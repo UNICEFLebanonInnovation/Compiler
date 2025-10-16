@@ -165,6 +165,20 @@ Vanna Integration
 
 The project ships with a light-weight bridge to the `Vanna <https://github.com/vanna-ai/vanna>`_ toolkit. Once enabled, a ``POST`` request to ``/api/vanna/`` allows authenticated users to ask natural language questions that Vanna converts to SQL.
 
+Typical user journey
+~~~~~~~~~~~~~~~~~~~~
+
+1. Ensure the integration is enabled and the API key is configured (see the environment variables below). When disabled the endpoint returns ``503``.
+2. Sign in to the site using the normal Django authentication flow so that the request carries a session or token.
+3. Issue a ``POST`` request to ``/api/vanna/`` with a JSON body containing the ``question`` text. Optionally include ``"run_sql": true`` to execute the generated SQL statement and receive tabular results.
+4. Inspect the JSON response, which can contain:
+
+   * ``answer`` – a natural language answer or explanation, when supported by the configured Vanna client.
+   * ``sql`` – the generated SQL query.
+   * ``results`` – the executed dataset when ``run_sql`` was requested and the client is able to execute SQL.
+
+For interactive clients (for example a React or Vue admin dashboard) you can wire a simple form that POSTs the question and then renders the JSON response fields. The endpoint is stateless, so multiple questions can be asked in sequence without any additional setup.
+
 Configuration is controlled through the following environment variables:
 
 * ``VANNA_ENABLED`` – set to ``true`` to activate the integration. When disabled the endpoint returns ``503``.
@@ -179,3 +193,13 @@ Configuration is controlled through the following environment variables:
 * ``VANNA_RUN_SQL_METHOD`` – override the method used to execute generated SQL (defaults to ``run_sql``).
 
 The API accepts a ``question`` string and an optional ``run_sql`` boolean flag. When ``run_sql`` is true and the configured client exposes the relevant method, the endpoint returns the executed dataset alongside the generated SQL text.
+
+Example ``curl`` request::
+
+    curl -X POST \
+         -H "Content-Type: application/json" \
+         -b cookie.jar \
+         -d '{"question": "How many students enrolled last month?", "run_sql": true}' \
+         https://<your-domain>/api/vanna/
+
+The ``-b cookie.jar`` flag assumes you have already authenticated and stored the session cookie; replace it with an ``Authorization`` header when using token-based authentication.
