@@ -28,6 +28,7 @@
     - cycle
     - round_id
     - age_band
+    - age_years
   allowed_filters:
     - governorate
     - caza
@@ -40,6 +41,7 @@
     - cycle
     - round_id
     - age_band
+    - age_years
   decimals: 0
   min_sample_size: 15
   rounding: 5
