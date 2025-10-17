@@ -124,11 +124,6 @@ urlpatterns = [
         name='child_profile_preview'
     ),
     re_path(
-        r'^child-registration-cancel/(?P<pk>[\w.@+-]+)/$',
-        view=views.main_registration_cancel_view,
-        name='child_registration_cancel'
-    ),
-    re_path(
         r'^load-districts/$',
         views.load_districts,
         name='load_districts'

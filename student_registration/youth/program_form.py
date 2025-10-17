@@ -228,7 +228,7 @@ class EnrolledProgramsForm(forms.ModelForm):
                 Reset('reset', 'Reset',
                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 HTML(
-                    '<a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="/youth/Child-Registration-Cancel/{}/">Cancel</a>'.format(
+                    '<a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="/youth/child-profile/{}/">Cancel</a>'.format(
                         registry)
                 )
             ),
@@ -359,8 +359,8 @@ class ProgramDocumentForm(forms.ModelForm):
         widget=forms.TextInput, required=True
     )
     project_description = forms.CharField(
-        label=_("Project Description"),
-        widget=forms.TextInput, required=True
+        label=_('Project Description'),
+        widget=forms.Textarea, required=True
     )
     implementing_partners = forms.CharField(
         label=_("Key Implementing Partner(s)"),
@@ -583,8 +583,6 @@ class ProgramDocumentForm(forms.ModelForm):
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                        Reset('reset', 'Reset',
-                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                     ),
                     css_id='step-2'
                 )
@@ -682,8 +680,6 @@ class ProgramDocumentForm(forms.ModelForm):
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                        Reset('reset', 'Reset',
-                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                     ),
                     css_id='step-1'
                 ),
