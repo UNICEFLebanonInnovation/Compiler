@@ -136,25 +136,11 @@ class FullFilter(PlaceholderFilterSet):
 
     child__first_phone_number = CharFilter(lookup_expr='icontains')
     child__second_phone_number = CharFilter(lookup_expr='icontains')
-    deleted = ChoiceFilter(
-        choices=DELETED_CHOICES,
-        label='Deleted',
-        empty_label='Deleted',
-        method='filter_deleted',
-    )
 
     class Meta:
         model = Registration
         fields = [
         ]
-
-
-    def filter_deleted(self, queryset, name, value):
-        if value == 'yes':
-            return queryset.filter(deleted=True)
-        elif value == 'no':
-            return queryset.filter(Q(deleted=False) | Q(deleted__isnull=True))
-        return queryset
 
     def filter_round(self, queryset, name, value):
         if value == 'no_round':

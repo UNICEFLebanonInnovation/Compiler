@@ -80,14 +80,12 @@ class ProvidedServicesAdmin(ImportExportModelAdmin):
 
 
 class RegistrationAdmin(admin.ModelAdmin):
-
     list_display = (
         'child',
         'get_unicef_id',
         'partner',
         'center',
         'round',
-        'deleted',
         'created',
         'modified',
     )
@@ -107,8 +105,7 @@ class RegistrationAdmin(admin.ModelAdmin):
         'have_labour',
         'partner',
         'center',
-        'round',
-        'deleted',
+        'round', 
         'created',
         'modified',
     )
@@ -120,12 +117,12 @@ class RegistrationAdmin(admin.ModelAdmin):
     )
 
     def get_queryset(self, request):
-        queryset = super(RegistrationAdmin, self).get_queryset(request)
-        return queryset.select_related('child', 'partner', 'center', 'round')
+        qs = super().get_queryset(request)
+        return qs.select_related('child', 'partner', 'center', 'round').filter(deleted=False)
+
     def get_unicef_id(self, obj):
         return obj.child.unicef_id
     get_unicef_id.short_description = 'Unicef ID'
-
 
 class EducationHistoryAdmin(admin.ModelAdmin):
 
