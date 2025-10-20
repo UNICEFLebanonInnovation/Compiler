@@ -68,8 +68,6 @@ def test_health_agent_view_without_api_key():
 
     PSSService.objects.create(registration=registration)
     HealthNutritionService.objects.create(registration=registration)
-    HealthNutritionReferral.objects.create(registration=registration)
-
     ProvidedServices.objects.create(
         registration=registration,
         name='PSS',

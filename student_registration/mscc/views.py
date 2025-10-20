@@ -347,7 +347,10 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
         normalized_ids = self._normalize_ids(registration_ids)
         limit_value = self._normalize_limit(limit)
 
-        queryset = Registration.objects.filter(deleted=False, type='Core-Package')
+        queryset = Registration.objects.filter(
+            deleted=False,
+            type__in=['Core-Package', 'Core Package'],
+        )
 
         pss_exists = PSSService.objects.filter(registration_id=OuterRef('pk'))
         health_service_exists = HealthNutritionService.objects.filter(
@@ -361,7 +364,11 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
             has_pss=Exists(pss_exists),
             has_health_service=Exists(health_service_exists),
             has_health_referral=Exists(health_referral_exists),
-        ).filter(has_pss=True, has_health_service=True, has_health_referral=True)
+        ).filter(
+            has_pss=True,
+        ).filter(
+            Q(has_health_service=True) | Q(has_health_referral=True)
+        )
         fetch_limit = limit_value
 
         if normalized_ids:
