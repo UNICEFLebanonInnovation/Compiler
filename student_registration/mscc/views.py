@@ -66,6 +66,9 @@ from .models import (
     Round,
     ProvidedServices,
     Registration,
+    PSSService,
+    HealthNutritionService,
+    HealthNutritionReferral,
 )
 from student_registration.backends.models import ExportHistory
 
@@ -344,7 +347,21 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
         normalized_ids = self._normalize_ids(registration_ids)
         limit_value = self._normalize_limit(limit)
 
-        queryset = Registration.objects.filter(deleted=False)
+        queryset = Registration.objects.filter(deleted=False, type='Core-Package')
+
+        pss_exists = PSSService.objects.filter(registration_id=OuterRef('pk'))
+        health_service_exists = HealthNutritionService.objects.filter(
+            registration_id=OuterRef('pk')
+        )
+        health_referral_exists = HealthNutritionReferral.objects.filter(
+            registration_id=OuterRef('pk')
+        )
+
+        queryset = queryset.annotate(
+            has_pss=Exists(pss_exists),
+            has_health_service=Exists(health_service_exists),
+            has_health_referral=Exists(health_referral_exists),
+        ).filter(has_pss=True, has_health_service=True, has_health_referral=True)
         fetch_limit = limit_value
 
         if normalized_ids:

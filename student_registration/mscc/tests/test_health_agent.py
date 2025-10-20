@@ -20,7 +20,13 @@ from student_registration.attendances.models import (
     MSCCAttendanceChild,
 )
 from student_registration.child.models import Child
-from student_registration.mscc.models import ProvidedServices, Registration
+from student_registration.mscc.models import (
+    ProvidedServices,
+    Registration,
+    PSSService,
+    HealthNutritionService,
+    HealthNutritionReferral,
+)
 from student_registration.mscc.views import HealthSupportAgentView
 
 
@@ -59,6 +65,10 @@ def test_health_agent_view_without_api_key():
     settings.OPENAI_API_KEY = ''
     child = _create_child('Rami', 'Test', 'Child', age_years=10, gender='Male')
     registration = Registration.objects.create(child=child, type='Core-Package')
+
+    PSSService.objects.create(registration=registration)
+    HealthNutritionService.objects.create(registration=registration)
+    HealthNutritionReferral.objects.create(registration=registration)
 
     ProvidedServices.objects.create(
         registration=registration,
@@ -109,6 +119,11 @@ def test_health_agent_view_calls_agent(mock_analyze):
 
     high_risk_registration = Registration.objects.create(child=high_risk_child, type='Core-Package')
     low_risk_registration = Registration.objects.create(child=low_risk_child, type='Core-Package')
+
+    for registration in (high_risk_registration, low_risk_registration):
+        PSSService.objects.create(registration=registration)
+        HealthNutritionService.objects.create(registration=registration)
+        HealthNutritionReferral.objects.create(registration=registration)
 
     ProvidedServices.objects.create(
         registration=high_risk_registration,
