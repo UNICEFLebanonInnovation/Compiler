@@ -155,6 +155,13 @@ IMPORT_EXPORT_SKIP_ADMIN_LOG = False
 # ------------------------------------------------------------------------------
 EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
 
+# OPENAI / AI AGENT CONFIGURATION
+# ------------------------------------------------------------------------------
+OPENAI_API_KEY = env('OPENAI_API_KEY', default='')
+OPENAI_HEALTH_AGENT_MODEL = env('OPENAI_HEALTH_AGENT_MODEL', default='gpt-4o-mini')
+OPENAI_API_BASE = env('OPENAI_API_BASE', default='https://api.openai.com/v1')
+OPENAI_TIMEOUT = env.int('OPENAI_TIMEOUT', default=30)
+
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#admins

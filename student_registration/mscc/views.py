@@ -2,6 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import json
+import logging
 from collections import Counter
 
 from django.views.generic import (
@@ -22,6 +23,7 @@ import csv
 import io
 import zipfile
 import codecs
+from django.utils import timezone
 from django.utils.encoding import smart_str
 import traceback
 
@@ -63,6 +65,7 @@ from .tables import (
 from .models import (
     Round,
     ProvidedServices,
+    Registration,
 )
 from student_registration.backends.models import ExportHistory
 
@@ -73,12 +76,16 @@ from .forms import (
 from .serializers import (
     MainSerializer
 )
+from django.conf import settings
 
 from .utils import *
 
 from student_registration.mscc.templatetags.simple_tags import education_history_model, education_history_programmes
 from .tasks import queue_mscc_export, queue_filtered_mscc_export
 from student_registration.users.templatetags.custom_tags import has_group
+from .ai_agent import HealthSupportAgent, AgentConfigurationError, AgentAPIError
+
+logger = logging.getLogger(__name__)
 
 
 def chart_data(request):
@@ -133,6 +140,359 @@ def chart_data(request):
             .order_by('label')
         )
     return JsonResponse(list(data), safe=False)
+
+
+def _service_to_dict(service):
+    return {
+        'id': service.id,
+        'name': service.name,
+        'type': service.type,
+        'category': service.category,
+        'required': service.required,
+        'completed': service.completed,
+        'completion_date': service.completion_date.isoformat() if service.completion_date else None,
+        'service_id': service.service_id,
+    }
+
+
+def _classify_service(service_dict):
+    name = (service_dict.get('name') or '').lower()
+    category = (service_dict.get('category') or '').lower()
+
+    if 'pss' in name or 'psychosocial' in name or 'child protection' in category:
+        return 'pss'
+    if 'health' in name or 'nutrition' in name or 'health' in category or 'nutrition' in category:
+        return 'health'
+    if 'support' in name or 'support' in category or 'social protection' in category or 'caregiver' in name:
+        return 'support'
+    return 'other'
+
+
+def _summarize_services(services):
+    buckets = {
+        'pss': [],
+        'health': [],
+        'support': [],
+        'other': [],
+    }
+
+    for service in services:
+        data = _service_to_dict(service)
+        buckets[_classify_service(data)].append(data)
+
+    summary = {}
+    overall_pending = 0
+    for key, items in buckets.items():
+        required_total = sum(1 for item in items if item['required'])
+        required_pending = sum(1 for item in items if item['required'] and not item['completed'])
+        completed = sum(1 for item in items if item['completed'])
+        summary[key] = {
+            'total': len(items),
+            'completed': completed,
+            'required_total': required_total,
+            'required_pending': required_pending,
+            'items': items,
+        }
+        overall_pending += required_pending
+
+    summary['overall_pending_required'] = overall_pending
+    return summary
+
+
+def _summarize_attendance(records):
+    total = len(records)
+    attended = sum(1 for record in records if record.attended == 'Yes')
+    missed = sum(1 for record in records if record.attended == 'No')
+    attendance_rate = round(attended / total, 2) if total else None
+    last_absence = None
+
+    for record in records:
+        if record.attended == 'No' and getattr(record, 'attendance_day', None):
+            attendance_date = getattr(record.attendance_day, 'attendance_date', None)
+            if attendance_date and (last_absence is None or attendance_date > last_absence):
+                last_absence = attendance_date
+
+    return {
+        'total_sessions': total,
+        'attended_sessions': attended,
+        'missed_sessions': missed,
+        'attendance_rate': attendance_rate,
+        'most_recent_absence': last_absence.isoformat() if last_absence else None,
+    }
+
+
+def _calculate_risk_score(age, attendance_summary, services_summary):
+    score = 0
+    missed = attendance_summary.get('missed_sessions', 0) or 0
+    rate = attendance_summary.get('attendance_rate')
+
+    if missed >= 4:
+        score += 4
+    elif missed >= 2:
+        score += 2
+    elif missed == 1:
+        score += 1
+
+    if rate is not None:
+        if rate < 0.5:
+            score += 4
+        elif rate < 0.75:
+            score += 3
+        elif rate < 0.9:
+            score += 1
+
+    pss_pending = services_summary['pss']['required_pending']
+    health_pending = services_summary['health']['required_pending']
+    support_pending = services_summary['support']['required_pending']
+
+    score += pss_pending * 3
+    score += health_pending * 2
+    score += support_pending
+
+    if age is not None:
+        if age < 6:
+            score += 1
+            if health_pending:
+                score += 1
+        if age < 12 and pss_pending:
+            score += 1
+
+    return score
+
+
+def _build_alerts(attendance_summary, services_summary):
+    alerts = []
+    rate = attendance_summary.get('attendance_rate')
+    missed = attendance_summary.get('missed_sessions', 0) or 0
+
+    if rate is not None and rate < 0.75:
+        alerts.append('Attendance below 75%')
+    if missed >= 3:
+        alerts.append(f'{missed} absences recorded')
+
+    if services_summary['pss']['required_pending']:
+        alerts.append('Pending required PSS services')
+    if services_summary['health']['required_pending']:
+        alerts.append('Pending required health services')
+    if services_summary['support']['required_pending']:
+        alerts.append('Pending required support services')
+
+    return alerts
+
+
+def _build_child_context(registration, services, attendance_records):
+    child = getattr(registration, 'child', None)
+    age = None
+    gender = None
+    child_name = None
+    child_id = None
+
+    if child:
+        child_id = child.id
+        child_name = child.full_name
+        gender = child.gender
+        age_value = child.age
+        age = age_value if age_value else None
+
+    services_summary = _summarize_services(services)
+    attendance_summary = _summarize_attendance(attendance_records)
+    alerts = _build_alerts(attendance_summary, services_summary)
+    risk_score = _calculate_risk_score(age, attendance_summary, services_summary)
+
+    return {
+        'registration_id': registration.id,
+        'child_id': child_id,
+        'child_name': child_name,
+        'gender': gender,
+        'age': age,
+        'package_type': registration.type,
+        'attendance': attendance_summary,
+        'services': services_summary,
+        'alerts': alerts,
+        'risk_score': risk_score,
+        'education_programme': registration.education_program,
+    }
+
+
+class HealthSupportAgentView(LoginRequiredMixin, View):
+    """Return an AI-assisted assessment of MSCC registrations."""
+
+    http_method_names = ['get', 'post']
+    DEFAULT_LIMIT = 5
+    MIN_LIMIT = 1
+    MAX_LIMIT = 20
+
+    def get(self, request, *args, **kwargs):
+        registration_ids = request.GET.getlist('registration_id')
+        single_id = request.GET.get('registration_id')
+        if single_id and not registration_ids:
+            registration_ids = [single_id]
+        limit = request.GET.get('limit')
+        return self._generate_response(registration_ids, limit)
+
+    def post(self, request, *args, **kwargs):
+        try:
+            payload = json.loads(request.body or '{}')
+        except ValueError:
+            return HttpResponseBadRequest('Invalid JSON payload')
+
+        registration_ids = payload.get('registration_ids')
+        limit = payload.get('limit')
+        return self._generate_response(registration_ids, limit)
+
+    def _generate_response(self, registration_ids, limit):
+        normalized_ids = self._normalize_ids(registration_ids)
+        limit_value = self._normalize_limit(limit)
+
+        queryset = Registration.objects.filter(deleted=False)
+        fetch_limit = limit_value
+
+        if normalized_ids:
+            queryset = queryset.filter(id__in=normalized_ids)
+            fetch_limit = max(limit_value, len(normalized_ids))
+        else:
+            absence_subquery = Subquery(
+                MSCCAttendanceChild.objects.filter(
+                    registration_id=OuterRef('pk'),
+                    attended='No'
+                ).values('registration_id').annotate(total=Count('id')).values('total'),
+                output_field=IntegerField(),
+            )
+            pending_subquery = Subquery(
+                ProvidedServices.objects.filter(
+                    registration_id=OuterRef('pk'),
+                    required=True,
+                    completed=False,
+                ).values('registration_id').annotate(total=Count('id')).values('total'),
+                output_field=IntegerField(),
+            )
+            queryset = queryset.annotate(
+                absent_days=Coalesce(absence_subquery, 0, output_field=IntegerField()),
+                pending_required=Coalesce(pending_subquery, 0, output_field=IntegerField()),
+            ).order_by('-absent_days', '-pending_required', '-id')
+            fetch_limit = max(limit_value * 3, limit_value)
+
+        registrations = list(queryset.select_related('child')[:fetch_limit])
+
+        if not registrations:
+            return JsonResponse({
+                'generated_at': timezone.now().isoformat(),
+                'children': [],
+                'analysis': '',
+                'model': getattr(settings, 'OPENAI_HEALTH_AGENT_MODEL', None),
+                'limit': limit_value,
+                'count': 0,
+                'filters': {'registration_ids': normalized_ids} if normalized_ids else {},
+            })
+
+        registration_ids_list = [registration.id for registration in registrations]
+
+        services_map = {}
+        for service in ProvidedServices.objects.filter(registration_id__in=registration_ids_list):
+            services_map.setdefault(service.registration_id, []).append(service)
+
+        attendance_map = {}
+        attendance_qs = MSCCAttendanceChild.objects.filter(
+            registration_id__in=registration_ids_list
+        ).select_related('attendance_day').order_by('attendance_day__attendance_date', 'id')
+        for attendance in attendance_qs:
+            attendance_map.setdefault(attendance.registration_id, []).append(attendance)
+
+        children_context = [
+            _build_child_context(
+                registration,
+                services_map.get(registration.id, []),
+                attendance_map.get(registration.id, []),
+            )
+            for registration in registrations
+        ]
+
+        children_context.sort(key=lambda child: child['risk_score'], reverse=True)
+        children_context = children_context[:limit_value]
+
+        analysis = ''
+        error = None
+        model_name = getattr(settings, 'OPENAI_HEALTH_AGENT_MODEL', None)
+
+        if children_context:
+            try:
+                agent = HealthSupportAgent()
+                analysis = agent.analyze_children(children_context)
+                model_name = agent.model
+            except AgentConfigurationError as exc:
+                error = str(exc)
+            except AgentAPIError as exc:
+                error = str(exc)
+            except Exception as exc:  # pragma: no cover - defensive guard
+                logger.exception('Unexpected error while running HealthSupportAgent')
+                error = 'Unexpected error while generating AI analysis.'
+
+        response_payload = {
+            'generated_at': timezone.now().isoformat(),
+            'children': children_context,
+            'analysis': analysis,
+            'model': model_name,
+            'limit': limit_value,
+            'count': len(children_context),
+        }
+
+        if normalized_ids:
+            response_payload['filters'] = {'registration_ids': normalized_ids}
+        if error:
+            response_payload['error'] = error
+
+        return JsonResponse(response_payload)
+
+    @staticmethod
+    def _normalize_ids(registration_ids):
+        if not registration_ids:
+            return []
+        if isinstance(registration_ids, (str, int)):
+            registration_ids = [registration_ids]
+
+        normalized = []
+        for value in registration_ids:
+            if value is None:
+                continue
+            value_str = str(value).strip()
+            if not value_str:
+                continue
+            try:
+                normalized.append(int(value_str))
+            except ValueError:
+                continue
+        return normalized
+
+    @staticmethod
+    def _normalize_limit(limit):
+        try:
+            limit_value = int(limit)
+        except (TypeError, ValueError):
+            limit_value = HealthSupportAgentView.DEFAULT_LIMIT
+        return max(
+            HealthSupportAgentView.MIN_LIMIT,
+            min(HealthSupportAgentView.MAX_LIMIT, limit_value),
+        )
+
+
+class HealthSupportAgentPageView(LoginRequiredMixin, TemplateView):
+    """Render the interactive dashboard for the health support agent."""
+
+    template_name = 'mscc/health_agent.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        default_limit = HealthSupportAgentView.DEFAULT_LIMIT
+        context.update(
+            {
+                'default_limit': default_limit,
+                'max_limit': HealthSupportAgentView.MAX_LIMIT,
+                'endpoint': reverse('mscc:health_agent'),
+                'is_agent_configured': bool(getattr(settings, 'OPENAI_API_KEY', '')),
+                'configured_model': getattr(settings, 'OPENAI_HEALTH_AGENT_MODEL', ''),
+            }
+        )
+        return context
 
 
 class ProfileView(LoginRequiredMixin,

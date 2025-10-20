@@ -1,0 +1,112 @@
+{% extends "mscc/base.html" %}
+{% load static i18n %}
+{% load django_bootstrap5 %}
+
+{% block project_title %}Health Support Insights{% endblock %}
+{% block module_name %}Makani - Health Support Insights{% endblock %}
+
+{% block content %}
+<div class="app-page-title">
+  <div class="page-title-wrapper">
+    <div class="page-title-heading">
+      <div>
+        <div class="page-title-head center-elem page-title-heading">
+          <span class="d-inline-block pr-2">
+            <i class="pe-7s-medal"></i>
+          </span>
+          <span class="d-inline-block">Health Support AI Insights</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="health-agent-app"
+     data-endpoint="{{ endpoint }}"
+     data-default-limit="{{ default_limit }}"
+     data-max-limit="{{ max_limit }}">
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Generate an insight</h5>
+        </div>
+        <div class="card-body">
+          <p class="text-muted small">
+            Request a prioritised list of children based on attendance and service follow-up needs.
+            Leave the registration list empty to let the assistant surface the highest-risk profiles automatically.
+          </p>
+          {% if not is_agent_configured %}
+          <div class="alert alert-warning" role="alert">
+            <strong>OpenAI configuration missing.</strong> The analysis step will be skipped until the
+            <code>OPENAI_API_KEY</code> setting is provided.
+          </div>
+          {% endif %}
+          <form id="health-agent-form" novalidate>
+            <div class="mb-3">
+              <label class="form-label" for="health-agent-registration-ids">Registration IDs</label>
+              <textarea id="health-agent-registration-ids"
+                        class="form-control"
+                        rows="4"
+                        placeholder="e.g. 1024, 2048 or one ID per line"></textarea>
+              <small class="form-text text-muted">Optional. Separate IDs with commas or new lines.</small>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="health-agent-limit">Maximum children to review</label>
+              <input type="number"
+                     id="health-agent-limit"
+                     class="form-control"
+                     min="1"
+                     max="{{ max_limit }}"
+                     value="{{ default_limit }}">
+              <small class="form-text text-muted">Between 1 and {{ max_limit }} children.</small>
+            </div>
+            <div class="d-flex">
+              <button type="submit" class="btn btn-primary flex-grow-1">Run assessment</button>
+              <button type="button" id="health-agent-reset" class="btn btn-outline-secondary ml-2">Reset</button>
+            </div>
+          </form>
+          <hr>
+          <div class="small text-muted">
+            <p class="mb-1"><strong>How it works</strong></p>
+            <ul class="pl-3 mb-0">
+              <li>Children are scored using attendance gaps and pending support services.</li>
+              <li>The top results are summarised with AI-generated recommendations.</li>
+              <li>Review alerts to trigger targeted follow-up with caregivers.</li>
+            </ul>
+            {% if configured_model %}
+            <p class="mt-2 mb-0"><strong>Model:</strong> {{ configured_model }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-8">
+      <div id="health-agent-status" class="alert d-none" role="alert"></div>
+      <div id="health-agent-results" class="d-none">
+        <div class="card mb-3">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">AI Analysis</h5>
+            <small class="text-muted" id="health-agent-metadata"></small>
+          </div>
+          <div class="card-body">
+            <div id="health-agent-analysis" class="markdown-body"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">Prioritised children</h5>
+          </div>
+          <div class="card-body">
+            <div id="health-agent-children"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'js/mscc/health_agent.js' %}"></script>
+{% endblock %}

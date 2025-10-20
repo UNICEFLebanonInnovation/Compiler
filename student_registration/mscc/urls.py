@@ -54,6 +54,16 @@ urlpatterns = [
         name='dashboard_data'
     ),
     re_path(
+        r'^ai/health-support/$',
+        view=views.HealthSupportAgentView.as_view(),
+        name='health_agent'
+    ),
+    re_path(
+        r'^ai/health-support/insights/$',
+        view=views.HealthSupportAgentPageView.as_view(),
+        name='health_agent_insights'
+    ),
+    re_path(
         r'^dashboard-custom/$',
         view=views.DashboardCustomView.as_view(),
         name='dashboard_custom'
