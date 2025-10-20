@@ -208,6 +208,53 @@
     return sections;
   }
 
+  function renderLifeQuality(lifeQuality) {
+    if (!lifeQuality) {
+      return '<span class="text-muted small">No information</span>';
+    }
+
+    var label = lifeQuality.label || 'Monitor';
+    var score = lifeQuality.score;
+    var signals = Array.isArray(lifeQuality.signals) ? lifeQuality.signals : [];
+
+    function badgeClass(value) {
+      switch (value) {
+        case 'Critical concern':
+          return 'danger';
+        case 'Needs attention':
+          return 'warning';
+        case 'Stable':
+          return 'success';
+        case 'Thriving':
+          return 'primary';
+        default:
+          return 'info';
+      }
+    }
+
+    var html = '';
+    html += '<div class="d-flex align-items-baseline mb-1">';
+    html += '<span class="badge badge-' + badgeClass(label) + ' mr-2">' + escapeHtml(label) + '</span>';
+    if (score !== undefined && score !== null) {
+      html += '<span class="small text-muted">Score: ' + escapeHtml(score) + '</span>';
+    }
+    html += '</div>';
+
+    if (signals.length) {
+      var items = signals
+        .map(function (signal) {
+          var weight = signal.weight !== undefined && signal.weight !== null ? ' (' + escapeHtml(signal.weight) + ')' : '';
+          return '<li>' + escapeHtml(signal.message || '') + weight + '</li>';
+        })
+        .join('');
+      html += '<ul class="small pl-3 mb-0">' + items + '</ul>';
+    } else {
+      html += '<p class="text-muted small mb-0">No sentiment signals recorded.</p>';
+    }
+
+    return html;
+  }
+
   function renderChildren(children) {
     if (!children || !children.length) {
       return '<p class="text-muted mb-0">No children met the selected criteria.</p>';
@@ -238,6 +285,7 @@
           '<div class="small">Last absence: ' + absenceDate + '</div>' +
           '</td>' +
           '<td class="align-middle">' + renderServiceSummary(services) + '</td>' +
+          '<td class="align-middle" style="min-width: 200px;">' + renderLifeQuality(child.life_quality) + '</td>' +
           '<td class="align-middle" style="min-width: 220px;">' + renderInsights(child) + '</td>' +
           '<td class="align-middle" style="min-width: 180px;">' + renderAlerts(child.alerts) + '</td>' +
           '</tr>'
@@ -254,6 +302,7 @@
       '<th>Child</th>' +
       '<th>Attendance</th>' +
       '<th>Services</th>' +
+      '<th>Life quality</th>' +
       '<th>Insights</th>' +
       '<th>Alerts</th>' +
       '</tr>' +

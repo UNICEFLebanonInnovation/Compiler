@@ -110,6 +110,12 @@ def test_health_agent_view_without_api_key():
     assert child_payload['health_details'] == []
     assert child_payload['health_referral_details'] == []
     assert child_payload['wellbeing_flags'] == []
+    assert child_payload['life_quality']['label'] == 'Needs attention'
+    assert child_payload['life_quality']['score'] < 0
+    assert any(
+        signal['message'].startswith('Attendance below')
+        for signal in child_payload['life_quality']['signals']
+    )
 
 
 @patch('student_registration.mscc.views.HealthSupportAgent.analyze_children', return_value='analysis output')
@@ -182,6 +188,7 @@ def test_health_agent_view_calls_agent(mock_analyze):
     called_context = mock_analyze.call_args[0][0]
     assert len(called_context) == 1
     assert called_context[0]['registration_id'] == high_risk_registration.id
+    assert called_context[0]['life_quality']['label'] == 'Critical concern'
 
     assert payload['analysis'] == 'analysis output'
     assert payload['model'] == 'gpt-test-model'
@@ -193,3 +200,7 @@ def test_health_agent_view_calls_agent(mock_analyze):
     assert any('MUAC screening result' in alert for alert in payload['children'][0]['alerts'])
     assert any('Referred for malnutrition treatment' in alert for alert in payload['children'][0]['alerts'])
     assert any('PSS vulnerability' in flag for flag in payload['children'][0]['wellbeing_flags'])
+    life_quality = payload['children'][0]['life_quality']
+    assert life_quality['label'] == 'Critical concern'
+    assert life_quality['score'] <= -6
+    assert any('Child showing distress symptoms' == signal['message'] for signal in life_quality['signals'])

@@ -373,6 +373,108 @@ def _build_alerts(attendance_summary, services_summary, wellbeing_flags=None):
     return alerts
 
 
+def _assess_life_quality(attendance_summary, pss=None, health=None, referral=None):
+    """Derive a sentiment-style signal for a child's quality of life."""
+
+    score = 0
+    signals = []
+
+    def record(weight, message):
+        nonlocal score
+        score += weight
+        signals.append({'weight': weight, 'message': message})
+
+    rate = attendance_summary.get('attendance_rate')
+    missed = attendance_summary.get('missed_sessions', 0) or 0
+
+    if rate is not None:
+        if rate >= 0.9:
+            record(2, 'Consistent attendance (≥90%)')
+        elif rate < 0.6:
+            record(-3, 'Attendance below 60%')
+        elif rate < 0.75:
+            record(-2, 'Attendance below 75%')
+        elif rate < 0.85:
+            record(-1, 'Attendance below 85%')
+    if missed >= 3:
+        record(-1, f'{missed} recent absences recorded')
+
+    if pss:
+        if pss.child_distress == 'Yes':
+            record(-3, 'Child showing distress symptoms')
+        if pss.caregivers_distress == 'Yes':
+            record(-2, 'Caregiver reports distress or anxiety')
+        if pss.child_protection_concern:
+            record(-3, 'Child protection concern reported')
+        if pss.child_vulnerability:
+            record(-2, 'Vulnerability flagged in PSS assessment')
+        if pss.child_know_seek_help == 'No':
+            record(-2, 'Child unsure where to seek help for abuse or violence')
+        elif pss.child_know_seek_help == 'Yes':
+            record(1, 'Child knows how to seek help when needed')
+        if pss.child_additional_parenting == 'Yes':
+            record(-1, 'Additional support requested for child caregiving')
+        if pss.caregivers_additional_parenting == 'Yes':
+            record(-1, 'Caregiver requested more psychosocial support')
+        if pss.child_registered == 'Yes':
+            record(1, 'Child has birth registration documentation')
+
+    if health:
+        if health.eating_minimum_meals == 'No':
+            record(-3, 'Child not meeting minimum daily meals')
+        elif health.eating_minimum_meals == 'Yes':
+            record(2, 'Child eating the recommended daily meals')
+        if health.child_vaccinated == 'No':
+            record(-3, 'Child missing required vaccinations')
+        elif health.child_vaccinated == 'Yes':
+            record(2, 'Child fully vaccinated per schedule')
+        if health.muac_malnutrition_screening and health.muac_malnutrition_screening != 'No malnutrition screening':
+            record(-2, 'Malnutrition risk identified during screening')
+        if getattr(health, 'child_malnutrition_screening', None) and health.child_malnutrition_screening != 'No malnutrition screening':
+            record(-2, 'Child MUAC screening indicates malnutrition risk')
+        if health.positive_parenting == 'No':
+            record(-1, 'Caregiver lacks positive parenting practices')
+        elif health.positive_parenting == 'Yes':
+            record(1, 'Caregiver practices positive parenting')
+        if health.physical_activity == 'No':
+            record(-1, 'Child lacks regular physical activity')
+        elif health.physical_activity == 'Yes':
+            record(1, 'Child engages in regular physical activity')
+        if health.accessing_reproductive_health == 'Yes':
+            record(-2, 'Child accessing reproductive health services (possible early marriage risk)')
+        if health.baby_breastfed == 'Yes':
+            record(1, 'Baby receiving breastfeeding support')
+        if health.infant_exclusively_breastfed == 'Yes':
+            record(1, 'Infant exclusively breastfed (0-6 months)')
+
+    if referral:
+        if referral.referred_development_delays == 'Yes':
+            record(-1, 'Referred for developmental delay follow-up')
+        if referral.referred_malnutrition == 'Yes':
+            record(-1, 'Referred to malnutrition treatment services')
+        if referral.referred_anc_pnc == 'Yes':
+            record(-1, 'ANC/PNC follow-up required for caregiver or child')
+
+    if score <= -6:
+        label = 'Critical concern'
+    elif score <= -3:
+        label = 'Needs attention'
+    elif score <= 1:
+        label = 'Monitor'
+    elif score <= 4:
+        label = 'Stable'
+    else:
+        label = 'Thriving'
+
+    signals.sort(key=lambda entry: entry['weight'])
+
+    return {
+        'score': score,
+        'label': label,
+        'signals': signals,
+    }
+
+
 def _build_child_context(
     registration,
     services,
@@ -407,6 +509,12 @@ def _build_child_context(
         services_summary,
         wellbeing_flags,
     )
+    life_quality = _assess_life_quality(
+        attendance_summary,
+        pss_assessment,
+        health_assessment,
+        health_referral,
+    )
 
     return {
         'registration_id': registration.id,
@@ -424,6 +532,7 @@ def _build_child_context(
         'health_details': health_details,
         'health_referral_details': referral_details,
         'wellbeing_flags': wellbeing_flags,
+        'life_quality': life_quality,
     }
 
 
