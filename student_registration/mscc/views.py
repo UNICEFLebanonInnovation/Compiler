@@ -19,6 +19,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, Http
 from django.db.models import Count, F
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db import connection
+from django.db import models
 import csv
 import io
 import zipfile
@@ -224,7 +225,90 @@ def _summarize_attendance(records):
     }
 
 
-def _calculate_risk_score(age, attendance_summary, services_summary):
+def _summarize_model_fields(instance):
+    if not instance:
+        return []
+
+    summary = []
+    for field in instance._meta.fields:
+        if field.name in {'id', 'registration', 'created', 'modified'}:
+            continue
+        value = getattr(instance, field.name)
+        if value in (None, '', []):
+            continue
+        if field.choices:
+            display_value = getattr(instance, f'get_{field.name}_display')()
+        elif isinstance(field, (models.DateField, models.DateTimeField)):
+            display_value = value.isoformat()
+        else:
+            display_value = value
+        label = str(field.verbose_name or field.name).strip()
+        summary.append({'field': field.name, 'label': label, 'value': display_value})
+
+    return summary
+
+
+def _extract_wellbeing_flags(pss, health, referral):
+    flags = []
+
+    if pss:
+        if pss.child_vulnerability:
+            flags.append(f"PSS vulnerability: {pss.get_child_vulnerability_display()}")
+        if pss.child_protection_concern:
+            flags.append(
+                f"Protection concern reported: {pss.get_child_protection_concern_display()}"
+            )
+        if pss.child_distress == 'Yes':
+            flags.append('Caregiver reports children experiencing distress')
+        if pss.caregivers_distress == 'Yes':
+            flags.append('Caregiver reports distress and anxiety')
+        if pss.child_know_seek_help == 'No':
+            flags.append('Child does not know where to seek help for violence or abuse')
+        if pss.child_additional_parenting == 'Yes':
+            flags.append('Caregiver requested additional parenting support')
+        if pss.caregivers_additional_parenting == 'Yes':
+            flags.append('Caregiver requested additional psychosocial support')
+        if pss.child_out_school_reasons:
+            flags.append(
+                f"Reason for being out of school: {pss.get_child_out_school_reasons_display()}"
+            )
+
+    if health:
+        if health.muac_malnutrition_screening and health.muac_malnutrition_screening != 'No malnutrition screening':
+            flags.append(
+                f"MUAC screening result: {health.get_muac_malnutrition_screening_display()}"
+            )
+        if health.child_malnutrition_screening and health.child_malnutrition_screening != 'No malnutrition screening':
+            flags.append(
+                f"Child MUAC screening result: {health.get_child_malnutrition_screening_display()}"
+            )
+        if health.eating_minimum_meals == 'No':
+            flags.append('Child not eating minimum meals per day')
+        if health.child_vaccinated == 'No':
+            flags.append('Child not vaccinated as per the national calendar')
+        if health.missing_vaccine:
+            flags.append(f"Missing vaccines noted: {health.missing_vaccine}")
+        if health.positive_parenting == 'No':
+            flags.append('Caregiver lacks positive parenting practices')
+        if health.physical_activity == 'No':
+            flags.append('Child lacks regular physical activity')
+        if health.accessing_reproductive_health == 'Yes':
+            flags.append('Child accessing reproductive health services (possible child marriage risk)')
+
+    if referral:
+        if referral.referred_development_delays == 'Yes':
+            destination = referral.get_development_delays_display() or 'unspecified location'
+            flags.append(f"Referred for developmental delays: {destination}")
+        if referral.referred_malnutrition == 'Yes':
+            destination = (
+                referral.get_malnutrition_treatment_center_display() or 'unspecified center'
+            )
+            flags.append(f"Referred for malnutrition treatment: {destination}")
+
+    return flags
+
+
+def _calculate_risk_score(age, attendance_summary, services_summary, wellbeing_flags=None):
     score = 0
     missed = attendance_summary.get('missed_sessions', 0) or 0
     rate = attendance_summary.get('attendance_rate')
@@ -260,10 +344,13 @@ def _calculate_risk_score(age, attendance_summary, services_summary):
         if age < 12 and pss_pending:
             score += 1
 
+    if wellbeing_flags:
+        score += len(wellbeing_flags) * 2
+
     return score
 
 
-def _build_alerts(attendance_summary, services_summary):
+def _build_alerts(attendance_summary, services_summary, wellbeing_flags=None):
     alerts = []
     rate = attendance_summary.get('attendance_rate')
     missed = attendance_summary.get('missed_sessions', 0) or 0
@@ -280,10 +367,20 @@ def _build_alerts(attendance_summary, services_summary):
     if services_summary['support']['required_pending']:
         alerts.append('Pending required support services')
 
+    if wellbeing_flags:
+        alerts.extend(wellbeing_flags)
+
     return alerts
 
 
-def _build_child_context(registration, services, attendance_records):
+def _build_child_context(
+    registration,
+    services,
+    attendance_records,
+    pss_assessment,
+    health_assessment,
+    health_referral,
+):
     child = getattr(registration, 'child', None)
     age = None
     gender = None
@@ -299,8 +396,17 @@ def _build_child_context(registration, services, attendance_records):
 
     services_summary = _summarize_services(services)
     attendance_summary = _summarize_attendance(attendance_records)
-    alerts = _build_alerts(attendance_summary, services_summary)
-    risk_score = _calculate_risk_score(age, attendance_summary, services_summary)
+    pss_details = _summarize_model_fields(pss_assessment)
+    health_details = _summarize_model_fields(health_assessment)
+    referral_details = _summarize_model_fields(health_referral)
+    wellbeing_flags = _extract_wellbeing_flags(pss_assessment, health_assessment, health_referral)
+    alerts = _build_alerts(attendance_summary, services_summary, wellbeing_flags)
+    risk_score = _calculate_risk_score(
+        age,
+        attendance_summary,
+        services_summary,
+        wellbeing_flags,
+    )
 
     return {
         'registration_id': registration.id,
@@ -314,6 +420,10 @@ def _build_child_context(registration, services, attendance_records):
         'alerts': alerts,
         'risk_score': risk_score,
         'education_programme': registration.education_program,
+        'pss_details': pss_details,
+        'health_details': health_details,
+        'health_referral_details': referral_details,
+        'wellbeing_flags': wellbeing_flags,
     }
 
 
@@ -422,11 +532,26 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
         for attendance in attendance_qs:
             attendance_map.setdefault(attendance.registration_id, []).append(attendance)
 
+        pss_map = {}
+        for pss in PSSService.objects.filter(registration_id__in=registration_ids_list).order_by('-id'):
+            pss_map.setdefault(pss.registration_id, pss)
+
+        health_service_map = {}
+        for health_service in HealthNutritionService.objects.filter(registration_id__in=registration_ids_list).order_by('-id'):
+            health_service_map.setdefault(health_service.registration_id, health_service)
+
+        health_referral_map = {}
+        for health_referral in HealthNutritionReferral.objects.filter(registration_id__in=registration_ids_list).order_by('-id'):
+            health_referral_map.setdefault(health_referral.registration_id, health_referral)
+
         children_context = [
             _build_child_context(
                 registration,
                 services_map.get(registration.id, []),
                 attendance_map.get(registration.id, []),
+                pss_map.get(registration.id),
+                health_service_map.get(registration.id),
+                health_referral_map.get(registration.id),
             )
             for registration in registrations
         ]

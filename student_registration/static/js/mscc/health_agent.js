@@ -163,6 +163,51 @@
       .join('');
   }
 
+  function renderAssessmentDetails(title, entries) {
+    if (!entries || !entries.length) {
+      return '';
+    }
+    var items = entries
+      .map(function (entry) {
+        return '<li><strong>' + escapeHtml(entry.label) + ':</strong> ' + escapeHtml(entry.value) + '</li>';
+      })
+      .join('');
+    return (
+      '<div class="mb-2">' +
+      '<div class="small text-uppercase text-muted">' + escapeHtml(title) + '</div>' +
+      '<ul class="small pl-3 mb-0">' + items + '</ul>' +
+      '</div>'
+    );
+  }
+
+  function renderInsights(child) {
+    var sections = '';
+    sections += renderAssessmentDetails('PSS responses', child.pss_details);
+    sections += renderAssessmentDetails('Health & nutrition responses', child.health_details);
+    sections += renderAssessmentDetails('Health referrals', child.health_referral_details);
+
+    if (child.wellbeing_flags && child.wellbeing_flags.length) {
+      var flags = child.wellbeing_flags
+        .map(function (flag) {
+          return '<li>' + escapeHtml(flag) + '</li>';
+        })
+        .join('');
+      sections +=
+        '<div class="mb-2">' +
+        '<div class="small text-uppercase text-muted">Wellbeing flags</div>' +
+        '<ul class="small pl-3 mb-0">' +
+        flags +
+        '</ul>' +
+        '</div>';
+    }
+
+    if (!sections) {
+      return '<span class="text-muted small">No assessment data</span>';
+    }
+
+    return sections;
+  }
+
   function renderChildren(children) {
     if (!children || !children.length) {
       return '<p class="text-muted mb-0">No children met the selected criteria.</p>';
@@ -193,6 +238,7 @@
           '<div class="small">Last absence: ' + absenceDate + '</div>' +
           '</td>' +
           '<td class="align-middle">' + renderServiceSummary(services) + '</td>' +
+          '<td class="align-middle" style="min-width: 220px;">' + renderInsights(child) + '</td>' +
           '<td class="align-middle" style="min-width: 180px;">' + renderAlerts(child.alerts) + '</td>' +
           '</tr>'
         );
@@ -208,6 +254,7 @@
       '<th>Child</th>' +
       '<th>Attendance</th>' +
       '<th>Services</th>' +
+      '<th>Insights</th>' +
       '<th>Alerts</th>' +
       '</tr>' +
       '</thead>' +

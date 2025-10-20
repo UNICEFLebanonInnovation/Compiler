@@ -106,6 +106,10 @@ def test_health_agent_view_without_api_key():
     assert child_payload['services']['health']['required_pending'] == 1
     assert child_payload['attendance']['missed_sessions'] == 2
     assert child_payload['attendance']['attendance_rate'] == pytest.approx(0.33, rel=1e-2)
+    assert child_payload['pss_details'] == []
+    assert child_payload['health_details'] == []
+    assert child_payload['health_referral_details'] == []
+    assert child_payload['wellbeing_flags'] == []
 
 
 @patch('student_registration.mscc.views.HealthSupportAgent.analyze_children', return_value='analysis output')
@@ -118,10 +122,31 @@ def test_health_agent_view_calls_agent(mock_analyze):
     high_risk_registration = Registration.objects.create(child=high_risk_child, type='Core-Package')
     low_risk_registration = Registration.objects.create(child=low_risk_child, type='Core-Package')
 
-    for registration in (high_risk_registration, low_risk_registration):
-        PSSService.objects.create(registration=registration)
-        HealthNutritionService.objects.create(registration=registration)
-        HealthNutritionReferral.objects.create(registration=registration)
+    PSSService.objects.create(
+        registration=high_risk_registration,
+        child_vulnerability='Clear signs of distress',
+        child_protection_concern='Isolation',
+        child_distress='Yes',
+        child_know_seek_help='No',
+    )
+    HealthNutritionService.objects.create(
+        registration=high_risk_registration,
+        muac_malnutrition_screening='SAM (MUAC <11.5 cm)',
+        eating_minimum_meals='No',
+        child_vaccinated='No',
+        missing_vaccine='Polio booster',
+    )
+    HealthNutritionReferral.objects.create(
+        registration=high_risk_registration,
+        referred_development_delays='Yes',
+        development_delays='Hospital',
+        referred_malnutrition='Yes',
+        malnutrition_treatment_center='To Hospital',
+    )
+
+    PSSService.objects.create(registration=low_risk_registration)
+    HealthNutritionService.objects.create(registration=low_risk_registration, eating_minimum_meals='Yes', child_vaccinated='Yes')
+    HealthNutritionReferral.objects.create(registration=low_risk_registration)
 
     ProvidedServices.objects.create(
         registration=high_risk_registration,
@@ -163,3 +188,8 @@ def test_health_agent_view_calls_agent(mock_analyze):
     assert payload['count'] == 1
     assert payload['children'][0]['registration_id'] == high_risk_registration.id
     assert payload['children'][0]['risk_score'] > payload['children'][0]['services']['pss']['required_pending']
+    assert payload['children'][0]['pss_details']
+    assert payload['children'][0]['health_details']
+    assert any('MUAC screening result' in alert for alert in payload['children'][0]['alerts'])
+    assert any('Referred for malnutrition treatment' in alert for alert in payload['children'][0]['alerts'])
+    assert any('PSS vulnerability' in flag for flag in payload['children'][0]['wellbeing_flags'])
