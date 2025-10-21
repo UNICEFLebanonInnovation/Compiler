@@ -185,6 +185,7 @@
     sections += renderAssessmentDetails('PSS responses', child.pss_details);
     sections += renderAssessmentDetails('Health & nutrition responses', child.health_details);
     sections += renderAssessmentDetails('Health referrals', child.health_referral_details);
+    sections += renderAssessmentDetails('Registration profile', child.registration_details);
 
     if (child.wellbeing_flags && child.wellbeing_flags.length) {
       var flags = child.wellbeing_flags

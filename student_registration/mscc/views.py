@@ -18,6 +18,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.db.models import Count, F
 from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
 from django.db import connection
 from django.db import models
 import csv
@@ -225,30 +226,98 @@ def _summarize_attendance(records):
     }
 
 
-def _summarize_model_fields(instance):
+REGISTRATION_WELLBEING_FIELDS = [
+    'registration_date',
+    'type',
+    'have_labour',
+    'labour_type',
+    'labour_type_specify',
+    'labour_hours',
+    'labour_weekly_income',
+    'labour_condition',
+    'cash_support_programmes',
+    'mscc_packages',
+    'source_of_identification',
+    'source_of_identification_specify',
+    'child_outreach',
+    'student_old',
+    'partner',
+    'center',
+    'round',
+    'partner_unique_number',
+]
+
+
+def _format_field_value(instance, field, value):
+    if value in (None, '', []):
+        return None
+
+    if isinstance(field, ArrayField):
+        if not value:
+            return None
+
+        base_field = getattr(field, 'base_field', None)
+        if base_field and getattr(base_field, 'choices', None):
+            choice_map = dict(getattr(base_field, 'flatchoices', base_field.choices))
+            formatted = [choice_map.get(item, item) for item in value if item not in (None, '')]
+        else:
+            formatted = [item for item in value if item not in (None, '')]
+
+        return ', '.join(str(item) for item in formatted if item not in (None, '')) or None
+
+    if field.choices:
+        display_method = getattr(instance, f'get_{field.name}_display', None)
+        if callable(display_method):
+            return display_method()
+        choice_map = dict(getattr(field, 'flatchoices', field.choices))
+        return choice_map.get(value, value)
+
+    if isinstance(field, (models.DateField, models.DateTimeField)):
+        return value.isoformat()
+
+    if isinstance(field, models.ForeignKey):
+        return str(value)
+
+    return value
+
+
+def _summarize_model_fields(instance, include_fields=None, exclude_fields=None):
     if not instance:
         return []
 
+    include_fields = set(include_fields or []) if include_fields else None
+    base_exclude = {'id', 'registration', 'created', 'modified'}
+    if exclude_fields:
+        base_exclude |= set(exclude_fields)
+    exclude_fields = base_exclude
+
     summary = []
     for field in instance._meta.fields:
-        if field.name in {'id', 'registration', 'created', 'modified'}:
+        if include_fields is not None and field.name not in include_fields:
             continue
+        if field.name in exclude_fields:
+            continue
+
         value = getattr(instance, field.name)
-        if value in (None, '', []):
+        display_value = _format_field_value(instance, field, value)
+        if display_value in (None, '', []):
             continue
-        if field.choices:
-            display_value = getattr(instance, f'get_{field.name}_display')()
-        elif isinstance(field, (models.DateField, models.DateTimeField)):
-            display_value = value.isoformat()
-        else:
-            display_value = value
+
         label = str(field.verbose_name or field.name).strip()
         summary.append({'field': field.name, 'label': label, 'value': display_value})
 
     return summary
 
 
-def _extract_wellbeing_flags(pss, health, referral):
+def _summarize_registration(registration):
+    return _summarize_model_fields(
+        registration,
+        include_fields=REGISTRATION_WELLBEING_FIELDS,
+        exclude_fields={'owner', 'modified_by', 'deleted', 'deleted_by', 'child'},
+    )
+
+
+def _extract_wellbeing_flags(pss, health, referral, registration=None):
     flags = []
 
     if pss:
@@ -305,10 +374,37 @@ def _extract_wellbeing_flags(pss, health, referral):
             )
             flags.append(f"Referred for malnutrition treatment: {destination}")
 
+    if registration:
+        if registration.have_labour and registration.have_labour.startswith('Yes'):
+            display = getattr(registration, 'get_have_labour_display', lambda: registration.have_labour)()
+            flags.append(f"Child engaged in labour: {display}")
+        if getattr(registration, 'labour_type', None):
+            display = getattr(registration, 'get_labour_type_display', lambda: registration.labour_type)()
+            flags.append(f"Labour type recorded: {display}")
+        if getattr(registration, 'labour_hours', None):
+            flags.append(f"Working {registration.labour_hours} hours per week")
+        if getattr(registration, 'labour_weekly_income', None):
+            display = getattr(
+                registration,
+                'get_labour_weekly_income_display',
+                lambda: registration.labour_weekly_income,
+            )()
+            flags.append(f"Weekly labour income reported: {display}")
+        labour_conditions = getattr(registration, 'labour_condition', None) or []
+        if labour_conditions:
+            flags.append(
+                'Labour conditions: ' + ', '.join(str(item) for item in labour_conditions if item)
+            )
     return flags
 
 
-def _calculate_risk_score(age, attendance_summary, services_summary, wellbeing_flags=None):
+def _calculate_risk_score(
+    age,
+    attendance_summary,
+    services_summary,
+    wellbeing_flags=None,
+    registration=None,
+):
     score = 0
     missed = attendance_summary.get('missed_sessions', 0) or 0
     rate = attendance_summary.get('attendance_rate')
@@ -347,6 +443,19 @@ def _calculate_risk_score(age, attendance_summary, services_summary, wellbeing_f
     if wellbeing_flags:
         score += len(wellbeing_flags) * 2
 
+    if registration:
+        if registration.have_labour and registration.have_labour.startswith('Yes'):
+            score += 3
+        hours = getattr(registration, 'labour_hours', None) or 0
+        if hours >= 40:
+            score += 3
+        elif hours >= 20:
+            score += 2
+        elif hours >= 10:
+            score += 1
+        if getattr(registration, 'labour_weekly_income', None):
+            score += 1
+
     return score
 
 
@@ -373,7 +482,7 @@ def _build_alerts(attendance_summary, services_summary, wellbeing_flags=None):
     return alerts
 
 
-def _assess_life_quality(attendance_summary, pss=None, health=None, referral=None):
+def _assess_life_quality(attendance_summary, pss=None, health=None, referral=None, registration=None):
     """Derive a sentiment-style signal for a child's quality of life."""
 
     score = 0
@@ -455,6 +564,22 @@ def _assess_life_quality(attendance_summary, pss=None, health=None, referral=Non
         if referral.referred_anc_pnc == 'Yes':
             record(-1, 'ANC/PNC follow-up required for caregiver or child')
 
+    if registration:
+        if registration.have_labour and registration.have_labour.startswith('Yes'):
+            display = getattr(registration, 'get_have_labour_display', lambda: registration.have_labour)()
+            record(-2, f'Child engaged in labour: {display}')
+        hours = getattr(registration, 'labour_hours', None) or 0
+        if hours >= 40:
+            record(-2, 'Working 40+ hours per week')
+        elif hours >= 20:
+            record(-1, 'Working 20+ hours per week')
+        cash_support = getattr(registration, 'cash_support_programmes', None) or []
+        if cash_support:
+            record(1, 'Cash support in place: ' + ', '.join(str(item) for item in cash_support if item))
+        assigned_packages = getattr(registration, 'mscc_packages', None) or []
+        if assigned_packages:
+            record(1, 'MSCC packages assigned: ' + ', '.join(str(item) for item in assigned_packages if item))
+
     if score <= -6:
         label = 'Critical concern'
     elif score <= -3:
@@ -501,19 +626,27 @@ def _build_child_context(
     pss_details = _summarize_model_fields(pss_assessment)
     health_details = _summarize_model_fields(health_assessment)
     referral_details = _summarize_model_fields(health_referral)
-    wellbeing_flags = _extract_wellbeing_flags(pss_assessment, health_assessment, health_referral)
+    registration_details = _summarize_registration(registration)
+    wellbeing_flags = _extract_wellbeing_flags(
+        pss_assessment,
+        health_assessment,
+        health_referral,
+        registration=registration,
+    )
     alerts = _build_alerts(attendance_summary, services_summary, wellbeing_flags)
     risk_score = _calculate_risk_score(
         age,
         attendance_summary,
         services_summary,
         wellbeing_flags,
+        registration=registration,
     )
     life_quality = _assess_life_quality(
         attendance_summary,
         pss_assessment,
         health_assessment,
         health_referral,
+        registration=registration,
     )
 
     return {
@@ -531,6 +664,7 @@ def _build_child_context(
         'pss_details': pss_details,
         'health_details': health_details,
         'health_referral_details': referral_details,
+        'registration_details': registration_details,
         'wellbeing_flags': wellbeing_flags,
         'life_quality': life_quality,
     }

@@ -65,7 +65,15 @@ def _record_attendance(registration: Registration, child: Child, date: datetime.
 def test_health_agent_view_without_api_key():
     settings.OPENAI_API_KEY = ''
     child = _create_child('Rami', 'Test', 'Child', age_years=10, gender='Male')
-    registration = Registration.objects.create(child=child, type='Core-Package')
+    registration = Registration.objects.create(
+        child=child,
+        type='Core-Package',
+        registration_date=datetime.date(2025, 1, 5),
+        have_labour='Yes - Morning',
+        labour_hours=18,
+        labour_weekly_income='5-20 USD',
+        source_of_identification='Dirassa',
+    )
 
     PSSService.objects.create(registration=registration)
     HealthNutritionService.objects.create(registration=registration)
@@ -111,7 +119,16 @@ def test_health_agent_view_without_api_key():
     assert child_payload['health_details'] == []
     assert child_payload['health_referral_details'] == []
     assert child_payload['wellbeing_flags'] == []
-    assert child_payload['life_quality']['label'] == 'Needs attention'
+    assert child_payload['registration_details']
+    assert any(
+        entry['field'] == 'have_labour' and entry['value'] == 'Yes - Morning'
+        for entry in child_payload['registration_details']
+    )
+    assert any(
+        entry['field'] == 'labour_hours' and entry['value'] == 18
+        for entry in child_payload['registration_details']
+    )
+    assert child_payload['life_quality']['label'] in {'Needs attention', 'Critical concern'}
     assert child_payload['life_quality']['score'] < 0
     assert any(
         signal['message'].startswith('Attendance below')
@@ -126,8 +143,18 @@ def test_health_agent_view_calls_agent(mock_analyze):
     high_risk_child = _create_child('Layla', 'Risk', 'Child', age_years=11, gender='Female')
     low_risk_child = _create_child('Omar', 'Stable', 'Child', age_years=12, gender='Male')
 
-    high_risk_registration = Registration.objects.create(child=high_risk_child, type='Core-Package')
-    low_risk_registration = Registration.objects.create(child=low_risk_child, type='Core-Package')
+    high_risk_registration = Registration.objects.create(
+        child=high_risk_child,
+        type='Core-Package',
+        have_labour='Yes - Full Day',
+        labour_hours=45,
+        labour_weekly_income='20-50 USD',
+    )
+    low_risk_registration = Registration.objects.create(
+        child=low_risk_child,
+        type='Core-Package',
+        registration_date=datetime.date(2025, 2, 1),
+    )
 
     PSSService.objects.create(
         registration=high_risk_registration,
@@ -196,6 +223,7 @@ def test_health_agent_view_calls_agent(mock_analyze):
     assert len(called_context) == 1
     assert called_context[0]['registration_id'] == high_risk_registration.id
     assert called_context[0]['life_quality']['label'] == 'Critical concern'
+    assert called_context[0]['registration_details']
 
     assert payload['analysis'] == 'analysis output'
     assert payload['model'] == 'gpt-test-model'
