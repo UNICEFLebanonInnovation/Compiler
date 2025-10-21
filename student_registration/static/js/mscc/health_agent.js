@@ -119,6 +119,22 @@
     return date.toLocaleDateString();
   }
 
+  function formatScore(value) {
+    if (value === undefined || value === null || value === '') {
+      return '—';
+    }
+
+    var number = Number(value);
+    if (!isNaN(number)) {
+      if (Math.abs(number % 1) < 0.01) {
+        return String(Math.round(number));
+      }
+      return number.toFixed(1);
+    }
+
+    return String(value);
+  }
+
   function renderServiceSummary(services) {
     if (!services) {
       return '';
@@ -180,12 +196,108 @@
     );
   }
 
+  function renderEducationProgress(progress) {
+    if (!progress) {
+      return '';
+    }
+
+    var summaryParts = [];
+    if (progress.programme_type) {
+      summaryParts.push('<strong>Programme:</strong> ' + escapeHtml(progress.programme_type));
+    }
+
+    if (typeof progress.average_change === 'number') {
+      var avgChange = (progress.average_change > 0 ? '+' : '') + formatScore(progress.average_change);
+      summaryParts.push('<strong>Average change:</strong> ' + escapeHtml(avgChange));
+    }
+
+    if (typeof progress.pre_average === 'number' && typeof progress.post_average === 'number') {
+      var preAvg = formatScore(progress.pre_average);
+      var postAvg = formatScore(progress.post_average);
+      summaryParts.push('<strong>Mean score:</strong> ' + escapeHtml(preAvg) + ' → ' + escapeHtml(postAvg));
+    }
+
+    if (progress.trend) {
+      summaryParts.push('<strong>Trend:</strong> ' + escapeHtml(progress.trend));
+    }
+
+    var summaryHtml = summaryParts.length
+      ? '<p class="small mb-1">' + summaryParts.join(' · ') + '</p>'
+      : '';
+
+    var subjectsHtml = '';
+    if (Array.isArray(progress.subjects) && progress.subjects.length) {
+      var subjectItems = progress.subjects
+        .map(function (subject) {
+          var label = subject.label || subject.field || 'Subject';
+          var pre = formatScore(subject.pre);
+          var post = formatScore(subject.post);
+          var changeValue = subject.change;
+          var changeText = changeValue === null || changeValue === undefined
+            ? '—'
+            : (changeValue > 0 ? '+' : '') + formatScore(changeValue);
+          return (
+            '<li><strong>' +
+            escapeHtml(label) +
+            ':</strong> ' +
+            escapeHtml(pre) +
+            ' → ' +
+            escapeHtml(post) +
+            ' <span class="text-muted">(Δ ' + escapeHtml(changeText) + ')</span></li>'
+          );
+        })
+        .join('');
+      subjectsHtml = '<ul class="small pl-3 mb-1">' + subjectItems + '</ul>';
+    }
+
+    var metaItems = [];
+    if (progress.participation) {
+      metaItems.push('<li><strong>Participation:</strong> ' + escapeHtml(progress.participation) + '</li>');
+    }
+    if (progress.barriers) {
+      var barrierText = progress.barriers;
+      if (progress.barriers_detail && barrierText.toLowerCase() === 'other') {
+        barrierText = progress.barriers_detail;
+      }
+      if (barrierText && barrierText.toLowerCase() !== 'no barriers') {
+        metaItems.push('<li><strong>Barrier:</strong> ' + escapeHtml(barrierText) + '</li>');
+      }
+    }
+    if (progress.post_test_done) {
+      metaItems.push('<li><strong>Post-tests:</strong> ' + escapeHtml(progress.post_test_done) + '</li>');
+    }
+    if (progress.school_year_completed) {
+      metaItems.push('<li><strong>School year completed:</strong> ' + escapeHtml(progress.school_year_completed) + '</li>');
+    }
+    if (progress.last_updated) {
+      metaItems.push('<li><strong>Last updated:</strong> ' + escapeHtml(formatDate(progress.last_updated)) + '</li>');
+    }
+
+    var metaHtml = metaItems.length
+      ? '<ul class="small pl-3 mb-0">' + metaItems.join('') + '</ul>'
+      : '';
+
+    if (!summaryHtml && !subjectsHtml && !metaHtml) {
+      return '';
+    }
+
+    return (
+      '<div class="mb-2">' +
+      '<div class="small text-uppercase text-muted">Education progress</div>' +
+      summaryHtml +
+      subjectsHtml +
+      metaHtml +
+      '</div>'
+    );
+  }
+
   function renderInsights(child) {
     var sections = '';
     sections += renderAssessmentDetails('PSS responses', child.pss_details);
     sections += renderAssessmentDetails('Health & nutrition responses', child.health_details);
     sections += renderAssessmentDetails('Health referrals', child.health_referral_details);
     sections += renderAssessmentDetails('Registration profile', child.registration_details);
+    sections += renderEducationProgress(child.education_progress);
 
     if (child.wellbeing_flags && child.wellbeing_flags.length) {
       var flags = child.wellbeing_flags

@@ -27,6 +27,7 @@ from student_registration.mscc.models import (
     PSSService,
     HealthNutritionService,
     HealthNutritionReferral,
+    EducationProgrammeAssessment,
 )
 from student_registration.mscc.views import HealthSupportAgentView
 
@@ -128,6 +129,7 @@ def test_health_agent_view_without_api_key():
         entry['field'] == 'labour_hours' and entry['value'] == 18
         for entry in child_payload['registration_details']
     )
+    assert child_payload['education_progress'] is None
     assert child_payload['life_quality']['label'] in {'Needs attention', 'Critical concern'}
     assert child_payload['life_quality']['score'] < 0
     assert any(
@@ -149,6 +151,7 @@ def test_health_agent_view_calls_agent(mock_analyze):
         have_labour='Yes - Full Day',
         labour_hours=45,
         labour_weekly_income='20-50 USD',
+        education_program='BLN Level 1',
     )
     low_risk_registration = Registration.objects.create(
         child=low_risk_child,
@@ -176,6 +179,26 @@ def test_health_agent_view_calls_agent(mock_analyze):
         development_delays='Hospital',
         referred_malnutrition='Yes',
         malnutrition_treatment_center='To Hospital',
+    )
+
+    EducationProgrammeAssessment.objects.create(
+        registration=high_risk_registration,
+        programme_type='BLN Level 1',
+        pre_test={
+            'programme_type': 'BLN Level 1',
+            'arabic_grade': '18',
+            'math_grade': '15',
+        },
+        post_test={
+            'programme_type': 'BLN Level 1',
+            'arabic_grade': '10',
+            'math_grade': '12',
+            'participation': 'Absence for 10-15 days /equivlant remote learning sessions',
+            'post_test_done': 'Yes',
+            'school_year_completed': 'No',
+            'barriers': 'Other',
+            'barriers_other': 'Transport challenges',
+        },
     )
 
     PSSService.objects.create(registration=low_risk_registration)
@@ -238,10 +261,29 @@ def test_health_agent_view_calls_agent(mock_analyze):
     assert any('MUAC screening result' in alert for alert in payload['children'][0]['alerts'])
     assert any('Referred for malnutrition treatment' in alert for alert in payload['children'][0]['alerts'])
     assert any('PSS vulnerability' in flag for flag in payload['children'][0]['wellbeing_flags'])
+    assert 'Significant decline in education grading outcomes' in payload['children'][0]['alerts']
+    assert 'School year not completed' in payload['children'][0]['alerts']
+    assert 'Education post-tests not completed' not in payload['children'][0]['alerts']
+    assert any(
+        flag == 'Learning outcomes declined across programme assessments'
+        for flag in payload['children'][0]['wellbeing_flags']
+    )
+    education_progress = payload['children'][0]['education_progress']
+    assert education_progress['programme_type'] == 'BLN Level 1'
+    assert education_progress['trend'] == 'declined'
+    assert education_progress['average_change'] == pytest.approx(-5.5, rel=1e-2)
+    assert education_progress['barriers_detail'] == 'Transport challenges'
+    subject_changes = {entry['field']: entry['change'] for entry in education_progress['subjects']}
+    assert subject_changes['arabic_grade'] == pytest.approx(-8, rel=1e-2)
+    assert subject_changes['math_grade'] == pytest.approx(-3, rel=1e-2)
     life_quality = payload['children'][0]['life_quality']
     assert life_quality['label'] == 'Critical concern'
     assert life_quality['score'] <= -6
     assert any('Child showing distress symptoms' == signal['message'] for signal in life_quality['signals'])
+    assert any(
+        signal['message'].startswith('Learning outcomes declined on average')
+        for signal in life_quality['signals']
+    )
 
 
 def test_agent_infers_nutrition_focus():
@@ -263,3 +305,68 @@ def test_agent_prompt_limits_scope_for_nutrition(settings):
     assert 'Focus specifically on: Need insights on nutrition status' in user_content
     assert 'Limit your assessment strictly to the following domains: nutrition' in user_content
     assert 'Avoid reporting on attendance, PSS' in user_content
+
+
+def test_education_progress_positive_trend():
+    settings.OPENAI_API_KEY = ''
+    child = _create_child('Sara', 'Bright', 'Child', age_years=9, gender='Female')
+    registration = Registration.objects.create(
+        child=child,
+        type='Core-Package',
+        education_program='BLN Level 2',
+    )
+
+    PSSService.objects.create(registration=registration)
+    HealthNutritionService.objects.create(registration=registration, eating_minimum_meals='Yes')
+    ProvidedServices.objects.create(
+        registration=registration,
+        name='PSS',
+        category='Child Protection',
+        required=True,
+        completed=True,
+    )
+
+    _record_attendance(registration, child, datetime.date(2025, 3, 1), 'Yes')
+    _record_attendance(registration, child, datetime.date(2025, 3, 2), 'Yes')
+
+    EducationProgrammeAssessment.objects.create(
+        registration=registration,
+        programme_type='BLN Level 2',
+        pre_test={
+            'programme_type': 'BLN Level 2',
+            'arabic_grade': '20',
+            'math_grade': '18',
+        },
+        post_test={
+            'programme_type': 'BLN Level 2',
+            'arabic_grade': '35',
+            'math_grade': '33',
+            'participation': 'No Absence',
+            'post_test_done': 'Yes',
+            'school_year_completed': 'Yes',
+            'barriers': 'No barriers',
+        },
+    )
+
+    factory = RequestFactory()
+    request = factory.get('/mscc/ai/health-support/', {'registration_id': str(registration.id)})
+    request.user = SimpleNamespace(is_authenticated=True)
+
+    response = HealthSupportAgentView.as_view()(request)
+
+    assert response.status_code == 200
+    payload = json.loads(response.content)
+    assert payload['count'] == 1
+    child_payload = payload['children'][0]
+    progress = child_payload['education_progress']
+    assert progress['programme_type'] == 'BLN Level 2'
+    assert progress['trend'] == 'improved'
+    assert progress['average_change'] == pytest.approx(15.0, rel=1e-2)
+    assert 'Learning outcomes improved across programme assessments' in child_payload['wellbeing_flags']
+    assert 'Significant decline in education grading outcomes' not in child_payload['alerts']
+    assert 'Education post-tests not completed' not in child_payload['alerts']
+    life_quality = child_payload['life_quality']
+    assert any(
+        signal['message'].startswith('Learning outcomes improved on average')
+        for signal in life_quality['signals']
+    )

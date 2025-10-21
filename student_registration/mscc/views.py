@@ -71,6 +71,7 @@ from .models import (
     PSSService,
     HealthNutritionService,
     HealthNutritionReferral,
+    EducationProgrammeAssessment,
 )
 from student_registration.backends.models import ExportHistory
 
@@ -248,6 +249,151 @@ REGISTRATION_WELLBEING_FIELDS = [
 ]
 
 
+EDUCATION_GRADE_LABELS = {
+    'arabic_grade': 'Arabic',
+    'language_grade': 'Foreign Language',
+    'math_grade': 'Mathematics',
+    'science_grade': 'Sciences',
+    'biology_grade': 'Biology',
+    'chemistry_grade': 'Chemistry',
+    'physics_grade': 'Physics',
+    'social_emotional_grade': 'Social-Emotional Development',
+    'artistic_grade': 'Artistic Development',
+    'psychomotor_grade': 'Psychomotor Development',
+}
+
+
+def _coerce_numeric_value(raw):
+    if raw in (None, '', [], {}):
+        return None
+
+    if isinstance(raw, (int, float)):
+        return float(raw)
+
+    if isinstance(raw, (list, tuple)):
+        for item in raw:
+            value = _coerce_numeric_value(item)
+            if value is not None:
+                return value
+        return None
+
+    try:
+        text = str(raw).strip()
+    except Exception:  # pragma: no cover - defensive
+        return None
+
+    if not text:
+        return None
+
+    try:
+        return float(text)
+    except ValueError:
+        return None
+
+
+def _coerce_text_value(raw):
+    if raw in (None, '', [], {}):
+        return None
+
+    if isinstance(raw, (list, tuple)):
+        for item in raw:
+            value = _coerce_text_value(item)
+            if value:
+                return value
+        return None
+
+    return str(raw)
+
+
+def _summarize_education_assessment(assessment):
+    if not assessment:
+        return None
+
+    pre_data = dict(assessment.pre_test or {})
+    post_data = dict(assessment.post_test or {})
+    subjects = []
+    pre_scores = []
+    post_scores = []
+    changes = []
+
+    for field, label in EDUCATION_GRADE_LABELS.items():
+        pre_value = _coerce_numeric_value(pre_data.get(field))
+        post_value = _coerce_numeric_value(post_data.get(field))
+
+        if pre_value is None and post_value is None:
+            continue
+
+        change = None
+        if pre_value is not None and post_value is not None:
+            change = round(post_value - pre_value, 2)
+            changes.append(change)
+
+        if pre_value is not None:
+            pre_scores.append(pre_value)
+        if post_value is not None:
+            post_scores.append(post_value)
+
+        subjects.append({
+            'field': field,
+            'label': label,
+            'pre': pre_value,
+            'post': post_value,
+            'change': change,
+        })
+
+    average_change = None
+    if changes:
+        average_change = round(sum(changes) / len(changes), 2)
+
+    pre_average = None
+    if pre_scores:
+        pre_average = round(sum(pre_scores) / len(pre_scores), 2)
+
+    post_average = None
+    if post_scores:
+        post_average = round(sum(post_scores) / len(post_scores), 2)
+
+    if not subjects and not any([
+        _coerce_text_value(post_data.get('participation')),
+        _coerce_text_value(post_data.get('barriers')),
+        _coerce_text_value(post_data.get('post_test_done')),
+        _coerce_text_value(post_data.get('school_year_completed')),
+    ]):
+        return None
+
+    trend = None
+    if average_change is not None:
+        if average_change >= 5:
+            trend = 'improved'
+        elif average_change <= -5:
+            trend = 'declined'
+        else:
+            trend = 'stable'
+
+    summary = {
+        'programme_type': assessment.programme_type
+        or _coerce_text_value(pre_data.get('programme_type')),
+        'pre_average': pre_average,
+        'post_average': post_average,
+        'average_change': average_change,
+        'trend': trend,
+        'subjects': subjects,
+        'participation': _coerce_text_value(post_data.get('participation')),
+        'barriers': _coerce_text_value(post_data.get('barriers')),
+        'barriers_other': _coerce_text_value(post_data.get('barriers_other')),
+        'post_test_done': _coerce_text_value(post_data.get('post_test_done')),
+        'school_year_completed': _coerce_text_value(post_data.get('school_year_completed')),
+        'last_updated': assessment.modified.isoformat()
+        if getattr(assessment, 'modified', None)
+        else None,
+    }
+
+    if summary['barriers'] and summary['barriers_other'] and summary['barriers'].lower() == 'other':
+        summary['barriers_detail'] = summary['barriers_other']
+
+    return summary
+
+
 def _format_field_value(instance, field, value):
     if value in (None, '', []):
         return None
@@ -317,7 +463,7 @@ def _summarize_registration(registration):
     )
 
 
-def _extract_wellbeing_flags(pss, health, referral, registration=None):
+def _extract_wellbeing_flags(pss, health, referral, registration=None, education=None):
     flags = []
 
     if pss:
@@ -395,6 +541,24 @@ def _extract_wellbeing_flags(pss, health, referral, registration=None):
             flags.append(
                 'Labour conditions: ' + ', '.join(str(item) for item in labour_conditions if item)
             )
+    if education:
+        trend = education.get('trend')
+        if trend == 'declined':
+            flags.append('Learning outcomes declined across programme assessments')
+        elif trend == 'improved':
+            flags.append('Learning outcomes improved across programme assessments')
+
+        if education.get('post_test_done') == 'No':
+            flags.append('Education post-tests not completed')
+        if education.get('school_year_completed') == 'No':
+            flags.append('School year not completed')
+        barriers = education.get('barriers')
+        if barriers and barriers.lower() not in {'', 'no barriers'}:
+            if barriers.lower() == 'other' and education.get('barriers_detail'):
+                flags.append(f"Learning barrier reported: {education['barriers_detail']}")
+            else:
+                flags.append(f"Learning barrier reported: {barriers}")
+
     return flags
 
 
@@ -404,6 +568,7 @@ def _calculate_risk_score(
     services_summary,
     wellbeing_flags=None,
     registration=None,
+    education_progress=None,
 ):
     score = 0
     missed = attendance_summary.get('missed_sessions', 0) or 0
@@ -456,10 +621,33 @@ def _calculate_risk_score(
         if getattr(registration, 'labour_weekly_income', None):
             score += 1
 
+    if education_progress:
+        avg_change = education_progress.get('average_change')
+        if avg_change is not None:
+            if avg_change <= -5:
+                score += 3
+            elif avg_change <= -2:
+                score += 1
+            elif avg_change >= 5:
+                score = max(score - 1, 0)
+
+        if education_progress.get('post_test_done') == 'No':
+            score += 1
+        if education_progress.get('school_year_completed') == 'No':
+            score += 2
+
+        participation = (education_progress.get('participation') or '').lower()
+        if 'more than 25' in participation:
+            score += 3
+        elif '15-25' in participation:
+            score += 2
+        elif '10-15' in participation:
+            score += 1
+
     return score
 
 
-def _build_alerts(attendance_summary, services_summary, wellbeing_flags=None):
+def _build_alerts(attendance_summary, services_summary, wellbeing_flags=None, education_progress=None):
     alerts = []
     rate = attendance_summary.get('attendance_rate')
     missed = attendance_summary.get('missed_sessions', 0) or 0
@@ -479,10 +667,26 @@ def _build_alerts(attendance_summary, services_summary, wellbeing_flags=None):
     if wellbeing_flags:
         alerts.extend(wellbeing_flags)
 
+    if education_progress:
+        avg_change = education_progress.get('average_change')
+        if avg_change is not None and avg_change <= -5:
+            alerts.append('Significant decline in education grading outcomes')
+        if education_progress.get('post_test_done') == 'No':
+            alerts.append('Education post-tests not completed')
+        if education_progress.get('school_year_completed') == 'No':
+            alerts.append('School year not completed')
+
     return alerts
 
 
-def _assess_life_quality(attendance_summary, pss=None, health=None, referral=None, registration=None):
+def _assess_life_quality(
+    attendance_summary,
+    pss=None,
+    health=None,
+    referral=None,
+    registration=None,
+    education_progress=None,
+):
     """Derive a sentiment-style signal for a child's quality of life."""
 
     score = 0
@@ -580,6 +784,45 @@ def _assess_life_quality(attendance_summary, pss=None, health=None, referral=Non
         if assigned_packages:
             record(1, 'MSCC packages assigned: ' + ', '.join(str(item) for item in assigned_packages if item))
 
+    if education_progress:
+        avg_change = education_progress.get('average_change')
+        if avg_change is not None:
+            change_display = f"{avg_change:+.1f}" if isinstance(avg_change, (int, float)) else avg_change
+            if avg_change >= 5:
+                record(2, f'Learning outcomes improved on average ({change_display})')
+            elif avg_change >= 2:
+                record(1, f'Slight learning gains recorded ({change_display})')
+            elif avg_change <= -5:
+                record(-3, f'Learning outcomes declined on average ({change_display})')
+            elif avg_change <= -2:
+                record(-1, f'Slight decline in learning outcomes ({change_display})')
+
+        participation = education_progress.get('participation')
+        if participation and isinstance(participation, str):
+            lower_participation = participation.lower()
+            if 'more than 25' in lower_participation:
+                record(-2, f'Extended absences reported ({participation})')
+            elif '15-25' in lower_participation:
+                record(-1, f'Repeated absences reported ({participation})')
+            elif 'no absence' in lower_participation:
+                record(1, 'No absences reported during programme participation')
+
+        barriers = education_progress.get('barriers')
+        if barriers and isinstance(barriers, str) and barriers.lower() not in {'', 'no barriers'}:
+            detail = education_progress.get('barriers_detail')
+            if barriers.lower() == 'other' and detail:
+                record(-1, f'Learning barrier reported: {detail}')
+            else:
+                record(-1, f'Learning barrier reported: {barriers}')
+
+        if education_progress.get('school_year_completed') == 'Yes':
+            record(1, 'Child completed the school year')
+        elif education_progress.get('school_year_completed') == 'No':
+            record(-2, 'Child did not complete the school year')
+
+        if education_progress.get('post_test_done') == 'No':
+            record(-1, 'Post-tests not completed to measure learning outcomes')
+
     if score <= -6:
         label = 'Critical concern'
     elif score <= -3:
@@ -607,6 +850,7 @@ def _build_child_context(
     pss_assessment,
     health_assessment,
     health_referral,
+    education_assessment,
 ):
     child = getattr(registration, 'child', None)
     age = None
@@ -627,19 +871,27 @@ def _build_child_context(
     health_details = _summarize_model_fields(health_assessment)
     referral_details = _summarize_model_fields(health_referral)
     registration_details = _summarize_registration(registration)
+    education_progress = _summarize_education_assessment(education_assessment)
     wellbeing_flags = _extract_wellbeing_flags(
         pss_assessment,
         health_assessment,
         health_referral,
         registration=registration,
+        education=education_progress,
     )
-    alerts = _build_alerts(attendance_summary, services_summary, wellbeing_flags)
+    alerts = _build_alerts(
+        attendance_summary,
+        services_summary,
+        wellbeing_flags,
+        education_progress=education_progress,
+    )
     risk_score = _calculate_risk_score(
         age,
         attendance_summary,
         services_summary,
         wellbeing_flags,
         registration=registration,
+        education_progress=education_progress,
     )
     life_quality = _assess_life_quality(
         attendance_summary,
@@ -647,6 +899,7 @@ def _build_child_context(
         health_assessment,
         health_referral,
         registration=registration,
+        education_progress=education_progress,
     )
 
     return {
@@ -667,6 +920,7 @@ def _build_child_context(
         'registration_details': registration_details,
         'wellbeing_flags': wellbeing_flags,
         'life_quality': life_quality,
+        'education_progress': education_progress,
     }
 
 
@@ -791,6 +1045,14 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
         for health_referral in HealthNutritionReferral.objects.filter(registration_id__in=registration_ids_list).order_by('-id'):
             health_referral_map.setdefault(health_referral.registration_id, health_referral)
 
+        education_assessment_map = {}
+        education_qs = (
+            EducationProgrammeAssessment.objects.filter(registration_id__in=registration_ids_list)
+            .order_by('-modified', '-id')
+        )
+        for education_assessment in education_qs:
+            education_assessment_map.setdefault(education_assessment.registration_id, education_assessment)
+
         children_context = [
             _build_child_context(
                 registration,
@@ -799,6 +1061,7 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
                 pss_map.get(registration.id),
                 health_service_map.get(registration.id),
                 health_referral_map.get(registration.id),
+                education_assessment_map.get(registration.id),
             )
             for registration in registrations
         ]
