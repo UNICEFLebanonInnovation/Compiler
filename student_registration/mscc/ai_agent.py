@@ -38,16 +38,29 @@ class HealthSupportAgent:
         self.base_url = base_url or getattr(settings, "OPENAI_API_BASE", "https://api.openai.com/v1")
         self.timeout = timeout or int(getattr(settings, "OPENAI_TIMEOUT", 30))
 
-    def analyze_children(self, children_context: Sequence[dict], question: str | None = None) -> str:
+    def analyze_children(
+        self,
+        children_context: Sequence[dict],
+        question: str | None = None,
+        focus_topics: set[str] | None = None,
+    ) -> str:
         """Generate an analysis for the supplied children context."""
 
-        messages = self._build_prompt(children_context, question=question)
+        if focus_topics is None:
+            focus_topics = self.infer_focus_topics(question)
+
+        messages = self._build_prompt(
+            children_context,
+            question=question,
+            focus_topics=focus_topics,
+        )
         return self._request_chat_completion(messages)
 
     def _build_prompt(
         self,
         children_context: Sequence[dict],
         question: str | None = None,
+        focus_topics: set[str] | None = None,
     ) -> List[dict]:
         summary = json.dumps(children_context, indent=2, default=str)
         system_message = (
@@ -66,11 +79,31 @@ class HealthSupportAgent:
             "their registration id and a short rationale."
         )
 
+        focus_topics = set(focus_topics or [])
         question_text = (question or "").strip()
         if question_text:
             user_instructions = (
                 f"{user_instructions}\n\nFocus specifically on: {question_text}"
             )
+
+        if focus_topics:
+            sorted_topics = ", ".join(sorted(focus_topics))
+            scope_instruction = (
+                "\n\nLimit your assessment strictly to the following domains: "
+                f"{sorted_topics}. Do not discuss other programme dimensions "
+                "unless they directly influence these focus areas."
+            )
+
+            if focus_topics == {"nutrition"}:
+                scope_instruction += (
+                    " Give detailed nutrition-specific insights, including "
+                    "feeding practices, malnutrition risks, and related "
+                    "health referrals. Avoid reporting on attendance, PSS, or "
+                    "other services unless they materially change the "
+                    "nutrition findings."
+                )
+
+            user_instructions = f"{user_instructions}{scope_instruction}"
 
         messages = [
             {"role": "system", "content": system_message},
@@ -80,6 +113,37 @@ class HealthSupportAgent:
             },
         ]
         return messages
+
+    @staticmethod
+    def infer_focus_topics(question: str | None) -> set[str]:
+        """Derive focus topics from the staff question for prompt tailoring."""
+
+        if not isinstance(question, str):
+            return set()
+
+        text = question.lower()
+        mapping = {
+            "nutrition": {"nutrition"},
+            "malnutrition": {"nutrition"},
+            "feeding": {"nutrition"},
+            "diet": {"nutrition"},
+            "health": {"health"},
+            "medical": {"health"},
+            "attendance": {"attendance"},
+            "absent": {"attendance"},
+            "psycho": {"pss"},
+            "pss": {"pss"},
+            "psychosocial": {"pss"},
+            "support": {"support"},
+            "caregiver": {"support"},
+        }
+
+        focus = set()
+        for keyword, topics in mapping.items():
+            if keyword in text:
+                focus.update(topics)
+
+        return focus
 
     def _request_chat_completion(self, messages: Sequence[dict]) -> str:
         url = f"{self.base_url.rstrip('/')}/chat/completions"

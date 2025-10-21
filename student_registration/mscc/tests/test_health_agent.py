@@ -20,6 +20,7 @@ from student_registration.attendances.models import (
     MSCCAttendanceChild,
 )
 from student_registration.child.models import Child
+from student_registration.mscc.ai_agent import HealthSupportAgent
 from student_registration.mscc.models import (
     ProvidedServices,
     Registration,
@@ -191,6 +192,7 @@ def test_health_agent_view_calls_agent(mock_analyze):
     mock_analyze.assert_called_once()
     called_context = mock_analyze.call_args[0][0]
     assert mock_analyze.call_args.kwargs['question'] == 'Focus on malnutrition risks'
+    assert mock_analyze.call_args.kwargs['focus_topics'] == {'nutrition'}
     assert len(called_context) == 1
     assert called_context[0]['registration_id'] == high_risk_registration.id
     assert called_context[0]['life_quality']['label'] == 'Critical concern'
@@ -198,8 +200,10 @@ def test_health_agent_view_calls_agent(mock_analyze):
     assert payload['analysis'] == 'analysis output'
     assert payload['model'] == 'gpt-test-model'
     assert payload['question'] == 'Focus on malnutrition risks'
+    assert payload['focus_topics'] == ['nutrition']
     assert payload['count'] == 1
     assert payload['children'][0]['registration_id'] == high_risk_registration.id
+    assert payload['children'][0]['focus_topics'] == ['nutrition']
     assert payload['children'][0]['risk_score'] > payload['children'][0]['services']['pss']['required_pending']
     assert payload['children'][0]['pss_details']
     assert payload['children'][0]['health_details']
@@ -210,3 +214,24 @@ def test_health_agent_view_calls_agent(mock_analyze):
     assert life_quality['label'] == 'Critical concern'
     assert life_quality['score'] <= -6
     assert any('Child showing distress symptoms' == signal['message'] for signal in life_quality['signals'])
+
+
+def test_agent_infers_nutrition_focus():
+    focus = HealthSupportAgent.infer_focus_topics('Need insights on nutrition and malnutrition risks')
+    assert focus == {'nutrition'}
+
+
+def test_agent_prompt_limits_scope_for_nutrition(settings):
+    settings.OPENAI_API_KEY = 'test-key'
+    agent = HealthSupportAgent(api_key='test-key')
+    messages = agent._build_prompt(
+        [{'registration_id': 1}],
+        question='Need insights on nutrition status',
+        focus_topics={'nutrition'},
+    )
+
+    assert len(messages) == 2
+    user_content = messages[1]['content']
+    assert 'Focus specifically on: Need insights on nutrition status' in user_content
+    assert 'Limit your assessment strictly to the following domains: nutrition' in user_content
+    assert 'Avoid reporting on attendance, PSS' in user_content

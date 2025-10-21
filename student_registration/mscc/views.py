@@ -568,6 +568,7 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
         normalized_ids = self._normalize_ids(registration_ids)
         limit_value = self._normalize_limit(limit)
         question_text = self._normalize_question(question)
+        focus_topics = HealthSupportAgent.infer_focus_topics(question_text)
 
         queryset = Registration.objects.filter(
             deleted=False,
@@ -668,6 +669,10 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
             for registration in registrations
         ]
 
+        if focus_topics:
+            for child in children_context:
+                child['focus_topics'] = sorted(focus_topics)
+
         children_context.sort(key=lambda child: child['risk_score'], reverse=True)
         children_context = children_context[:limit_value]
 
@@ -678,7 +683,11 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
         if children_context:
             try:
                 agent = HealthSupportAgent()
-                analysis = agent.analyze_children(children_context, question=question_text)
+                analysis = agent.analyze_children(
+                    children_context,
+                    question=question_text,
+                    focus_topics=focus_topics,
+                )
                 model_name = agent.model
             except AgentConfigurationError as exc:
                 error = str(exc)
@@ -701,6 +710,8 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
             response_payload['filters'] = {'registration_ids': normalized_ids}
         if question_text:
             response_payload['question'] = question_text
+        if focus_topics:
+            response_payload['focus_topics'] = sorted(focus_topics)
         if error:
             response_payload['error'] = error
 
