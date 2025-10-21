@@ -28,6 +28,7 @@ from student_registration.mscc.models import (
     HealthNutritionService,
     HealthNutritionReferral,
     EducationProgrammeAssessment,
+    Round,
 )
 from student_registration.mscc.views import HealthSupportAgentView
 
@@ -66,6 +67,14 @@ def _record_attendance(registration: Registration, child: Child, date: datetime.
 def test_health_agent_view_without_api_key():
     settings.OPENAI_API_KEY = ''
     child = _create_child('Rami', 'Test', 'Child', age_years=10, gender='Male')
+    prior_round = Round.objects.create(name='2024 Round', year=2024)
+    current_round = Round.objects.create(name='2025 Round', year=2025)
+    Registration.objects.create(
+        child=child,
+        type='Core-Package',
+        registration_date=datetime.date(2024, 1, 5),
+        round=prior_round,
+    )
     registration = Registration.objects.create(
         child=child,
         type='Core-Package',
@@ -74,6 +83,7 @@ def test_health_agent_view_without_api_key():
         labour_hours=18,
         labour_weekly_income='5-20 USD',
         source_of_identification='Dirassa',
+        round=current_round,
     )
 
     PSSService.objects.create(registration=registration)
@@ -136,6 +146,12 @@ def test_health_agent_view_without_api_key():
         signal['message'].startswith('Attendance below')
         for signal in child_payload['life_quality']['signals']
     )
+    history = child_payload['registration_history']
+    assert history
+    assert history['total_registrations'] == 2
+    assert history['distinct_rounds'] == 2
+    assert history['longest_consecutive_years'] >= 1
+    assert any(entry['is_current'] for entry in history['entries'])
 
 
 @patch('student_registration.mscc.views.HealthSupportAgent.analyze_children', return_value='analysis output')
@@ -145,6 +161,14 @@ def test_health_agent_view_calls_agent(mock_analyze):
     high_risk_child = _create_child('Layla', 'Risk', 'Child', age_years=11, gender='Female')
     low_risk_child = _create_child('Omar', 'Stable', 'Child', age_years=12, gender='Male')
 
+    round_2024 = Round.objects.create(name='2024 Round', year=2024)
+    round_2025 = Round.objects.create(name='2025 Round', year=2025)
+    Registration.objects.create(
+        child=high_risk_child,
+        type='Core-Package',
+        registration_date=datetime.date(2024, 1, 10),
+        round=round_2024,
+    )
     high_risk_registration = Registration.objects.create(
         child=high_risk_child,
         type='Core-Package',
@@ -152,11 +176,13 @@ def test_health_agent_view_calls_agent(mock_analyze):
         labour_hours=45,
         labour_weekly_income='20-50 USD',
         education_program='BLN Level 1',
+        round=round_2025,
     )
     low_risk_registration = Registration.objects.create(
         child=low_risk_child,
         type='Core-Package',
         registration_date=datetime.date(2025, 2, 1),
+        round=round_2025,
     )
 
     PSSService.objects.create(
@@ -247,6 +273,8 @@ def test_health_agent_view_calls_agent(mock_analyze):
     assert called_context[0]['registration_id'] == high_risk_registration.id
     assert called_context[0]['life_quality']['label'] == 'Critical concern'
     assert called_context[0]['registration_details']
+    assert called_context[0]['registration_history']
+    assert called_context[0]['registration_history']['total_registrations'] >= 2
 
     assert payload['analysis'] == 'analysis output'
     assert payload['model'] == 'gpt-test-model'
@@ -258,6 +286,7 @@ def test_health_agent_view_calls_agent(mock_analyze):
     assert payload['children'][0]['risk_score'] > payload['children'][0]['services']['pss']['required_pending']
     assert payload['children'][0]['pss_details']
     assert payload['children'][0]['health_details']
+    assert payload['children'][0]['registration_history']
     assert any('MUAC screening result' in alert for alert in payload['children'][0]['alerts'])
     assert any('Referred for malnutrition treatment' in alert for alert in payload['children'][0]['alerts'])
     assert any('PSS vulnerability' in flag for flag in payload['children'][0]['wellbeing_flags'])

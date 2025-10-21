@@ -291,6 +291,78 @@
     );
   }
 
+  function renderRegistrationHistory(history) {
+    if (!history) {
+      return '';
+    }
+
+    var summaryItems = [];
+    if (history.total_registrations !== undefined && history.total_registrations !== null) {
+      summaryItems.push('<li><strong>Total registrations:</strong> ' + escapeHtml(history.total_registrations) + '</li>');
+    }
+    if (history.distinct_rounds !== undefined && history.distinct_rounds !== null) {
+      summaryItems.push('<li><strong>Distinct rounds:</strong> ' + escapeHtml(history.distinct_rounds) + '</li>');
+    }
+    if (Array.isArray(history.years_active) && history.years_active.length) {
+      summaryItems.push('<li><strong>Years active:</strong> ' + escapeHtml(history.years_active.join(', ')) + '</li>');
+    }
+    if (history.longest_consecutive_years) {
+      summaryItems.push('<li><strong>Longest consecutive years:</strong> ' + escapeHtml(history.longest_consecutive_years) + '</li>');
+    }
+    if (history.largest_gap_years) {
+      summaryItems.push('<li><strong>Largest gap:</strong> ' + escapeHtml(history.largest_gap_years) + ' year(s)</li>');
+    }
+    if (history.engagement_span_years) {
+      summaryItems.push('<li><strong>Engagement span:</strong> ' + escapeHtml(history.engagement_span_years) + ' year(s)</li>');
+    }
+
+    var summaryHtml = summaryItems.length
+      ? '<ul class="small pl-3 mb-1">' + summaryItems.join('') + '</ul>'
+      : '';
+
+    var entryHtml = '';
+    if (Array.isArray(history.entries) && history.entries.length) {
+      var entryItems = history.entries
+        .map(function (entry) {
+          var parts = [];
+          parts.push('Registration #' + escapeHtml(entry.registration_id));
+          if (entry.round) {
+            parts.push(escapeHtml(entry.round));
+          } else if (entry.round_year) {
+            parts.push('Year ' + escapeHtml(entry.round_year));
+          }
+          if (entry.registration_date) {
+            parts.push('Registered ' + escapeHtml(formatDate(entry.registration_date)));
+          }
+          if (entry.package_type) {
+            parts.push(escapeHtml(entry.package_type));
+          }
+          if (entry.center) {
+            parts.push(escapeHtml(entry.center));
+          }
+          var text = parts.filter(Boolean).join(' · ');
+          if (entry.is_current) {
+            text = '<strong>' + text + ' (current)</strong>';
+          }
+          return '<li>' + text + '</li>';
+        })
+        .join('');
+      entryHtml = '<ul class="small pl-3 mb-0">' + entryItems + '</ul>';
+    }
+
+    if (!summaryHtml && !entryHtml) {
+      return '';
+    }
+
+    return (
+      '<div class="mb-2">' +
+      '<div class="small text-uppercase text-muted">Registration history</div>' +
+      summaryHtml +
+      entryHtml +
+      '</div>'
+    );
+  }
+
   function renderInsights(child) {
     var sections = '';
     sections += renderAssessmentDetails('PSS responses', child.pss_details);
@@ -298,6 +370,7 @@
     sections += renderAssessmentDetails('Health referrals', child.health_referral_details);
     sections += renderAssessmentDetails('Registration profile', child.registration_details);
     sections += renderEducationProgress(child.education_progress);
+    sections += renderRegistrationHistory(child.registration_history);
 
     if (child.wellbeing_flags && child.wellbeing_flags.length) {
       var flags = child.wellbeing_flags

@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 
 import json
 import logging
+import datetime
 from collections import Counter
 
 from django.views.generic import (
@@ -463,6 +464,120 @@ def _summarize_registration(registration):
     )
 
 
+def _resolve_registration_date(registration):
+    """Return the best available date for a registration record."""
+
+    if getattr(registration, 'registration_date', None):
+        return registration.registration_date
+
+    created = getattr(registration, 'created', None)
+    if isinstance(created, datetime.datetime):
+        return created.date()
+    if isinstance(created, datetime.date):
+        return created
+
+    return None
+
+
+def _summarize_registration_history(registration, history_records):
+    """Summarise a child's participation across registrations and rounds."""
+
+    if not history_records:
+        return None
+
+    entries = []
+    unique_round_ids = set()
+    years_counter = Counter()
+    first_date = None
+    latest_date = None
+    previous_year = None
+    consecutive_streak = 0
+    longest_streak = 0
+    recorded_years = []
+    gap_years = []
+
+    sorted_history = sorted(
+        history_records,
+        key=lambda record: (
+            _resolve_registration_date(record) or datetime.date.min,
+            record.id,
+        ),
+    )
+
+    for record in sorted_history:
+        resolved_date = _resolve_registration_date(record)
+        round_name = record.round.name if getattr(record, 'round', None) else None
+        round_year = getattr(record.round, 'year', None) if getattr(record, 'round', None) else None
+        participation_year = round_year
+        if participation_year is None and resolved_date:
+            participation_year = resolved_date.year
+
+        if resolved_date:
+            if first_date is None or resolved_date < first_date:
+                first_date = resolved_date
+            if latest_date is None or resolved_date > latest_date:
+                latest_date = resolved_date
+
+        if record.round_id:
+            unique_round_ids.add(record.round_id)
+
+        if participation_year is not None:
+            years_counter[participation_year] += 1
+            recorded_years.append(participation_year)
+
+            if previous_year is None or participation_year == previous_year:
+                consecutive_streak = max(consecutive_streak, 1)
+            elif participation_year == previous_year + 1:
+                consecutive_streak += 1
+            else:
+                gap_years.append(participation_year - previous_year)
+                consecutive_streak = 1
+
+            longest_streak = max(longest_streak, consecutive_streak)
+            previous_year = participation_year
+
+        entries.append(
+            {
+                'registration_id': record.id,
+                'round': round_name,
+                'round_year': round_year,
+                'registration_date': resolved_date.isoformat() if resolved_date else None,
+                'package_type': record.type,
+                'center': str(record.center) if getattr(record, 'center', None) else None,
+                'is_current': record.id == registration.id,
+            }
+        )
+
+    unique_years = sorted(set(recorded_years))
+    if unique_years:
+        # recompute longest streak to ensure gaps reset correctly when duplicate years appear
+        current_streak = 0
+        previous = None
+        longest_streak = 0
+        for year in unique_years:
+            if previous is None or year == previous + 1:
+                current_streak += 1
+            else:
+                current_streak = 1
+            longest_streak = max(longest_streak, current_streak)
+            previous = year
+
+    return {
+        'total_registrations': len(entries),
+        'distinct_rounds': len(unique_round_ids),
+        'years_active': unique_years,
+        'yearly_counts': [
+            {'year': year, 'registrations': years_counter[year]} for year in sorted(years_counter)
+        ],
+        'first_registration_date': first_date.isoformat() if first_date else None,
+        'latest_registration_date': latest_date.isoformat() if latest_date else None,
+        'engagement_span_years': (unique_years[-1] - unique_years[0]) if len(unique_years) >= 2 else 0,
+        'largest_gap_years': max(gap_years) if gap_years else 0,
+        'longest_consecutive_years': longest_streak,
+        'entries': entries,
+    }
+
+
 def _extract_wellbeing_flags(pss, health, referral, registration=None, education=None):
     flags = []
 
@@ -569,6 +684,7 @@ def _calculate_risk_score(
     wellbeing_flags=None,
     registration=None,
     education_progress=None,
+    registration_history=None,
 ):
     score = 0
     missed = attendance_summary.get('missed_sessions', 0) or 0
@@ -644,10 +760,28 @@ def _calculate_risk_score(
         elif '10-15' in participation:
             score += 1
 
+    if registration_history:
+        total_registrations = registration_history.get('total_registrations') or 0
+        longest_streak = registration_history.get('longest_consecutive_years') or 0
+        largest_gap = registration_history.get('largest_gap_years') or 0
+
+        if total_registrations >= 3:
+            score += 1
+        if largest_gap >= 2:
+            score += 1
+        if longest_streak >= 3:
+            score = max(score - 1, 0)
+
     return score
 
 
-def _build_alerts(attendance_summary, services_summary, wellbeing_flags=None, education_progress=None):
+def _build_alerts(
+    attendance_summary,
+    services_summary,
+    wellbeing_flags=None,
+    education_progress=None,
+    registration_history=None,
+):
     alerts = []
     rate = attendance_summary.get('attendance_rate')
     missed = attendance_summary.get('missed_sessions', 0) or 0
@@ -676,6 +810,11 @@ def _build_alerts(attendance_summary, services_summary, wellbeing_flags=None, ed
         if education_progress.get('school_year_completed') == 'No':
             alerts.append('School year not completed')
 
+    if registration_history:
+        largest_gap = registration_history.get('largest_gap_years') or 0
+        if largest_gap >= 2:
+            alerts.append(f'Gap of {largest_gap} years between registrations detected')
+
     return alerts
 
 
@@ -686,6 +825,7 @@ def _assess_life_quality(
     referral=None,
     registration=None,
     education_progress=None,
+    registration_history=None,
 ):
     """Derive a sentiment-style signal for a child's quality of life."""
 
@@ -823,6 +963,18 @@ def _assess_life_quality(
         if education_progress.get('post_test_done') == 'No':
             record(-1, 'Post-tests not completed to measure learning outcomes')
 
+    if registration_history:
+        total_registrations = registration_history.get('total_registrations') or 0
+        longest_streak = registration_history.get('longest_consecutive_years') or 0
+        largest_gap = registration_history.get('largest_gap_years') or 0
+
+        if total_registrations >= 2:
+            record(1, f'Re-engaged with programme {total_registrations} times')
+        if longest_streak >= 3:
+            record(2, f'Sustained participation across {longest_streak} consecutive years')
+        if largest_gap >= 2:
+            record(-1, f'Break of {largest_gap} years between registrations')
+
     if score <= -6:
         label = 'Critical concern'
     elif score <= -3:
@@ -851,6 +1003,7 @@ def _build_child_context(
     health_assessment,
     health_referral,
     education_assessment,
+    registration_history=None,
 ):
     child = getattr(registration, 'child', None)
     age = None
@@ -872,6 +1025,10 @@ def _build_child_context(
     referral_details = _summarize_model_fields(health_referral)
     registration_details = _summarize_registration(registration)
     education_progress = _summarize_education_assessment(education_assessment)
+    registration_history_summary = _summarize_registration_history(
+        registration,
+        registration_history or [],
+    )
     wellbeing_flags = _extract_wellbeing_flags(
         pss_assessment,
         health_assessment,
@@ -884,6 +1041,7 @@ def _build_child_context(
         services_summary,
         wellbeing_flags,
         education_progress=education_progress,
+        registration_history=registration_history_summary,
     )
     risk_score = _calculate_risk_score(
         age,
@@ -892,6 +1050,7 @@ def _build_child_context(
         wellbeing_flags,
         registration=registration,
         education_progress=education_progress,
+        registration_history=registration_history_summary,
     )
     life_quality = _assess_life_quality(
         attendance_summary,
@@ -900,6 +1059,7 @@ def _build_child_context(
         health_referral,
         registration=registration,
         education_progress=education_progress,
+        registration_history=registration_history_summary,
     )
 
     return {
@@ -921,6 +1081,7 @@ def _build_child_context(
         'wellbeing_flags': wellbeing_flags,
         'life_quality': life_quality,
         'education_progress': education_progress,
+        'registration_history': registration_history_summary,
     }
 
 
@@ -1007,7 +1168,7 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
             ).order_by('-absent_days', '-pending_required', '-id')
             fetch_limit = max(limit_value * 3, limit_value)
 
-        registrations = list(queryset.select_related('child')[:fetch_limit])
+        registrations = list(queryset.select_related('child', 'round')[:fetch_limit])
 
         if not registrations:
             return JsonResponse({
@@ -1021,6 +1182,7 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
             })
 
         registration_ids_list = [registration.id for registration in registrations]
+        child_ids = [registration.child_id for registration in registrations if registration.child_id]
 
         services_map = {}
         for service in ProvidedServices.objects.filter(registration_id__in=registration_ids_list):
@@ -1053,6 +1215,16 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
         for education_assessment in education_qs:
             education_assessment_map.setdefault(education_assessment.registration_id, education_assessment)
 
+        registration_history_map = {}
+        if child_ids:
+            history_qs = (
+                Registration.objects.filter(child_id__in=child_ids, deleted=False)
+                .select_related('round', 'center')
+                .order_by('child_id', 'registration_date', 'created', 'id')
+            )
+            for history_record in history_qs:
+                registration_history_map.setdefault(history_record.child_id, []).append(history_record)
+
         children_context = [
             _build_child_context(
                 registration,
@@ -1062,6 +1234,7 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
                 health_service_map.get(registration.id),
                 health_referral_map.get(registration.id),
                 education_assessment_map.get(registration.id),
+                registration_history=registration_history_map.get(registration.child_id, []),
             )
             for registration in registrations
         ]
