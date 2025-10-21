@@ -323,6 +323,9 @@
     if (payload.limit !== undefined) {
       parts.push('limit ' + escapeHtml(payload.limit));
     }
+    if (payload.question) {
+      parts.push('focus: ' + escapeHtml(payload.question));
+    }
     if (payload.generated_at) {
       var generatedDate = new Date(payload.generated_at);
       if (!isNaN(generatedDate.getTime())) {
@@ -374,6 +377,7 @@
     var form = qs(container, '#health-agent-form');
     var idsField = qs(container, '#health-agent-registration-ids');
     var limitField = qs(container, '#health-agent-limit');
+    var questionField = qs(container, '#health-agent-question');
     var resetButton = qs(container, '#health-agent-reset');
     var statusBox = document.getElementById('health-agent-status');
     var resultsPanel = document.getElementById('health-agent-results');
@@ -409,6 +413,9 @@
       analysisContainer.innerHTML = renderMarkdown(payload.analysis || '');
       childrenContainer.innerHTML = renderChildren(payload.children || []);
       metadataContainer.textContent = buildMetadata(payload);
+      if (questionField && payload.question !== undefined) {
+        questionField.value = payload.question;
+      }
       if (payload.error) {
         showStatus(payload.error, 'warning');
       } else {
@@ -432,6 +439,9 @@
       if (metadataContainer) {
         metadataContainer.textContent = '';
       }
+      if (questionField) {
+        questionField.value = '';
+      }
       if (resultsPanel) {
         resultsPanel.classList.add('d-none');
       }
@@ -442,6 +452,8 @@
       event.preventDefault();
       var registrationInput = idsField ? idsField.value : '';
       var limitInput = limitField ? limitField.value : defaultLimit;
+      var questionInput = questionField ? questionField.value : '';
+      var trimmedQuestion = questionInput ? questionInput.trim() : '';
       var limitValue = clamp(limitInput, 1, maxLimit);
 
       if (limitField) {
@@ -455,6 +467,9 @@
       var registrationIds = parseRegistrationInput(registrationInput);
       if (registrationIds.length) {
         payload.registration_ids = registrationIds;
+      }
+      if (trimmedQuestion) {
+        payload.question = trimmedQuestion;
       }
 
       showStatus('Fetching recommendations…', 'info');

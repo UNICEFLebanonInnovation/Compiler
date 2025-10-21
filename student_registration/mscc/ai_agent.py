@@ -38,13 +38,17 @@ class HealthSupportAgent:
         self.base_url = base_url or getattr(settings, "OPENAI_API_BASE", "https://api.openai.com/v1")
         self.timeout = timeout or int(getattr(settings, "OPENAI_TIMEOUT", 30))
 
-    def analyze_children(self, children_context: Sequence[dict]) -> str:
+    def analyze_children(self, children_context: Sequence[dict], question: str | None = None) -> str:
         """Generate an analysis for the supplied children context."""
 
-        messages = self._build_prompt(children_context)
+        messages = self._build_prompt(children_context, question=question)
         return self._request_chat_completion(messages)
 
-    def _build_prompt(self, children_context: Sequence[dict]) -> List[dict]:
+    def _build_prompt(
+        self,
+        children_context: Sequence[dict],
+        question: str | None = None,
+    ) -> List[dict]:
         summary = json.dumps(children_context, indent=2, default=str)
         system_message = (
             "You are an expert public health analyst supporting the MSCC "
@@ -61,6 +65,12 @@ class HealthSupportAgent:
             "'Watch List', and 'Key Programme Insights'. List each child with "
             "their registration id and a short rationale."
         )
+
+        question_text = (question or "").strip()
+        if question_text:
+            user_instructions = (
+                f"{user_instructions}\n\nFocus specifically on: {question_text}"
+            )
 
         messages = [
             {"role": "system", "content": system_message},

@@ -550,7 +550,8 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
         if single_id and not registration_ids:
             registration_ids = [single_id]
         limit = request.GET.get('limit')
-        return self._generate_response(registration_ids, limit)
+        question = request.GET.get('question')
+        return self._generate_response(registration_ids, limit, question)
 
     def post(self, request, *args, **kwargs):
         try:
@@ -560,11 +561,13 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
 
         registration_ids = payload.get('registration_ids')
         limit = payload.get('limit')
-        return self._generate_response(registration_ids, limit)
+        question = payload.get('question')
+        return self._generate_response(registration_ids, limit, question)
 
-    def _generate_response(self, registration_ids, limit):
+    def _generate_response(self, registration_ids, limit, question):
         normalized_ids = self._normalize_ids(registration_ids)
         limit_value = self._normalize_limit(limit)
+        question_text = self._normalize_question(question)
 
         queryset = Registration.objects.filter(
             deleted=False,
@@ -675,7 +678,7 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
         if children_context:
             try:
                 agent = HealthSupportAgent()
-                analysis = agent.analyze_children(children_context)
+                analysis = agent.analyze_children(children_context, question=question_text)
                 model_name = agent.model
             except AgentConfigurationError as exc:
                 error = str(exc)
@@ -696,6 +699,8 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
 
         if normalized_ids:
             response_payload['filters'] = {'registration_ids': normalized_ids}
+        if question_text:
+            response_payload['question'] = question_text
         if error:
             response_payload['error'] = error
 
@@ -731,6 +736,12 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
             HealthSupportAgentView.MIN_LIMIT,
             min(HealthSupportAgentView.MAX_LIMIT, limit_value),
         )
+
+    @staticmethod
+    def _normalize_question(question):
+        if not isinstance(question, str):
+            return ''
+        return question.strip()
 
 
 class HealthSupportAgentPageView(LoginRequiredMixin, TemplateView):

@@ -175,7 +175,11 @@ def test_health_agent_view_calls_agent(mock_analyze):
     _record_attendance(low_risk_registration, low_risk_child, datetime.date(2025, 1, 1), 'Yes')
 
     factory = RequestFactory()
-    payload = json.dumps({'registration_ids': [high_risk_registration.id, low_risk_registration.id], 'limit': 1})
+    payload = json.dumps({
+        'registration_ids': [high_risk_registration.id, low_risk_registration.id],
+        'limit': 1,
+        'question': '  Focus on malnutrition risks  ',
+    })
     request = factory.post('/mscc/ai/health-support/', data=payload, content_type='application/json')
     request.user = SimpleNamespace(is_authenticated=True)
 
@@ -186,12 +190,14 @@ def test_health_agent_view_calls_agent(mock_analyze):
 
     mock_analyze.assert_called_once()
     called_context = mock_analyze.call_args[0][0]
+    assert mock_analyze.call_args.kwargs['question'] == 'Focus on malnutrition risks'
     assert len(called_context) == 1
     assert called_context[0]['registration_id'] == high_risk_registration.id
     assert called_context[0]['life_quality']['label'] == 'Critical concern'
 
     assert payload['analysis'] == 'analysis output'
     assert payload['model'] == 'gpt-test-model'
+    assert payload['question'] == 'Focus on malnutrition risks'
     assert payload['count'] == 1
     assert payload['children'][0]['registration_id'] == high_risk_registration.id
     assert payload['children'][0]['risk_score'] > payload['children'][0]['services']['pss']['required_pending']
