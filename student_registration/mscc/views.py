@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 
 import json
 import logging
-import datetime
+import datetime as dt
 from collections import Counter
 
 from django.views.generic import (
@@ -471,9 +471,9 @@ def _resolve_registration_date(registration):
         return registration.registration_date
 
     created = getattr(registration, 'created', None)
-    if isinstance(created, datetime.datetime):
+    if isinstance(created, dt.datetime):
         return created.date()
-    if isinstance(created, datetime.date):
+    if isinstance(created, dt.date):
         return created
 
     return None
@@ -499,7 +499,7 @@ def _summarize_registration_history(registration, history_records):
     sorted_history = sorted(
         history_records,
         key=lambda record: (
-            _resolve_registration_date(record) or datetime.date.min,
+            _resolve_registration_date(record) or dt.date.min,
             record.id,
         ),
     )
@@ -1796,12 +1796,10 @@ class MainViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        from datetime import datetime
-
         qs = self.queryset
         if self.request.GET.get('creation_date', None):
             return self.queryset.filter(
-                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by(
+                created__gte=dt.datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by(
                 'created')
 
         if self.request.GET.get('school', None):
