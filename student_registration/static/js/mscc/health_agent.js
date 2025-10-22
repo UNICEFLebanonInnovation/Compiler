@@ -135,36 +135,118 @@
     return String(value);
   }
 
-  function renderServiceSummary(services) {
-    if (!services) {
+  function lifeQualityBadgeClass(value) {
+    switch (value) {
+      case 'Critical concern':
+        return 'danger';
+      case 'Needs attention':
+        return 'warning';
+      case 'Stable':
+        return 'success';
+      case 'Thriving':
+        return 'primary';
+      default:
+        return 'info';
+    }
+  }
+
+  function renderFocusTopics(topics) {
+    if (!Array.isArray(topics) || !topics.length) {
       return '';
     }
-    var keys = ['pss', 'health', 'support'];
-    var html = '<div class="row">';
-    keys.forEach(function (key) {
-      if (!services[key]) {
+
+    var badges = topics
+      .map(function (topic) {
+        return '<span class="badge badge-light text-primary mr-1 mb-1">' + escapeHtml(topic) + '</span>';
+      })
+      .join('');
+
+    return (
+      '<div class="priority-focus-topics small text-muted">' +
+      '<span class="mr-1">Focus:</span>' +
+      badges +
+      '</div>'
+    );
+  }
+
+  function renderAttendanceSummary(attendance) {
+    if (!attendance) {
+      return '<p class="text-muted small mb-0">No attendance data recorded.</p>';
+    }
+
+    var attended = attendance.attended_sessions || 0;
+    var total = attendance.total_sessions || 0;
+    var missed = attendance.missed_sessions || 0;
+    var rate = formatPercent(attendance.attendance_rate);
+    var absence = attendance.most_recent_absence ? formatDate(attendance.most_recent_absence) : null;
+
+    var html = '';
+    html += '<div class="priority-metric-value">' + rate + '</div>';
+    html += '<div class="small text-muted">Attendance rate</div>';
+    html += '<div class="small">' + escapeHtml(attended) + ' of ' + escapeHtml(total) + ' sessions attended</div>';
+    html += '<div class="small text-muted">Missed sessions: ' + escapeHtml(missed) + '</div>';
+    if (absence) {
+      html += '<div class="small text-muted">Last absence: ' + absence + '</div>';
+    }
+
+    return html;
+  }
+
+  function renderServiceSummary(services) {
+    if (!services) {
+      return '<p class="text-muted small mb-0">No service data recorded.</p>';
+    }
+    var keyMeta = [
+      { key: 'pss', label: 'PSS' },
+      { key: 'health', label: 'Health & Nutrition' },
+      { key: 'support', label: 'Support' },
+    ];
+
+    var html = '<div class="priority-service-grid">';
+    keyMeta.forEach(function (meta) {
+      var summary = services[meta.key];
+      if (!summary) {
         return;
       }
-      var summary = services[key];
-      html += '<div class="col-md-4 col-sm-6 mb-2">';
-      html += '<div class="border rounded p-2 h-100">';
-      html += '<div class="small text-uppercase text-muted">' + key.toUpperCase() + '</div>';
-      html += '<div class="d-flex justify-content-between align-items-baseline">';
+
       var completed = summary.completed || 0;
       var total = summary.total || 0;
       var pending = summary.required_pending || 0;
-      html += '<span class="font-weight-bold">' + escapeHtml(completed) + '/' + escapeHtml(total) + '</span>';
+      var pendingItems = (summary.items || []).filter(function (item) {
+        return item.required && !item.completed;
+      });
+
+      html += '<div class="priority-service-item border rounded p-3">';
+      html += '<div class="d-flex justify-content-between align-items-center mb-2">';
+      html += '<span class="small text-uppercase text-muted">' + escapeHtml(meta.label) + '</span>';
       html += '<span class="badge badge-' + (pending ? 'danger' : 'success') + '">';
       html += pending ? escapeHtml(pending) + ' pending' : 'Up to date';
       html += '</span>';
       html += '</div>';
-      html += '</div>';
+      html += '<div class="h5 mb-1">' + escapeHtml(completed) + ' / ' + escapeHtml(total) + '</div>';
+      if (summary.required_total) {
+        html += '<div class="small text-muted">' + escapeHtml(summary.required_total) + ' required services</div>';
+      }
+      if (pendingItems.length) {
+        var itemsHtml = pendingItems
+          .map(function (item) {
+            return '<li>' + escapeHtml(item.name || 'Service') + '</li>';
+          })
+          .join('');
+        html += '<div class="small mt-2">Pending:</div>';
+        html += '<ul class="small pl-3 mb-0">' + itemsHtml + '</ul>';
+      }
       html += '</div>';
     });
     html += '</div>';
+
     if (services.overall_pending_required) {
-      html += '<p class="small text-danger mb-0">' + escapeHtml(services.overall_pending_required) + ' required services still pending.</p>';
+      html +=
+        '<p class="small text-danger mb-0 mt-2">' +
+        escapeHtml(services.overall_pending_required) +
+        ' required services still pending.</p>';
     }
+
     return html;
   }
 
@@ -403,24 +485,10 @@
     var score = lifeQuality.score;
     var signals = Array.isArray(lifeQuality.signals) ? lifeQuality.signals : [];
 
-    function badgeClass(value) {
-      switch (value) {
-        case 'Critical concern':
-          return 'danger';
-        case 'Needs attention':
-          return 'warning';
-        case 'Stable':
-          return 'success';
-        case 'Thriving':
-          return 'primary';
-        default:
-          return 'info';
-      }
-    }
-
     var html = '';
     html += '<div class="d-flex align-items-baseline mb-1">';
-    html += '<span class="badge badge-' + badgeClass(label) + ' mr-2">' + escapeHtml(label) + '</span>';
+    html +=
+      '<span class="badge badge-' + lifeQualityBadgeClass(label) + ' mr-2">' + escapeHtml(label) + '</span>';
     if (score !== undefined && score !== null) {
       html += '<span class="small text-muted">Score: ' + escapeHtml(score) + '</span>';
     }
@@ -446,59 +514,82 @@
       return '<p class="text-muted mb-0">No children met the selected criteria.</p>';
     }
 
-    var rows = children
-      .map(function (child) {
+    var cards = children
+      .map(function (child, index) {
         var attendance = child.attendance || {};
         var services = child.services || {};
+        var lifeQuality = child.life_quality || null;
         var name = child.child_name || 'Unknown child';
         var gender = child.gender ? ' (' + escapeHtml(child.gender) + ')' : '';
-        var programme = child.education_programme ? '<div class="small text-muted">' + escapeHtml(child.education_programme) + '</div>' : '';
-        var absenceDate = attendance.most_recent_absence ? formatDate(attendance.most_recent_absence) : '—';
-        var ageInfo = child.age !== undefined && child.age !== null ? '<div class="small">Age: ' + escapeHtml(child.age) + '</div>' : '';
+        var programme = child.education_programme
+          ? '<div class="small text-muted">Education programme: ' + escapeHtml(child.education_programme) + '</div>'
+          : '';
+        var ageInfo =
+          child.age !== undefined && child.age !== null ? '<div class="small">Age: ' + escapeHtml(child.age) + '</div>' : '';
+        var registrationId = child.registration_id ? escapeHtml(child.registration_id) : '—';
+        var riskScore = child.risk_score !== undefined && child.risk_score !== null ? escapeHtml(child.risk_score) : '—';
+        var rankBadge = '<span class="badge badge-primary badge-pill mr-2">#' + (index + 1) + '</span>';
+        var riskBadge = '<span class="badge badge-danger badge-pill">Risk score ' + riskScore + '</span>';
+        var lifeQualityBadge = lifeQuality && lifeQuality.label
+          ? '<span class="badge badge-' + lifeQualityBadgeClass(lifeQuality.label) + ' badge-pill">' +
+            escapeHtml(lifeQuality.label) +
+            '</span>'
+          : '';
 
         return (
-          '<tr>' +
-          '<td class="align-middle"><strong>' + escapeHtml(child.risk_score) + '</strong></td>' +
-          '<td class="align-middle">' +
-          '<div class="font-weight-bold">' + escapeHtml(name) + gender + '</div>' +
-          '<div class="small text-muted">Registration #' + escapeHtml(child.registration_id) + '</div>' +
+          '<div class="priority-child-card card mb-3 shadow-sm">' +
+          '<div class="card-body">' +
+          '<div class="priority-card-header d-flex justify-content-between align-items-start flex-wrap">' +
+          '<div class="mb-2 mr-3">' +
+          '<div class="d-flex align-items-center flex-wrap">' +
+          rankBadge +
+          '<h5 class="mb-0">' + escapeHtml(name) + gender + '</h5>' +
+          '</div>' +
+          '<div class="small text-muted mt-1">Registration #' + registrationId + '</div>' +
           ageInfo +
           programme +
-          '</td>' +
-          '<td class="align-middle">' +
-          '<div><strong>' + formatPercent(attendance.attendance_rate) + '</strong></div>' +
-          '<div class="small text-muted">' + escapeHtml(attendance.attended_sessions || 0) + ' / ' + escapeHtml(attendance.total_sessions || 0) + ' sessions</div>' +
-          '<div class="small">Last absence: ' + absenceDate + '</div>' +
-          '</td>' +
-          '<td class="align-middle">' + renderServiceSummary(services) + '</td>' +
-          '<td class="align-middle" style="min-width: 200px;">' + renderLifeQuality(child.life_quality) + '</td>' +
-          '<td class="align-middle" style="min-width: 220px;">' + renderInsights(child) + '</td>' +
-          '<td class="align-middle" style="min-width: 180px;">' + renderAlerts(child.alerts) + '</td>' +
-          '</tr>'
+          renderFocusTopics(child.focus_topics) +
+          '</div>' +
+          '<div class="text-right mb-2 ml-auto">' +
+          riskBadge +
+          (lifeQualityBadge ? '<div class="mt-2">' + lifeQualityBadge + '</div>' : '') +
+          '</div>' +
+          '</div>' +
+          '<div class="row priority-metric-row">' +
+          '<div class="col-lg-4 col-md-6 mb-3">' +
+          '<div class="priority-metric h-100">' +
+          '<div class="priority-metric-title small text-uppercase text-muted">Attendance</div>' +
+          renderAttendanceSummary(attendance) +
+          '</div>' +
+          '</div>' +
+          '<div class="col-lg-4 col-md-6 mb-3">' +
+          '<div class="priority-metric h-100">' +
+          '<div class="priority-metric-title small text-uppercase text-muted">Services</div>' +
+          renderServiceSummary(services) +
+          '</div>' +
+          '</div>' +
+          '<div class="col-lg-4 col-md-12 mb-3">' +
+          '<div class="priority-metric h-100">' +
+          '<div class="priority-metric-title small text-uppercase text-muted">Life quality</div>' +
+          renderLifeQuality(lifeQuality) +
+          '</div>' +
+          '</div>' +
+          '</div>' +
+          '<div class="priority-section mt-3">' +
+          '<div class="priority-section-title small text-uppercase text-muted">Insights &amp; history</div>' +
+          '<div class="priority-section-body small">' + renderInsights(child) + '</div>' +
+          '</div>' +
+          '<div class="priority-section mt-3">' +
+          '<div class="priority-section-title small text-uppercase text-muted">Alerts</div>' +
+          '<div class="priority-alerts">' + renderAlerts(child.alerts) + '</div>' +
+          '</div>' +
+          '</div>' +
+          '</div>'
         );
       })
       .join('');
 
-    return (
-      '<div class="table-responsive">' +
-      '<table class="table table-striped table-sm mb-0">' +
-      '<thead>' +
-      '<tr>' +
-      '<th style="width: 70px;">Risk</th>' +
-      '<th>Child</th>' +
-      '<th>Attendance</th>' +
-      '<th>Services</th>' +
-      '<th>Life quality</th>' +
-      '<th>Insights</th>' +
-      '<th>Alerts</th>' +
-      '</tr>' +
-      '</thead>' +
-      '<tbody>' +
-      rows +
-      '</tbody>' +
-      '</table>' +
-      '</div>'
-    );
+    return '<div class="priority-children-list">' + cards + '</div>';
   }
 
   function buildMetadata(payload) {

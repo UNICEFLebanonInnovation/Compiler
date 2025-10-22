@@ -5,6 +5,115 @@
 {% block project_title %}Health Support Insights{% endblock %}
 {% block module_name %}Makani - Health Support Insights{% endblock %}
 
+{% block extra_head %}
+{{ block.super }}
+<style>
+  .priority-children-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .priority-child-card {
+    border: 1px solid #e9ecef;
+    border-left: 4px solid #3f6ad8;
+    border-radius: 0.75rem;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .priority-child-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1.2rem rgba(63, 106, 216, 0.15);
+  }
+
+  .priority-card-header h5 {
+    font-weight: 600;
+  }
+
+  .priority-metric {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 0.65rem;
+    padding: 1rem;
+  }
+
+  .priority-metric-title {
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.35rem;
+  }
+
+  .priority-metric-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.1;
+    margin-bottom: 0.25rem;
+  }
+
+  .priority-service-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .priority-service-item {
+    background: #fff;
+    border: 1px solid rgba(63, 106, 216, 0.08);
+    border-radius: 0.55rem;
+    height: 100%;
+  }
+
+  .priority-service-item .badge {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.5rem;
+  }
+
+  .priority-focus-topics .badge {
+    font-size: 0.75rem;
+    border: 1px solid rgba(63, 106, 216, 0.25);
+    background: rgba(63, 106, 216, 0.1);
+  }
+
+  .priority-section-title {
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+  }
+
+  .priority-section-body {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 0.65rem;
+    padding: 0.85rem;
+  }
+
+  .priority-alerts .badge {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.6rem;
+  }
+
+  @media (max-width: 767.98px) {
+    .priority-child-card {
+      border-left-width: 3px;
+    }
+
+    .priority-card-header {
+      flex-direction: column;
+      align-items: flex-start !important;
+    }
+
+    .priority-card-header .text-right {
+      text-align: left !important;
+      margin-left: 0 !important;
+    }
+
+    .priority-service-grid {
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="app-page-title">
   <div class="page-title-wrapper">
