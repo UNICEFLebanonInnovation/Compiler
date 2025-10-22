@@ -71,7 +71,9 @@ class HealthSupportAgent:
             "Review the children information and highlight who requires urgent "
             "support or follow-up. Consider age, psychosocial (PSS) services, "
             "health services, attendance history, and other support needs. "
-            "Provide actionable recommendations for each child."
+            "Provide actionable recommendations for each child. Evaluate the "
+            "Makani programme impact over the years and clarify whether it "
+            "appears positive, negative, or mixed for each case."
         )
         formatting = (
             "Return your response in markdown with the sections 'Priority Cases', "

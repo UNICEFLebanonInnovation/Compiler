@@ -150,6 +150,20 @@
     }
   }
 
+  function programmeImpactBadgeClass(direction) {
+    switch (direction) {
+      case 'positive':
+        return 'success';
+      case 'negative':
+        return 'danger';
+      case 'mixed':
+      case 'neutral':
+        return 'warning';
+      default:
+        return 'info';
+    }
+  }
+
   function renderFocusTopics(topics) {
     if (!Array.isArray(topics) || !topics.length) {
       return '';
@@ -447,6 +461,7 @@
 
   function renderInsights(child) {
     var sections = '';
+    sections += renderProgrammeImpactInsights(child.programme_impact);
     sections += renderAssessmentDetails('PSS responses', child.pss_details);
     sections += renderAssessmentDetails('Health & nutrition responses', child.health_details);
     sections += renderAssessmentDetails('Health referrals', child.health_referral_details);
@@ -509,6 +524,117 @@
     return html;
   }
 
+  function renderProgrammeImpact(impact) {
+    if (!impact) {
+      return '<span class="text-muted small">No information</span>';
+    }
+
+    var direction = impact.direction || 'mixed';
+    var label = impact.label || 'Programme impact';
+    var score = impact.score;
+    var summary = impact.summary || '';
+    var yearsEngaged = Array.isArray(impact.years_engaged) ? impact.years_engaged.length : null;
+    var totalRegistrations = impact.total_registrations;
+    var spanYears = impact.engagement_span_years;
+    var factors = Array.isArray(impact.factors) ? impact.factors : [];
+
+    var html = '';
+    html += '<div class="d-flex align-items-baseline mb-1">';
+    html +=
+      '<span class="badge badge-' + programmeImpactBadgeClass(direction) + ' mr-2">' +
+      escapeHtml(label) +
+      '</span>';
+    if (score !== undefined && score !== null) {
+      html += '<span class="small text-muted">Score: ' + escapeHtml(score) + '</span>';
+    }
+    html += '</div>';
+
+    if (summary) {
+      html += '<p class="small mb-1">' + escapeHtml(summary) + '</p>';
+    }
+
+    if (yearsEngaged) {
+      html += '<div class="small text-muted">Years engaged: ' + escapeHtml(yearsEngaged) + '</div>';
+    }
+
+    if (totalRegistrations) {
+      html += '<div class="small text-muted">Registrations: ' + escapeHtml(totalRegistrations) + '</div>';
+    }
+
+    if (spanYears) {
+      html += '<div class="small text-muted">Span: ' + escapeHtml(spanYears) + ' years</div>';
+    }
+
+    if (factors.length) {
+      var items = factors
+        .slice(0, 3)
+        .map(function (factor) {
+          return '<li>' + escapeHtml(factor.message || '') + '</li>';
+        })
+        .join('');
+      html += '<ul class="small pl-3 mb-0">' + items + '</ul>';
+    } else if (!summary) {
+      html += '<p class="text-muted small mb-0">No impact factors recorded.</p>';
+    }
+
+    return html;
+  }
+
+  function renderProgrammeImpactInsights(impact) {
+    if (!impact) {
+      return '';
+    }
+
+    var factors = Array.isArray(impact.factors) ? impact.factors : [];
+    var summary = impact.summary || '';
+    var yearsEngaged = Array.isArray(impact.years_engaged) ? impact.years_engaged : [];
+    var spanYears = impact.engagement_span_years;
+    var totalRegistrations = impact.total_registrations;
+
+    var meta = '';
+    if (summary) {
+      meta += '<p class="small mb-1">' + escapeHtml(summary) + '</p>';
+    }
+    if (yearsEngaged.length) {
+      var yearList = yearsEngaged
+        .map(function (year) {
+          return escapeHtml(year);
+        })
+        .join(', ');
+      meta += '<div class="small text-muted mb-1">Years active: ' + yearList + '</div>';
+    }
+    if (totalRegistrations) {
+      meta += '<div class="small text-muted mb-1">Registrations: ' + escapeHtml(totalRegistrations) + '</div>';
+    }
+    if (spanYears) {
+      meta += '<div class="small text-muted mb-1">Span across ' + escapeHtml(spanYears) + ' years</div>';
+    }
+
+    var items = factors
+      .map(function (factor) {
+        var weight =
+          factor.weight !== undefined && factor.weight !== null
+            ? ' (' + escapeHtml(factor.weight) + ')'
+            : '';
+        return '<li>' + escapeHtml(factor.message || '') + weight + '</li>';
+      })
+      .join('');
+
+    if (!items) {
+      items = '<li class="text-muted">No impact drivers recorded.</li>';
+    }
+
+    return (
+      '<div class="mb-2">' +
+      '<div class="small text-uppercase text-muted">Programme impact</div>' +
+      meta +
+      '<ul class="small pl-3 mb-0">' +
+      items +
+      '</ul>' +
+      '</div>'
+    );
+  }
+
   function renderChildren(children) {
     if (!children || !children.length) {
       return '<p class="text-muted mb-0">No children met the selected criteria.</p>';
@@ -519,6 +645,7 @@
         var attendance = child.attendance || {};
         var services = child.services || {};
         var lifeQuality = child.life_quality || null;
+        var programmeImpact = child.programme_impact || null;
         var name = child.child_name || 'Unknown child';
         var gender = child.gender ? ' (' + escapeHtml(child.gender) + ')' : '';
         var programme = child.education_programme
@@ -556,22 +683,28 @@
           '</div>' +
           '</div>' +
           '<div class="row priority-metric-row">' +
-          '<div class="col-lg-4 col-md-6 mb-3">' +
+          '<div class="col-xl-3 col-lg-6 col-md-6 mb-3">' +
           '<div class="priority-metric h-100">' +
           '<div class="priority-metric-title small text-uppercase text-muted">Attendance</div>' +
           renderAttendanceSummary(attendance) +
           '</div>' +
           '</div>' +
-          '<div class="col-lg-4 col-md-6 mb-3">' +
+          '<div class="col-xl-3 col-lg-6 col-md-6 mb-3">' +
           '<div class="priority-metric h-100">' +
           '<div class="priority-metric-title small text-uppercase text-muted">Services</div>' +
           renderServiceSummary(services) +
           '</div>' +
           '</div>' +
-          '<div class="col-lg-4 col-md-12 mb-3">' +
+          '<div class="col-xl-3 col-lg-6 col-md-6 mb-3">' +
           '<div class="priority-metric h-100">' +
           '<div class="priority-metric-title small text-uppercase text-muted">Life quality</div>' +
           renderLifeQuality(lifeQuality) +
+          '</div>' +
+          '</div>' +
+          '<div class="col-xl-3 col-lg-6 col-md-6 mb-3">' +
+          '<div class="priority-metric h-100">' +
+          '<div class="priority-metric-title small text-uppercase text-muted">Programme impact</div>' +
+          renderProgrammeImpact(programmeImpact) +
           '</div>' +
           '</div>' +
           '</div>' +

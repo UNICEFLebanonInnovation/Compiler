@@ -995,6 +995,171 @@ def _assess_life_quality(
     }
 
 
+def _evaluate_programme_impact(
+    attendance_summary,
+    education_progress=None,
+    registration_history=None,
+    life_quality=None,
+    risk_score=None,
+):
+    """Assess the Makani programme's longitudinal impact on a child."""
+
+    attendance_snapshot = attendance_summary or {}
+    has_longitudinal_data = any(
+        [
+            education_progress,
+            registration_history,
+            life_quality,
+            risk_score is not None,
+            attendance_snapshot.get('attendance_rate') is not None,
+        ]
+    )
+
+    if not has_longitudinal_data:
+        return None
+
+    score = 0
+    factors = []
+
+    def record(weight, message):
+        nonlocal score
+        if not message:
+            return
+        score += weight
+        factors.append({'weight': weight, 'message': message})
+
+    rate = attendance_snapshot.get('attendance_rate')
+    if rate is not None:
+        if rate >= 0.9:
+            record(2, 'Consistently high attendance across programme activities')
+        elif rate < 0.6:
+            record(-2, 'Very low attendance limits positive programme impact')
+        elif rate < 0.75:
+            record(-1, 'Attendance challenges reduce programme impact')
+
+    if education_progress:
+        avg_change = education_progress.get('average_change')
+        numeric_change = avg_change if isinstance(avg_change, (int, float)) else None
+        trend = education_progress.get('trend')
+        if numeric_change is not None:
+            if numeric_change >= 5:
+                record(3, f'Education outcomes improved markedly (+{numeric_change:.1f})')
+            elif numeric_change >= 2:
+                record(1, f'Moderate gains in education outcomes (+{numeric_change:.1f})')
+            elif numeric_change <= -5:
+                record(-3, f'Significant decline in education outcomes ({numeric_change:.1f})')
+            elif numeric_change <= -2:
+                record(-1, f'Slight decline in education outcomes ({numeric_change:.1f})')
+        if trend == 'improved':
+            record(1, 'Learning assessments show improvement over time')
+        elif trend == 'declined':
+            record(-1, 'Learning assessments declined over time')
+        if education_progress.get('school_year_completed') == 'Yes':
+            record(1, 'Child completed the school year during programme participation')
+        elif education_progress.get('school_year_completed') == 'No':
+            record(-2, 'School year not completed despite programme support')
+
+    years_active = []
+    if registration_history:
+        total_registrations = registration_history.get('total_registrations') or 0
+        longest_streak = registration_history.get('longest_consecutive_years') or 0
+        largest_gap = registration_history.get('largest_gap_years') or 0
+        engagement_span = registration_history.get('engagement_span_years') or 0
+        years_active = registration_history.get('years_active') or []
+
+        if total_registrations >= 4:
+            record(3, f'{total_registrations} registrations show sustained engagement')
+        elif total_registrations >= 2:
+            record(1, f'{total_registrations} registrations reflect repeated engagement')
+
+        if longest_streak >= 3:
+            record(2, f'Participated for {longest_streak} consecutive years')
+        elif longest_streak == 2:
+            record(1, 'Participated across two consecutive years')
+
+        if engagement_span >= 4:
+            record(1, f'Programme support spans {engagement_span} years')
+
+        if largest_gap >= 3:
+            record(-2, f'Gap of {largest_gap} years between registrations')
+        elif largest_gap == 2:
+            record(-1, 'Two-year gap between registrations observed')
+
+        yearly_counts = registration_history.get('yearly_counts') or []
+        if yearly_counts:
+            first_year_count = yearly_counts[0].get('registrations')
+            last_year_count = yearly_counts[-1].get('registrations')
+            if isinstance(first_year_count, int) and isinstance(last_year_count, int):
+                if last_year_count > first_year_count:
+                    record(1, 'Participation intensity increased in recent years')
+                elif last_year_count + 1 < first_year_count:
+                    record(-1, 'Participation intensity decreased in recent years')
+
+        first_date_raw = registration_history.get('first_registration_date')
+        latest_date_raw = registration_history.get('latest_registration_date')
+
+        def _to_date(value):
+            if not value:
+                return None
+            if isinstance(value, dt.datetime):
+                return value.date()
+            if isinstance(value, dt.date):
+                return value
+            try:
+                return dt.datetime.fromisoformat(value).date()
+            except (TypeError, ValueError):
+                return None
+
+        first_date = _to_date(first_date_raw)
+        latest_date = _to_date(latest_date_raw)
+        if first_date and latest_date and latest_date > first_date:
+            span_years = latest_date.year - first_date.year
+            if span_years >= 3:
+                record(1, 'Progress tracked across multiple programme years')
+
+    if life_quality:
+        label = life_quality.get('label')
+        if label in {'Thriving', 'Stable'}:
+            record(1, 'Recent wellbeing indicators are stable or improving')
+        elif label in {'Needs attention', 'Critical concern'}:
+            record(-2, 'Wellbeing indicators highlight ongoing risks')
+
+    if risk_score is not None:
+        if risk_score >= 8:
+            record(-3, 'High current risk score offsets positive programme outcomes')
+        elif risk_score <= 2:
+            record(1, 'Low current risk score suggests positive programme results')
+
+    factors.sort(key=lambda entry: entry['weight'], reverse=True)
+
+    if score >= 5:
+        label = 'Positive impact'
+        direction = 'positive'
+    elif score <= -3:
+        label = 'Negative impact'
+        direction = 'negative'
+    else:
+        label = 'Mixed impact'
+        direction = 'mixed'
+
+    summary_lookup = {
+        'positive': 'Makani engagement appears to be driving positive change over the years.',
+        'negative': 'Challenges persist despite Makani engagement, signalling a negative impact trend.',
+        'mixed': 'Makani impact is mixed with both gains and setbacks observed over the years.',
+    }
+
+    return {
+        'score': score,
+        'label': label,
+        'direction': direction,
+        'summary': summary_lookup.get(direction),
+        'factors': factors,
+        'years_engaged': years_active,
+        'total_registrations': registration_history.get('total_registrations') if registration_history else None,
+        'engagement_span_years': registration_history.get('engagement_span_years') if registration_history else None,
+    }
+
+
 def _build_child_context(
     registration,
     services,
@@ -1061,6 +1226,13 @@ def _build_child_context(
         education_progress=education_progress,
         registration_history=registration_history_summary,
     )
+    programme_impact = _evaluate_programme_impact(
+        attendance_summary,
+        education_progress=education_progress,
+        registration_history=registration_history_summary,
+        life_quality=life_quality,
+        risk_score=risk_score,
+    )
 
     return {
         'registration_id': registration.id,
@@ -1082,6 +1254,7 @@ def _build_child_context(
         'life_quality': life_quality,
         'education_progress': education_progress,
         'registration_history': registration_history_summary,
+        'programme_impact': programme_impact,
     }
 
 

@@ -146,6 +146,10 @@ def test_health_agent_view_without_api_key():
         signal['message'].startswith('Attendance below')
         for signal in child_payload['life_quality']['signals']
     )
+    programme_impact = child_payload['programme_impact']
+    assert programme_impact
+    assert programme_impact['label'] in {'Mixed impact', 'Negative impact'}
+    assert programme_impact['total_registrations'] == 2
     history = child_payload['registration_history']
     assert history
     assert history['total_registrations'] == 2
@@ -275,6 +279,8 @@ def test_health_agent_view_calls_agent(mock_analyze):
     assert called_context[0]['registration_details']
     assert called_context[0]['registration_history']
     assert called_context[0]['registration_history']['total_registrations'] >= 2
+    assert called_context[0]['programme_impact']
+    assert called_context[0]['programme_impact']['direction'] in {'negative', 'mixed'}
 
     assert payload['analysis'] == 'analysis output'
     assert payload['model'] == 'gpt-test-model'
@@ -313,6 +319,10 @@ def test_health_agent_view_calls_agent(mock_analyze):
         signal['message'].startswith('Learning outcomes declined on average')
         for signal in life_quality['signals']
     )
+    programme_impact = payload['children'][0]['programme_impact']
+    assert programme_impact['direction'] in {'negative', 'mixed'}
+    assert programme_impact['total_registrations'] >= 2
+    assert any('decline' in (factor['message'] or '').lower() for factor in programme_impact['factors'])
 
 
 def test_agent_infers_nutrition_focus():
@@ -399,3 +409,7 @@ def test_education_progress_positive_trend():
         signal['message'].startswith('Learning outcomes improved on average')
         for signal in life_quality['signals']
     )
+    programme_impact = child_payload['programme_impact']
+    assert programme_impact
+    assert programme_impact['direction'] in {'positive', 'mixed'}
+    assert any('improved' in (factor['message'] or '').lower() for factor in programme_impact['factors'])
