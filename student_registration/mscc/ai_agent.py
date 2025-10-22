@@ -159,6 +159,13 @@ class HealthSupportAgent:
 
         try:
             response = requests.post(url, headers=headers, json=payload, timeout=self.timeout)
+        except requests.Timeout as exc:  # pragma: no cover - explicit timeout guard
+            logger.exception(
+                "OpenAI API request timed out after %s seconds", self.timeout
+            )
+            raise AgentAPIError(
+                "OpenAI API request timed out. Please try again in a moment."
+            ) from exc
         except requests.RequestException as exc:  # pragma: no cover - network failure guard
             logger.exception("Failed to contact OpenAI API")
             raise AgentAPIError("Unable to contact OpenAI API") from exc
