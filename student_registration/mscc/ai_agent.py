@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 from typing import List, Sequence
 
 import requests
@@ -22,6 +23,97 @@ class AgentAPIError(RuntimeError):
 
 class HealthSupportAgent:
     """Simple wrapper around the OpenAI chat completion endpoint."""
+
+    STOP_WORDS = {
+        'the',
+        'and',
+        'for',
+        'with',
+        'that',
+        'this',
+        'from',
+        'into',
+        'about',
+        'need',
+        'please',
+        'could',
+        'would',
+        'should',
+        'like',
+        'make',
+        'have',
+        'has',
+        'had',
+        'are',
+        'was',
+        'were',
+        'can',
+        'help',
+        'assist',
+        'focus',
+        'around',
+        'into',
+        'insight',
+        'insights',
+        'information',
+        'status',
+        'provide',
+        'providing',
+        'look',
+        'looking',
+        'tell',
+        'show',
+        'question',
+        'questions',
+        'kids',
+        'child',
+        'children',
+        'programme',
+        'program',
+        'mscc',
+        'over',
+        'year',
+        'years',
+        'round',
+        'rounds',
+    }
+
+    KEYWORD_TOPIC_MAP = {
+        'nutrition': {'nutrition'},
+        'malnutrition': {'nutrition'},
+        'feeding': {'nutrition'},
+        'diet': {'nutrition'},
+        'food': {'nutrition'},
+        'health': {'health'},
+        'medical': {'health'},
+        'clinic': {'health'},
+        'attendance': {'attendance'},
+        'absent': {'attendance'},
+        'presence': {'attendance'},
+        'pss': {'pss'},
+        'psycho': {'pss'},
+        'psychosocial': {'pss'},
+        'support': {'support'},
+        'caregiver': {'support'},
+        'case': {'support'},
+        'education': {'education'},
+        'school': {'education'},
+        'learning': {'education'},
+        'grade': {'education'},
+        'improvement': {'education', 'impact'},
+        'decline': {'education', 'impact'},
+        'impact': {'impact'},
+        'progress': {'education', 'impact'},
+        'risk': {'impact'},
+        'risks': {'impact'},
+        'wellbeing': {'wellbeing'},
+        'quality': {'wellbeing'},
+        'sentiment': {'wellbeing'},
+        'life': {'wellbeing'},
+        'history': {'registration'},
+        'registration': {'registration'},
+        'profile': {'registration'},
+    }
 
     def __init__(
         self,
@@ -43,16 +135,21 @@ class HealthSupportAgent:
         children_context: Sequence[dict],
         question: str | None = None,
         focus_topics: set[str] | None = None,
+        keywords: Sequence[str] | None = None,
     ) -> str:
         """Generate an analysis for the supplied children context."""
 
         if focus_topics is None:
             focus_topics = self.infer_focus_topics(question)
 
+        if keywords is None:
+            keywords = self.extract_keywords(question)
+
         messages = self._build_prompt(
             children_context,
             question=question,
             focus_topics=focus_topics,
+            keywords=keywords,
         )
         return self._request_chat_completion(messages)
 
@@ -61,6 +158,7 @@ class HealthSupportAgent:
         children_context: Sequence[dict],
         question: str | None = None,
         focus_topics: set[str] | None = None,
+        keywords: Sequence[str] | None = None,
     ) -> List[dict]:
         summary = json.dumps(children_context, indent=2, default=str)
         system_message = (
@@ -83,9 +181,30 @@ class HealthSupportAgent:
 
         focus_topics = set(focus_topics or [])
         question_text = (question or "").strip()
+        keywords = [keyword for keyword in (keywords or []) if keyword]
         if question_text:
             user_instructions = (
                 f"{user_instructions}\n\nFocus specifically on: {question_text}"
+            )
+        else:
+            user_instructions = (
+                f"{user_instructions}\n\nIf no focus question is provided, explain "
+                "that the assessment defaults to the most critical risk "
+                "factors detected in the data."
+            )
+
+        if keywords:
+            detected = ", ".join(keywords)
+            user_instructions = (
+                f"{user_instructions}\n\nDetected question keywords: {detected}. "
+                "Explicitly address these themes in your findings and "
+                "rationale."
+            )
+        elif question_text:
+            user_instructions = (
+                f"{user_instructions}\n\nThe staff question lacks clear programme "
+                "keywords. Provide a concise general triage and note that "
+                "the query was ambiguous."
             )
 
         if focus_topics:
@@ -116,36 +235,42 @@ class HealthSupportAgent:
         ]
         return messages
 
-    @staticmethod
-    def infer_focus_topics(question: str | None) -> set[str]:
+    @classmethod
+    def infer_focus_topics(cls, question: str | None) -> set[str]:
         """Derive focus topics from the staff question for prompt tailoring."""
 
         if not isinstance(question, str):
             return set()
 
         text = question.lower()
-        mapping = {
-            "nutrition": {"nutrition"},
-            "malnutrition": {"nutrition"},
-            "feeding": {"nutrition"},
-            "diet": {"nutrition"},
-            "health": {"health"},
-            "medical": {"health"},
-            "attendance": {"attendance"},
-            "absent": {"attendance"},
-            "psycho": {"pss"},
-            "pss": {"pss"},
-            "psychosocial": {"pss"},
-            "support": {"support"},
-            "caregiver": {"support"},
-        }
-
+        keywords = cls.extract_keywords(question)
         focus = set()
-        for keyword, topics in mapping.items():
-            if keyword in text:
+        for keyword, topics in cls.KEYWORD_TOPIC_MAP.items():
+            if keyword in text or keyword in keywords:
                 focus.update(topics)
 
         return focus
+
+    @staticmethod
+    def extract_keywords(question: str | None, limit: int = 5) -> list[str]:
+        """Return the most relevant keywords derived from a question."""
+
+        if not isinstance(question, str):
+            return []
+
+        tokens = re.findall(r"[a-zA-Z']+", question.lower())
+        keywords: list[str] = []
+        for token in tokens:
+            if len(token) < 3:
+                continue
+            if token in HealthSupportAgent.STOP_WORDS:
+                continue
+            if token not in keywords:
+                keywords.append(token)
+            if len(keywords) >= limit:
+                break
+
+        return keywords
 
     def _request_chat_completion(self, messages: Sequence[dict]) -> str:
         url = f"{self.base_url.rstrip('/')}/chat/completions"

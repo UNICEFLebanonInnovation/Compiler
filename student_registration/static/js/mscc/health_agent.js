@@ -183,6 +183,77 @@
     );
   }
 
+  function renderQuestionKeywords(keywords) {
+    if (!Array.isArray(keywords) || !keywords.length) {
+      return '';
+    }
+
+    var badges = keywords
+      .map(function (keyword) {
+        return '<span class="badge badge-light text-info mr-1 mb-1">#' + escapeHtml(keyword) + '</span>';
+      })
+      .join('');
+
+    return (
+      '<div class="priority-question-keywords small text-muted">' +
+      '<span class="mr-1">Keywords:</span>' +
+      badges +
+      '</div>'
+    );
+  }
+
+  function formatTopicTitle(topic) {
+    if (!topic) {
+      return '';
+    }
+    return topic.charAt(0).toUpperCase() + topic.slice(1);
+  }
+
+  function renderFocusHighlights(highlights) {
+    if (!highlights) {
+      return '';
+    }
+
+    var topics = Object.keys(highlights || {});
+    if (!topics.length) {
+      return '';
+    }
+
+    topics.sort();
+
+    var sections = topics
+      .map(function (topic) {
+        var entries = highlights[topic];
+        if (!Array.isArray(entries) || !entries.length) {
+          return '';
+        }
+
+        var items = entries
+          .slice(0, 6)
+          .map(function (entry) {
+            return '<li>' + escapeHtml(entry) + '</li>';
+          })
+          .join('');
+
+        if (!items) {
+          return '';
+        }
+
+        return (
+          '<div class="mb-2">' +
+          '<div class="small text-uppercase text-muted">' + escapeHtml(formatTopicTitle(topic)) + '</div>' +
+          '<ul class="small pl-3 mb-0">' +
+          items +
+          '</ul>' +
+          '</div>'
+        );
+      })
+      .filter(Boolean)
+      .join('');
+
+    return sections;
+  }
+
   function renderAttendanceSummary(attendance) {
     if (!attendance) {
       return '<p class="text-muted small mb-0">No attendance data recorded.</p>';
@@ -676,6 +747,7 @@
           ageInfo +
           programme +
           renderFocusTopics(child.focus_topics) +
+          renderQuestionKeywords(child.question_keywords) +
           '</div>' +
           '<div class="text-right mb-2 ml-auto">' +
           riskBadge +
@@ -708,6 +780,18 @@
           '</div>' +
           '</div>' +
           '</div>' +
+          (function () {
+            var highlights = renderFocusHighlights(child.focus_highlights);
+            if (!highlights) {
+              return '';
+            }
+            return (
+              '<div class="priority-section mt-3">' +
+              '<div class="priority-section-title small text-uppercase text-muted">Focus highlights</div>' +
+              '<div class="priority-section-body small">' + highlights + '</div>' +
+              '</div>'
+            );
+          })() +
           '<div class="priority-section mt-3">' +
           '<div class="priority-section-title small text-uppercase text-muted">Insights &amp; history</div>' +
           '<div class="priority-section-body small">' + renderInsights(child) + '</div>' +
@@ -735,6 +819,9 @@
     }
     if (payload.question) {
       parts.push('focus: ' + escapeHtml(payload.question));
+    }
+    if (payload.question_keywords && payload.question_keywords.length) {
+      parts.push('keywords: ' + escapeHtml(payload.question_keywords.join(', ')));
     }
     if (payload.generated_at) {
       var generatedDate = new Date(payload.generated_at);

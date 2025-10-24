@@ -273,6 +273,7 @@ def test_health_agent_view_calls_agent(mock_analyze):
     called_context = mock_analyze.call_args[0][0]
     assert mock_analyze.call_args.kwargs['question'] == 'Focus on malnutrition risks'
     assert mock_analyze.call_args.kwargs['focus_topics'] == {'nutrition'}
+    assert mock_analyze.call_args.kwargs['keywords'] == ['malnutrition', 'risks']
     assert len(called_context) == 1
     assert called_context[0]['registration_id'] == high_risk_registration.id
     assert called_context[0]['life_quality']['label'] == 'Critical concern'
@@ -286,9 +287,12 @@ def test_health_agent_view_calls_agent(mock_analyze):
     assert payload['model'] == 'gpt-test-model'
     assert payload['question'] == 'Focus on malnutrition risks'
     assert payload['focus_topics'] == ['nutrition']
+    assert payload['question_keywords'] == ['malnutrition', 'risks']
     assert payload['count'] == 1
     assert payload['children'][0]['registration_id'] == high_risk_registration.id
     assert payload['children'][0]['focus_topics'] == ['nutrition']
+    assert payload['children'][0]['question_keywords'] == ['malnutrition', 'risks']
+    assert 'nutrition' in payload['children'][0]['focus_highlights']
     assert payload['children'][0]['risk_score'] > payload['children'][0]['services']['pss']['required_pending']
     assert payload['children'][0]['pss_details']
     assert payload['children'][0]['health_details']
@@ -330,6 +334,11 @@ def test_agent_infers_nutrition_focus():
     assert focus == {'nutrition'}
 
 
+def test_agent_extracts_keywords():
+    keywords = HealthSupportAgent.extract_keywords('How are nutrition and attendance improving this year?')
+    assert keywords == ['nutrition', 'attendance', 'improving']
+
+
 def test_agent_prompt_limits_scope_for_nutrition(settings):
     settings.OPENAI_API_KEY = 'test-key'
     agent = HealthSupportAgent(api_key='test-key')
@@ -344,6 +353,7 @@ def test_agent_prompt_limits_scope_for_nutrition(settings):
     assert 'Focus specifically on: Need insights on nutrition status' in user_content
     assert 'Limit your assessment strictly to the following domains: nutrition' in user_content
     assert 'Avoid reporting on attendance, PSS' in user_content
+    assert 'Detected question keywords: nutrition' in user_content
 
 
 def test_education_progress_positive_trend():

@@ -578,6 +578,249 @@ def _summarize_registration_history(registration, history_records):
     }
 
 
+def _format_percentage(value):
+    if value in (None, ''):
+        return None
+
+    try:
+        numeric = float(value) * 100
+    except (TypeError, ValueError):
+        return None
+
+    rounded = round(numeric, 1)
+    if rounded.is_integer():
+        return f"{int(rounded)}%"
+    return f"{rounded}%"
+
+
+def _format_service_highlight(summary, label):
+    if not summary:
+        return None
+
+    total = summary.get('total')
+    completed = summary.get('completed')
+    pending = summary.get('required_pending')
+    segments = []
+
+    if total is not None and completed is not None:
+        segments.append(f"{completed}/{total} completed")
+    if pending:
+        segments.append(f"{pending} required pending")
+
+    if not segments:
+        return None
+
+    return f"{label}: {'; '.join(segments)}"
+
+
+def _format_detail_entries(details, limit=3):
+    messages = []
+    if not details:
+        return messages
+
+    for entry in details[:limit]:
+        label = entry.get('label') or entry.get('field')
+        value = entry.get('value')
+        if not label or value in (None, '', []):
+            continue
+        messages.append(f"{label}: {value}")
+
+    return messages
+
+
+def _derive_focus_highlights(child_context, focus_topics, question_keywords):
+    topics = set(focus_topics or [])
+    keywords = [keyword for keyword in (question_keywords or []) if keyword]
+
+    if keywords:
+        keyword_focus = HealthSupportAgent.infer_focus_topics(' '.join(keywords))
+        topics.update(keyword_focus)
+
+    if not topics:
+        return {}
+
+    highlights = {}
+
+    def add(topic, message):
+        if not topic or not message:
+            return
+        highlights.setdefault(topic, []).append(message)
+
+    attendance = child_context.get('attendance') or {}
+    if 'attendance' in topics and attendance:
+        rate = _format_percentage(attendance.get('attendance_rate'))
+        attended = attendance.get('attended_sessions')
+        total = attendance.get('total_sessions')
+        missed = attendance.get('missed_sessions')
+        parts = []
+        if rate:
+            parts.append(f"Attendance rate {rate}")
+        if attended is not None and total is not None:
+            parts.append(f"{attended}/{total} sessions attended")
+        if missed:
+            parts.append(f"{missed} missed")
+        last_absence = attendance.get('most_recent_absence')
+        if last_absence:
+            parts.append(f"Last absence {last_absence}")
+        if parts:
+            add('attendance', '; '.join(parts))
+
+    services = child_context.get('services') or {}
+    health_services = services.get('health')
+    health_summary = _format_service_highlight(health_services, 'Health & nutrition services')
+    if health_summary:
+        if 'nutrition' in topics:
+            add('nutrition', health_summary)
+        if 'health' in topics:
+            add('health', health_summary)
+
+    for detail in _format_detail_entries(child_context.get('health_details')):
+        if 'nutrition' in topics:
+            add('nutrition', f"Health response – {detail}")
+        if 'health' in topics:
+            add('health', f"Health response – {detail}")
+
+    for detail in _format_detail_entries(child_context.get('health_referral_details')):
+        if 'nutrition' in topics:
+            add('nutrition', f"Health referral – {detail}")
+        if 'health' in topics:
+            add('health', f"Health referral – {detail}")
+
+    pss_services = services.get('pss')
+    pss_summary = _format_service_highlight(pss_services, 'PSS services')
+    if pss_summary and 'pss' in topics:
+        add('pss', pss_summary)
+
+    for detail in _format_detail_entries(child_context.get('pss_details')):
+        if 'pss' in topics:
+            add('pss', f"PSS response – {detail}")
+
+    support_services = services.get('support')
+    support_summary = _format_service_highlight(support_services, 'Support services')
+    if support_summary and 'support' in topics:
+        add('support', support_summary)
+
+    overall_pending = services.get('overall_pending_required')
+    if overall_pending and 'support' in topics:
+        add('support', f"Overall pending required services: {overall_pending}")
+
+    wellbeing_flags = child_context.get('wellbeing_flags') or []
+    if wellbeing_flags:
+        if 'pss' in topics:
+            for flag in wellbeing_flags[:3]:
+                add('pss', f"Wellbeing flag – {flag}")
+        if 'wellbeing' in topics:
+            for flag in wellbeing_flags[:3]:
+                add('wellbeing', f"Wellbeing flag – {flag}")
+
+    life_quality = child_context.get('life_quality') or {}
+    if life_quality:
+        label = life_quality.get('label')
+        score = life_quality.get('score')
+        summary_parts = []
+        if label:
+            summary_parts.append(label)
+        if score is not None:
+            summary_parts.append(f"score {score}")
+        if summary_parts:
+            summary = "Life quality: " + ' '.join(summary_parts)
+            if 'wellbeing' in topics:
+                add('wellbeing', summary)
+            if 'impact' in topics:
+                add('impact', summary)
+        signals = life_quality.get('signals') or []
+        if signals and ('nutrition' in topics or 'health' in topics):
+            for signal in signals[:2]:
+                message = signal.get('message')
+                if not message:
+                    continue
+                lower = message.lower()
+                if any(keyword in lower for keyword in ['nutrition', 'health', 'malnutrition', 'vaccine']):
+                    if 'nutrition' in topics:
+                        add('nutrition', f"Life quality signal – {message}")
+                    if 'health' in topics:
+                        add('health', f"Life quality signal – {message}")
+
+    education = child_context.get('education_progress') or {}
+    if education and 'education' in topics:
+        programme = education.get('programme_type')
+        trend = education.get('trend')
+        average_change = education.get('average_change')
+        parts = []
+        if programme:
+            parts.append(programme)
+        if trend:
+            parts.append(f"trend {trend}")
+        if isinstance(average_change, (int, float)):
+            parts.append(f"Δ {average_change}")
+        if parts:
+            add('education', 'Education progress – ' + ', '.join(parts))
+        subjects = education.get('subjects') or []
+        for subject in subjects[:2]:
+            label = subject.get('label') or subject.get('field')
+            change = subject.get('change')
+            if label and isinstance(change, (int, float)):
+                add('education', f"{label}: change {change}")
+        barriers = education.get('barriers_detail') or education.get('barriers')
+        if barriers and isinstance(barriers, str) and barriers.lower() not in {'', 'no barriers'}:
+            add('education', f"Barrier reported – {barriers}")
+
+    programme_impact = child_context.get('programme_impact') or {}
+    if programme_impact and 'impact' in topics:
+        label = programme_impact.get('label')
+        score = programme_impact.get('score')
+        summary = programme_impact.get('summary')
+        parts = []
+        if label:
+            parts.append(label)
+        if score is not None:
+            parts.append(f"score {score}")
+        if summary:
+            parts.append(summary)
+        if parts:
+            add('impact', 'Programme impact – ' + '. '.join(parts))
+        for factor in (programme_impact.get('factors') or [])[:3]:
+            message = factor.get('message')
+            if message:
+                add('impact', f"Driver – {message}")
+
+    alerts = child_context.get('alerts') or []
+    if alerts and 'support' in topics:
+        for alert in alerts[:3]:
+            add('support', f"Alert – {alert}")
+
+    registration_history = child_context.get('registration_history') or {}
+    if registration_history and 'registration' in topics:
+        total = registration_history.get('total_registrations')
+        distinct = registration_history.get('distinct_rounds')
+        span = registration_history.get('engagement_span_years')
+        parts = []
+        if total:
+            parts.append(f"{total} registrations")
+        if distinct:
+            parts.append(f"{distinct} rounds")
+        if span:
+            parts.append(f"span {span} years")
+        if parts:
+            add('registration', 'Registration history – ' + ', '.join(parts))
+        longest = registration_history.get('longest_consecutive_years')
+        if longest:
+            add('registration', f"Longest consecutive years: {longest}")
+
+    registration_details = child_context.get('registration_details') or []
+    if registration_details and 'registration' in topics:
+        for detail in _format_detail_entries(registration_details):
+            add('registration', f"Profile – {detail}")
+
+    if not highlights:
+        return {}
+
+    ordered = {}
+    for topic in sorted(highlights):
+        ordered[topic] = highlights[topic]
+    return ordered
+
+
 def _extract_wellbeing_flags(pss, health, referral, registration=None, education=None):
     flags = []
 
@@ -1291,6 +1534,12 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
         limit_value = self._normalize_limit(limit)
         question_text = self._normalize_question(question)
         focus_topics = HealthSupportAgent.infer_focus_topics(question_text)
+        question_keywords = HealthSupportAgent.extract_keywords(question_text)
+        combined_focus_topics = set(focus_topics)
+        if question_keywords:
+            combined_focus_topics.update(
+                HealthSupportAgent.infer_focus_topics(' '.join(question_keywords))
+            )
 
         queryset = Registration.objects.filter(
             deleted=False,
@@ -1412,9 +1661,18 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
             for registration in registrations
         ]
 
-        if focus_topics:
-            for child in children_context:
+        for child in children_context:
+            if focus_topics:
                 child['focus_topics'] = sorted(focus_topics)
+            if question_keywords:
+                child['question_keywords'] = question_keywords
+            highlights = _derive_focus_highlights(
+                child,
+                combined_focus_topics,
+                question_keywords,
+            )
+            if highlights:
+                child['focus_highlights'] = highlights
 
         children_context.sort(key=lambda child: child['risk_score'], reverse=True)
         children_context = children_context[:limit_value]
@@ -1430,6 +1688,7 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
                     children_context,
                     question=question_text,
                     focus_topics=focus_topics,
+                    keywords=question_keywords,
                 )
                 model_name = agent.model
             except AgentConfigurationError as exc:
@@ -1453,6 +1712,8 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
             response_payload['filters'] = {'registration_ids': normalized_ids}
         if question_text:
             response_payload['question'] = question_text
+        if question_keywords:
+            response_payload['question_keywords'] = question_keywords
         if focus_topics:
             response_payload['focus_topics'] = sorted(focus_topics)
         if error:
