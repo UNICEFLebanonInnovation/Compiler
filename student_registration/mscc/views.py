@@ -73,6 +73,7 @@ from .models import (
     HealthNutritionService,
     HealthNutritionReferral,
     EducationProgrammeAssessment,
+    FollowUpService,
 )
 from student_registration.backends.models import ExportHistory
 
@@ -252,6 +253,31 @@ REGISTRATION_WELLBEING_FIELDS = [
     'center',
     'round',
     'partner_unique_number',
+]
+
+
+FAMILY_SOCIOECONOMIC_FIELDS = [
+    'have_labour',
+    'labour_type',
+    'labour_type_specify',
+    'labour_hours',
+    'labour_weekly_income',
+    'labour_condition',
+    'cash_support_programmes',
+    'mscc_packages',
+    'source_of_identification',
+    'source_of_identification_specify',
+]
+
+
+PSS_FAMILY_FIELDS = [
+    'child_living_arrangement',
+    'caregivers_distress',
+    'caregivers_additional_parenting',
+    'child_distress',
+    'child_additional_parenting',
+    'child_vulnerability',
+    'child_out_school_reasons',
 ]
 
 
@@ -583,6 +609,249 @@ def _summarize_registration_history(registration, history_records):
     }
 
 
+def _summarize_family_followups(followups):
+    """Aggregate family follow-up touchpoints for a registration."""
+
+    if not followups:
+        return {
+            'total_followups': 0,
+            'recent_follow_up': None,
+            'results_breakdown': [],
+            'caregiver_participation': {
+                'records': 0,
+                'attended': 0,
+                'attendance_rate': None,
+                'caregiver_roles': [],
+                'meeting_sessions_recorded': 0,
+            },
+            'pfss_sessions_recorded': 0,
+        }
+
+    def _display(instance, field):
+        display_method = getattr(instance, f'get_{field}_display', None)
+        if callable(display_method):
+            try:
+                return display_method()
+            except Exception:  # pragma: no cover - defensive
+                return getattr(instance, field, None)
+        return getattr(instance, field, None)
+
+    ordered = sorted(
+        followups,
+        key=lambda record: (
+            getattr(record, 'created', None) or dt.datetime.min,
+            record.id,
+        ),
+    )
+
+    results_counter = Counter()
+    caregiver_roles = set()
+    attended_records = 0
+    attendance_records = 0
+    meeting_sessions = 0
+    pfss_sessions = 0
+
+    for record in ordered:
+        result_display = _display(record, 'follow_up_result')
+        if result_display and result_display != '----------':
+            results_counter[result_display] += 1
+
+        caregiver_display = _display(record, 'caregiver_attended')
+        if caregiver_display and caregiver_display != '----------':
+            caregiver_roles.add(caregiver_display)
+
+        parent_attended = getattr(record, 'parent_attended_meeting', None)
+        if parent_attended in {'Yes', 'No'}:
+            attendance_records += 1
+            if parent_attended == 'Yes':
+                attended_records += 1
+
+        if getattr(record, 'meeting_number', None):
+            meeting_sessions += record.meeting_number or 0
+
+        if getattr(record, 'pfss_sessions', None) == 'Yes':
+            pfss_sessions += record.pfss_sessions_number or 0
+
+    recent = ordered[-1]
+    recent_payload = {
+        'type': _display(recent, 'follow_up_type'),
+        'result': _display(recent, 'follow_up_result'),
+        'meeting_type': _display(recent, 'meeting_type'),
+        'meeting_modality': _display(recent, 'meeting_modality'),
+        'meeting_number': recent.meeting_number,
+        'caregiver': _display(recent, 'caregiver_attended'),
+        'pfss_sessions': _display(recent, 'pfss_sessions'),
+        'pfss_sessions_number': recent.pfss_sessions_number,
+        'notes': recent.dropout_reason,
+        'created': recent.created.isoformat() if getattr(recent, 'created', None) else None,
+        'dropout_date': recent.dropout_date.isoformat() if getattr(recent, 'dropout_date', None) else None,
+    }
+
+    attendance_rate = None
+    if attendance_records:
+        attendance_rate = round(attended_records / attendance_records, 2)
+
+    results_breakdown = [
+        {'label': label, 'count': count}
+        for label, count in results_counter.most_common()
+    ]
+
+    return {
+        'total_followups': len(ordered),
+        'recent_follow_up': recent_payload,
+        'results_breakdown': results_breakdown,
+        'caregiver_participation': {
+            'records': attendance_records,
+            'attended': attended_records,
+            'attendance_rate': attendance_rate,
+            'caregiver_roles': sorted(caregiver_roles),
+            'meeting_sessions_recorded': meeting_sessions,
+        },
+        'pfss_sessions_recorded': pfss_sessions,
+    }
+
+
+def _summarize_family_education_support(followups, education_progress=None):
+    """Summarise caregiver engagement that influences learning outcomes."""
+
+    followups = followups or []
+    education_progress = education_progress or {}
+
+    parent_records = [
+        record
+        for record in followups
+        if getattr(record, 'parent_attended_meeting', None) in {'Yes', 'No'}
+    ]
+
+    summary = {}
+
+    if parent_records:
+        attended = sum(1 for record in parent_records if record.parent_attended_meeting == 'Yes')
+        summary['caregiver_meeting_records'] = len(parent_records)
+        summary['caregiver_meetings_attended'] = attended
+        summary['caregiver_meeting_attendance_rate'] = round(attended / len(parent_records), 2)
+
+    caregivers = {
+        getattr(record, 'get_caregiver_attended_display', lambda: record.caregiver_attended)()
+        for record in followups
+        if getattr(record, 'caregiver_attended', None)
+    }
+    caregivers = {role for role in caregivers if role not in (None, '', '----------')}
+    if caregivers:
+        summary['caregiver_roles'] = sorted(caregivers)
+
+    sessions_recorded = sum(
+        record.meeting_number or 0
+        for record in followups
+        if getattr(record, 'meeting_number', None)
+    )
+    if sessions_recorded:
+        summary['meeting_sessions_recorded'] = sessions_recorded
+
+    pfss_sessions = sum(
+        record.pfss_sessions_number or 0
+        for record in followups
+        if getattr(record, 'pfss_sessions', None) == 'Yes'
+    )
+    if pfss_sessions:
+        summary['pfss_sessions_recorded'] = pfss_sessions
+        summary['pfss_support_enrolled'] = True
+    elif any(getattr(record, 'pfss_sessions', None) == 'No' for record in followups):
+        summary['pfss_support_enrolled'] = False
+
+    for key in ('programme_type', 'trend', 'average_change'):
+        value = education_progress.get(key)
+        if value not in (None, ''):
+            summary[f'education_{key}'] = value
+
+    participation = education_progress.get('participation')
+    if participation not in (None, ''):
+        summary['education_participation'] = participation
+
+    barrier = education_progress.get('barriers_detail') or education_progress.get('barriers')
+    if isinstance(barrier, str) and barrier.strip() and barrier.lower() != 'no barriers':
+        summary['education_barrier'] = barrier
+
+    return summary
+
+
+def _build_family_context(registration, pss_assessment, followups, education_progress=None):
+    """Construct the family lens used by the AI assistant."""
+
+    socioeconomic = _summarize_model_fields(
+        registration,
+        include_fields=FAMILY_SOCIOECONOMIC_FIELDS,
+        exclude_fields={'owner', 'modified_by', 'deleted', 'deleted_by', 'child'},
+    )
+
+    pss_family = _summarize_model_fields(
+        pss_assessment,
+        include_fields=PSS_FAMILY_FIELDS,
+    ) if pss_assessment else []
+
+    followup_summary = _summarize_family_followups(followups)
+    education_support = _summarize_family_education_support(followups, education_progress)
+
+    flags = []
+    total_followups = followup_summary.get('total_followups', 0)
+    caregiver_participation = followup_summary.get('caregiver_participation', {})
+    attendance_rate = caregiver_participation.get('attendance_rate')
+
+    if total_followups == 0:
+        flags.append('No family follow-up records are available for this registration.')
+    else:
+        if attendance_rate is not None and attendance_rate < 0.5:
+            flags.append('Caregiver meeting attendance is below 50%; follow-up reinforcement recommended.')
+        recent = followup_summary.get('recent_follow_up') or {}
+        if recent.get('result') == 'Dropout/No Interest':
+            flags.append('Latest follow-up indicated dropout or low engagement risk.')
+        elif recent.get('result') == 'Follow-up with parents':
+            flags.append('Latest follow-up connected directly with parents/caregivers.')
+
+    for entry in socioeconomic:
+        field = entry.get('field')
+        value = entry.get('value')
+        if not field or value in (None, ''):
+            continue
+        if field == 'have_labour' and isinstance(value, str) and value.lower().startswith('yes'):
+            flags.append('Family relies on child labour income to cope with economic stress.')
+        if field == 'labour_weekly_income' and isinstance(value, str) and '5 USD' in value:
+            flags.append('Child labour income reported in the lowest income bracket.')
+        if field == 'cash_support_programmes' and value == 'None':
+            flags.append('No cash support programmes are recorded for this household.')
+
+    for entry in pss_family:
+        field = entry.get('field')
+        value = entry.get('value')
+        if not field or value in (None, ''):
+            continue
+        if field == 'caregivers_distress' and value == 'Yes':
+            flags.append('Caregiver reports distress or anxiety.')
+        if field == 'child_distress' and value == 'Yes':
+            flags.append('Household children are showing distress symptoms.')
+        if field == 'caregivers_additional_parenting' and value == 'Yes':
+            flags.append('Caregiver requested additional parenting or psychosocial support.')
+        if field == 'child_out_school_reasons' and value and value not in {'N/A', 'No'}:
+            flags.append(f'Out-of-school driver noted: {value}.')
+
+    trend = education_support.get('education_trend') if education_support else None
+    if trend == 'declined':
+        flags.append('Learning outcomes are declining; additional family support is advised.')
+    elif trend == 'improved':
+        flags.append('Learning outcomes are improving alongside family engagement.')
+
+    if education_support.get('education_barrier'):
+        flags.append(f"Education barrier reported by the family: {education_support['education_barrier']}")
+
+    return {
+        'follow_up': followup_summary,
+        'socioeconomic': socioeconomic,
+        'pss_family': pss_family,
+        'education_support': education_support if education_support else None,
+        'flags': flags,
+    }
+
+
 def _format_percentage(value):
     if value in (None, ''):
         return None
@@ -816,6 +1085,49 @@ def _derive_focus_highlights(child_context, focus_topics, question_keywords):
     if registration_details and 'registration' in topics:
         for detail in _format_detail_entries(registration_details):
             add('registration', f"Profile – {detail}")
+
+    family_context = child_context.get('family_context') or {}
+    if family_context and 'family' in topics:
+        follow_up = family_context.get('follow_up') or {}
+        total_followups = follow_up.get('total_followups')
+        if total_followups:
+            add('family', f"{total_followups} recorded family follow-ups")
+        else:
+            add('family', 'No family follow-ups recorded')
+
+        recent = follow_up.get('recent_follow_up') or {}
+        if recent.get('result'):
+            add('family', f"Latest follow-up outcome: {recent['result']}")
+        attendance_rate = (follow_up.get('caregiver_participation') or {}).get('attendance_rate')
+        formatted_attendance = _format_percentage(attendance_rate)
+        if formatted_attendance:
+            add('family', f"Caregiver meeting attendance {formatted_attendance}")
+
+        socioeconomic = family_context.get('socioeconomic') or []
+        for detail in _format_detail_entries(socioeconomic, limit=2):
+            add('family', f"Household context – {detail}")
+
+        pss_family = family_context.get('pss_family') or []
+        for detail in _format_detail_entries(pss_family, limit=2):
+            add('family', f"Caregiver feedback – {detail}")
+
+        education_support = family_context.get('education_support') or {}
+        trend = education_support.get('education_trend')
+        if trend:
+            add('family', f"Education trend noted: {trend}")
+        avg_change = education_support.get('education_average_change')
+        if isinstance(avg_change, (int, float)):
+            add('family', f"Average learning change: {avg_change}")
+        meeting_attendance = education_support.get('caregiver_meeting_attendance_rate')
+        formatted_meeting = _format_percentage(meeting_attendance)
+        if formatted_meeting:
+            add('family', f"Caregiver sessions attended {formatted_meeting}")
+        barrier = education_support.get('education_barrier')
+        if barrier:
+            add('family', f"Education barrier reported – {barrier}")
+
+        for flag in (family_context.get('flags') or [])[:3]:
+            add('family', flag)
 
     if not highlights:
         return {}
@@ -1415,6 +1727,7 @@ def _build_child_context(
     pss_assessment,
     health_assessment,
     health_referral,
+    followups,
     education_assessment,
     registration_history=None,
 ):
@@ -1441,6 +1754,12 @@ def _build_child_context(
     registration_history_summary = _summarize_registration_history(
         registration,
         registration_history or [],
+    )
+    family_context = _build_family_context(
+        registration,
+        pss_assessment,
+        followups,
+        education_progress=education_progress,
     )
     wellbeing_flags = _extract_wellbeing_flags(
         pss_assessment,
@@ -1503,6 +1822,7 @@ def _build_child_context(
         'education_progress': education_progress,
         'registration_history': registration_history_summary,
         'programme_impact': programme_impact,
+        'family_context': family_context,
     }
 
 
@@ -1673,6 +1993,14 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
         for health_referral in HealthNutritionReferral.objects.filter(registration_id__in=registration_ids_list).order_by('-id'):
             health_referral_map.setdefault(health_referral.registration_id, health_referral)
 
+        followup_map = {}
+        followup_qs = (
+            FollowUpService.objects.filter(registration_id__in=registration_ids_list)
+            .order_by('created', 'id')
+        )
+        for followup in followup_qs:
+            followup_map.setdefault(followup.registration_id, []).append(followup)
+
         education_assessment_map = {}
         education_qs = (
             EducationProgrammeAssessment.objects.filter(registration_id__in=registration_ids_list)
@@ -1699,6 +2027,7 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
                 pss_map.get(registration.id),
                 health_service_map.get(registration.id),
                 health_referral_map.get(registration.id),
+                followup_map.get(registration.id, []),
                 education_assessment_map.get(registration.id),
                 registration_history=registration_history_map.get(registration.child_id, []),
             )

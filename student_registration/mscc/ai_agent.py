@@ -94,7 +94,16 @@ class HealthSupportAgent:
         'psycho': {'pss'},
         'psychosocial': {'pss'},
         'support': {'support'},
-        'caregiver': {'support'},
+        'caregiver': {'support', 'family'},
+        'family': {'family'},
+        'parent': {'family'},
+        'household': {'family'},
+        'follow': {'family'},
+        'followup': {'family'},
+        'follow-up': {'family'},
+        'socioeconomic': {'family'},
+        'livelihood': {'family'},
+        'poverty': {'family'},
         'case': {'support'},
         'education': {'education'},
         'school': {'education'},
@@ -169,6 +178,8 @@ class HealthSupportAgent:
             "Review the children information and highlight who requires urgent "
             "support or follow-up. Consider age, psychosocial (PSS) services, "
             "health services, attendance history, and other support needs. "
+            "Incorporate family follow-up actions, socio-economic stability, "
+            "and caregiver engagement in education when prioritising cases. "
             "Provide actionable recommendations for each child. Evaluate the "
             "Makani programme impact over the years and clarify whether it "
             "appears positive, negative, or mixed for each case."
@@ -222,6 +233,12 @@ class HealthSupportAgent:
                     "health referrals. Avoid reporting on attendance, PSS, or "
                     "other services unless they materially change the "
                     "nutrition findings."
+                )
+            if 'family' in focus_topics:
+                scope_instruction += (
+                    " Highlight family follow-up efforts, caregiver "
+                    "participation, socio-economic pressures, and how the "
+                    "household context affects wellbeing and learning."
                 )
 
             user_instructions = f"{user_instructions}{scope_instruction}"

@@ -742,6 +742,167 @@
     );
   }
 
+  function renderFamilyFollowUp(followUp) {
+    if (!followUp || typeof followUp !== 'object') {
+      return '';
+    }
+
+    var total = followUp.total_followups || 0;
+    var recent = followUp.recent_follow_up || {};
+    var participation = followUp.caregiver_participation || {};
+    var attendanceRate = participation.attendance_rate;
+    var caregiverRoles = Array.isArray(participation.caregiver_roles) ? participation.caregiver_roles : [];
+    var meetingSessions = participation.meeting_sessions_recorded || 0;
+    var pfssSessions = followUp.pfss_sessions_recorded || 0;
+
+    var hasRecentData = Boolean(
+      recent.result || recent.type || recent.meeting_modality || recent.caregiver || recent.meeting_number || recent.pfss_sessions || recent.notes
+    );
+    var hasAttendance = attendanceRate !== undefined && attendanceRate !== null;
+    var hasCaregivers = caregiverRoles.length > 0;
+    var hasMeetings = Boolean(meetingSessions);
+    var hasPfss = Boolean(pfssSessions);
+
+    if (!total && !hasRecentData && !hasAttendance && !hasCaregivers && !hasMeetings && !hasPfss) {
+      return '';
+    }
+
+    var items = [];
+    if (total) {
+      items.push('<li><strong>Total follow-ups:</strong> ' + escapeHtml(total) + '</li>');
+    }
+    if (hasRecentData) {
+      var parts = [];
+      if (recent.result) {
+        parts.push(escapeHtml(recent.result));
+      }
+      if (recent.type) {
+        parts.push('via ' + escapeHtml(recent.type));
+      }
+      if (recent.meeting_modality) {
+        parts.push(escapeHtml(recent.meeting_modality));
+      }
+      if (recent.caregiver) {
+        parts.push('Caregiver: ' + escapeHtml(recent.caregiver));
+      }
+      items.push('<li><strong>Latest follow-up:</strong> ' + parts.join(' · ') + '</li>');
+    }
+    if (hasAttendance) {
+      items.push('<li><strong>Caregiver attendance:</strong> ' + formatPercent(attendanceRate) + '</li>');
+    }
+    if (hasCaregivers) {
+      items.push('<li><strong>Caregivers engaged:</strong> ' + escapeHtml(caregiverRoles.join(', ')) + '</li>');
+    }
+    if (hasMeetings) {
+      items.push('<li><strong>Parent meetings recorded:</strong> ' + escapeHtml(meetingSessions) + '</li>');
+    }
+    if (hasPfss) {
+      items.push('<li><strong>FPSS sessions:</strong> ' + escapeHtml(pfssSessions) + '</li>');
+    }
+
+    return (
+      '<div class="mb-2">' +
+      '<div class="small text-uppercase text-muted">Family follow-up</div>' +
+      '<ul class="small pl-3 mb-0">' + items.join('') + '</ul>' +
+      '</div>'
+    );
+  }
+
+  function renderFamilyEducationSupport(support) {
+    if (!support || typeof support !== 'object') {
+      return '';
+    }
+
+    var items = [];
+    if (support.caregiver_meeting_records !== undefined) {
+      items.push('<li><strong>Meetings logged:</strong> ' + escapeHtml(support.caregiver_meeting_records) + '</li>');
+    }
+    if (support.caregiver_meetings_attended !== undefined) {
+      items.push('<li><strong>Meetings attended:</strong> ' + escapeHtml(support.caregiver_meetings_attended) + '</li>');
+    }
+    if (support.caregiver_meeting_attendance_rate !== undefined && support.caregiver_meeting_attendance_rate !== null) {
+      items.push('<li><strong>Attendance rate:</strong> ' + formatPercent(support.caregiver_meeting_attendance_rate) + '</li>');
+    }
+    if (Array.isArray(support.caregiver_roles) && support.caregiver_roles.length) {
+      items.push('<li><strong>Caregivers:</strong> ' + escapeHtml(support.caregiver_roles.join(', ')) + '</li>');
+    }
+    if (support.meeting_sessions_recorded) {
+      items.push('<li><strong>Session count:</strong> ' + escapeHtml(support.meeting_sessions_recorded) + '</li>');
+    }
+    if (support.pfss_support_enrolled === true) {
+      items.push('<li><strong>FPSS support:</strong> Enrolled</li>');
+    } else if (support.pfss_support_enrolled === false) {
+      items.push('<li><strong>FPSS support:</strong> Not enrolled</li>');
+    }
+    if (support.education_trend) {
+      items.push('<li><strong>Education trend:</strong> ' + escapeHtml(support.education_trend) + '</li>');
+    }
+    if (support.education_average_change !== undefined && support.education_average_change !== null) {
+      items.push('<li><strong>Average change:</strong> ' + escapeHtml(formatScore(support.education_average_change)) + '</li>');
+    }
+    if (support.education_participation) {
+      items.push('<li><strong>Participation:</strong> ' + escapeHtml(support.education_participation) + '</li>');
+    }
+    if (support.education_barrier) {
+      items.push('<li><strong>Barrier:</strong> ' + escapeHtml(support.education_barrier) + '</li>');
+    }
+
+    if (!items.length) {
+      return '';
+    }
+
+    return (
+      '<div class="mb-2">' +
+      '<div class="small text-uppercase text-muted">Caregiver education engagement</div>' +
+      '<ul class="small pl-3 mb-0">' + items.join('') + '</ul>' +
+      '</div>'
+    );
+  }
+
+  function renderFamilyFlags(flags) {
+    if (!Array.isArray(flags) || !flags.length) {
+      return '';
+    }
+
+    var items = flags
+      .map(function (flag) {
+        return '<li>' + escapeHtml(flag) + '</li>';
+      })
+      .join('');
+
+    return (
+      '<div class="mb-2">' +
+      '<div class="small text-uppercase text-muted">Family alerts</div>' +
+      '<ul class="small pl-3 mb-0">' + items + '</ul>' +
+      '</div>'
+    );
+  }
+
+  function renderFamilyContext(context) {
+    if (!context || typeof context !== 'object') {
+      return '<span class="text-muted small">No family information recorded.</span>';
+    }
+
+    var sections = '';
+    var followUp = renderFamilyFollowUp(context.follow_up);
+    var socioeconomic = renderAssessmentDetails('Household socio-economic', context.socioeconomic);
+    var pssFamily = renderAssessmentDetails('Caregiver wellbeing', context.pss_family);
+    var education = renderFamilyEducationSupport(context.education_support);
+    var flags = renderFamilyFlags(context.flags);
+
+    sections += followUp;
+    sections += socioeconomic;
+    sections += pssFamily;
+    sections += education;
+    sections += flags;
+
+    if (!sections) {
+      return '<span class="text-muted small">No family information recorded.</span>';
+    }
+
+    return sections;
+  }
+
   function renderChildren(children) {
     if (!children || !children.length) {
       return '<p class="text-muted mb-0">No children met the selected criteria.</p>';
@@ -831,6 +992,10 @@
           '<div class="priority-section mt-3">' +
           '<div class="priority-section-title small text-uppercase text-muted">Insights &amp; history</div>' +
           '<div class="priority-section-body small">' + renderInsights(child) + '</div>' +
+          '</div>' +
+          '<div class="priority-section mt-3">' +
+          '<div class="priority-section-title small text-uppercase text-muted">Family context</div>' +
+          '<div class="priority-section-body small">' + renderFamilyContext(child.family_context) + '</div>' +
           '</div>' +
           '<div class="priority-section mt-3">' +
           '<div class="priority-section-title small text-uppercase text-muted">Alerts</div>' +

@@ -28,6 +28,7 @@ from student_registration.mscc.models import (
     HealthNutritionService,
     HealthNutritionReferral,
     EducationProgrammeAssessment,
+    FollowUpService,
     Round,
 )
 from student_registration.mscc.views import HealthSupportAgentView
@@ -61,6 +62,29 @@ def _record_attendance(registration: Registration, child: Child, date: datetime.
         child=child,
         attendance_day=attendance_day,
         attended=attended,
+    )
+
+
+def _record_followup(
+    registration: Registration,
+    *,
+    follow_up_type: str = 'Phone call',
+    follow_up_result: str = 'Follow-up with parents',
+    parent_attended: str = 'Yes',
+    caregiver_attended: str = 'Mother & Father',
+    meeting_number: int = 1,
+    pfss_sessions: str = 'No',
+    pfss_sessions_number: int = 0,
+) -> FollowUpService:
+    return FollowUpService.objects.create(
+        registration=registration,
+        follow_up_type=follow_up_type,
+        follow_up_result=follow_up_result,
+        parent_attended_meeting=parent_attended,
+        caregiver_attended=caregiver_attended,
+        meeting_number=meeting_number,
+        pfss_sessions=pfss_sessions,
+        pfss_sessions_number=pfss_sessions_number,
     )
 
 
@@ -101,6 +125,17 @@ def test_health_agent_view_without_api_key():
         category='Health & Nutrition',
         required=True,
         completed=False,
+    )
+
+    _record_followup(
+        registration,
+        follow_up_type='Phone call',
+        follow_up_result='Follow-up with parents',
+        parent_attended='Yes',
+        caregiver_attended='Mother & Father',
+        meeting_number=2,
+        pfss_sessions='Yes',
+        pfss_sessions_number=2,
     )
 
     _record_attendance(registration, child, datetime.date(2025, 1, 1), 'No')
@@ -150,6 +185,12 @@ def test_health_agent_view_without_api_key():
     assert programme_impact
     assert programme_impact['label'] in {'Mixed impact', 'Negative impact'}
     assert programme_impact['total_registrations'] == 2
+    family_context = child_payload['family_context']
+    assert family_context
+    assert family_context['follow_up']['total_followups'] == 1
+    assert family_context['follow_up']['recent_follow_up']['result'] == 'Follow-up with parents'
+    assert any(entry['field'] == 'have_labour' for entry in family_context['socioeconomic'])
+    assert any('Family relies on child labour income' in flag for flag in family_context['flags'])
     history = child_payload['registration_history']
     assert history
     assert history['total_registrations'] == 2
@@ -250,6 +291,17 @@ def test_health_agent_view_calls_agent(mock_analyze):
         completed=True,
     )
 
+    _record_followup(
+        high_risk_registration,
+        follow_up_type='Home Visits',
+        follow_up_result='Child returned to program',
+        parent_attended='Yes',
+        caregiver_attended='Mother & Father',
+        meeting_number=3,
+        pfss_sessions='Yes',
+        pfss_sessions_number=3,
+    )
+
     _record_attendance(high_risk_registration, high_risk_child, datetime.date(2025, 1, 1), 'No')
     _record_attendance(high_risk_registration, high_risk_child, datetime.date(2025, 1, 2), 'No')
     _record_attendance(high_risk_registration, high_risk_child, datetime.date(2025, 1, 3), 'Yes')
@@ -291,6 +343,8 @@ def test_health_agent_view_calls_agent(mock_analyze):
     assert called_context[0]['registration_history']['total_registrations'] >= 2
     assert called_context[0]['programme_impact']
     assert called_context[0]['programme_impact']['direction'] in {'negative', 'mixed'}
+    assert called_context[0]['family_context']['follow_up']['total_followups'] == 1
+    assert called_context[0]['family_context']['socioeconomic']
 
     assert payload['analysis'] == 'analysis output'
     assert payload['model'] == 'gpt-test-model'
@@ -306,6 +360,8 @@ def test_health_agent_view_calls_agent(mock_analyze):
     assert payload['children'][0]['pss_details']
     assert payload['children'][0]['health_details']
     assert payload['children'][0]['registration_history']
+    assert payload['children'][0]['family_context']['follow_up']['total_followups'] == 1
+    assert payload['children'][0]['family_context']['flags']
     assert any('MUAC screening result' in alert for alert in payload['children'][0]['alerts'])
     assert any('Referred for malnutrition treatment' in alert for alert in payload['children'][0]['alerts'])
     assert any('PSS vulnerability' in flag for flag in payload['children'][0]['wellbeing_flags'])
@@ -341,6 +397,11 @@ def test_health_agent_view_calls_agent(mock_analyze):
 def test_agent_infers_nutrition_focus():
     focus = HealthSupportAgent.infer_focus_topics('Need insights on nutrition and malnutrition risks')
     assert focus == {'nutrition'}
+
+
+def test_agent_infers_family_focus():
+    focus = HealthSupportAgent.infer_focus_topics('Review family follow-up and household poverty barriers')
+    assert focus == {'family'}
 
 
 def test_agent_extracts_keywords():
