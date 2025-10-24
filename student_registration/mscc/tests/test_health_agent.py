@@ -164,7 +164,10 @@ def test_health_agent_view_without_api_key():
     assert child_payload['pss_details'] == []
     assert child_payload['health_details'] == []
     assert child_payload['health_referral_details'] == []
-    assert child_payload['wellbeing_flags'] == []
+    assert any(
+        'Family relies on child labour income' in flag
+        for flag in child_payload['wellbeing_flags']
+    )
     assert child_payload['registration_details']
     assert any(
         entry['field'] == 'have_labour' and entry['value'] == 'Yes - Morning'
@@ -365,6 +368,10 @@ def test_health_agent_view_calls_agent(mock_analyze):
     assert any('MUAC screening result' in alert for alert in payload['children'][0]['alerts'])
     assert any('Referred for malnutrition treatment' in alert for alert in payload['children'][0]['alerts'])
     assert any('PSS vulnerability' in flag for flag in payload['children'][0]['wellbeing_flags'])
+    assert any(
+        'Family relies on child labour income' in flag
+        for flag in payload['children'][0]['wellbeing_flags']
+    )
     assert 'Significant decline in education grading outcomes' in payload['children'][0]['alerts']
     assert 'School year not completed' in payload['children'][0]['alerts']
     assert 'Education post-tests not completed' not in payload['children'][0]['alerts']

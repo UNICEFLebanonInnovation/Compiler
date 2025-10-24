@@ -1138,7 +1138,14 @@ def _derive_focus_highlights(child_context, focus_topics, question_keywords):
     return ordered
 
 
-def _extract_wellbeing_flags(pss, health, referral, registration=None, education=None):
+def _extract_wellbeing_flags(
+    pss,
+    health,
+    referral,
+    registration=None,
+    education=None,
+    family_context=None,
+):
     flags = []
 
     if pss:
@@ -1233,6 +1240,11 @@ def _extract_wellbeing_flags(pss, health, referral, registration=None, education
                 flags.append(f"Learning barrier reported: {education['barriers_detail']}")
             else:
                 flags.append(f"Learning barrier reported: {barriers}")
+
+    if family_context:
+        for flag in family_context.get('flags') or []:
+            if flag and flag not in flags:
+                flags.append(flag)
 
     return flags
 
@@ -1767,6 +1779,7 @@ def _build_child_context(
         health_referral,
         registration=registration,
         education=education_progress,
+        family_context=family_context,
     )
     alerts = _build_alerts(
         attendance_summary,
