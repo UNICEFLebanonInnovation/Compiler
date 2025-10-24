@@ -312,8 +312,178 @@ class HealthSupportAgent:
             raise AgentAPIError("Unexpected response from OpenAI") from exc
 
 
+class PreAssessmentAgent:
+    """Lightweight analyser that validates staff questions before querying."""
+
+    PROFANITY = {
+        'shit',
+        'shitty',
+        'fuck',
+        'fucking',
+        'damn',
+        'crap',
+    }
+
+    KEYBOARD_ROWS = (
+        'qwertyuiop',
+        'asdfghjkl',
+        'zxcvbnm',
+    )
+
+    def __init__(self, min_tokens: int = 2) -> None:
+        self.min_tokens = min_tokens
+
+    def evaluate(self, question: str | None) -> dict:
+        """Return an assessment describing whether a question is actionable."""
+
+        normalized = question.strip() if isinstance(question, str) else ""
+        result = {
+            'question': normalized,
+            'is_empty': not normalized,
+            'is_meaningful': False,
+            'quality_score': 0.0,
+            'confidence': 'low',
+            'keywords': [],
+            'focus_topics': [],
+            'issues': [],
+            'should_abort': False,
+            'summary': '',
+            'profanity_detected': False,
+            'token_count': 0,
+            'recommended_action': '',
+        }
+
+        if not normalized:
+            result['summary'] = (
+                'No focus question provided; the assistant will prioritise the most '
+                'critical risks detected in the data.'
+            )
+            result['recommended_action'] = (
+                'Consider adding a focus question to tailor the prioritisation for your needs.'
+            )
+            result['issues'] = ['No question provided; default prioritisation will be used.']
+            return result
+
+        tokens = re.findall(r"[a-zA-Z']+", normalized.lower())
+        filtered_tokens = [token for token in tokens if len(token) >= 3]
+        unique_tokens = set(filtered_tokens)
+        vowel_tokens = [token for token in filtered_tokens if re.search('[aeiou]', token)]
+        vowel_ratio = (len(vowel_tokens) / len(filtered_tokens)) if filtered_tokens else 0.0
+        profanity_tokens = [token for token in filtered_tokens if token in self.PROFANITY]
+
+        keywords = HealthSupportAgent.extract_keywords(normalized)
+        focus_topics = sorted(HealthSupportAgent.infer_focus_topics(normalized))
+        recognized_keyword_count = sum(
+            1 for keyword in keywords if keyword in HealthSupportAgent.KEYWORD_TOPIC_MAP
+        )
+
+        quality = 0.0
+        quality += 0.25  # baseline for providing any input
+        if len(normalized) >= 40:
+            quality += 0.15
+        if len(filtered_tokens) >= self.min_tokens:
+            quality += 0.2
+        if len(unique_tokens) >= max(self.min_tokens, 3):
+            quality += 0.1
+        if recognized_keyword_count:
+            quality += 0.2
+        elif keywords:
+            quality += 0.05
+        if focus_topics:
+            quality += 0.2
+        if len(normalized) >= 120:
+            quality += 0.1
+
+        gibberish_detected = bool(filtered_tokens) and vowel_ratio < 0.3
+        if gibberish_detected:
+            quality -= 0.4
+            result['issues'].append('The wording looks unclear or non-sensical.')
+
+        keyboard_walk_tokens = [
+            token
+            for token in filtered_tokens
+            if any(token in row or token[::-1] in row for row in self.KEYBOARD_ROWS)
+        ]
+        if filtered_tokens:
+            keyboard_walk_ratio = len(keyboard_walk_tokens) / len(filtered_tokens)
+        else:
+            keyboard_walk_ratio = 0.0
+        if keyboard_walk_ratio >= 0.5:
+            quality -= 0.35
+            result['issues'].append('The wording appears to be keyboard gibberish; please clarify the request.')
+
+        if profanity_tokens:
+            quality -= 0.3
+            result['issues'].append('The question contains flagged language.')
+            result['profanity_detected'] = True
+
+        if len(filtered_tokens) < self.min_tokens:
+            result['issues'].append('The question is too short to understand the intent.')
+
+        if not focus_topics:
+            result['issues'].append(
+                'No programme focus detected; results may be generic unless the question is refined.'
+            )
+        if keywords and not recognized_keyword_count:
+            result['issues'].append('No recognised programme keywords were detected.')
+
+        quality = max(0.0, min(1.0, quality))
+        is_meaningful = quality >= 0.5 or bool(focus_topics)
+        should_abort = bool(normalized) and (
+            (quality < 0.35 and not focus_topics)
+            or (
+                not focus_topics
+                and not recognized_keyword_count
+                and keyboard_walk_ratio >= 0.5
+            )
+        )
+
+        result.update(
+            {
+                'is_meaningful': is_meaningful,
+                'quality_score': round(quality, 2),
+                'confidence': 'high' if quality >= 0.75 else 'medium' if quality >= 0.5 else 'low',
+                'keywords': keywords,
+                'focus_topics': focus_topics,
+                'should_abort': should_abort,
+                'token_count': len(filtered_tokens),
+            }
+        )
+
+        if should_abort:
+            result['summary'] = (
+                'The question could not be matched to Makani programme themes. '
+                'Please rephrase it with specific outcomes or services to analyse.'
+            )
+            result['recommended_action'] = (
+                'Rephrase the question with programme keywords (e.g., nutrition, attendance, PSS) '
+                'or specify the outcomes you want to review.'
+            )
+        elif not is_meaningful:
+            result['summary'] = (
+                'The question may be ambiguous; the assistant will still run a generic triage.'
+            )
+            result['recommended_action'] = (
+                'Add specific programme areas or child outcomes to sharpen the assessment focus.'
+            )
+        else:
+            result['summary'] = 'Question understood; tailoring the assessment accordingly.'
+            result['recommended_action'] = (
+                'Proceeding with the tailored analysis based on the detected focus areas.'
+            )
+
+        if focus_topics:
+            result['summary'] += f" Focus areas detected: {', '.join(focus_topics)}."
+
+        if not result['issues']:
+            result['issues'] = ['No issues detected.']
+
+        return result
+
+
 __all__ = [
     "AgentAPIError",
     "AgentConfigurationError",
     "HealthSupportAgent",
+    "PreAssessmentAgent",
 ]

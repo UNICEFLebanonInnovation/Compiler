@@ -20,7 +20,7 @@ from student_registration.attendances.models import (
     MSCCAttendanceChild,
 )
 from student_registration.child.models import Child
-from student_registration.mscc.ai_agent import HealthSupportAgent
+from student_registration.mscc.ai_agent import HealthSupportAgent, PreAssessmentAgent
 from student_registration.mscc.models import (
     ProvidedServices,
     Registration,
@@ -269,6 +269,15 @@ def test_health_agent_view_calls_agent(mock_analyze):
     assert response.status_code == 200
     payload = json.loads(response.content)
 
+    assessment = payload['question_assessment']
+    assert assessment['question'] == 'Focus on malnutrition risks'
+    assert assessment['focus_topics'] == ['nutrition']
+    assert assessment['keywords'] == ['malnutrition', 'risks']
+    assert assessment['is_meaningful'] is True
+    assert assessment['should_abort'] is False
+    assert assessment['quality_score'] >= 0.5
+    assert assessment['recommended_action']
+
     mock_analyze.assert_called_once()
     called_context = mock_analyze.call_args[0][0]
     assert mock_analyze.call_args.kwargs['question'] == 'Focus on malnutrition risks'
@@ -337,6 +346,19 @@ def test_agent_infers_nutrition_focus():
 def test_agent_extracts_keywords():
     keywords = HealthSupportAgent.extract_keywords('How are nutrition and attendance improving this year?')
     assert keywords == ['nutrition', 'attendance', 'improving']
+
+
+def test_pre_assessment_flags_gibberish_question():
+    agent = PreAssessmentAgent()
+    assessment = agent.evaluate('asdf qwer zxcv')
+
+    assert assessment['should_abort'] is True
+    assert assessment['is_meaningful'] is False
+    assert assessment['quality_score'] < 0.35
+    assert any(
+        'gibberish' in issue.lower() or 'unclear' in issue.lower()
+        for issue in assessment['issues']
+    )
 
 
 def test_agent_prompt_limits_scope_for_nutrition(settings):

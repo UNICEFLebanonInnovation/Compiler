@@ -202,6 +202,42 @@
     );
   }
 
+  function questionQualityBadgeClass(confidence, shouldAbort) {
+    if (shouldAbort) {
+      return 'badge-danger';
+    }
+    switch ((confidence || '').toLowerCase()) {
+      case 'high':
+        return 'badge-success';
+      case 'medium':
+        return 'badge-warning';
+      default:
+        return 'badge-secondary';
+    }
+  }
+
+  function formatQualityLabel(assessment) {
+    if (!assessment) {
+      return '—';
+    }
+
+    if (assessment.should_abort) {
+      return 'Action required';
+    }
+
+    if (assessment.is_empty) {
+      return 'No question provided';
+    }
+
+    var confidence = (assessment.confidence || 'low').toLowerCase();
+    var score = typeof assessment.quality_score === 'number' ? assessment.quality_score : null;
+    var label = confidence.charAt(0).toUpperCase() + confidence.slice(1) + ' confidence';
+    if (score !== null) {
+      label += ' · score ' + score.toFixed(2);
+    }
+    return label;
+  }
+
   function formatTopicTitle(topic) {
     if (!topic) {
       return '';
@@ -878,6 +914,12 @@
     var resetButton = qs(container, '#health-agent-reset');
     var statusBox = document.getElementById('health-agent-status');
     var resultsPanel = document.getElementById('health-agent-results');
+    var questionCard = document.getElementById('health-agent-question-card');
+    var questionSummaryEl = document.getElementById('health-agent-question-summary');
+    var questionTopicsEl = document.getElementById('health-agent-question-topics');
+    var questionIssuesEl = document.getElementById('health-agent-question-issues');
+    var questionQualityEl = document.getElementById('health-agent-question-quality');
+    var questionActionEl = document.getElementById('health-agent-question-action');
     var analysisContainer = document.getElementById('health-agent-analysis');
     var childrenContainer = document.getElementById('health-agent-children');
     var metadataContainer = document.getElementById('health-agent-metadata');
@@ -907,14 +949,84 @@
         return;
       }
       resultsPanel.classList.remove('d-none');
-      analysisContainer.innerHTML = renderMarkdown(payload.analysis || '');
-      childrenContainer.innerHTML = renderChildren(payload.children || []);
+
+      var assessment = payload.question_assessment || null;
+
+      if (questionCard) {
+        if (!assessment) {
+          questionCard.classList.add('d-none');
+        } else {
+          questionCard.classList.remove('d-none');
+          if (questionSummaryEl) {
+            questionSummaryEl.textContent = assessment.summary || '';
+          }
+          if (questionQualityEl) {
+            var badgeClass = questionQualityBadgeClass(assessment.confidence, assessment.should_abort);
+            questionQualityEl.className = 'badge ' + badgeClass;
+            questionQualityEl.textContent = formatQualityLabel(assessment);
+          }
+          if (questionTopicsEl) {
+            var focusHtml = renderFocusTopics(assessment.focus_topics || []);
+            var keywordsHtml = renderQuestionKeywords(assessment.keywords || []);
+            var combined = '';
+            if (focusHtml) {
+              combined += focusHtml;
+            }
+            if (keywordsHtml) {
+              combined += keywordsHtml;
+            }
+            if (!combined) {
+              questionTopicsEl.innerHTML = '<p class="small text-muted mb-0">No focus areas detected.</p>';
+            } else {
+              questionTopicsEl.innerHTML = combined;
+            }
+          }
+          if (questionIssuesEl) {
+            var issues = Array.isArray(assessment.issues) ? assessment.issues : [];
+            if (!issues.length) {
+              issues = ['No issues detected.'];
+            }
+            questionIssuesEl.innerHTML = issues
+              .map(function (issue) {
+                return '<li>' + escapeHtml(issue) + '</li>';
+              })
+              .join('');
+          }
+          if (questionActionEl) {
+            var action = assessment.recommended_action || '';
+            questionActionEl.classList.remove('text-primary', 'text-danger');
+            if (action) {
+              questionActionEl.textContent = action;
+              if (assessment.should_abort) {
+                questionActionEl.classList.add('text-danger');
+              } else {
+                questionActionEl.classList.add('text-primary');
+              }
+              questionActionEl.classList.remove('d-none');
+            } else {
+              questionActionEl.textContent = '';
+              questionActionEl.classList.add('d-none');
+            }
+          }
+        }
+      }
+
+      var shouldAbort = assessment && assessment.should_abort;
+      if (shouldAbort) {
+        analysisContainer.innerHTML = '<p class="text-muted mb-0">Question needs clarification before an AI summary can be generated.</p>';
+        childrenContainer.innerHTML = '<p class="text-muted mb-0">No children were evaluated because the focus question was unclear.</p>';
+      } else {
+        analysisContainer.innerHTML = renderMarkdown(payload.analysis || '');
+        childrenContainer.innerHTML = renderChildren(payload.children || []);
+      }
       metadataContainer.textContent = buildMetadata(payload);
       if (questionField && payload.question !== undefined) {
         questionField.value = payload.question;
       }
       if (payload.error) {
         showStatus(payload.error, 'warning');
+      } else if (assessment && !assessment.should_abort && !assessment.is_meaningful) {
+        showStatus(assessment.summary || 'Assessment completed with limited focus.', 'warning');
       } else {
         showStatus('Assessment updated successfully.', 'info');
       }
@@ -935,6 +1047,27 @@
       }
       if (metadataContainer) {
         metadataContainer.textContent = '';
+      }
+      if (questionCard) {
+        questionCard.classList.add('d-none');
+      }
+      if (questionSummaryEl) {
+        questionSummaryEl.textContent = '';
+      }
+      if (questionTopicsEl) {
+        questionTopicsEl.innerHTML = '';
+      }
+      if (questionIssuesEl) {
+        questionIssuesEl.innerHTML = '';
+      }
+      if (questionQualityEl) {
+        questionQualityEl.className = 'badge badge-secondary';
+        questionQualityEl.textContent = '';
+      }
+      if (questionActionEl) {
+        questionActionEl.textContent = '';
+        questionActionEl.classList.remove('text-primary', 'text-danger');
+        questionActionEl.classList.add('d-none');
       }
       if (questionField) {
         questionField.value = '';

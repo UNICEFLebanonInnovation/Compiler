@@ -90,7 +90,12 @@ from .utils import *
 from student_registration.mscc.templatetags.simple_tags import education_history_model, education_history_programmes
 from .tasks import queue_mscc_export, queue_filtered_mscc_export
 from student_registration.users.templatetags.custom_tags import has_group
-from .ai_agent import HealthSupportAgent, AgentConfigurationError, AgentAPIError
+from .ai_agent import (
+    AgentAPIError,
+    AgentConfigurationError,
+    HealthSupportAgent,
+    PreAssessmentAgent,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -1533,13 +1538,44 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
         normalized_ids = self._normalize_ids(registration_ids)
         limit_value = self._normalize_limit(limit)
         question_text = self._normalize_question(question)
-        focus_topics = HealthSupportAgent.infer_focus_topics(question_text)
-        question_keywords = HealthSupportAgent.extract_keywords(question_text)
+        assessment_agent = PreAssessmentAgent()
+        question_assessment = assessment_agent.evaluate(question_text)
+
+        focus_topics = set(question_assessment.get('focus_topics') or [])
+        question_keywords = list(question_assessment.get('keywords') or [])
+
         combined_focus_topics = set(focus_topics)
         if question_keywords:
             combined_focus_topics.update(
                 HealthSupportAgent.infer_focus_topics(' '.join(question_keywords))
             )
+        focus_topics = combined_focus_topics
+        question_assessment['focus_topics'] = sorted(focus_topics)
+        question_assessment['keywords'] = question_keywords
+
+        if question_assessment.get('should_abort'):
+            response_payload = {
+                'generated_at': timezone.now().isoformat(),
+                'children': [],
+                'analysis': '',
+                'model': getattr(settings, 'OPENAI_HEALTH_AGENT_MODEL', None),
+                'limit': limit_value,
+                'count': 0,
+                'question_assessment': question_assessment,
+            }
+            if normalized_ids:
+                response_payload['filters'] = {'registration_ids': normalized_ids}
+            if question_text:
+                response_payload['question'] = question_text
+            if question_keywords:
+                response_payload['question_keywords'] = question_keywords
+            if focus_topics:
+                response_payload['focus_topics'] = sorted(focus_topics)
+            response_payload['error'] = (
+                question_assessment.get('summary')
+                or 'The focus question needs clarification before running the assessment.'
+            )
+            return JsonResponse(response_payload)
 
         queryset = Registration.objects.filter(
             deleted=False,
@@ -1593,7 +1629,7 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
         registrations = list(queryset.select_related('child', 'round')[:fetch_limit])
 
         if not registrations:
-            return JsonResponse({
+            empty_payload = {
                 'generated_at': timezone.now().isoformat(),
                 'children': [],
                 'analysis': '',
@@ -1601,7 +1637,15 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
                 'limit': limit_value,
                 'count': 0,
                 'filters': {'registration_ids': normalized_ids} if normalized_ids else {},
-            })
+                'question_assessment': question_assessment,
+            }
+            if question_text:
+                empty_payload['question'] = question_text
+            if question_keywords:
+                empty_payload['question_keywords'] = question_keywords
+            if focus_topics:
+                empty_payload['focus_topics'] = sorted(focus_topics)
+            return JsonResponse(empty_payload)
 
         registration_ids_list = [registration.id for registration in registrations]
         child_ids = [registration.child_id for registration in registrations if registration.child_id]
@@ -1706,6 +1750,7 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
             'model': model_name,
             'limit': limit_value,
             'count': len(children_context),
+            'question_assessment': question_assessment,
         }
 
         if normalized_ids:
