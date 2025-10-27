@@ -86,9 +86,38 @@ def configure_azure_monitoring(*, service_name: str | None = None) -> bool:
 
 
 def _connection_string() -> str | None:
+    connection_string = os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING") or os.getenv(
+        "AZURE_MONITOR_CONNECTION_STRING"
+    )
+    if connection_string:
+        return connection_string
+
+    instrumentation_key = _instrumentation_key()
+    if not instrumentation_key:
+        return None
+
+    parts = [f"InstrumentationKey={instrumentation_key}"]
+
+    ingestion_endpoint = os.getenv("AZURE_MONITOR_INGESTION_ENDPOINT")
+    if ingestion_endpoint:
+        parts.append(f"IngestionEndpoint={ingestion_endpoint}")
+
+    live_endpoint = os.getenv("AZURE_MONITOR_LIVE_ENDPOINT")
+    if live_endpoint:
+        parts.append(f"LiveEndpoint={live_endpoint}")
+
+    application_id = os.getenv("AZURE_MONITOR_APPLICATION_ID")
+    if application_id:
+        parts.append(f"ApplicationId={application_id}")
+
+    return ";".join(parts)
+
+
+def _instrumentation_key() -> str | None:
     return (
-        os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING")
-        or os.getenv("AZURE_MONITOR_CONNECTION_STRING")
+        os.getenv("AZURE_MONITOR_INSTRUMENTATION_KEY")
+        or os.getenv("APPLICATIONINSIGHTS_INSTRUMENTATION_KEY")
+        or os.getenv("APPINSIGHTS_INSTRUMENTATIONKEY")
     )
 
 
