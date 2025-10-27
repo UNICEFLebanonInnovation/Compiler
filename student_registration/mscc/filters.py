@@ -1,8 +1,8 @@
 from django.db.models import Q
+from django.db.utils import NotSupportedError, OperationalError, ProgrammingError
 
 from django_filters import (
     FilterSet,
-    ModelChoiceFilter,
     ChoiceFilter,
     CharFilter,
     BooleanFilter,
@@ -52,6 +52,36 @@ class PlaceholderFilterSet(FilterSet):
             if isinstance(field.widget, (forms.TextInput, forms.NumberInput)):
                 field.widget.attrs.setdefault('placeholder', label)
 
+    def _set_filter_choices(self, filter_name, choices):
+        """Safely assign choices to a filter without raising DB errors."""
+
+        flt = self.filters.get(filter_name)
+        if not flt:
+            return
+
+        flt.extra['choices'] = choices
+        flt.field.choices = choices
+
+    def _build_choices(self, empty_label, queryset=None, extra_choices=None):
+        """Return choices built from a queryset while handling DB errors."""
+
+        extra_choices = list(extra_choices or [])
+        choices = [('', empty_label)] + extra_choices
+
+        if queryset is None:
+            return choices
+
+        try:
+            choices.extend(queryset.values_list('id', 'name'))
+        except (NotSupportedError, OperationalError, ProgrammingError):
+            # The database might be unavailable or not supported in the
+            # execution environment (e.g. CI using SQLite). In such cases we
+            # silently fall back to the base choices so that importing the
+            # filters module doesn't crash.
+            pass
+
+        return choices
+
 
 class MainFilter(PlaceholderFilterSet):
     NO_ROUND_OPTION = ('no_round', 'No Round')
@@ -64,10 +94,9 @@ class MainFilter(PlaceholderFilterSet):
     child__number = CharFilter(lookup_expr='icontains')
     child__unicef_id = CharFilter(lookup_expr='icontains')
     child__gender = ChoiceFilter(choices=Child.GENDER, empty_label='Gender')
-    child__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
-                                .order_by('name').distinct(), empty_label='Nationality')
+    child__nationality = ChoiceFilter(choices=(), empty_label='Nationality')
     round = ChoiceFilter(
-        choices=[NO_ROUND_OPTION] + list(Round.objects.values_list('id', 'name').order_by('name').distinct()),
+        choices=(),
         empty_label='Round',
         method='filter_round'
     )
@@ -76,19 +105,55 @@ class MainFilter(PlaceholderFilterSet):
                                   empty_label='Programme Type', method='filter_education_program')
     child__first_phone_number = CharFilter(lookup_expr='icontains')
     child__second_phone_number = CharFilter(lookup_expr='icontains')
-    center = ChoiceFilter(choices=Center.objects.values_list('id', 'name')
-                          .order_by('name').distinct(), empty_label='Center')
-    center__governorate = ChoiceFilter(choices=Location.objects.filter(parent__isnull=True).values_list('id', 'name')
-                                       .order_by('name').distinct(), empty_label='Governorate')
-    center__caza = ChoiceFilter(choices=Location.objects.filter(parent__isnull=False, type=2).values_list('id', 'name')
-                                .order_by('name').distinct(), empty_label='Caza')
-    center__cadaster = ChoiceFilter(
-        choices=Location.objects.filter(parent__isnull=False, type=3).values_list('id', 'name')
-        .order_by('name').distinct(), empty_label='Cadaster')
+    center = ChoiceFilter(choices=(), empty_label='Center')
+    center__governorate = ChoiceFilter(choices=(), empty_label='Governorate')
+    center__caza = ChoiceFilter(choices=(), empty_label='Caza')
+    center__cadaster = ChoiceFilter(choices=(), empty_label='Cadaster')
 
     class Meta:
         model = Registration
         fields = []
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self._set_filter_choices(
+            'round',
+            self._build_choices(
+                'Round',
+                queryset=Round.objects.order_by('name'),
+                extra_choices=[self.NO_ROUND_OPTION]
+            )
+        )
+        self._set_filter_choices(
+            'child__nationality',
+            self._build_choices('Nationality', Nationality.objects.order_by('name').distinct())
+        )
+        self._set_filter_choices(
+            'center',
+            self._build_choices('Center', Center.objects.order_by('name').distinct())
+        )
+        self._set_filter_choices(
+            'center__governorate',
+            self._build_choices(
+                'Governorate',
+                Location.objects.filter(parent__isnull=True).order_by('name').distinct()
+            )
+        )
+        self._set_filter_choices(
+            'center__caza',
+            self._build_choices(
+                'Caza',
+                Location.objects.filter(parent__isnull=False, type=2).order_by('name').distinct()
+            )
+        )
+        self._set_filter_choices(
+            'center__cadaster',
+            self._build_choices(
+                'Cadaster',
+                Location.objects.filter(parent__isnull=False, type=3).order_by('name').distinct()
+            )
+        )
 
     def filter_round(self, queryset, name, value):
         if value == 'no_round':
@@ -103,23 +168,18 @@ class FullFilter(PlaceholderFilterSet):
     NO_ROUND_OPTION = ('no_round', 'No Round')
 
     type = ChoiceFilter(choices=PACKAGE_TYPES, empty_label='Package type')
-    partner = ChoiceFilter(choices=PartnerOrganization.objects.values_list('id', 'name')
-                          .order_by('name').distinct(), empty_label='Partner')
+    partner = ChoiceFilter(choices=(), empty_label='Partner')
 
     round = ChoiceFilter(
-        choices=[NO_ROUND_OPTION] + list(Round.objects.values_list('id', 'name').order_by('name').distinct()),
+        choices=(),
         empty_label='Round',
         method='filter_round'
     )
 
-    center = ChoiceFilter(choices=Center.objects.values_list('id', 'name')
-                          .order_by('name').distinct(), empty_label='Center')
-    center__governorate = ChoiceFilter(choices=Location.objects.filter(parent__isnull=True).values_list('id', 'name')
-                                       .order_by('name').distinct(), empty_label='Governorate')
-    center__caza = ChoiceFilter(choices=Location.objects.filter(parent__isnull=False, type=2).values_list('id', 'name')
-                                .order_by('name').distinct(), empty_label='Caza')
-    center__cadaster = ChoiceFilter(choices=Location.objects.filter(parent__isnull=False, type=3).values_list('id', 'name')
-                                    .order_by('name').distinct(), empty_label='Cadaster')
+    center = ChoiceFilter(choices=(), empty_label='Center')
+    center__governorate = ChoiceFilter(choices=(), empty_label='Governorate')
+    center__caza = ChoiceFilter(choices=(), empty_label='Caza')
+    center__cadaster = ChoiceFilter(choices=(), empty_label='Cadaster')
 
     child__first_name = CharFilter(lookup_expr='icontains')
     child__father_name = CharFilter(lookup_expr='icontains')
@@ -128,8 +188,7 @@ class FullFilter(PlaceholderFilterSet):
     child__number = CharFilter(lookup_expr='icontains')
     child__unicef_id = CharFilter(lookup_expr='icontains')
     child__gender = ChoiceFilter(choices=Child.GENDER, empty_label='Gender')
-    child__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
-                                      .order_by('name').distinct(), empty_label='Nationality')
+    child__nationality = ChoiceFilter(choices=(), empty_label='Nationality')
     programme_type = ChoiceFilter(choices=EducationService.EDUCATION_PROGRAM,
                                   field_name='education_service__education_program',
                                   empty_label='Programme Type', method='filter_education_program')
@@ -141,6 +200,51 @@ class FullFilter(PlaceholderFilterSet):
         model = Registration
         fields = [
         ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self._set_filter_choices(
+            'round',
+            self._build_choices(
+                'Round',
+                queryset=Round.objects.order_by('name'),
+                extra_choices=[self.NO_ROUND_OPTION]
+            )
+        )
+        self._set_filter_choices(
+            'partner',
+            self._build_choices('Partner', PartnerOrganization.objects.order_by('name').distinct())
+        )
+        self._set_filter_choices(
+            'center',
+            self._build_choices('Center', Center.objects.order_by('name').distinct())
+        )
+        self._set_filter_choices(
+            'child__nationality',
+            self._build_choices('Nationality', Nationality.objects.order_by('name').distinct())
+        )
+        self._set_filter_choices(
+            'center__governorate',
+            self._build_choices(
+                'Governorate',
+                Location.objects.filter(parent__isnull=True).order_by('name').distinct()
+            )
+        )
+        self._set_filter_choices(
+            'center__caza',
+            self._build_choices(
+                'Caza',
+                Location.objects.filter(parent__isnull=False, type=2).order_by('name').distinct()
+            )
+        )
+        self._set_filter_choices(
+            'center__cadaster',
+            self._build_choices(
+                'Cadaster',
+                Location.objects.filter(parent__isnull=False, type=3).order_by('name').distinct()
+            )
+        )
 
     def filter_round(self, queryset, name, value):
         if value == 'no_round':
