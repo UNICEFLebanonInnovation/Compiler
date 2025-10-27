@@ -454,8 +454,18 @@ UNIQUE_ID_API_USERNAME = env('UNIQUE_ID_API_USERNAME', default='NO_USERNAME')
 UNIQUE_ID_API_PASSWORD = env('UNIQUE_ID_API_PASSWORD', default='NO_PASSWORD')
 
 
-APPLICATIONINSIGHTS_CONNECTION_STRING = env('UNIQUE_ID_API_PASSWORD', default='InstrumentationKey=95277cfa-462c-4736-b2a6-fb14c15c4dcb;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/;ApplicationId=cfcefd29-47a1-461c-a6f9-3808704cf0ac')
-AZURE_MONITOR_CONNECTION_STRING = env('UNIQUE_ID_API_PASSWORD', default='InstrumentationKey=95277cfa-462c-4736-b2a6-fb14c15c4dcb;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/;ApplicationId=cfcefd29-47a1-461c-a6f9-3808704cf0ac')
+# NOTE: Keep a shared default so both configuration keys fall back to the same
+# value when not explicitly supplied by the environment.
+DEFAULT_APPINSIGHTS_CONNECTION_STRING = 'InstrumentationKey=95277cfa-462c-4736-b2a6-fb14c15c4dcb;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/;ApplicationId=cfcefd29-47a1-461c-a6f9-3808704cf0ac'
+
+APPLICATIONINSIGHTS_CONNECTION_STRING = env(
+    'APPLICATIONINSIGHTS_CONNECTION_STRING',
+    default=DEFAULT_APPINSIGHTS_CONNECTION_STRING,
+)
+AZURE_MONITOR_CONNECTION_STRING = env(
+    'AZURE_MONITOR_CONNECTION_STRING',
+    default=APPLICATIONINSIGHTS_CONNECTION_STRING,
+)
 AZURE_MONITOR_INGESTION_ENDPOINT = ""
 AZURE_MONITOR_APPLICATION_ID = ""
 AZURE_MONITOR_DISABLE_TRACING = 1

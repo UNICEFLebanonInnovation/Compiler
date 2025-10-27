@@ -16,6 +16,7 @@ import importlib
 import importlib.util
 import logging
 import os
+from functools import lru_cache
 from typing import Any, Dict
 
 logger = logging.getLogger(__name__)
@@ -86,8 +87,9 @@ def configure_azure_monitoring(*, service_name: str | None = None) -> bool:
 
 
 def _connection_string() -> str | None:
-    connection_string = os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING") or os.getenv(
-        "AZURE_MONITOR_CONNECTION_STRING"
+    connection_string = _value_from_env_or_settings(
+        "APPLICATIONINSIGHTS_CONNECTION_STRING",
+        "AZURE_MONITOR_CONNECTION_STRING",
     )
     if connection_string:
         return connection_string
@@ -98,15 +100,15 @@ def _connection_string() -> str | None:
 
     parts = [f"InstrumentationKey={instrumentation_key}"]
 
-    ingestion_endpoint = os.getenv("AZURE_MONITOR_INGESTION_ENDPOINT")
+    ingestion_endpoint = _value_from_env_or_settings("AZURE_MONITOR_INGESTION_ENDPOINT")
     if ingestion_endpoint:
         parts.append(f"IngestionEndpoint={ingestion_endpoint}")
 
-    live_endpoint = os.getenv("AZURE_MONITOR_LIVE_ENDPOINT")
+    live_endpoint = _value_from_env_or_settings("AZURE_MONITOR_LIVE_ENDPOINT")
     if live_endpoint:
         parts.append(f"LiveEndpoint={live_endpoint}")
 
-    application_id = os.getenv("AZURE_MONITOR_APPLICATION_ID")
+    application_id = _value_from_env_or_settings("AZURE_MONITOR_APPLICATION_ID")
     if application_id:
         parts.append(f"ApplicationId={application_id}")
 
@@ -114,10 +116,10 @@ def _connection_string() -> str | None:
 
 
 def _instrumentation_key() -> str | None:
-    return (
-        os.getenv("AZURE_MONITOR_INSTRUMENTATION_KEY")
-        or os.getenv("APPLICATIONINSIGHTS_INSTRUMENTATION_KEY")
-        or os.getenv("APPINSIGHTS_INSTRUMENTATIONKEY")
+    return _value_from_env_or_settings(
+        "AZURE_MONITOR_INSTRUMENTATION_KEY",
+        "APPLICATIONINSIGHTS_INSTRUMENTATION_KEY",
+        "APPINSIGHTS_INSTRUMENTATIONKEY",
     )
 
 
@@ -133,29 +135,84 @@ def _resolve_service_name(service_name: str | None) -> str:
 def _configuration_options() -> Dict[str, Any]:
     options: Dict[str, Any] = {}
 
-    disable_tracing = os.getenv("AZURE_MONITOR_DISABLE_TRACING")
+    disable_tracing = _value_from_env_or_settings("AZURE_MONITOR_DISABLE_TRACING")
     if disable_tracing is not None:
-        options["disable_tracing"] = disable_tracing.lower() in {"1", "true", "yes"}
+        options["disable_tracing"] = _as_bool(disable_tracing)
 
-    disable_metrics = os.getenv("AZURE_MONITOR_DISABLE_METRICS")
+    disable_metrics = _value_from_env_or_settings("AZURE_MONITOR_DISABLE_METRICS")
     if disable_metrics is not None:
-        options["disable_metrics"] = disable_metrics.lower() in {"1", "true", "yes"}
+        options["disable_metrics"] = _as_bool(disable_metrics)
         options["enable_live_metrics"] = "true"
 
-    disable_logging = os.getenv("AZURE_MONITOR_DISABLE_LOGGING")
+    disable_logging = _value_from_env_or_settings("AZURE_MONITOR_DISABLE_LOGGING")
     if disable_logging is not None:
-        options["disable_logging"] = disable_logging.lower() in {"1", "true", "yes"}
+        options["disable_logging"] = _as_bool(disable_logging)
 
-    sampling_ratio = os.getenv("AZURE_MONITOR_SAMPLING_RATIO")
-    if sampling_ratio:
+    sampling_ratio = _value_from_env_or_settings("AZURE_MONITOR_SAMPLING_RATIO")
+    if sampling_ratio not in (None, ""):
         try:
             options["sampling_ratio"] = float(sampling_ratio)
-        except ValueError:
+        except (TypeError, ValueError):
             logger.warning(
                 "Invalid AZURE_MONITOR_SAMPLING_RATIO '%s'; expected float", sampling_ratio
             )
 
     return options
+
+
+def _value_from_env_or_settings(*names: str) -> str | None:
+    for name in names:
+        value = os.getenv(name)
+        if value:
+            return value
+
+        settings_value = _settings_value(name)
+        if settings_value not in (None, ""):
+            return str(settings_value)
+    return None
+
+
+@lru_cache(maxsize=None)
+def _settings_value(name: str) -> Any | None:
+    module_names = []
+    settings_module = os.getenv("DJANGO_SETTINGS_MODULE")
+    if settings_module:
+        module_names.append(settings_module)
+
+    # Fall back to the production settings module when DJANGO_SETTINGS_MODULE is
+    # not yet populated (e.g. early in the WSGI bootstrap).
+    module_names.append("config.settings.production")
+
+    for module_name in module_names:
+        try:
+            module = importlib.import_module(module_name)
+        except Exception:
+            continue
+
+        if hasattr(module, name):
+            value = getattr(module, name)
+            if value not in (None, ""):
+                return value
+
+    try:
+        from django.conf import settings  # type: ignore
+    except Exception:
+        return None
+
+    if getattr(settings, "configured", False) and hasattr(settings, name):
+        value = getattr(settings, name)
+        if value not in (None, ""):
+            return value
+
+    return None
+
+
+def _as_bool(value: Any) -> bool:
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return bool(value)
+    return str(value).strip().lower() in {"1", "true", "yes", "on"}
 
 
 def _instrument_if_available(module_name: str, instrumentor_attribute: str) -> None:
