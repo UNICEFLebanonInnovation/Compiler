@@ -15,6 +15,8 @@ import os
 import logging
 from kombu import Queue
 
+from config.monitoring import configure_azure_monitoring
+
 logger = logging.getLogger(__name__)
 
 ROOT_DIR = environ.Path(__file__) - 3  # (student_registration/config/settings/base.py - 3 = student_registration/)
@@ -37,6 +39,11 @@ if READ_DOT_ENV_FILE:
     logger.info('Loading : %s', env_file)
     env.read_env(env_file)
     logger.info('The .env file has been loaded. See base.py for more information')
+
+
+configure_azure_monitoring(
+    service_name=env('AZURE_MONITOR_SERVICE_NAME', default='student-registration')
+)
 
 
 # APP CONFIGURATION
