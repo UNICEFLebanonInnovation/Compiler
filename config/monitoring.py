@@ -140,6 +140,7 @@ def _configuration_options() -> Dict[str, Any]:
     disable_metrics = os.getenv("AZURE_MONITOR_DISABLE_METRICS")
     if disable_metrics is not None:
         options["disable_metrics"] = disable_metrics.lower() in {"1", "true", "yes"}
+        options["enable_live_metrics"] = "true"
 
     disable_logging = os.getenv("AZURE_MONITOR_DISABLE_LOGGING")
     if disable_logging is not None:

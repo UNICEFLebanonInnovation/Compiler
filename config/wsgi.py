@@ -13,6 +13,22 @@ framework.
 import os
 import sys
 
+# ---------------- Azure Application Insights (OpenTelemetry) ----------------
+# Configure BEFORE Django imports its app.
+# Uses the AZURE_MONITOR_CONNECTION_STRING environment variable.
+try:
+    from config.monitoring import configure_azure_monitoring
+    configure_azure_monitoring()
+
+    # from azure.monitor.opentelemetry import configure_azure_monitor
+    # configure_azure_monitor()
+except Exception as _appins_exc:
+    print(_appins_exc)
+    # Don't block the app if AI isn't configured; just continue.
+    # You can log/print here if desired.
+    pass
+# ---------------------------------------------------------------------------
+
 from django.core.wsgi import get_wsgi_application
 
 # This allows easy placement of apps within the interior

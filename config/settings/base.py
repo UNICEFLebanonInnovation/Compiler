@@ -15,7 +15,6 @@ import os
 import logging
 from kombu import Queue
 
-from config.monitoring import configure_azure_monitoring
 
 logger = logging.getLogger(__name__)
 
@@ -39,11 +38,6 @@ if READ_DOT_ENV_FILE:
     logger.info('Loading : %s', env_file)
     env.read_env(env_file)
     logger.info('The .env file has been loaded. See base.py for more information')
-
-
-configure_azure_monitoring(
-    service_name=env('AZURE_MONITOR_SERVICE_NAME', default='student-registration')
-)
 
 
 # APP CONFIGURATION
@@ -178,7 +172,7 @@ MANAGERS = ADMINS
 DATABASES = {
     # 'default': env.db('DATABASE_URL', default='postgres:///mscc_10012023'),
     'default': env.db('DATABASE_URL',
-    default='postgresql://lebclmprod:clmp!0ck3din@leb-clm-prod-flex-14.postgres.database.azure.com:5432/new_staging_03092025'),
+    default='postgresql://lebclmprod:clmp!0ck3din@leb-clm-prod-flex-14.postgres.database.azure.com:5432/bma_staging'),
 }
 DJANGO_READ_DOT_ENV_FILE = True
 
@@ -458,6 +452,20 @@ UNIQUE_ID_API_URL = env('UNIQUE_ID_API_URL', default='https://leb-cash-ims.azure
 UNIQUE_PROGRAMMES_API_URL = env('UNIQUE_PROGRAMMES_API_URL', default='https://leb-cash-ims.azurewebsites.net/cashmis/api/Request/getIndividualsProgrammes')
 UNIQUE_ID_API_USERNAME = env('UNIQUE_ID_API_USERNAME', default='NO_USERNAME')
 UNIQUE_ID_API_PASSWORD = env('UNIQUE_ID_API_PASSWORD', default='NO_PASSWORD')
+
+
+APPLICATIONINSIGHTS_CONNECTION_STRING = env('UNIQUE_ID_API_PASSWORD', default='InstrumentationKey=95277cfa-462c-4736-b2a6-fb14c15c4dcb;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/;ApplicationId=cfcefd29-47a1-461c-a6f9-3808704cf0ac')
+AZURE_MONITOR_CONNECTION_STRING = env('UNIQUE_ID_API_PASSWORD', default='InstrumentationKey=95277cfa-462c-4736-b2a6-fb14c15c4dcb;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/;ApplicationId=cfcefd29-47a1-461c-a6f9-3808704cf0ac')
+AZURE_MONITOR_INGESTION_ENDPOINT = ""
+AZURE_MONITOR_APPLICATION_ID = ""
+AZURE_MONITOR_DISABLE_TRACING = 1
+AZURE_MONITOR_DISABLE_METRICS = 0
+AZURE_MONITOR_DISABLE_LOGGING = 0
+AZURE_MONITOR_SERVICE_NAME = env('AZURE_MONITOR_SERVICE_NAME', default='leb-bma')
+AZURE_MONITOR_SAMPLING_RATIO = 1.0
+
+logger.error("test test")
+RuntimeError("test 123")
 
 # import firebase_admin
 # from firebase_admin import credentials
