@@ -92,7 +92,13 @@ def _connection_string() -> str | None:
         "AZURE_MONITOR_CONNECTION_STRING",
     )
     if connection_string:
-        return connection_string
+        if _contains_instrumentation_key(connection_string):
+            return connection_string
+
+        logger.warning(
+            "Azure Monitor connection string missing InstrumentationKey; telemetry disabled"
+        )
+        return None
 
     instrumentation_key = _instrumentation_key()
     if not instrumentation_key:
@@ -213,6 +219,14 @@ def _as_bool(value: Any) -> bool:
     if isinstance(value, (int, float)):
         return bool(value)
     return str(value).strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _contains_instrumentation_key(connection_string: str) -> bool:
+    for part in connection_string.split(";"):
+        key, _, value = part.partition("=")
+        if key.strip().lower() == "instrumentationkey":
+            return bool(value.strip())
+    return False
 
 
 def _instrument_if_available(module_name: str, instrumentor_attribute: str) -> None:
