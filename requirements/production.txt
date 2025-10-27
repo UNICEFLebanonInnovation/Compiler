@@ -16,11 +16,6 @@ boto==2.48.0
 # -------------------------------------------------------
 #django-anymail==1.2.1
 
-# Raven is the Sentry client
-# --------------------------
-#raven==6.1.0
-sentry-sdk
-
 # Opbeat agent for performance monitoring
 # -----------------------------------------
 #opbeat==3.5.2
