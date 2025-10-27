@@ -147,8 +147,11 @@ def _configuration_options() -> Dict[str, Any]:
 
     disable_metrics = _value_from_env_or_settings("AZURE_MONITOR_DISABLE_METRICS")
     if disable_metrics is not None:
-        options["disable_metrics"] = _as_bool(disable_metrics)
-        options["enable_live_metrics"] = "true"
+        metrics_disabled = _as_bool(disable_metrics)
+        options["disable_metrics"] = metrics_disabled
+
+        if not metrics_disabled and _has_instrumentation_key():
+            options["enable_live_metrics"] = True
 
     disable_logging = _value_from_env_or_settings("AZURE_MONITOR_DISABLE_LOGGING")
     if disable_logging is not None:
@@ -164,6 +167,21 @@ def _configuration_options() -> Dict[str, Any]:
             )
 
     return options
+
+
+def _has_instrumentation_key() -> bool:
+    if _instrumentation_key():
+        return True
+
+    connection_string = _value_from_env_or_settings(
+        "APPLICATIONINSIGHTS_CONNECTION_STRING",
+        "AZURE_MONITOR_CONNECTION_STRING",
+    )
+
+    if connection_string:
+        return _contains_instrumentation_key(connection_string)
+
+    return False
 
 
 def _value_from_env_or_settings(*names: str) -> str | None:
