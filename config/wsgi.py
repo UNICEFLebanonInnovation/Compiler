@@ -17,13 +17,21 @@ import sys
 # Configure BEFORE Django imports its app.
 # Uses the AZURE_MONITOR_CONNECTION_STRING environment variable.
 try:
-    from config.monitoring import configure_azure_monitoring
-    configure_azure_monitoring()
 
-    # from azure.monitor.opentelemetry import configure_azure_monitor
-    # configure_azure_monitor()
+    from azure.monitor.opentelemetry import configure_azure_monitor
+    configure_azure_monitor(
+        connection_string="InstrumentationKey=95277cfa-462c-4736-b2a6-fb14c15c4dcb;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/;ApplicationId=cfcefd29-47a1-461c-a6f9-3808704cf0ac",
+        sampling_ratio=1.0,
+        enable_live_metrics=True,
+        enable_standard_metrics=True,
+        enable_tracing=True,
+        enable_metrics=True,
+        enable_logging=True,
+        disable_offline_storage=True,
+        logger_name="LEB-BMA"
+    )
+
 except Exception as _appins_exc:
-    print(_appins_exc)
     # Don't block the app if AI isn't configured; just continue.
     # You can log/print here if desired.
     pass
