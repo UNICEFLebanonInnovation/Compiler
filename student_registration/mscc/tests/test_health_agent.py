@@ -10,8 +10,11 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.test')
 import django
 import pytest
 from django.conf import settings
+from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import RequestFactory
 from django.test.utils import setup_databases, teardown_databases
+from django.utils import timezone
 
 django.setup()
 
@@ -25,7 +28,7 @@ from student_registration.mscc.ai_agent import (
     MSCCKnowledgeEngine,
     PreAssessmentAgent,
 )
-from student_registration.mscc.knowledge import MSCCKnowledgeCompiler
+from student_registration.mscc.knowledge import KnowledgeCompilation, MSCCKnowledgeCompiler
 from student_registration.mscc.models import (
     ProvidedServices,
     Registration,
@@ -297,6 +300,57 @@ def test_mscc_knowledge_compiler_creates_daily_snapshot():
 
     numeric_results = knowledge_engine.search(str(registration.id))
     assert any(result.registration_id == registration.id for result in numeric_results)
+
+
+@patch('student_registration.mscc.management.commands.compile_mscc_knowledge.MSCCKnowledgeCompiler')
+def test_compile_mscc_knowledge_command_creates_snapshot(mock_compiler, capsys):
+    snapshot = SimpleNamespace(
+        pk=42,
+        generated_for=datetime.date(2024, 4, 1),
+        document_count=3,
+    )
+    snapshot.as_openai_payload = lambda: {
+        'summary': 'compiled summary',
+        'children': [{'registration_id': 10}],
+        'metadata': {'digest': 'abc123'},
+    }
+
+    mock_compiler.return_value.create_snapshot.return_value = snapshot
+
+    call_command('compile_mscc_knowledge')
+
+    mock_compiler.assert_called_once()
+    mock_compiler.return_value.create_snapshot.assert_called_once()
+    output = capsys.readouterr().out
+    assert 'snapshot created' in output
+    assert '"document_count": 3' in output
+
+
+@patch('student_registration.mscc.management.commands.compile_mscc_knowledge.MSCCKnowledgeCompiler')
+def test_compile_mscc_knowledge_command_dry_run(mock_compiler, capsys):
+    compilation = KnowledgeCompilation(
+        generated_at=timezone.now(),
+        summary='Daily summary content',
+        documents=[{'registration_id': 1, 'numbers': [1]}],
+        children=[{'registration_id': 1, 'child_name': 'Layla'}],
+        vulnerability_overview={'severity_counts': {'high': 1}},
+    )
+
+    mock_compiler.return_value.compile.return_value = compilation
+
+    call_command('compile_mscc_knowledge', '--dry-run', '--limit', '5')
+
+    mock_compiler.assert_called_once_with(limit=5)
+    mock_compiler.return_value.compile.assert_called_once()
+    output = capsys.readouterr().out
+    assert 'Compiled MSCC knowledge' in output
+    assert 'Daily summary content' in output
+    assert '"children_count": 1' in output
+
+
+def test_compile_mscc_knowledge_command_include_documents_requires_dry_run():
+    with pytest.raises(CommandError):
+        call_command('compile_mscc_knowledge', '--include-documents')
 
 
 @patch('student_registration.mscc.views.HealthSupportAgent.analyze_children', return_value='analysis output')
