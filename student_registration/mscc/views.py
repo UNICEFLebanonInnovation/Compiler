@@ -1749,6 +1749,9 @@ def _build_child_context(
     gender = None
     child_name = None
     child_id = None
+    center = getattr(registration, 'center', None)
+    center_id = getattr(registration, 'center_id', None)
+    center_name = str(center) if center else None
 
     if child:
         child_id = child.id
@@ -1837,6 +1840,8 @@ def _build_child_context(
         'registration_history': registration_history_summary,
         'programme_impact': programme_impact,
         'family_context': family_context,
+        'center_id': center_id,
+        'center_name': center_name,
     }
 
 
