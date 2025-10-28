@@ -14,6 +14,7 @@ import environ
 import os
 import logging
 from kombu import Queue
+from celery.schedules import crontab
 
 logger = logging.getLogger(__name__)
 
@@ -376,6 +377,21 @@ CELERY_TASK_ROUTES = {
     'student_registration.mscc.tasks.generate_mscc_export': {
         'queue': 'mscc_export',
         'routing_key': 'mscc_export',
+    },
+}
+
+MSCC_KNOWLEDGE_SNAPSHOT_LIMIT = env.int('MSCC_KNOWLEDGE_SNAPSHOT_LIMIT', default=200)
+MSCC_KNOWLEDGE_SNAPSHOT_HOUR = env.int('MSCC_KNOWLEDGE_SNAPSHOT_HOUR', default=3)
+MSCC_KNOWLEDGE_SNAPSHOT_MINUTE = env.int('MSCC_KNOWLEDGE_SNAPSHOT_MINUTE', default=15)
+
+CELERY_BEAT_SCHEDULE = {
+    'compile-mscc-knowledge-daily': {
+        'task': 'student_registration.mscc.tasks.compile_mscc_knowledge_snapshot',
+        'schedule': crontab(
+            hour=MSCC_KNOWLEDGE_SNAPSHOT_HOUR,
+            minute=MSCC_KNOWLEDGE_SNAPSHOT_MINUTE,
+        ),
+        'options': {'queue': 'default'},
     },
 }
 ########## END CELERY

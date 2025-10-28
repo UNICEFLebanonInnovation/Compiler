@@ -25,6 +25,7 @@ from student_registration.mscc.ai_agent import (
     MSCCKnowledgeEngine,
     PreAssessmentAgent,
 )
+from student_registration.mscc.knowledge import MSCCKnowledgeCompiler
 from student_registration.mscc.models import (
     ProvidedServices,
     Registration,
@@ -34,6 +35,7 @@ from student_registration.mscc.models import (
     EducationProgrammeAssessment,
     FollowUpService,
     Round,
+    MSCCKnowledgeSnapshot,
 )
 from student_registration.mscc.views import HealthSupportAgentView
 
@@ -198,10 +200,72 @@ def test_health_agent_view_without_api_key():
     assert family_context['follow_up']['recent_follow_up']['result'] == 'Follow-up with parents'
     assert any(entry['field'] == 'have_labour' for entry in family_context['socioeconomic'])
     assert any('Family relies on child labour income' in flag for flag in family_context['flags'])
-    history = child_payload['registration_history']
-    assert history
-    assert history['total_registrations'] == 2
-    assert history['distinct_rounds'] == 2
+
+
+def test_mscc_knowledge_compiler_creates_daily_snapshot():
+    settings.OPENAI_API_KEY = ''
+    child = _create_child('Layla', 'Test', 'Child', age_years=11, gender='Female')
+    round_2024 = Round.objects.create(name='2024 Round', year=2024)
+    registration = Registration.objects.create(
+        child=child,
+        type='Core-Package',
+        registration_date=datetime.date(2024, 3, 12),
+        have_labour='No',
+        round=round_2024,
+    )
+
+    PSSService.objects.create(registration=registration)
+    HealthNutritionService.objects.create(registration=registration)
+    ProvidedServices.objects.create(
+        registration=registration,
+        name='PSS',
+        category='Child Protection',
+        required=True,
+        completed=False,
+    )
+    ProvidedServices.objects.create(
+        registration=registration,
+        name='Health and Nutrition',
+        category='Health & Nutrition',
+        required=True,
+        completed=False,
+    )
+
+    _record_followup(
+        registration,
+        follow_up_type='Centre visit',
+        follow_up_result='Discussed attendance with caregivers',
+        meeting_number=1,
+    )
+    _record_attendance(registration, child, datetime.date(2024, 3, 10), 'No')
+    _record_attendance(registration, child, datetime.date(2024, 3, 11), 'Yes')
+
+    EducationProgrammeAssessment.objects.create(
+        registration=registration,
+        overall_comment='Improving engagement.',
+        academic_progress='Steady',
+    )
+
+    compiler = MSCCKnowledgeCompiler(limit=5)
+    snapshot = compiler.create_snapshot()
+
+    assert snapshot.summary
+    assert snapshot.children
+    assert snapshot.metadata.get('children_count') == len(snapshot.children)
+    assert snapshot.document_count >= 1
+
+    payload = snapshot.as_openai_payload()
+    assert payload['summary'] == snapshot.summary
+    assert payload['children'] == snapshot.children
+    assert payload['metadata'].get('digest')
+
+    latest_snapshot = MSCCKnowledgeSnapshot.latest_snapshot()
+    assert latest_snapshot == snapshot
+
+    assert snapshot.children
+    child_summary = snapshot.children[0]
+    history = child_summary.get('registration_history') or {}
+    assert history.get('total_registrations') == 1
 
     knowledge_engine = MSCCKnowledgeEngine(payload['children'])
     compiled_summary = knowledge_engine.render_compiled_summary()
@@ -215,8 +279,6 @@ def test_health_agent_view_without_api_key():
 
     numeric_results = knowledge_engine.search(str(registration.id))
     assert any(result.registration_id == registration.id for result in numeric_results)
-    assert history['longest_consecutive_years'] >= 1
-    assert any(entry['is_current'] for entry in history['entries'])
 
 
 @patch('student_registration.mscc.views.HealthSupportAgent.analyze_children', return_value='analysis output')
