@@ -200,6 +200,16 @@ def test_health_agent_view_without_api_key():
     assert family_context['follow_up']['recent_follow_up']['result'] == 'Follow-up with parents'
     assert any(entry['field'] == 'have_labour' for entry in family_context['socioeconomic'])
     assert any('Family relies on child labour income' in flag for flag in family_context['flags'])
+    vulnerability_profile = child_payload['vulnerability_profile']
+    assert vulnerability_profile
+    assert vulnerability_profile['top_concerns']
+    assert child_payload['vulnerability_tags']
+    assert vulnerability_profile['severity'] in {'elevated', 'moderate', 'high', 'critical', 'low'}
+    assert any('attendance rate' in concern.lower() for concern in vulnerability_profile['top_concerns'])
+    assert any('pss pending' in concern.lower() for concern in vulnerability_profile['top_concerns'])
+    assert any('labour' in concern.lower() for concern in vulnerability_profile['top_concerns'])
+    assert 'vulnerability_overview' in payload
+    assert payload['vulnerability_overview']['severity_counts']
 
 
 def test_mscc_knowledge_compiler_creates_daily_snapshot():
@@ -266,11 +276,19 @@ def test_mscc_knowledge_compiler_creates_daily_snapshot():
     child_summary = snapshot.children[0]
     history = child_summary.get('registration_history') or {}
     assert history.get('total_registrations') == 1
+    assert child_summary.get('vulnerability_profile')
+    assert child_summary['vulnerability_profile']['top_concerns']
+    metadata = snapshot.metadata
+    assert metadata.get('vulnerability_overview')
+    assert metadata['document_index'][0]['vulnerability_concerns']
+    assert metadata['document_index'][0]['vulnerability_severity']
 
     knowledge_engine = MSCCKnowledgeEngine(payload['children'])
     compiled_summary = knowledge_engine.render_compiled_summary()
     assert f"registration_id = {registration.id}" in compiled_summary
     assert 'attendance.missed_sessions = 2' in compiled_summary
+    overview = knowledge_engine.vulnerability_overview
+    assert overview.get('severity_counts')
 
     search_results = knowledge_engine.search('attendance 2')
     assert search_results
@@ -478,6 +496,13 @@ def test_health_agent_view_calls_agent(mock_analyze):
     assert programme_impact['direction'] in {'negative', 'mixed'}
     assert programme_impact['total_registrations'] >= 2
     assert any('decline' in (factor['message'] or '').lower() for factor in programme_impact['factors'])
+    vulnerability_profile = payload['children'][0]['vulnerability_profile']
+    assert vulnerability_profile
+    assert vulnerability_profile['severity'] in {'high', 'critical', 'moderate', 'elevated'}
+    assert any('attendance' in concern.lower() for concern in vulnerability_profile['top_concerns'])
+    assert any('pss' in concern.lower() or 'psychosocial' in concern.lower() for concern in vulnerability_profile['top_concerns'])
+    assert payload['children'][0]['vulnerability_tags']
+    assert payload['vulnerability_overview']['severity_counts']
 
 
 def test_agent_infers_nutrition_focus():

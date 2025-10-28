@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime
 from typing import List
@@ -35,6 +36,7 @@ class KnowledgeCompilation:
     summary: str
     documents: List[dict]
     children: List[dict]
+    vulnerability_overview: dict
 
 
 class MSCCKnowledgeCompiler:
@@ -51,12 +53,15 @@ class MSCCKnowledgeCompiler:
         engine = MSCCKnowledgeEngine(children_context)
         summary = engine.render_compiled_summary()
         documents = engine.documents
+        enriched_children = engine.enriched_children
+        vulnerability_overview = engine.vulnerability_overview
         generated_at = timezone.now()
         return KnowledgeCompilation(
             generated_at=generated_at,
             summary=summary,
             documents=documents,
-            children=children_context,
+            children=enriched_children,
+            vulnerability_overview=vulnerability_overview,
         )
 
     def create_snapshot(self) -> MSCCKnowledgeSnapshot:
@@ -85,9 +90,43 @@ class MSCCKnowledgeCompiler:
                     'child_id': doc.get('child_id'),
                     'tokens': sorted(doc.get('tokens') or []),
                     'numbers': sorted(doc.get('numbers') or []),
+                    'vulnerability_severity': (doc.get('context') or {}).get('vulnerability_profile', {}).get('severity'),
+                    'vulnerability_concerns': (doc.get('context') or {}).get('vulnerability_profile', {}).get('top_concerns', [])[:5],
+                    'vulnerability_score': (doc.get('context') or {}).get('vulnerability_profile', {}).get('score'),
                 }
                 for doc in compilation.documents
             ]
+
+            severity_counter: Counter[str] = Counter()
+            domain_counter: Counter[str] = Counter()
+            concern_counter: Counter[str] = Counter()
+            for doc in compilation.documents:
+                profile = (doc.get('context') or {}).get('vulnerability_profile') or {}
+                severity = profile.get('severity') or 'unknown'
+                severity_counter[severity] += 1
+                for entry in profile.get('domain_breakdown') or []:
+                    domain = entry.get('domain')
+                    if domain:
+                        domain_counter[domain] += 1
+                for concern in profile.get('top_concerns') or []:
+                    concern_counter[concern] += 1
+
+            if severity_counter:
+                metadata['vulnerability_severity'] = dict(
+                    sorted(severity_counter.items(), key=lambda item: (-item[1], item[0]))
+                )
+            if domain_counter:
+                metadata['vulnerability_domains'] = dict(
+                    sorted(domain_counter.items(), key=lambda item: (-item[1], item[0]))
+                )
+            if concern_counter:
+                metadata['top_vulnerability_concerns'] = [
+                    {'concern': concern, 'count': count}
+                    for concern, count in concern_counter.most_common(10)
+                ]
+
+        if compilation.vulnerability_overview:
+            metadata['vulnerability_overview'] = compilation.vulnerability_overview
 
         snapshot, _ = MSCCKnowledgeSnapshot.objects.update_or_create(
             generated_for=compilation.generated_at.date(),
