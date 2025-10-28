@@ -604,9 +604,12 @@ class HealthSupportAgent:
             "health services, attendance history, and other support needs. "
             "Incorporate family follow-up actions, socio-economic stability, "
             "and caregiver engagement in education when prioritising cases. "
-            "Provide actionable recommendations for each child. Evaluate the "
-            "Makani programme impact over the years and clarify whether it "
-            "appears positive, negative, or mixed for each case."
+            "Provide actionable recommendations for each child. Recommendations "
+            "must respond strictly to the staff question or stated focus "
+            "domains—omit unrelated advice and state when information is "
+            "insufficient. Evaluate the Makani programme impact over the years "
+            "and clarify whether it appears positive, negative, or mixed for "
+            "each case."
         )
         formatting = (
             "Return your response in markdown with the sections 'Priority Cases', "
