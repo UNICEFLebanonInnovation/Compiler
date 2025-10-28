@@ -5,12 +5,70 @@ from __future__ import annotations
 import json
 import logging
 import re
-from typing import List, Sequence
+from dataclasses import dataclass
+from datetime import date, datetime
+from decimal import Decimal
+from typing import Iterable, List, Sequence
 
 import requests
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
+
+
+AGENT_STOP_WORDS = {
+    'the',
+    'and',
+    'for',
+    'with',
+    'that',
+    'this',
+    'from',
+    'into',
+    'about',
+    'need',
+    'please',
+    'could',
+    'would',
+    'should',
+    'like',
+    'make',
+    'have',
+    'has',
+    'had',
+    'are',
+    'was',
+    'were',
+    'can',
+    'help',
+    'assist',
+    'focus',
+    'around',
+    'into',
+    'insight',
+    'insights',
+    'information',
+    'status',
+    'provide',
+    'providing',
+    'look',
+    'looking',
+    'tell',
+    'show',
+    'question',
+    'questions',
+    'kids',
+    'child',
+    'children',
+    'programme',
+    'program',
+    'mscc',
+    'over',
+    'year',
+    'years',
+    'round',
+    'rounds',
+}
 
 
 class AgentConfigurationError(RuntimeError):
@@ -21,62 +79,169 @@ class AgentAPIError(RuntimeError):
     """Raised when the upstream OpenAI API returns an error."""
 
 
+@dataclass(frozen=True)
+class KnowledgeSearchResult:
+    """Lightweight container returned by :class:`MSCCKnowledgeEngine`."""
+
+    registration_id: int | None
+    child_id: int | None
+    score: float
+    matched_terms: tuple[str, ...]
+    snippet: str
+
+
+class MSCCKnowledgeEngine:
+    """Compile MSCC child context into a searchable knowledge base.
+
+    The health agent already receives rich dictionaries describing each child.
+    This helper flattens that structure into plain text "documents" that are
+    easy to scan and tokenise.  The compiled representation keeps a small
+    inverted index so staff (or automated routines) can quickly look up numbers
+    and programme terms without wading through deeply nested JSON.
+    """
+
+    SECTION_SEPARATOR = "\n\n"
+
+    def __init__(self, children_context: Iterable[dict] | None) -> None:
+        self._children = [child for child in (children_context or []) if isinstance(child, dict)]
+        self._documents: list[dict] = []
+        self._compiled_summary: str = ""
+        self._build_documents()
+
+    @staticmethod
+    def _normalise_value(value) -> str:
+        if value is None:
+            return ""
+        if isinstance(value, (datetime, date)):
+            return value.isoformat()
+        if isinstance(value, Decimal):
+            return format(value, 'f')
+        if isinstance(value, float):
+            return f"{value:.4g}"
+        return str(value)
+
+    @staticmethod
+    def _tokenise(text: str) -> set[str]:
+        tokens = {
+            token
+            for token in re.findall(r"[a-zA-Z0-9']+", text.lower())
+            if len(token) >= 2 and token not in AGENT_STOP_WORDS
+        }
+        return tokens
+
+    @staticmethod
+    def _extract_numbers(text: str) -> set[str]:
+        return {match.group(0) for match in re.finditer(r"\d+(?:\.\d+)?", text)}
+
+    def _build_documents(self) -> None:
+        documents: list[dict] = []
+        compiled_sections: list[str] = []
+
+        for index, child in enumerate(self._children, start=1):
+            lines: list[str] = []
+            self._flatten(child, prefix=[], output=lines)
+            document_text = "\n".join(lines)
+            tokens = self._tokenise(document_text)
+            numbers = self._extract_numbers(document_text)
+            registration_id = child.get('registration_id')
+            child_id = child.get('child_id')
+            documents.append(
+                {
+                    'registration_id': registration_id,
+                    'child_id': child_id,
+                    'text': document_text,
+                    'tokens': tokens,
+                    'numbers': numbers,
+                    'context': child,
+                }
+            )
+            header = f"Child {index} – Registration {registration_id}"
+            compiled_sections.append(f"{header}\n{document_text}")
+
+        self._documents = documents
+        self._compiled_summary = self.SECTION_SEPARATOR.join(compiled_sections).strip()
+
+    def _flatten(self, value, *, prefix: list[str], output: list[str]) -> None:
+        if isinstance(value, dict):
+            for key in sorted(value):
+                self._flatten(value[key], prefix=prefix + [str(key)], output=output)
+            return
+        if isinstance(value, (list, tuple)):
+            for position, item in enumerate(value):
+                self._flatten(item, prefix=prefix + [str(position)], output=output)
+            return
+
+        field_path = ".".join(prefix)
+        normalised = self._normalise_value(value)
+        if normalised:
+            output.append(f"{field_path} = {normalised}")
+
+    @property
+    def documents(self) -> list[dict]:
+        """Return the indexed documents."""
+
+        return list(self._documents)
+
+    def render_compiled_summary(self) -> str:
+        """Return a readable text dump of all indexed children."""
+
+        return self._compiled_summary
+
+    def search(self, query: str, *, limit: int = 5) -> list[KnowledgeSearchResult]:
+        """Search the compiled knowledge using keyword and numeric matches."""
+
+        if not isinstance(query, str):
+            return []
+
+        query_tokens = self._tokenise(query)
+        query_numbers = self._extract_numbers(query)
+        if not query_tokens and not query_numbers:
+            return []
+
+        ranked: list[tuple[float, dict, set[str]]] = []
+        for document in self._documents:
+            token_matches = query_tokens & document['tokens'] if query_tokens else set()
+            number_matches = query_numbers & document['numbers'] if query_numbers else set()
+            if not token_matches and not number_matches:
+                continue
+            score = float(len(token_matches)) + 1.5 * float(len(number_matches))
+            ranked.append((score, document, token_matches | number_matches))
+
+        ranked.sort(key=lambda item: item[0], reverse=True)
+        results: list[KnowledgeSearchResult] = []
+        for score, document, matches in ranked[:limit]:
+            snippet = self._build_snippet(document['text'], matches)
+            results.append(
+                KnowledgeSearchResult(
+                    registration_id=document.get('registration_id'),
+                    child_id=document.get('child_id'),
+                    score=round(score, 2),
+                    matched_terms=tuple(sorted(matches)),
+                    snippet=snippet,
+                )
+            )
+
+        return results
+
+    @staticmethod
+    def _build_snippet(document_text: str, matches: set[str]) -> str:
+        if not document_text:
+            return ""
+        if not matches:
+            return document_text.splitlines()[0]
+
+        lines = document_text.splitlines()
+        for line in lines:
+            for term in matches:
+                if term.lower() in line.lower():
+                    return line
+        return lines[0]
+
+
 class HealthSupportAgent:
     """Simple wrapper around the OpenAI chat completion endpoint."""
 
-    STOP_WORDS = {
-        'the',
-        'and',
-        'for',
-        'with',
-        'that',
-        'this',
-        'from',
-        'into',
-        'about',
-        'need',
-        'please',
-        'could',
-        'would',
-        'should',
-        'like',
-        'make',
-        'have',
-        'has',
-        'had',
-        'are',
-        'was',
-        'were',
-        'can',
-        'help',
-        'assist',
-        'focus',
-        'around',
-        'into',
-        'insight',
-        'insights',
-        'information',
-        'status',
-        'provide',
-        'providing',
-        'look',
-        'looking',
-        'tell',
-        'show',
-        'question',
-        'questions',
-        'kids',
-        'child',
-        'children',
-        'programme',
-        'program',
-        'mscc',
-        'over',
-        'year',
-        'years',
-        'round',
-        'rounds',
-    }
+    STOP_WORDS = AGENT_STOP_WORDS
 
     KEYWORD_TOPIC_MAP = {
         'nutrition': {'nutrition'},
@@ -169,7 +334,10 @@ class HealthSupportAgent:
         focus_topics: set[str] | None = None,
         keywords: Sequence[str] | None = None,
     ) -> List[dict]:
-        summary = json.dumps(children_context, indent=2, default=str)
+        knowledge_engine = MSCCKnowledgeEngine(children_context)
+        summary = knowledge_engine.render_compiled_summary() or json.dumps(
+            children_context, indent=2, default=str
+        )
         system_message = (
             "You are an expert public health analyst supporting the MSCC "
             "(Makani Strategic Child Care) programme."
@@ -501,6 +669,8 @@ class PreAssessmentAgent:
 __all__ = [
     "AgentAPIError",
     "AgentConfigurationError",
+    "KnowledgeSearchResult",
+    "MSCCKnowledgeEngine",
     "HealthSupportAgent",
     "PreAssessmentAgent",
 ]

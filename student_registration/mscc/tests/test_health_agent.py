@@ -20,7 +20,11 @@ from student_registration.attendances.models import (
     MSCCAttendanceChild,
 )
 from student_registration.child.models import Child
-from student_registration.mscc.ai_agent import HealthSupportAgent, PreAssessmentAgent
+from student_registration.mscc.ai_agent import (
+    HealthSupportAgent,
+    MSCCKnowledgeEngine,
+    PreAssessmentAgent,
+)
 from student_registration.mscc.models import (
     ProvidedServices,
     Registration,
@@ -198,6 +202,19 @@ def test_health_agent_view_without_api_key():
     assert history
     assert history['total_registrations'] == 2
     assert history['distinct_rounds'] == 2
+
+    knowledge_engine = MSCCKnowledgeEngine(payload['children'])
+    compiled_summary = knowledge_engine.render_compiled_summary()
+    assert f"registration_id = {registration.id}" in compiled_summary
+    assert 'attendance.missed_sessions = 2' in compiled_summary
+
+    search_results = knowledge_engine.search('attendance 2')
+    assert search_results
+    assert search_results[0].registration_id == registration.id
+    assert any('missed_sessions' in result.snippet for result in search_results)
+
+    numeric_results = knowledge_engine.search(str(registration.id))
+    assert any(result.registration_id == registration.id for result in numeric_results)
     assert history['longest_consecutive_years'] >= 1
     assert any(entry['is_current'] for entry in history['entries'])
 
