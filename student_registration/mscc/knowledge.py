@@ -14,7 +14,6 @@ from django.db.models.functions import Coalesce
 from django.utils import timezone
 
 from student_registration.attendances.models import MSCCAttendanceChild
-from student_registration.mscc import views as mscc_views
 from student_registration.mscc.ai_agent import MSCCKnowledgeEngine
 from student_registration.mscc.models import (
     EducationProgrammeAssessment,
@@ -26,6 +25,13 @@ from student_registration.mscc.models import (
     PSSService,
     Registration,
 )
+
+
+def _get_mscc_views():
+    """Import and return the MSCC views module lazily to avoid circular imports."""
+    from student_registration.mscc import views as mscc_views  # local import to prevent circular dependency
+
+    return mscc_views
 
 
 @dataclass(frozen=True)
@@ -247,7 +253,7 @@ class MSCCKnowledgeCompiler:
                 registration_history_map.setdefault(history_record.child_id, []).append(history_record)
 
         children_context = [
-            mscc_views._build_child_context(
+            _get_mscc_views()._build_child_context(
                 registration,
                 services_map.get(registration.id, []),
                 attendance_map.get(registration.id, []),
