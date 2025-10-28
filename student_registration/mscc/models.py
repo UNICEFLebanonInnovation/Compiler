@@ -2234,3 +2234,39 @@ class LegoService(TimeStampedModel):
         verbose_name = "LEGO"
         verbose_name_plural = "LEGO"
 
+
+class MSCCKnowledgeSnapshot(TimeStampedModel):
+    """Persisted daily compilation of MSCC child knowledge."""
+
+    generated_for = models.DateField(db_index=True)
+    summary = models.TextField()
+    children = models.JSONField(default=list, blank=True)
+    metadata = models.JSONField(default=dict, blank=True)
+    document_count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['-generated_for', '-created']
+        unique_together = ('generated_for',)
+        verbose_name = 'MSCC knowledge snapshot'
+        verbose_name_plural = 'MSCC knowledge snapshots'
+
+    def __str__(self):
+        return f"MSCC knowledge snapshot for {self.generated_for}"
+
+    @classmethod
+    def latest_snapshot(cls):
+        """Return the most recently generated snapshot if available."""
+
+        return cls.objects.order_by('-generated_for', '-created').first()
+
+    def as_openai_payload(self) -> dict:
+        """Return a serialisable payload ready to be shared with OpenAI."""
+
+        return {
+            'generated_for': self.generated_for.isoformat(),
+            'summary': self.summary,
+            'children': self.children,
+            'metadata': self.metadata,
+            'document_count': self.document_count,
+        }
+

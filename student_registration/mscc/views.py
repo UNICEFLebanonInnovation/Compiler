@@ -95,6 +95,7 @@ from .ai_agent import (
     AgentAPIError,
     AgentConfigurationError,
     HealthSupportAgent,
+    MSCCKnowledgeEngine,
     PreAssessmentAgent,
 )
 
@@ -2047,6 +2048,9 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
             for registration in registrations
         ]
 
+        knowledge_engine = MSCCKnowledgeEngine(children_context)
+        children_context = knowledge_engine.enriched_children
+
         for child in children_context:
             if focus_topics:
                 child['focus_topics'] = sorted(focus_topics)
@@ -2062,6 +2066,12 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
 
         children_context.sort(key=lambda child: child['risk_score'], reverse=True)
         children_context = children_context[:limit_value]
+
+        vulnerability_overview = (
+            MSCCKnowledgeEngine(children_context).vulnerability_overview
+            if children_context
+            else {}
+        )
 
         analysis = ''
         error = None
@@ -2105,6 +2115,8 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
             response_payload['focus_topics'] = sorted(focus_topics)
         if error:
             response_payload['error'] = error
+        if vulnerability_overview:
+            response_payload['vulnerability_overview'] = vulnerability_overview
 
         return JsonResponse(response_payload)
 

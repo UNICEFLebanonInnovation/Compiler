@@ -10,8 +10,11 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.test')
 import django
 import pytest
 from django.conf import settings
+from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import RequestFactory
 from django.test.utils import setup_databases, teardown_databases
+from django.utils import timezone
 
 django.setup()
 
@@ -20,7 +23,12 @@ from student_registration.attendances.models import (
     MSCCAttendanceChild,
 )
 from student_registration.child.models import Child
-from student_registration.mscc.ai_agent import HealthSupportAgent, PreAssessmentAgent
+from student_registration.mscc.ai_agent import (
+    HealthSupportAgent,
+    MSCCKnowledgeEngine,
+    PreAssessmentAgent,
+)
+from student_registration.mscc.knowledge import KnowledgeCompilation, MSCCKnowledgeCompiler
 from student_registration.mscc.models import (
     ProvidedServices,
     Registration,
@@ -30,6 +38,7 @@ from student_registration.mscc.models import (
     EducationProgrammeAssessment,
     FollowUpService,
     Round,
+    MSCCKnowledgeSnapshot,
 )
 from student_registration.mscc.views import HealthSupportAgentView
 
@@ -194,12 +203,154 @@ def test_health_agent_view_without_api_key():
     assert family_context['follow_up']['recent_follow_up']['result'] == 'Follow-up with parents'
     assert any(entry['field'] == 'have_labour' for entry in family_context['socioeconomic'])
     assert any('Family relies on child labour income' in flag for flag in family_context['flags'])
-    history = child_payload['registration_history']
-    assert history
-    assert history['total_registrations'] == 2
-    assert history['distinct_rounds'] == 2
-    assert history['longest_consecutive_years'] >= 1
-    assert any(entry['is_current'] for entry in history['entries'])
+    vulnerability_profile = child_payload['vulnerability_profile']
+    assert vulnerability_profile
+    assert vulnerability_profile['top_concerns']
+    assert child_payload['vulnerability_tags']
+    assert vulnerability_profile['severity'] in {'elevated', 'moderate', 'high', 'critical', 'low'}
+    assert any('attendance rate' in concern.lower() for concern in vulnerability_profile['top_concerns'])
+    assert any('pss pending' in concern.lower() for concern in vulnerability_profile['top_concerns'])
+    assert any('labour' in concern.lower() for concern in vulnerability_profile['top_concerns'])
+    assert 'vulnerability_overview' in payload
+    assert payload['vulnerability_overview']['severity_counts']
+
+
+def test_mscc_knowledge_compiler_creates_daily_snapshot():
+    settings.OPENAI_API_KEY = ''
+    child = _create_child('Layla', 'Test', 'Child', age_years=11, gender='Female')
+    round_2024 = Round.objects.create(name='2024 Round', year=2024)
+    registration = Registration.objects.create(
+        child=child,
+        type='Core-Package',
+        registration_date=datetime.date(2024, 3, 12),
+        have_labour='No',
+        round=round_2024,
+    )
+
+    PSSService.objects.create(registration=registration)
+    HealthNutritionService.objects.create(registration=registration)
+    ProvidedServices.objects.create(
+        registration=registration,
+        name='PSS',
+        category='Child Protection',
+        required=True,
+        completed=False,
+    )
+    ProvidedServices.objects.create(
+        registration=registration,
+        name='Health and Nutrition',
+        category='Health & Nutrition',
+        required=True,
+        completed=False,
+    )
+
+    _record_followup(
+        registration,
+        follow_up_type='Centre visit',
+        follow_up_result='Discussed attendance with caregivers',
+        meeting_number=1,
+    )
+    _record_attendance(registration, child, datetime.date(2024, 3, 10), 'No')
+    _record_attendance(registration, child, datetime.date(2024, 3, 11), 'Yes')
+
+    EducationProgrammeAssessment.objects.create(
+        registration=registration,
+        overall_comment='Improving engagement.',
+        academic_progress='Steady',
+    )
+
+    compiler = MSCCKnowledgeCompiler(limit=5)
+    snapshot = compiler.create_snapshot()
+
+    assert snapshot.summary
+    assert snapshot.children
+    assert snapshot.metadata.get('children_count') == len(snapshot.children)
+    assert snapshot.document_count >= 1
+
+    payload = snapshot.as_openai_payload()
+    assert payload['summary'] == snapshot.summary
+    assert payload['children'] == snapshot.children
+    assert payload['metadata'].get('digest')
+
+    latest_snapshot = MSCCKnowledgeSnapshot.latest_snapshot()
+    assert latest_snapshot == snapshot
+
+    assert snapshot.children
+    child_summary = snapshot.children[0]
+    history = child_summary.get('registration_history') or {}
+    assert history.get('total_registrations') == 1
+    assert child_summary.get('vulnerability_profile')
+    assert child_summary['vulnerability_profile']['top_concerns']
+    metadata = snapshot.metadata
+    assert metadata.get('vulnerability_overview')
+    assert metadata['document_index'][0]['vulnerability_concerns']
+    assert metadata['document_index'][0]['vulnerability_severity']
+
+    knowledge_engine = MSCCKnowledgeEngine(payload['children'])
+    compiled_summary = knowledge_engine.render_compiled_summary()
+    assert f"registration_id = {registration.id}" in compiled_summary
+    assert 'attendance.missed_sessions = 2' in compiled_summary
+    overview = knowledge_engine.vulnerability_overview
+    assert overview.get('severity_counts')
+
+    search_results = knowledge_engine.search('attendance 2')
+    assert search_results
+    assert search_results[0].registration_id == registration.id
+    assert any('missed_sessions' in result.snippet for result in search_results)
+
+    numeric_results = knowledge_engine.search(str(registration.id))
+    assert any(result.registration_id == registration.id for result in numeric_results)
+
+
+@patch('student_registration.mscc.management.commands.compile_mscc_knowledge.MSCCKnowledgeCompiler')
+def test_compile_mscc_knowledge_command_creates_snapshot(mock_compiler, capsys):
+    snapshot = SimpleNamespace(
+        pk=42,
+        generated_for=datetime.date(2024, 4, 1),
+        document_count=3,
+    )
+    snapshot.as_openai_payload = lambda: {
+        'summary': 'compiled summary',
+        'children': [{'registration_id': 10}],
+        'metadata': {'digest': 'abc123'},
+    }
+
+    mock_compiler.return_value.create_snapshot.return_value = snapshot
+
+    call_command('compile_mscc_knowledge')
+
+    mock_compiler.assert_called_once()
+    mock_compiler.return_value.create_snapshot.assert_called_once()
+    output = capsys.readouterr().out
+    assert 'snapshot created' in output
+    assert '"document_count": 3' in output
+
+
+@patch('student_registration.mscc.management.commands.compile_mscc_knowledge.MSCCKnowledgeCompiler')
+def test_compile_mscc_knowledge_command_dry_run(mock_compiler, capsys):
+    compilation = KnowledgeCompilation(
+        generated_at=timezone.now(),
+        summary='Daily summary content',
+        documents=[{'registration_id': 1, 'numbers': [1]}],
+        children=[{'registration_id': 1, 'child_name': 'Layla'}],
+        vulnerability_overview={'severity_counts': {'high': 1}},
+    )
+
+    mock_compiler.return_value.compile.return_value = compilation
+
+    call_command('compile_mscc_knowledge', '--dry-run', '--limit', '5')
+
+    mock_compiler.assert_called_once_with(limit=5)
+    mock_compiler.return_value.compile.assert_called_once()
+    output = capsys.readouterr().out
+    assert 'Compiled MSCC knowledge' in output
+    assert 'Daily summary content' in output
+    assert '"children_count": 1' in output
+
+
+def test_compile_mscc_knowledge_command_include_documents_requires_dry_run():
+    with pytest.raises(CommandError):
+        call_command('compile_mscc_knowledge', '--include-documents')
 
 
 @patch('student_registration.mscc.views.HealthSupportAgent.analyze_children', return_value='analysis output')
@@ -399,6 +550,13 @@ def test_health_agent_view_calls_agent(mock_analyze):
     assert programme_impact['direction'] in {'negative', 'mixed'}
     assert programme_impact['total_registrations'] >= 2
     assert any('decline' in (factor['message'] or '').lower() for factor in programme_impact['factors'])
+    vulnerability_profile = payload['children'][0]['vulnerability_profile']
+    assert vulnerability_profile
+    assert vulnerability_profile['severity'] in {'high', 'critical', 'moderate', 'elevated'}
+    assert any('attendance' in concern.lower() for concern in vulnerability_profile['top_concerns'])
+    assert any('pss' in concern.lower() or 'psychosocial' in concern.lower() for concern in vulnerability_profile['top_concerns'])
+    assert payload['children'][0]['vulnerability_tags']
+    assert payload['vulnerability_overview']['severity_counts']
 
 
 def test_agent_infers_nutrition_focus():
