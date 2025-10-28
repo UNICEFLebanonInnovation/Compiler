@@ -80,6 +80,37 @@
     margin-bottom: 0.5rem;
   }
 
+  .priority-section-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .priority-section-toggle:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .priority-section-toggle .collapse-icon {
+    display: inline-flex;
+    transition: transform 0.2s ease;
+  }
+
+  .priority-section-toggle[aria-expanded="true"] .collapse-icon {
+    transform: rotate(180deg);
+  }
+
+  .priority-section-body.collapse.show {
+    margin-top: 0.75rem;
+  }
+
   .priority-section-body {
     background: #fff;
     border: 1px solid #e9ecef;

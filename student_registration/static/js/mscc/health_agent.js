@@ -931,6 +931,9 @@
             '</span>'
           : '';
 
+        var insightsCollapseId = 'priority-insights-' + index;
+        var insightsToggleId = 'priority-insights-toggle-' + index;
+
         return (
           '<div class="priority-child-card card mb-3 shadow-sm">' +
           '<div class="card-body">' +
@@ -990,8 +993,12 @@
             );
           })() +
           '<div class="priority-section mt-3">' +
-          '<div class="priority-section-title small text-uppercase text-muted">Insights &amp; history</div>' +
-          '<div class="priority-section-body small">' + renderInsights(child) + '</div>' +
+          '<button id="' + insightsToggleId + '" class="priority-section-title priority-section-toggle small text-uppercase text-muted" type="button" ' +
+          'data-toggle="collapse" data-target="#' + insightsCollapseId + '" aria-expanded="false" aria-controls="' + insightsCollapseId + '">' +
+          '<span>Insights &amp; history</span>' +
+          '<span class="collapse-icon"><i class="pe-7s-angle-down"></i></span>' +
+          '</button>' +
+          '<div id="' + insightsCollapseId + '" class="priority-section-body small collapse" aria-labelledby="' + insightsToggleId + '">' + renderInsights(child) + '</div>' +
           '</div>' +
           '<div class="priority-section mt-3">' +
           '<div class="priority-section-title small text-uppercase text-muted">Family context</div>' +
