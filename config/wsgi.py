@@ -15,6 +15,48 @@ import sys
 
 from django.core.wsgi import get_wsgi_application
 
+import os
+ENV = os.getenv("ENVIRONMENT", "dev")         # "production" in prod
+SERVICE = os.getenv("SERVICE_NAME", "bma-api")        # e.g., "bma-api"
+VERSION = os.getenv("RELEASE_VERSION", "2.5")     # e.g., git sha/semver
+ROLE = f"{SERVICE}-{ENV}"
+
+# 1) Resource attributes (read by Azure Monitor)
+# These OTEL_* env vars are picked up by azure.monitor.opentelemetry.
+os.environ.setdefault("OTEL_SERVICE_NAME", ROLE)
+os.environ.setdefault(
+    "OTEL_RESOURCE_ATTRIBUTES",
+    f"deployment.environment={ENV},service.version={VERSION},cloud.role={ROLE}"
+)
+
+# 2) Sampling per env (keep prod high, dev lower)
+SAMPLING = 1.0 if ENV == "production" else 0.2
+
+# ---------------- Azure Application Insights (OpenTelemetry) ----------------
+# Configure BEFORE Django imports its app.
+# Uses the AZURE_MONITOR_CONNECTION_STRING environment variable.
+try:
+
+    from azure.monitor.opentelemetry import configure_azure_monitor
+    configure_azure_monitor(
+        connection_string="InstrumentationKey=95277cfa-462c-4736-b2a6-fb14c15c4dcb;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/;ApplicationId=cfcefd29-47a1-461c-a6f9-3808704cf0ac",
+        sampling_ratio=SAMPLING,
+        enable_live_metrics=True,
+        enable_standard_metrics=True,
+        enable_tracing=True,
+        enable_metrics=True,
+        enable_logging=True,
+        disable_offline_storage=False,
+        logger_name=ROLE
+    )
+
+except Exception as _appins_exc:
+    # Don't block the app if AI isn't configured; just continue.
+    # You can log/print here if desired.
+    pass
+# ---------------------------------------------------------------------------
+
+
 # This allows easy placement of apps within the interior
 # student_registration directory.
 app_path = os.path.dirname(os.path.abspath(__file__)).replace('/config', '')
