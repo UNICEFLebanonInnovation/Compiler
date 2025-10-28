@@ -226,32 +226,31 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
     def get(self, request, pk, *args, **kwargs):
         try:
             upload = get_object_or_404(AdolescentUpload, pk=pk, uploaded_by=request.user)
-            data = self.parse_file(upload.file)
+            result = self.parse_file(upload.file, preview=True)
 
-            if isinstance(data, dict) and data.get("error"):
-                messages.error(request, data["error"], extra_tags='import')
+            if result.get("error"):
+                messages.error(request, result["error"], extra_tags='import')
                 return redirect("backends:adolescent_upload")
 
-            preview = data[:5]
             return render(request, self.template_name, {
                 'upload': upload,
-                'count': len(data),
-                'preview': preview,
+                'count': result.get('count', 0),
+                'preview': result.get('preview', []),
             })
-        except Exception as e:
+        except Exception:
             messages.error(request, "An unexpected error occurred while processing the file", extra_tags='import')
             return redirect("backends:adolescent_upload")
 
     def post(self, request, pk, *args, **kwargs):
         try:
             upload = get_object_or_404(AdolescentUpload, pk=pk, uploaded_by=request.user)
-            data = self.parse_file(upload.file)
+            result = self.parse_file(upload.file)
 
-            if isinstance(data, dict) and data.get("error"):
-                messages.error(request, data["error"], extra_tags='import')
+            if result.get("error"):
+                messages.error(request, result["error"], extra_tags='import')
                 return redirect("backends:adolescent_upload")
 
-            imported, not_imported = self.import_data(data, upload, request)
+            imported, not_imported = self.import_data(result.get('rows', []), upload, request)
             upload.processed = True
             upload.save()
             return render(request, self.result_template, {
@@ -260,21 +259,67 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                 'not_imported': not_imported,
                 'upload': upload,
             })
-        except Exception as e:
+        except Exception:
             messages.error(request, "An unexpected error occurred while importing the file", extra_tags='import')
             return redirect("backends:adolescent_upload")
 
-    def parse_file(self, uploaded_file):
+    def parse_file(self, uploaded_file, preview=False, preview_limit=5):
         from openpyxl import load_workbook
         from collections import OrderedDict
 
+        def _open_workbook(file_field):
+            try:
+                file_field.open('rb')
+            except Exception:
+                pass
+
+            try:
+                file_field.seek(0)
+            except AttributeError:
+                try:
+                    file_field.file.seek(0)
+                except Exception:
+                    pass
+
+            return load_workbook(filename=file_field, read_only=True, data_only=True)
+
+        def _iter_rows(ws, headers):
+            skipped = []
+
+            def generator():
+                try:
+                    for row_index, row in enumerate(ws.iter_rows(min_row=2), start=2):
+                        try:
+                            values = [cell.value for cell in row]
+                            if not any(values):
+                                continue
+                            row_data = OrderedDict(
+                                (self.mapping.get(headers[i]), values[i])
+                                for i in range(len(headers))
+                                if headers[i] in self.mapping
+                            )
+                            row_data['row'] = row_index
+                            yield row_data
+                        except Exception:
+                            skipped.append(row_index)
+                            yield {
+                                'row': row_index,
+                                'parse_error': 'Failed to parse row {0}'.format(row_index)
+                            }
+                finally:
+                    ws.parent.close()
+
+            return generator(), skipped
+
         try:
-            wb = load_workbook(filename=uploaded_file, read_only=True)
+            wb = _open_workbook(uploaded_file)
 
             if not wb.sheetnames:
+                wb.close()
                 return {"error": "The uploaded Excel file has no sheets. Please check the file content."}
 
             if 'Registrations' not in wb.sheetnames:
+                wb.close()
                 return {"error": "Sheet 'Registrations' not found in Excel file."}
 
             ws = wb['Registrations']
@@ -283,26 +328,32 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                 header_row = next(ws.iter_rows(min_row=1, max_row=1))
                 headers = [cell.value for cell in header_row]
             except Exception:
+                wb.close()
                 return {"error": "Failed to read header row in 'Registrations' sheet."}
 
-            rows = []
-            skipped_rows = []
+            row_iter, skipped_rows = _iter_rows(ws, headers)
 
-            for row_index, row in enumerate(ws.iter_rows(min_row=2), start=2):
-                try:
-                    values = [cell.value for cell in row]
-                    if not any(values):
-                        continue
-                    row_data = OrderedDict(
-                        (self.mapping.get(headers[i]), values[i])
-                        for i in range(len(headers))
-                        if headers[i] in self.mapping
-                    )
-                    row_data['row'] = row_index
-                    rows.append(row_data)
-                except Exception:
-                    skipped_rows.append(row_index)
-                    continue
+            if preview:
+                preview_rows = []
+                count = 0
+                for row_data in row_iter:
+                    count += 1
+                    if len(preview_rows) < preview_limit:
+                        preview_rows.append(dict(row_data))
+
+                if skipped_rows:
+                    return {
+                        "error": "Failed to parse rows: {}. Please check the file format.".format(
+                            ", ".join(map(str, skipped_rows))
+                        ),
+                        "skipped": skipped_rows
+                    }
+
+                return {
+                    "error": None,
+                    "count": count,
+                    "preview": preview_rows,
+                }
 
             if skipped_rows:
                 return {
@@ -312,7 +363,10 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                     "skipped": skipped_rows
                 }
 
-            return rows
+            return {
+                "error": None,
+                "rows": row_iter,
+            }
 
         except Exception:
             return {"error": "Unexpected error while processing Excel file"}
@@ -324,11 +378,74 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
         not_imported = []
         imported = 0
 
+        nationality_cache = {}
+        caregiver_nat_cache = {}
+        disability_cache = {}
+        education_cache = {}
+        id_type_cache = {}
+        location_cache = {}
+
+        def get_nationality(value, cache):
+            if not value:
+                return None
+            cached = cache.get(value)
+            if cached is not None:
+                return cached
+            obj = Nationality.objects.filter(name=value).first()
+            cache[value] = obj
+            return obj
+
+        def get_location(value, type_id):
+            if not value:
+                return None
+            key = (value, type_id)
+            if key in location_cache:
+                return location_cache[key]
+            obj = Location.objects.filter(name=value, type_id=type_id).first()
+            location_cache[key] = obj
+            return obj
+
+        def get_disability(value):
+            if not value:
+                return None
+            if value in disability_cache:
+                return disability_cache[value]
+            obj = Disability.objects.filter(name=value).first()
+            disability_cache[value] = obj
+            return obj
+
+        def get_education(value):
+            if not value:
+                return None
+            if value in education_cache:
+                return education_cache[value]
+            obj = EducationalLevel.objects.filter(name=value).first()
+            education_cache[value] = obj
+            return obj
+
+        def get_id_type(value):
+            if not value:
+                return None
+            if value in id_type_cache:
+                return id_type_cache[value]
+            obj = IDType.objects.filter(name=value).first()
+            id_type_cache[value] = obj
+            return obj
+
         for index, values in enumerate(data, start=2):
+            row_number = values.get('row', index)
+
+            parse_error = values.get('parse_error')
+            if parse_error:
+                values['row'] = row_number
+                values['error'] = parse_error
+                not_imported.append(values)
+                continue
+
             # ---- Missing mandatory fields
             missing = [f for f in self.mandatory_fields if not values.get(f)]
             if missing:
-                values['row'] = index
+                values['row'] = row_number
                 values['error'] = 'Missing fields: ' + ', '.join(missing)
                 not_imported.append(values)
                 continue
@@ -345,11 +462,16 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             main_caregiver_norm = raw_main_caregiver[:1].upper() + raw_main_caregiver[1:] if raw_main_caregiver else ''
             values['main_caregiver'] = main_caregiver_norm
 
-            nationality = Nationality.objects.filter(name=values.get('nationality')).first()
-            gov = Location.objects.filter(name=values.get('governorate'), type_id=1).first()
-            dist = Location.objects.filter(name=values.get('district'), type_id=2).first()
-            cad = Location.objects.filter(name=values.get('cadaster'), type_id=3).first()
-            disability = Disability.objects.filter(name=values.get('disability')).first()
+            nationality_value = (values.get('nationality') or '').strip()
+            nationality = get_nationality(nationality_value, nationality_cache)
+            gov_value = (values.get('governorate') or '').strip()
+            gov = get_location(gov_value, 1)
+            dist_value = (values.get('district') or '').strip()
+            dist = get_location(dist_value, 2)
+            cad_value = (values.get('cadaster') or '').strip()
+            cad = get_location(cad_value, 3)
+            disability_value = (values.get('disability') or '').strip()
+            disability = get_disability(disability_value)
 
             if not nationality:
                 invalid_fields.append("nationality ({0})".format(values.get('nationality')))
@@ -377,28 +499,28 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             father_ed = None
             father_ed_val = (values.get('father_educational_level') or '').strip()
             if father_ed_val:
-                father_ed = EducationalLevel.objects.filter(name=father_ed_val).first()
+                father_ed = get_education(father_ed_val)
                 if not father_ed:
                     invalid_fields.append("father_educational_level ({0})".format(father_ed_val))
 
             mother_ed = None
             mother_ed_val = (values.get('mother_educational_level') or '').strip()
             if mother_ed_val:
-                mother_ed = EducationalLevel.objects.filter(name=mother_ed_val).first()
+                mother_ed = get_education(mother_ed_val)
                 if not mother_ed:
                     invalid_fields.append("mother_educational_level ({0})".format(mother_ed_val))
 
             caregiver_nat = None
             caregiver_nat_val = (values.get('main_caregiver_nationality') or '').strip()
             if caregiver_nat_val:
-                caregiver_nat = Nationality.objects.filter(name=caregiver_nat_val).first()
+                caregiver_nat = get_nationality(caregiver_nat_val, caregiver_nat_cache)
                 if not caregiver_nat:
                     invalid_fields.append("main_caregiver_nationality ({0})".format(caregiver_nat_val))
 
             id_type = None
             id_type_val = (values.get('id_type') or '').strip()
             if id_type_val:
-                id_type = IDType.objects.filter(name=id_type_val).first()
+                id_type = get_id_type(id_type_val)
                 if not id_type:
                     invalid_fields.append("id_type ({0})".format(id_type_val))
 
@@ -427,7 +549,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
 
             # ---- If any invalids, log and skip row
             if invalid_fields:
-                values['row'] = index
+                values['row'] = row_number
                 values['error'] = "Invalid: " + "; ".join(invalid_fields)
                 not_imported.append(values)
                 continue
@@ -501,7 +623,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                 imported += 1
 
             except Exception as ex:
-                values['row'] = index
+                values['row'] = row_number
                 values['error'] = str(ex)
                 not_imported.append(values)
 
