@@ -8,45 +8,84 @@ from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font, Color
 from datetime import datetime
 import logging
+from typing import Any, Dict, Iterable, Mapping, Optional, Union
+
 from django.conf import settings
 import requests
+from requests import Response
 from requests.structures import CaseInsensitiveDict
 import json
+
 logger = logging.getLogger(__name__)
 
 
-def get_api_token():
+def _parse_json_response(resp: Response) -> Optional[Dict[str, Any]]:
+    """Safely load the JSON body from the response object."""
+    try:
+        return resp.json()
+    except ValueError:
+        logger.exception("Failed to decode JSON response from %s", resp.url)
+        return None
+
+
+def _handle_request_errors(exc: BaseException, url: str) -> None:
+    """Log a request failure without interrupting the request flow."""
+    logger.exception("Unique ID API request to %s failed: %s", url, exc)
+
+
+def get_api_token() -> Optional[str]:
+    body = {
+        "username": settings.UNIQUE_ID_API_USERNAME,
+        "password": settings.UNIQUE_ID_API_PASSWORD,
+    }
 
     try:
-        body = {
-            "username": settings.UNIQUE_ID_API_USERNAME,
-            "password": settings.UNIQUE_ID_API_PASSWORD
-        }
+        resp = requests.post(
+            settings.UNIQUE_ID_API_TOKEN_URL,
+            data=body,
+            timeout=settings.REQUESTS_TIMEOUT if hasattr(settings, "REQUESTS_TIMEOUT") else 10,
+        )
+        resp.raise_for_status()
+    except BaseException as exc:  # includes RequestException and SystemExit
+        _handle_request_errors(exc, settings.UNIQUE_ID_API_TOKEN_URL)
+        return None
 
-        resp = requests.post(settings.UNIQUE_ID_API_TOKEN_URL, data=body)
-        result = json.loads(resp.text)
+    result = _parse_json_response(resp)
+    if not result:
+        return None
 
-        return result['token'] if "token" in result else 0
-    except Exception as ex:
-        return 0
+    token = result.get("token")
+    if not token:
+        logger.warning("Unique ID API token response missing token key")
+    return token
 
 
-def get_api_data(token, data):
+def get_api_data(token: str, data: Mapping[str, Any]) -> Union[Dict[str, Any], Iterable[Dict[str, Any]], int]:
 
     try:
 
         headers = CaseInsensitiveDict()
         headers["Authorization"] = token
         json_data = json.dumps(data)
-        resp = requests.post(settings.UNIQUE_ID_API_URL, headers=headers, data=json_data)
-        result = json.loads(resp.text)
-
-        individuals = result["individual"] if "individual" in result else []
-        if len(individuals) == 1:
-            return individuals[0]
-        return individuals
-    except Exception as ex:
+        resp = requests.post(
+            settings.UNIQUE_ID_API_URL,
+            headers=headers,
+            data=json_data,
+            timeout=settings.REQUESTS_TIMEOUT if hasattr(settings, "REQUESTS_TIMEOUT") else 10,
+        )
+        resp.raise_for_status()
+    except BaseException as exc:
+        _handle_request_errors(exc, settings.UNIQUE_ID_API_URL)
         return 0
+
+    result = _parse_json_response(resp)
+    if not result:
+        return 0
+
+    individuals = result["individual"] if "individual" in result else []
+    if len(individuals) == 1:
+        return individuals[0]
+    return individuals
 
 
 def generate_one_unique_id(pk,first_name,father_name, last_name, mother_fullname, birthdate, nationality, sex):
@@ -69,7 +108,10 @@ def generate_one_unique_id(pk,first_name,father_name, last_name, mother_fullname
             ]
         }
         result = get_api_data(token, data)
-        return result["unicef_id"]
+        if not isinstance(result, dict):
+            logger.warning("Unique ID API returned unexpected payload: %s", result)
+            return 0
+        return result.get("unicef_id", 0)
     except Exception as ex:
         return 0
 
@@ -80,7 +122,16 @@ def generate_bulk_unique_id(data):
         return 0
 
     data = get_api_data(token, data)
-    return {int(indiv["id"]): indiv["unicef_id"] for indiv in data}
+    if isinstance(data, Mapping):
+        data = [data]
+    elif not isinstance(data, Iterable):
+        logger.warning("Unique ID API bulk response not iterable: %s", data)
+        return {}
+    return {
+        int(indiv["id"]): indiv.get("unicef_id")
+        for indiv in data
+        if isinstance(indiv, Mapping) and "id" in indiv and "unicef_id" in indiv
+    }
 
 
 def get_api_programmes(token, data):
