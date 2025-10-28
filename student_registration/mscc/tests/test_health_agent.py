@@ -97,6 +97,36 @@ def _record_followup(
     )
 
 
+def _build_child_context_for_center(
+    *,
+    registration_id: int,
+    center_id: int,
+    center_name: str,
+    risk_score: float,
+    wellbeing_flags: list[str] | None = None,
+) -> dict:
+    return {
+        'registration_id': registration_id,
+        'center_id': center_id,
+        'center_name': center_name,
+        'registration_details': [
+            {'field': 'center', 'label': 'Center', 'value': center_name},
+        ],
+        'risk_score': risk_score,
+        'attendance': {'missed_sessions': 0, 'attendance_rate': 0.95},
+        'services': {
+            'pss': {'required_pending': 0},
+            'health': {'required_pending': 0},
+            'support': {'required_pending': 0},
+        },
+        'alerts': [],
+        'wellbeing_flags': wellbeing_flags or [],
+        'family_context': {'flags': []},
+        'programme_impact': {},
+        'life_quality': {'score': 0, 'signals': []},
+    }
+
+
 def test_health_agent_view_without_api_key():
     settings.OPENAI_API_KEY = ''
     child = _create_child('Rami', 'Test', 'Child', age_years=10, gender='Male')
@@ -292,6 +322,7 @@ def test_mscc_knowledge_compiler_creates_daily_snapshot():
     assert 'attendance.missed_sessions = 2' in compiled_summary
     overview = knowledge_engine.vulnerability_overview
     assert overview.get('severity_counts')
+    assert 'center_risk_assessment' in overview
 
     search_results = knowledge_engine.search('attendance 2')
     assert search_results
@@ -300,6 +331,63 @@ def test_mscc_knowledge_compiler_creates_daily_snapshot():
 
     numeric_results = knowledge_engine.search(str(registration.id))
     assert any(result.registration_id == registration.id for result in numeric_results)
+
+
+def test_detect_high_risk_centers_flags_vulnerability_and_protection():
+    children = [
+        _build_child_context_for_center(
+            registration_id=1,
+            center_id=10,
+            center_name='Center Alpha',
+            risk_score=16,
+            wellbeing_flags=['Protection concern reported: Safety alert'],
+        ),
+        _build_child_context_for_center(
+            registration_id=2,
+            center_id=10,
+            center_name='Center Alpha',
+            risk_score=18,
+            wellbeing_flags=['Protection concern reported: Abuse risk'],
+        ),
+        _build_child_context_for_center(
+            registration_id=3,
+            center_id=10,
+            center_name='Center Alpha',
+            risk_score=9,
+        ),
+        _build_child_context_for_center(
+            registration_id=4,
+            center_id=20,
+            center_name='Center Beta',
+            risk_score=6,
+        ),
+    ]
+
+    engine = MSCCKnowledgeEngine(children)
+    assessments = engine.detect_high_risk_centers()
+    assert assessments
+
+    center_map = {entry['center_name']: entry for entry in assessments}
+    assert 'Center Alpha' in center_map
+    alpha = center_map['Center Alpha']
+    assert alpha['total_children'] == 3
+    assert alpha['high_vulnerability_children'] >= 2
+    assert alpha['is_high_vulnerability_center'] is True
+    assert alpha['is_high_child_protection_center'] is True
+    assert alpha['child_protection_cases'] == 2
+    assert any('child protection' in reason.lower() for reason in alpha['reasons'])
+    assert alpha['center_label'] == 'Center Alpha'
+
+    beta = center_map['Center Beta']
+    assert beta['total_children'] == 1
+    assert beta['is_high_vulnerability_center'] is False
+    assert beta['is_high_child_protection_center'] is False
+
+    overview = engine.vulnerability_overview
+    flagged = overview.get('flagged_centers')
+    assert flagged
+    assert any(entry['center_name'] == 'Center Alpha' for entry in flagged)
+    assert overview['center_risk_assessment'][0]['center_name'] == 'Center Alpha'
 
 
 @patch('student_registration.mscc.management.commands.compile_mscc_knowledge.MSCCKnowledgeCompiler')

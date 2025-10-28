@@ -436,7 +436,163 @@ class MSCCKnowledgeEngine:
                 {'concern': concern, 'count': count}
                 for concern, count in concern_counts.most_common(10)
             ]
+        center_risk_assessment = self.detect_high_risk_centers()
+        overview['center_risk_assessment'] = center_risk_assessment
+        flagged_centers = [
+            entry
+            for entry in center_risk_assessment
+            if entry['is_high_vulnerability_center'] or entry['is_high_child_protection_center']
+        ]
+        if flagged_centers:
+            overview['flagged_centers'] = flagged_centers
         return overview
+
+    @staticmethod
+    def _extract_center_name(registration_details: list | None) -> str | None:
+        if not isinstance(registration_details, list):
+            return None
+        for entry in registration_details:
+            if not isinstance(entry, dict):
+                continue
+            if entry.get('field') == 'center':
+                value = entry.get('value')
+                if value:
+                    return str(value)
+        return None
+
+    def detect_high_risk_centers(
+        self,
+        *,
+        vulnerability_ratio_threshold: float = 0.35,
+        vulnerability_count_threshold: int = 3,
+        protection_ratio_threshold: float = 0.25,
+        protection_count_threshold: int = 2,
+        high_score_threshold: float = 14.0,
+    ) -> list[dict]:
+        """Return centre-level risk assessments derived from child wellbeing data."""
+
+        centers: dict[tuple[int | None, str | None], dict] = {}
+        for child in self._children:
+            center_id = child.get('center_id')
+            center_name = child.get('center_name')
+            if not center_name:
+                center_name = self._extract_center_name(child.get('registration_details'))
+            if center_id is None and not center_name:
+                continue
+            key = (center_id, center_name)
+            entry = centers.setdefault(
+                key,
+                {
+                    'center_id': center_id,
+                    'center_name': center_name,
+                    'total_children': 0,
+                    'high_vulnerability_children': 0,
+                    'child_protection_cases': 0,
+                    'scores': [],
+                },
+            )
+
+            entry['total_children'] += 1
+
+            profile = child.get('vulnerability_profile') or {}
+            severity = str(profile.get('severity') or '').lower()
+            score = profile.get('score')
+            if isinstance(score, (int, float)):
+                entry['scores'].append(float(score))
+            if severity in {'high', 'critical'} or (
+                isinstance(score, (int, float)) and float(score) >= high_score_threshold
+            ):
+                entry['high_vulnerability_children'] += 1
+
+            has_protection_flag = False
+            for flag in child.get('wellbeing_flags') or []:
+                if isinstance(flag, str) and 'protection' in flag.lower():
+                    has_protection_flag = True
+                    break
+            if not has_protection_flag:
+                for breakdown in profile.get('domain_breakdown') or []:
+                    domain = str(breakdown.get('domain') or '').lower()
+                    if domain != 'protection':
+                        continue
+                    score_value = breakdown.get('score')
+                    if isinstance(score_value, (int, float)) and score_value > 0:
+                        has_protection_flag = True
+                        break
+            if has_protection_flag:
+                entry['child_protection_cases'] += 1
+
+        assessments: list[dict] = []
+        for (center_id, center_name), data in centers.items():
+            total = data['total_children']
+            vulnerability_ratio = data['high_vulnerability_children'] / total if total else 0.0
+            protection_ratio = data['child_protection_cases'] / total if total else 0.0
+            scores = [score for score in data['scores'] if score is not None]
+            average_score = sum(scores) / len(scores) if scores else None
+
+            high_vulnerability_flag = (
+                data['high_vulnerability_children'] >= vulnerability_count_threshold
+                or vulnerability_ratio >= vulnerability_ratio_threshold
+                or (average_score is not None and average_score >= high_score_threshold)
+            )
+            high_protection_flag = (
+                data['child_protection_cases'] >= protection_count_threshold
+                or protection_ratio >= protection_ratio_threshold
+            )
+
+            reasons: list[str] = []
+            if high_vulnerability_flag:
+                if vulnerability_ratio >= vulnerability_ratio_threshold and total:
+                    reasons.append(
+                        f"{round(vulnerability_ratio * 100)}% of assessed children show high vulnerabilities."
+                    )
+                if data['high_vulnerability_children'] >= vulnerability_count_threshold:
+                    reasons.append(
+                        f"{data['high_vulnerability_children']} children flagged with high vulnerabilities."
+                    )
+                if average_score is not None and average_score >= high_score_threshold:
+                    reasons.append(
+                        f"Average vulnerability score {average_score:.1f} exceeds threshold {high_score_threshold:.0f}."
+                    )
+            if high_protection_flag:
+                if protection_ratio >= protection_ratio_threshold and total:
+                    reasons.append(
+                        f"{round(protection_ratio * 100)}% of children have child protection concerns."
+                    )
+                if data['child_protection_cases'] >= protection_count_threshold:
+                    reasons.append(
+                        f"{data['child_protection_cases']} child protection cases reported."
+                    )
+
+            display_name = center_name or 'Unknown center'
+
+            assessments.append(
+                {
+                    'center_id': center_id,
+                    'center_name': display_name,
+                    'center_label': center_name,
+                    'total_children': total,
+                    'high_vulnerability_children': data['high_vulnerability_children'],
+                    'high_vulnerability_ratio': round(vulnerability_ratio, 2) if total else 0.0,
+                    'average_vulnerability_score': round(average_score, 2)
+                    if average_score is not None
+                    else None,
+                    'child_protection_cases': data['child_protection_cases'],
+                    'child_protection_ratio': round(protection_ratio, 2) if total else 0.0,
+                    'is_high_vulnerability_center': high_vulnerability_flag,
+                    'is_high_child_protection_center': high_protection_flag,
+                    'reasons': reasons,
+                }
+            )
+
+        assessments.sort(
+            key=lambda item: (
+                1 if (item['is_high_vulnerability_center'] or item['is_high_child_protection_center']) else 0,
+                item['high_vulnerability_ratio'],
+                item['child_protection_ratio'],
+            ),
+            reverse=True,
+        )
+        return assessments
 
     def render_compiled_summary(self) -> str:
         """Return a readable text dump of all indexed children."""
@@ -604,14 +760,26 @@ class HealthSupportAgent:
             "health services, attendance history, and other support needs. "
             "Incorporate family follow-up actions, socio-economic stability, "
             "and caregiver engagement in education when prioritising cases. "
-            "Provide actionable recommendations for each child. Evaluate the "
-            "Makani programme impact over the years and clarify whether it "
-            "appears positive, negative, or mixed for each case."
+            "Detect early signs of vulnerability among the registered children, "
+            "calling out emerging risk factors or deteriorating trends that may "
+            "need proactive attention. Provide actionable recommendations for "
+            "each child. Recommendations must respond strictly to the staff "
+            "question or stated focus domains—omit unrelated advice and state "
+            "when information is insufficient. Evaluate the Makani programme "
+            "impact over the years and clarify whether it appears positive, "
+            "negative, or mixed for each case. Quantify how well each centre "
+            "supports children's wellbeing by reporting proportions or counts "
+            "of children who regularly attend, complete core services, or need "
+            "further follow-up, and flag data gaps when calculations are not "
+            "possible."
         )
         formatting = (
             "Return your response in markdown with the sections 'Priority Cases', "
             "'Watch List', and 'Key Programme Insights'. List each child with "
-            "their registration id and a short rationale."
+            "their registration id and a short rationale. In 'Key Programme "
+            "Insights', include the centre-level wellbeing metrics you "
+            "calculated, highlighting attendance, service completion, and "
+            "follow-up needs."
         )
 
         focus_topics = set(focus_topics or [])
