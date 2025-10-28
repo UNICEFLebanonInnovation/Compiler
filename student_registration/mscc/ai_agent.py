@@ -609,12 +609,18 @@ class HealthSupportAgent:
             "domains—omit unrelated advice and state when information is "
             "insufficient. Evaluate the Makani programme impact over the years "
             "and clarify whether it appears positive, negative, or mixed for "
-            "each case."
+            "each case. Quantify how well each centre supports children's "
+            "wellbeing by reporting proportions or counts of children who "
+            "regularly attend, complete core services, or need further "
+            "follow-up, and flag data gaps when calculations are not possible."
         )
         formatting = (
             "Return your response in markdown with the sections 'Priority Cases', "
             "'Watch List', and 'Key Programme Insights'. List each child with "
-            "their registration id and a short rationale."
+            "their registration id and a short rationale. In 'Key Programme "
+            "Insights', include the centre-level wellbeing metrics you "
+            "calculated, highlighting attendance, service completion, and "
+            "follow-up needs."
         )
 
         focus_topics = set(focus_topics or [])
