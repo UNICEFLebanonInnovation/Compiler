@@ -157,15 +157,21 @@ def chart_data(request):
 
 
 def _service_to_dict(service):
+    """Return a serialisable representation of a provided service."""
+
+    name = (service.name or '').strip()
+    category = (service.category or '').strip()
+    service_identifier = (service.service_id or '').strip()
+
     return {
         'id': service.id,
-        'name': service.name,
+        'name': name,
         'type': service.type,
-        'category': service.category,
+        'category': category,
         'required': service.required,
         'completed': service.completed,
         'completion_date': service.completion_date.isoformat() if service.completion_date else None,
-        'service_id': service.service_id,
+        'service_id': service_identifier,
     }
 
 
@@ -192,6 +198,9 @@ def _summarize_services(services):
 
     for service in services:
         data = _service_to_dict(service)
+        if not (data['name'] or data['service_id'] or data['category']):
+            # Skip placeholder records that do not contain any service data.
+            continue
         buckets[_classify_service(data)].append(data)
 
     summary = {}
