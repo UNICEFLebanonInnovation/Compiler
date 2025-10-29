@@ -21,6 +21,7 @@ import io
 
 from student_registration.adolescent.models import Adolescent
 from student_registration.students.models import Nationality, IDType
+from student_registration.students.utils import generate_bulk_unique_id
 from student_registration.clm.models import Disability, EducationalLevel
 from student_registration.locations.models import Location
 from student_registration.youth.models import Registration
@@ -319,18 +320,24 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
 
     def import_data(self, data, upload, request):
         import datetime
-        from student_registration.students.utils import generate_one_unique_id
 
         not_imported = []
         imported = 0
+        validated_rows = []
 
-        for index, values in enumerate(data, start=2):
+        for row_data in data:
+            values = dict(row_data)
+            row_number = values.pop('row', None)
+            if row_number is None:
+                row_number = len(validated_rows) + len(not_imported) + 2
+
             # ---- Missing mandatory fields
             missing = [f for f in self.mandatory_fields if not values.get(f)]
             if missing:
-                values['row'] = index
-                values['error'] = 'Missing fields: ' + ', '.join(missing)
-                not_imported.append(values)
+                error_entry = dict(values)
+                error_entry['row'] = row_number
+                error_entry['error'] = 'Missing fields: ' + ', '.join(missing)
+                not_imported.append(error_entry)
                 continue
 
             invalid_fields = []
@@ -363,6 +370,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                 invalid_fields.append("disability ({0})".format(values.get('disability')))
 
             dob = None
+            y = m = d = None
             try:
                 y = int(values.get('birthday_year'))
                 m = int(values.get('birthday_month'))
@@ -402,37 +410,79 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                 if not id_type:
                     invalid_fields.append("id_type ({0})".format(id_type_val))
 
-            # ---- UNICEF ID duplicate pre-check
-            if not invalid_fields and dob is not None and nationality is not None:
-                try:
-                    nationality_en = getattr(nationality, 'name_en', None)
-                    dob_str = u'{}-{}-{}'.format(y, m, d)
-
-                    prospective_unicef_id = generate_one_unique_id(
-                        123,
-                        (values.get('first_name') or ''),
-                        (values.get('father_name') or ''),
-                        (values.get('last_name') or ''),
-                        (values.get('mother_fullname') or ''),
-                        dob_str,
-                        nationality_en,
-                        gender_norm
-                    )
-
-                    if Registration.objects.filter(adolescent__unicef_id=prospective_unicef_id, deleted=False).exists():
-                        invalid_fields.append("duplicate unicef_id ({0})".format(prospective_unicef_id))
-
-                except Exception:
-                    invalid_fields.append("unicef_id generation failed")
-
             # ---- If any invalids, log and skip row
             if invalid_fields:
-                values['row'] = index
-                values['error'] = "Invalid: " + "; ".join(invalid_fields)
-                not_imported.append(values)
+                error_entry = dict(values)
+                error_entry['row'] = row_number
+                error_entry['error'] = "Invalid: " + "; ".join(invalid_fields)
+                not_imported.append(error_entry)
                 continue
 
             values['gender'] = gender_norm
+
+            validated_rows.append({
+                'row_number': row_number,
+                'values': values,
+                'references': {
+                    'nationality': nationality,
+                    'gov': gov,
+                    'dist': dist,
+                    'cad': cad,
+                    'disability': disability,
+                    'father_ed': father_ed,
+                    'mother_ed': mother_ed,
+                    'caregiver_nat': caregiver_nat,
+                    'id_type': id_type,
+                },
+                'dob': dob,
+                'gender': gender_norm,
+                'nationality_en': getattr(nationality, 'name_en', None) or getattr(nationality, 'name', ''),
+            })
+
+        # ---- Generate UNICEF IDs in bulk for validated rows
+        payload = {
+            "individuals": [
+                {
+                    "id": idx,
+                    "first_name": row['values'].get('first_name') or '',
+                    "father_name": row['values'].get('father_name') or '',
+                    "last_name": row['values'].get('last_name') or '',
+                    "mother_name": row['values'].get('mother_fullname') or '',
+                    "date_of_birth": row['dob'].strftime('%Y-%m-%d') if row['dob'] else '',
+                    "nationality": row['nationality_en'] or '',
+                    "gender": row['gender'] or '',
+                }
+                for idx, row in enumerate(validated_rows)
+            ]
+        }
+
+        bulk_ids = {}
+        if payload["individuals"]:
+            try:
+                bulk_ids = generate_bulk_unique_id(payload) or {}
+            except Exception:
+                bulk_ids = {}
+
+        # ---- Persist valid rows
+        for idx, row in enumerate(validated_rows):
+            values = row['values']
+            references = row['references']
+            row_number = row['row_number']
+            prospective_unicef_id = bulk_ids.get(idx)
+
+            if not prospective_unicef_id:
+                error_entry = dict(values)
+                error_entry['row'] = row_number
+                error_entry['error'] = "Unable to generate UNICEF ID"
+                not_imported.append(error_entry)
+                continue
+
+            if Registration.objects.filter(adolescent__unicef_id=prospective_unicef_id, deleted=False).exists():
+                error_entry = dict(values)
+                error_entry['row'] = row_number
+                error_entry['error'] = "Invalid: duplicate unicef_id ({0})".format(prospective_unicef_id)
+                not_imported.append(error_entry)
+                continue
 
             try:
                 adolescent = Adolescent.objects.create(
@@ -444,15 +494,15 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                     birthday_day=values.get('birthday_day'),
                     gender=values.get('gender'),
                     mother_fullname=values.get('mother_fullname'),
-                    nationality=nationality,
+                    nationality=references['nationality'],
                     nationality_other=values.get('nationality_other'),
-                    governorate=gov,
-                    district=dist,
-                    cadaster=cad,
+                    governorate=references['gov'],
+                    district=references['dist'],
+                    cadaster=references['cad'],
                     address=values.get('address'),
-                    disability=disability,
-                    father_educational_level=father_ed,
-                    mother_educational_level=mother_ed,
+                    disability=references['disability'],
+                    father_educational_level=references['father_ed'],
+                    mother_educational_level=references['mother_ed'],
                     first_phone_number=values.get('first_phone_number'),
                     second_phone_number=values.get('second_phone_number'),
                     main_caregiver=values.get('main_caregiver'),
@@ -460,9 +510,9 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                     caregiver_first_name=values.get('caregiver_first_name'),
                     caregiver_middle_name=values.get('caregiver_middle_name'),
                     caregiver_last_name=values.get('caregiver_last_name'),
-                    main_caregiver_nationality=caregiver_nat,
+                    main_caregiver_nationality=references['caregiver_nat'],
                     main_caregiver_nationality_other=values.get('main_caregiver_nationality_other'),
-                    id_type=id_type,
+                    id_type=references['id_type'],
                     case_number=values.get('case_number'),
                     parent_individual_case_number=values.get('parent_individual_case_number'),
                     individual_case_number=values.get('individual_case_number'),
@@ -477,33 +527,24 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                     parent_other_number=values.get('parent_other_number'),
                     other_number=values.get('other_number'),
                 )
-                if adolescent:
-                    adolescent.unicef_id = generate_one_unique_id(
-                        str(adolescent.pk),
-                        adolescent.first_name,
-                        adolescent.father_name,
-                        adolescent.last_name,
-                        adolescent.mother_fullname,
-                        adolescent.birthdate,
-                        adolescent.nationality_name_en,
-                        adolescent.gender
-                    )
 
-                    adolescent.save()
+                adolescent.unicef_id = prospective_unicef_id
+                adolescent.save()
 
-                    Registration.objects.create(
-                        adolescent=adolescent,
-                        owner=request.user,
-                        partner_id=getattr(request.user, 'partner_id', None),
-                        center_id=getattr(request.user, 'center_id', None),
-                    )
+                Registration.objects.create(
+                    adolescent=adolescent,
+                    owner=request.user,
+                    partner_id=getattr(request.user, 'partner_id', None),
+                    center_id=getattr(request.user, 'center_id', None),
+                )
 
                 imported += 1
 
             except Exception as ex:
-                values['row'] = index
-                values['error'] = str(ex)
-                not_imported.append(values)
+                error_entry = dict(values)
+                error_entry['row'] = row_number
+                error_entry['error'] = str(ex)
+                not_imported.append(error_entry)
 
         # ---- Write failed rows CSV
         if not_imported:
