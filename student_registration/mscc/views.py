@@ -1965,7 +1965,12 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
             ).order_by('-absent_days', '-pending_required', '-id')
             fetch_limit = max(limit_value * 3, limit_value)
 
-        registrations = list(queryset.select_related('child', 'round')[:fetch_limit])
+        registrations_queryset = queryset.select_related('child', 'round')
+
+        if normalized_ids:
+            registrations = list(registrations_queryset[:fetch_limit])
+        else:
+            registrations = list(registrations_queryset)
 
         if not registrations:
             empty_payload = {
@@ -1985,7 +1990,6 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
             if focus_topics:
                 empty_payload['focus_topics'] = sorted(focus_topics)
             return JsonResponse(empty_payload)
-
         registration_ids_list = [registration.id for registration in registrations]
         child_ids = [registration.child_id for registration in registrations if registration.child_id]
 
