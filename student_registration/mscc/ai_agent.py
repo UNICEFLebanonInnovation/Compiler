@@ -722,6 +722,7 @@ class HealthSupportAgent:
         question: str | None = None,
         focus_topics: set[str] | None = None,
         keywords: Sequence[str] | None = None,
+        programme_overview: dict | None = None,
     ) -> str:
         """Generate an analysis for the supplied children context."""
 
@@ -736,6 +737,7 @@ class HealthSupportAgent:
             question=question,
             focus_topics=focus_topics,
             keywords=keywords,
+            programme_overview=programme_overview,
         )
         return self._request_chat_completion(messages)
 
@@ -745,6 +747,7 @@ class HealthSupportAgent:
         question: str | None = None,
         focus_topics: set[str] | None = None,
         keywords: Sequence[str] | None = None,
+        programme_overview: dict | None = None,
     ) -> List[dict]:
         knowledge_engine = MSCCKnowledgeEngine(children_context)
         summary = knowledge_engine.render_compiled_summary() or json.dumps(
@@ -779,7 +782,10 @@ class HealthSupportAgent:
             "their registration id and a short rationale. In 'Key Programme "
             "Insights', include the centre-level wellbeing metrics you "
             "calculated, highlighting attendance, service completion, and "
-            "follow-up needs."
+            "follow-up needs. Use the aggregated programme overview data "
+            "provided (covering all eligible children before any review limit) "
+            "when reporting centre-wide metrics so counts are not capped by the "
+            "Maximum children to review setting."
         )
 
         focus_topics = set(focus_topics or [])
@@ -835,11 +841,24 @@ class HealthSupportAgent:
 
             user_instructions = f"{user_instructions}{scope_instruction}"
 
+        overview_appendix = ""
+        if programme_overview:
+            try:
+                overview_text = json.dumps(programme_overview, indent=2, default=str)
+            except TypeError:
+                overview_text = str(programme_overview)
+            overview_appendix = (
+                "\n\nAggregated programme overview (all eligible children before applying review limits):\n"
+                f"{overview_text}"
+            )
+
         messages = [
             {"role": "system", "content": system_message},
             {
                 "role": "user",
-                "content": f"{user_instructions}\n\n{formatting}\n\nChildren data:\n{summary}",
+                "content": (
+                    f"{user_instructions}\n\n{formatting}\n\nChildren data:\n{summary}{overview_appendix}"
+                ),
             },
         ]
         return messages
