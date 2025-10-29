@@ -496,7 +496,11 @@ class BridgingForm(CommonForm):
         choices=REGISTRATION_LEVEL
     )
     school = forms.ModelChoiceField(
-        queryset=School.objects.filter(is_closed=False), widget=forms.Select,
+        queryset=School.objects.filter(
+            is_closed=False,
+            partner_schools__is_dirasa=True,
+        ).distinct(),
+        widget=forms.Select,
         label=_('School Name'),
         empty_label='-------',
         required=False, to_field_name='id',

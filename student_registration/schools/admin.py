@@ -191,13 +191,22 @@ class ClassRoomAdmin(ImportExportModelAdmin):
 class PartnerOrganizationAdmin(ImportExportModelAdmin):
     filter_horizontal = ('schools', )
     search_fields = ('name', 'short_name')
-    list_filter = ('is_Kayany', 'is_unrwa', 'is_youth', 'active')
+    list_filter = (
+        'is_Kayany',
+        'is_unrwa',
+        'is_youth',
+        'is_dirasa',
+        'is_bma',
+        'active',
+    )
     list_display = (
         'name',
         'short_name',
         'is_Kayany',
         'is_unrwa',
         'is_youth',
+        'is_dirasa',
+        'is_bma',
         'active',
     )
     fields = (
@@ -206,6 +215,8 @@ class PartnerOrganizationAdmin(ImportExportModelAdmin):
         'is_Kayany',
         'is_unrwa',
         'is_youth',
+        'is_dirasa',
+        'is_bma',
         'active',
         'schools'
     )

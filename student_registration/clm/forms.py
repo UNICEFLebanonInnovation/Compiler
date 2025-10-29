@@ -7016,7 +7016,11 @@ class BridgingForm(CommonForm):
         choices=REGISTRATION_LEVEL
     )
     school = forms.ModelChoiceField(
-        queryset=School.objects.filter(is_closed=False), widget=forms.Select,
+        queryset=School.objects.filter(
+            is_closed=False,
+            partner_schools__is_dirasa=True,
+        ).distinct(),
+        widget=forms.Select,
         label=_('School Name'),
         empty_label='-------',
         required=False, to_field_name='id',
@@ -7416,6 +7420,11 @@ class BridgingForm(CommonForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(BridgingForm, self).__init__(*args, **kwargs)
+
+        self.fields['school'].queryset = School.objects.filter(
+            is_closed=False,
+            partner_schools__is_dirasa=True,
+        ).distinct()
 
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''

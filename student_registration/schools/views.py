@@ -542,7 +542,10 @@ class SchoolListView(LoginRequiredMixin,
     table_class = SchoolTable
     model = School
     template_name = 'schools/school_list.html'
-    table = SchoolTable(School.objects.all(), order_by='id')
+    table = SchoolTable(
+        School.objects.filter(partner_schools__is_dirasa=True).distinct(),
+        order_by='id'
+    )
     group_required = [u"CLM_Bridging"]
     filterset_class = SchoolFilter
 
@@ -551,10 +554,10 @@ class SchoolListView(LoginRequiredMixin,
         clm_bridging_all = has_group(self.request.user, 'CLM_BRIDGING_ALL')
         is_staff = self.request.user.is_staff
 
-        queryset = School.objects.filter(is_bma=True).all()
+        queryset = School.objects.filter(partner_schools__is_dirasa=True).distinct()
 
         if clm_bridging_all or is_staff:
-            queryset = School.objects.filter(is_bma=True).all()
+            queryset = School.objects.filter(partner_schools__is_dirasa=True).distinct()
         else:
             school_id = 0
             partner_id = 0
@@ -568,11 +571,13 @@ class SchoolListView(LoginRequiredMixin,
                 queryset = School.objects.filter(id=school_id)
 
             elif partner_id > 0:
-                queryset = School.objects.filter(is_bma=True,
-                                                 id__in=PartnerOrganization
-                                                 .objects
-                                                 .filter(id=partner_id)
-                                                 .values_list('schools', flat=True))
+                queryset = School.objects.filter(
+                    is_bma=True,
+                    id__in=PartnerOrganization
+                    .objects
+                    .filter(id=partner_id)
+                    .values_list('schools', flat=True),
+                )
             else:
                 queryset = queryset.none()
 

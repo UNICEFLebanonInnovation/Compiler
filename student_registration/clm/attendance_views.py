@@ -36,9 +36,11 @@ class AttendanceView(LoginRequiredMixin,
         close_reason = ''
         rounds = CLMRound.objects.filter(current_year=True)
 
-        school = School.objects.filter(is_closed=False).all()
+        school_queryset = School.objects.filter(is_closed=False)
         if clm_bridging_all or is_staff:
-            school = School.objects.filter(is_closed=False).order_by('name')
+            school = school_queryset.filter(
+                partner_schools__is_dirasa=True,
+            ).order_by('name').distinct()
         else:
             school_id = 0
             partner_id = 0
@@ -49,16 +51,20 @@ class AttendanceView(LoginRequiredMixin,
                 partner_id = self.request.user.partner_id
 
             if school_id and school_id > 0:
-                school = School.objects.filter(id=school_id).order_by('name')
+                school = School.objects.filter(
+                    id=school_id,
+                ).order_by('name')
 
             elif partner_id > 0:
-                school = School.objects.filter(is_closed=False,
-                                                 id__in=PartnerOrganization
-                                                 .objects
-                                                 .filter(id=partner_id)
-                                                 .values_list('schools', flat=True)).order_by('name')
+                school = School.objects.filter(
+                    is_closed=False,
+                    id__in=PartnerOrganization
+                    .objects
+                    .filter(id=partner_id)
+                    .values_list('schools', flat=True),
+                ).order_by('name')
             else:
-                school = school.none()
+                school = school_queryset.none()
 
         # sorted_education_programs = sorted(education_programs, key=lambda x: x[1])
         # education_program_dict = OrderedDict(sorted_education_programs)
