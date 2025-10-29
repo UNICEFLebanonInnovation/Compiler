@@ -131,6 +131,20 @@
     margin-bottom: 0.25rem;
   }
 
+  .agent-chart-card .agent-chart {
+    min-height: 220px;
+    position: relative;
+  }
+
+  .agent-chart-card canvas {
+    max-width: 100%;
+  }
+
+  .agent-chart-empty {
+    font-size: 0.85rem;
+    color: #6c757d;
+  }
+
   @media (max-width: 767.98px) {
     .priority-child-card {
       border-left-width: 3px;
@@ -262,6 +276,45 @@
             <div id="health-agent-analysis" class="markdown-body"></div>
           </div>
         </div>
+        <div class="card mb-3 d-none" id="health-agent-overview-card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Vulnerability overview</h5>
+            <small class="text-muted">
+              Analysed children: <span id="health-agent-overview-total">&mdash;</span>
+            </small>
+          </div>
+          <div class="card-body agent-chart-card">
+            <div class="row">
+              <div class="col-md-6 mb-3 mb-md-0">
+                <h6 class="text-muted text-uppercase small mb-2">Severity mix</h6>
+                <div class="agent-chart">
+                  <canvas id="health-agent-severity-chart" height="220" class="d-none"></canvas>
+                  <p id="health-agent-severity-empty" class="agent-chart-empty mb-0">Run the assessment to visualise severity levels.</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-muted text-uppercase small mb-2">Domain focus</h6>
+                <div class="agent-chart">
+                  <canvas id="health-agent-domain-chart" height="220" class="d-none"></canvas>
+                  <p id="health-agent-domain-empty" class="agent-chart-empty mb-0">Run the assessment to see domain coverage.</p>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-12">
+                <h6 class="text-muted text-uppercase small mb-2">Top concerns</h6>
+                <div class="agent-chart">
+                  <canvas id="health-agent-concerns-chart" height="240" class="d-none"></canvas>
+                  <p id="health-agent-concerns-empty" class="agent-chart-empty mb-0">Run the assessment to surface priority concerns.</p>
+                </div>
+              </div>
+            </div>
+            <div id="health-agent-flagged-centers" class="mt-3 d-none">
+              <h6 class="text-muted text-uppercase small mb-2">Flagged centres</h6>
+              <ul id="health-agent-flagged-centers-list" class="small pl-3 mb-0"></ul>
+            </div>
+          </div>
+        </div>
         <div class="card">
           <div class="card-header">
             <h5 class="card-title mb-0">Prioritised children</h5>
@@ -277,5 +330,6 @@
 {% endblock content %}
 
 {% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script src="{% static 'js/mscc/health_agent.js' %}"></script>
 {% endblock %}

@@ -1,6 +1,44 @@
 (function () {
   'use strict';
 
+  var chartInstances = {
+    severity: null,
+    domain: null,
+    concerns: null,
+  };
+
+  var chartPalette = [
+    '#3f6ad8',
+    '#1bc943',
+    '#f7b924',
+    '#d92550',
+    '#11cdef',
+    '#5e72e4',
+    '#ffce54',
+    '#63c2de',
+    '#f86c6b',
+    '#444054',
+  ];
+
+  var overviewElements = {
+    card: null,
+    total: null,
+    severityCanvas: null,
+    severityEmpty: null,
+    domainCanvas: null,
+    domainEmpty: null,
+    concernsCanvas: null,
+    concernsEmpty: null,
+    flaggedContainer: null,
+    flaggedList: null,
+  };
+
+  var overviewEmptyDefaults = {
+    severity: '',
+    domain: '',
+    concerns: '',
+  };
+
   function qs(scope, selector) {
     return scope.querySelector(selector);
   }
@@ -30,6 +68,366 @@
       }
     }
     return cookieValue;
+  }
+
+  function setChartVisibility(canvas, emptyEl, showCanvas) {
+    if (canvas) {
+      if (showCanvas) {
+        canvas.classList.remove('d-none');
+      } else {
+        canvas.classList.add('d-none');
+      }
+    }
+    if (emptyEl) {
+      if (showCanvas) {
+        emptyEl.classList.add('d-none');
+      } else {
+        emptyEl.classList.remove('d-none');
+      }
+    }
+  }
+
+  function destroyChartInstance(key) {
+    if (chartInstances[key]) {
+      try {
+        chartInstances[key].destroy();
+      } catch (err) {
+        // ignore chart teardown issues
+      }
+      chartInstances[key] = null;
+    }
+  }
+
+  function destroyAllCharts() {
+    destroyChartInstance('severity');
+    destroyChartInstance('domain');
+    destroyChartInstance('concerns');
+  }
+
+  function prepareCountEntries(counts) {
+    if (!counts || typeof counts !== 'object') {
+      return [];
+    }
+    return Object.keys(counts)
+      .map(function (label) {
+        var rawValue = counts[label];
+        var value = Number(rawValue);
+        if (isNaN(value) || value <= 0) {
+          return null;
+        }
+        return {
+          label: label,
+          value: value,
+        };
+      })
+      .filter(function (entry) {
+        return entry !== null;
+      });
+  }
+
+  function prepareConcernEntries(items) {
+    if (!Array.isArray(items)) {
+      return [];
+    }
+    return items
+      .map(function (item) {
+        if (!item) {
+          return null;
+        }
+        var label = item.concern || item.label || item.name || '';
+        var countValue = item.count !== undefined ? item.count : item.value;
+        var value = Number(countValue);
+        if (!label || isNaN(value) || value <= 0) {
+          return null;
+        }
+        return {
+          label: label,
+          value: value,
+        };
+      })
+      .filter(function (entry) {
+        return entry !== null;
+      });
+  }
+
+  function formatCountSummary(entries) {
+    if (!entries || !entries.length) {
+      return '';
+    }
+    return entries
+      .map(function (entry) {
+        return entry.label + ' (' + entry.value + ')';
+      })
+      .join(', ');
+  }
+
+  function updateFlaggedCenters(flaggedCenters) {
+    var container = overviewElements.flaggedContainer;
+    var list = overviewElements.flaggedList;
+    if (!container || !list) {
+      return;
+    }
+
+    if (!Array.isArray(flaggedCenters) || !flaggedCenters.length) {
+      list.innerHTML = '';
+      container.classList.add('d-none');
+      return;
+    }
+
+    var limited = flaggedCenters
+      .filter(function (center) {
+        return center && (center.is_high_vulnerability_center || center.is_high_child_protection_center || center.reasons);
+      })
+      .slice(0, 5);
+
+    if (!limited.length) {
+      list.innerHTML = '';
+      container.classList.add('d-none');
+      return;
+    }
+
+    var items = limited
+      .map(function (center) {
+        if (!center) {
+          return '';
+        }
+        var name = center.center_name || center.center_label || 'Unknown centre';
+        var reasons = Array.isArray(center.reasons) ? center.reasons : [];
+        var reasonText = reasons.length
+          ? reasons
+              .map(function (reason) {
+                return escapeHtml(reason);
+              })
+              .join(' • ')
+          : 'Multiple vulnerability indicators detected.';
+        return '<li><strong>' + escapeHtml(name) + '</strong>: ' + reasonText + '</li>';
+      })
+      .filter(function (html) {
+        return Boolean(html);
+      })
+      .join('');
+
+    if (!items) {
+      list.innerHTML = '';
+      container.classList.add('d-none');
+      return;
+    }
+
+    list.innerHTML = items;
+    container.classList.remove('d-none');
+  }
+
+  function clearOverviewCard() {
+    destroyAllCharts();
+    if (overviewElements.card) {
+      overviewElements.card.classList.add('d-none');
+    }
+    if (overviewElements.total) {
+      overviewElements.total.textContent = '—';
+    }
+    setChartVisibility(overviewElements.severityCanvas, overviewElements.severityEmpty, false);
+    setChartVisibility(overviewElements.domainCanvas, overviewElements.domainEmpty, false);
+    setChartVisibility(overviewElements.concernsCanvas, overviewElements.concernsEmpty, false);
+    if (overviewElements.severityEmpty) {
+      overviewElements.severityEmpty.textContent = overviewEmptyDefaults.severity;
+    }
+    if (overviewElements.domainEmpty) {
+      overviewElements.domainEmpty.textContent = overviewEmptyDefaults.domain;
+    }
+    if (overviewElements.concernsEmpty) {
+      overviewElements.concernsEmpty.textContent = overviewEmptyDefaults.concerns;
+    }
+    updateFlaggedCenters([]);
+  }
+
+  function updateOverviewCharts(overview, totalChildren) {
+    if (!overviewElements.card) {
+      return;
+    }
+
+    var severityEntries = prepareCountEntries(overview && overview.severity_counts);
+    var domainEntries = prepareCountEntries(overview && overview.domain_counts);
+    var concernEntries = prepareConcernEntries(overview && overview.top_concerns);
+
+    var hasData = Boolean(
+      (severityEntries && severityEntries.length) ||
+        (domainEntries && domainEntries.length) ||
+        (concernEntries && concernEntries.length)
+    );
+
+    if (!overview || !hasData) {
+      clearOverviewCard();
+      return;
+    }
+
+    overviewElements.card.classList.remove('d-none');
+
+    var total = totalChildren;
+    if (total === undefined || total === null || total === '') {
+      total = overview && overview.total_children;
+    }
+    if (overviewElements.total) {
+      var totalLabel = total !== undefined && total !== null && total !== '' ? String(total) : '—';
+      overviewElements.total.textContent = totalLabel;
+    }
+
+    var chartSupported = typeof Chart !== 'undefined';
+    if (chartSupported && typeof Chart === 'object' && Chart !== null && typeof Chart.Chart === 'function') {
+      chartSupported = true;
+    }
+
+    if (severityEntries.length && chartSupported && overviewElements.severityCanvas) {
+      setChartVisibility(overviewElements.severityCanvas, overviewElements.severityEmpty, true);
+      destroyChartInstance('severity');
+      var severityCtx = overviewElements.severityCanvas.getContext('2d');
+      chartInstances.severity = new Chart(severityCtx, {
+        type: 'doughnut',
+        data: {
+          labels: severityEntries.map(function (entry) {
+            return entry.label;
+          }),
+          datasets: [
+            {
+              label: 'Children',
+              data: severityEntries.map(function (entry) {
+                return entry.value;
+              }),
+              backgroundColor: severityEntries.map(function (_, index) {
+                return chartPalette[index % chartPalette.length];
+              }),
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+            },
+          },
+        },
+      });
+    } else {
+      destroyChartInstance('severity');
+      setChartVisibility(overviewElements.severityCanvas, overviewElements.severityEmpty, false);
+      if (overviewElements.severityEmpty) {
+        if (severityEntries.length) {
+          overviewElements.severityEmpty.textContent = formatCountSummary(severityEntries);
+        } else {
+          overviewElements.severityEmpty.textContent = 'No vulnerability severity data available.';
+        }
+      }
+    }
+
+    if (domainEntries.length && chartSupported && overviewElements.domainCanvas) {
+      setChartVisibility(overviewElements.domainCanvas, overviewElements.domainEmpty, true);
+      destroyChartInstance('domain');
+      var domainCtx = overviewElements.domainCanvas.getContext('2d');
+      chartInstances.domain = new Chart(domainCtx, {
+        type: 'doughnut',
+        data: {
+          labels: domainEntries.map(function (entry) {
+            return entry.label;
+          }),
+          datasets: [
+            {
+              label: 'Signals',
+              data: domainEntries.map(function (entry) {
+                return entry.value;
+              }),
+              backgroundColor: domainEntries.map(function (_, index) {
+                return chartPalette[index % chartPalette.length];
+              }),
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+            },
+          },
+        },
+      });
+    } else {
+      destroyChartInstance('domain');
+      setChartVisibility(overviewElements.domainCanvas, overviewElements.domainEmpty, false);
+      if (overviewElements.domainEmpty) {
+        if (domainEntries.length) {
+          overviewElements.domainEmpty.textContent = formatCountSummary(domainEntries);
+        } else {
+          overviewElements.domainEmpty.textContent = 'No domain coverage data available.';
+        }
+      }
+    }
+
+    var concernsToDisplay = concernEntries.slice(0, 10);
+    if (concernsToDisplay.length && chartSupported && overviewElements.concernsCanvas) {
+      setChartVisibility(overviewElements.concernsCanvas, overviewElements.concernsEmpty, true);
+      destroyChartInstance('concerns');
+      var concernsCtx = overviewElements.concernsCanvas.getContext('2d');
+      chartInstances.concerns = new Chart(concernsCtx, {
+        type: 'bar',
+        data: {
+          labels: concernsToDisplay.map(function (entry) {
+            return entry.label;
+          }),
+          datasets: [
+            {
+              label: 'Mentions',
+              data: concernsToDisplay.map(function (entry) {
+                return entry.value;
+              }),
+              backgroundColor: concernsToDisplay.map(function (_, index) {
+                return chartPalette[index % chartPalette.length];
+              }),
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          indexAxis: 'y',
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false,
+            },
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              ticks: {
+                precision: 0,
+                stepSize: 1,
+              },
+            },
+            y: {
+              ticks: {
+                autoSkip: false,
+              },
+            },
+          },
+        },
+      });
+    } else {
+      destroyChartInstance('concerns');
+      setChartVisibility(overviewElements.concernsCanvas, overviewElements.concernsEmpty, false);
+      if (overviewElements.concernsEmpty) {
+        if (concernsToDisplay.length) {
+          overviewElements.concernsEmpty.textContent = formatCountSummary(concernsToDisplay);
+        } else {
+          overviewElements.concernsEmpty.textContent = 'No priority concern data available.';
+        }
+      }
+    }
+
+    updateFlaggedCenters(
+      Array.isArray(overview && overview.flagged_centers) ? overview.flagged_centers : []
+    );
   }
 
   function renderMarkdown(markdown) {
@@ -1096,6 +1494,29 @@
     var childrenContainer = document.getElementById('health-agent-children');
     var metadataContainer = document.getElementById('health-agent-metadata');
 
+    overviewElements.card = document.getElementById('health-agent-overview-card');
+    overviewElements.total = document.getElementById('health-agent-overview-total');
+    overviewElements.severityCanvas = document.getElementById('health-agent-severity-chart');
+    overviewElements.severityEmpty = document.getElementById('health-agent-severity-empty');
+    overviewElements.domainCanvas = document.getElementById('health-agent-domain-chart');
+    overviewElements.domainEmpty = document.getElementById('health-agent-domain-empty');
+    overviewElements.concernsCanvas = document.getElementById('health-agent-concerns-chart');
+    overviewElements.concernsEmpty = document.getElementById('health-agent-concerns-empty');
+    overviewElements.flaggedContainer = document.getElementById('health-agent-flagged-centers');
+    overviewElements.flaggedList = document.getElementById('health-agent-flagged-centers-list');
+
+    if (overviewElements.severityEmpty) {
+      overviewEmptyDefaults.severity = overviewElements.severityEmpty.textContent;
+    }
+    if (overviewElements.domainEmpty) {
+      overviewEmptyDefaults.domain = overviewElements.domainEmpty.textContent;
+    }
+    if (overviewElements.concernsEmpty) {
+      overviewEmptyDefaults.concerns = overviewElements.concernsEmpty.textContent;
+    }
+
+    clearOverviewCard();
+
     if (!limitField.value) {
       limitField.value = defaultLimit;
     }
@@ -1191,6 +1612,7 @@
         analysisContainer.innerHTML = renderMarkdown(payload.analysis || '');
         childrenContainer.innerHTML = renderChildren(payload.children || []);
       }
+      updateOverviewCharts(payload.vulnerability_overview || null, payload.total_children);
       metadataContainer.textContent = buildMetadata(payload);
       if (questionField && payload.question !== undefined) {
         questionField.value = payload.question;
@@ -1247,6 +1669,7 @@
       if (resultsPanel) {
         resultsPanel.classList.add('d-none');
       }
+      clearOverviewCard();
       showStatus('', 'info');
     }
 
