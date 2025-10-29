@@ -525,9 +525,19 @@
                                                     <h5 class="menu-header-title">Education
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="{% url 'mscc:service_education_edit' instance.id result.id instance.type %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Infos.">Edit</a>
+                                                              {% if instance.type %}
+                                                                {% url 'mscc:service_education_edit' instance.id result.id instance.type as education_service_url %}
+                                                              {% else %}
+                                                                {% url 'mscc:service_education_edit' instance.id result.id as education_service_url %}
+                                                              {% endif %}
+                                                              <a href="{{ education_service_url }}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Infos.">Edit</a>
                                                             {% else %}
-                                                              <a href="{% url 'mscc:service_education_add' instance.id instance.type %}" data-toggle="tooltip" data-placement="top" data-original-title="Add Education Infos.">Add</a>
+                                                              {% if instance.type %}
+                                                                {% url 'mscc:service_education_add' instance.id instance.type as education_service_url %}
+                                                              {% else %}
+                                                                {% url 'mscc:service_education_add' instance.id as education_service_url %}
+                                                              {% endif %}
+                                                              <a href="{{ education_service_url }}" data-toggle="tooltip" data-placement="top" data-original-title="Add Education Infos.">Add</a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
