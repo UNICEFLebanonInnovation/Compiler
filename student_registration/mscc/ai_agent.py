@@ -6,6 +6,7 @@ import copy
 import json
 import logging
 import re
+import time
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from datetime import date, datetime
@@ -707,6 +708,8 @@ class HealthSupportAgent:
         model: str | None = None,
         base_url: str | None = None,
         timeout: int | None = None,
+        max_retries: int | None = None,
+        retry_backoff: float | None = None,
     ) -> None:
         self.api_key = api_key or getattr(settings, "OPENAI_API_KEY", "")
         if not self.api_key:
@@ -715,6 +718,15 @@ class HealthSupportAgent:
         self.model = model or getattr(settings, "OPENAI_HEALTH_AGENT_MODEL", "gpt-4o-mini")
         self.base_url = base_url or getattr(settings, "OPENAI_API_BASE", "https://api.openai.com/v1")
         self.timeout = timeout or int(getattr(settings, "OPENAI_TIMEOUT", 30))
+        retries_setting = int(getattr(settings, "OPENAI_MAX_RETRIES", 3))
+        retries = max_retries if max_retries is not None else retries_setting
+        self.max_retries = max(1, int(retries))
+        backoff_setting = float(getattr(settings, "OPENAI_RETRY_BACKOFF", 1.0))
+        backoff = retry_backoff if retry_backoff is not None else backoff_setting
+        self.retry_backoff = max(0.0, float(backoff))
+
+    def _retry_delay(self, attempt: int) -> float:
+        return self.retry_backoff * (2 ** (attempt - 1))
 
     def analyze_children(
         self,
@@ -912,18 +924,79 @@ class HealthSupportAgent:
             "temperature": 0.2,
         }
 
-        try:
-            response = requests.post(url, headers=headers, json=payload, timeout=self.timeout)
-        except requests.exceptions.Timeout as exc:  # pragma: no cover - explicit timeout guard
-            logger.exception(
-                "OpenAI API request timed out after %s seconds", self.timeout
-            )
-            raise AgentAPIError(
-                "OpenAI API request timed out. Please try again in a moment."
-            ) from exc
-        except requests.RequestException as exc:  # pragma: no cover - network failure guard
-            logger.exception("Failed to contact OpenAI API")
-            raise AgentAPIError("Unable to contact OpenAI API") from exc
+        response = None
+        for attempt in range(1, self.max_retries + 1):
+            try:
+                response = requests.post(
+                    url, headers=headers, json=payload, timeout=self.timeout
+                )
+            except requests.exceptions.Timeout as exc:  # pragma: no cover - explicit timeout guard
+                if attempt == self.max_retries:
+                    logger.exception(
+                        "OpenAI API request timed out after %s seconds", self.timeout
+                    )
+                    raise AgentAPIError(
+                        "OpenAI API request timed out. Please try again in a moment."
+                    ) from exc
+
+                delay = self._retry_delay(attempt)
+                logger.warning(
+                    "OpenAI API request timed out after %s seconds (attempt %s/%s). Retrying in %.1fs.",
+                    self.timeout,
+                    attempt,
+                    self.max_retries,
+                    delay,
+                )
+                if delay:
+                    time.sleep(delay)
+                continue
+            except requests.RequestException as exc:  # pragma: no cover - network failure guard
+                if attempt == self.max_retries:
+                    logger.exception("Failed to contact OpenAI API")
+                    raise AgentAPIError("Unable to contact OpenAI API") from exc
+
+                delay = self._retry_delay(attempt)
+                logger.warning(
+                    "OpenAI API request failed (attempt %s/%s). Retrying in %.1fs.",
+                    attempt,
+                    self.max_retries,
+                    delay,
+                )
+                if delay:
+                    time.sleep(delay)
+                continue
+
+            if response.status_code in {429} or response.status_code >= 500:
+                if attempt == self.max_retries:
+                    try:
+                        detail = response.json()
+                    except ValueError:
+                        detail = response.text
+                    logger.error(
+                        "OpenAI API error (%s): %s",
+                        response.status_code,
+                        detail,
+                    )
+                    raise AgentAPIError(
+                        f"OpenAI API returned status {response.status_code}"
+                    )
+
+                delay = self._retry_delay(attempt)
+                logger.warning(
+                    "OpenAI API returned retryable status %s (attempt %s/%s). Retrying in %.1fs.",
+                    response.status_code,
+                    attempt,
+                    self.max_retries,
+                    delay,
+                )
+                if delay:
+                    time.sleep(delay)
+                continue
+            break
+
+        if response is None:
+            raise AgentAPIError("Unable to contact OpenAI API")
+
         if response.status_code >= 400:
             try:
                 detail = response.json()
