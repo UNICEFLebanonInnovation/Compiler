@@ -401,6 +401,24 @@ class MSCCKnowledgeEngine:
 
         return [copy.deepcopy(profile) for profile in self._vulnerability_profiles]
 
+    @staticmethod
+    def _child_has_service_data(child: dict) -> bool:
+        """Return ``True`` when the child context contains service information."""
+
+        services = child.get('services') if isinstance(child, dict) else None
+        if not isinstance(services, dict):
+            return False
+        for key, summary in services.items():
+            if key == 'overall_pending_required':
+                continue
+            if isinstance(summary, dict):
+                if summary.get('total'):
+                    return True
+                items = summary.get('items')
+                if isinstance(items, list) and items:
+                    return True
+        return False
+
     @property
     def vulnerability_overview(self) -> dict:
         """Aggregate vulnerability signals across all children."""
@@ -411,9 +429,15 @@ class MSCCKnowledgeEngine:
         severity_counts: Counter[str] = Counter()
         domain_counts: Counter[str] = Counter()
         concern_counts: Counter[str] = Counter()
+        relevant_children = 0
 
         for child in self._children:
+            if not self._child_has_service_data(child):
+                continue
             profile = child.get('vulnerability_profile') or {}
+            if not profile:
+                continue
+            relevant_children += 1
             severity = profile.get('severity') or 'unknown'
             severity_counts[severity] += 1
             for entry in profile.get('domain_breakdown') or []:
@@ -423,7 +447,10 @@ class MSCCKnowledgeEngine:
             for concern in profile.get('top_concerns') or []:
                 concern_counts[concern] += 1
 
-        overview: dict = {'total_children': len(self._children)}
+        if not relevant_children:
+            return {}
+
+        overview: dict = {'total_children': relevant_children}
         if severity_counts:
             overview['severity_counts'] = dict(
                 sorted(severity_counts.items(), key=lambda item: (-item[1], item[0]))
@@ -474,6 +501,8 @@ class MSCCKnowledgeEngine:
 
         centers: dict[tuple[int | None, str | None], dict] = {}
         for child in self._children:
+            if not self._child_has_service_data(child):
+                continue
             center_id = child.get('center_id')
             center_name = child.get('center_name')
             if not center_name:
