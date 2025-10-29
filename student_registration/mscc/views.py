@@ -2054,9 +2054,10 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
         ]
 
         knowledge_engine = MSCCKnowledgeEngine(children_context)
-        children_context = knowledge_engine.enriched_children
+        enriched_children = knowledge_engine.enriched_children
+        vulnerability_overview = knowledge_engine.vulnerability_overview
 
-        for child in children_context:
+        for child in enriched_children:
             if focus_topics:
                 child['focus_topics'] = sorted(focus_topics)
             if question_keywords:
@@ -2069,14 +2070,8 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
             if highlights:
                 child['focus_highlights'] = highlights
 
-        children_context.sort(key=lambda child: child['risk_score'], reverse=True)
-        children_context = children_context[:limit_value]
-
-        vulnerability_overview = (
-            MSCCKnowledgeEngine(children_context).vulnerability_overview
-            if children_context
-            else {}
-        )
+        enriched_children.sort(key=lambda child: child['risk_score'], reverse=True)
+        children_context = enriched_children[:limit_value]
 
         analysis = ''
         error = None
@@ -2090,6 +2085,7 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
                     question=question_text,
                     focus_topics=focus_topics,
                     keywords=question_keywords,
+                    programme_overview=vulnerability_overview,
                 )
                 model_name = agent.model
             except AgentConfigurationError as exc:
@@ -2110,6 +2106,16 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
             'question_assessment': question_assessment,
         }
 
+        if vulnerability_overview:
+            response_payload['vulnerability_overview'] = vulnerability_overview
+        else:
+            response_payload['vulnerability_overview'] = {}
+
+        total_children = vulnerability_overview.get('total_children') if isinstance(vulnerability_overview, dict) else None
+        if total_children is None:
+            total_children = len(enriched_children)
+        response_payload['total_children'] = total_children
+
         if normalized_ids:
             response_payload['filters'] = {'registration_ids': normalized_ids}
         if question_text:
@@ -2120,9 +2126,6 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
             response_payload['focus_topics'] = sorted(focus_topics)
         if error:
             response_payload['error'] = error
-        if vulnerability_overview:
-            response_payload['vulnerability_overview'] = vulnerability_overview
-
         return JsonResponse(response_payload)
 
     @staticmethod

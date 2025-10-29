@@ -645,6 +645,8 @@ def test_health_agent_view_calls_agent(mock_analyze):
     assert any('pss' in concern.lower() or 'psychosocial' in concern.lower() for concern in vulnerability_profile['top_concerns'])
     assert payload['children'][0]['vulnerability_tags']
     assert payload['vulnerability_overview']['severity_counts']
+    assert payload['vulnerability_overview']['total_children'] == 2
+    assert payload['total_children'] == 2
 
 
 def test_agent_infers_nutrition_focus():
@@ -690,6 +692,23 @@ def test_agent_prompt_limits_scope_for_nutrition(settings):
     assert 'Limit your assessment strictly to the following domains: nutrition' in user_content
     assert 'Avoid reporting on attendance, PSS' in user_content
     assert 'Detected question keywords: nutrition' in user_content
+
+
+def test_agent_prompt_includes_programme_overview(settings):
+    settings.OPENAI_API_KEY = 'test-key'
+    agent = HealthSupportAgent(api_key='test-key')
+    overview = {'total_children': 25, 'severity_counts': {'high': 5, 'moderate': 10}}
+
+    messages = agent._build_prompt(
+        [{'registration_id': 1, 'risk_score': 2}],
+        programme_overview=overview,
+    )
+
+    assert len(messages) == 2
+    user_content = messages[1]['content']
+    assert 'Aggregated programme overview (all eligible children before applying review limits):' in user_content
+    assert '"total_children": 25' in user_content
+    assert 'Maximum children to review setting' in user_content
 
 
 def test_education_progress_positive_trend():
