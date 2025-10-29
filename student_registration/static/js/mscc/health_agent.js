@@ -533,6 +533,32 @@
     return String(value);
   }
 
+  function summariseCountAndRatio(count, total, ratio) {
+    var segments = [];
+    var countText = formatScore(count);
+    var totalText = formatScore(total);
+    var totalNumber = Number(total);
+
+    if (countText !== '—') {
+      if (totalText !== '—' && !isNaN(totalNumber) && totalNumber > 0) {
+        segments.push(escapeHtml(countText + ' of ' + totalText));
+      } else {
+        segments.push(escapeHtml(countText));
+      }
+    }
+
+    var ratioText = formatPercent(ratio);
+    if (ratioText !== '—') {
+      segments.push(ratioText);
+    }
+
+    if (!segments.length) {
+      return '<span class="text-muted">—</span>';
+    }
+
+    return segments.join(' • ');
+  }
+
   function lifeQualityBadgeClass(value) {
     switch (value) {
       case 'Critical concern':
@@ -1301,6 +1327,105 @@
     return sections;
   }
 
+  function renderCenters(centers) {
+    if (!Array.isArray(centers) || !centers.length) {
+      return '<p class="text-muted mb-0">No centre wellbeing data available.</p>';
+    }
+
+    var rows = centers
+      .map(function (center) {
+        if (!center) {
+          return '';
+        }
+
+        var name = center.center_name || center.center_label || 'Unknown centre';
+        var totalText = formatScore(center.total_children);
+        var totalHtml = totalText !== '—' ? escapeHtml(totalText) : '<span class="text-muted">—</span>';
+        var highSummary = summariseCountAndRatio(
+          center.high_vulnerability_children,
+          center.total_children,
+          center.high_vulnerability_ratio
+        );
+        var protectionSummary = summariseCountAndRatio(
+          center.child_protection_cases,
+          center.total_children,
+          center.child_protection_ratio
+        );
+        var averageText = formatScore(center.average_vulnerability_score);
+        var averageHtml = averageText !== '—' ? escapeHtml(averageText) : '<span class="text-muted">—</span>';
+
+        var badges = [];
+        if (center.is_high_vulnerability_center) {
+          badges.push('<span class="badge badge-danger mr-1 mb-1">High vulnerability</span>');
+        }
+        if (center.is_high_child_protection_center) {
+          badges.push('<span class="badge badge-warning mr-1 mb-1">Child protection</span>');
+        }
+        var badgeHtml = badges.length ? '<div class="mt-1">' + badges.join('') + '</div>' : '';
+
+        var reasons = Array.isArray(center.reasons)
+          ? center.reasons.filter(function (reason) {
+              return !!reason;
+            })
+          : [];
+        var reasonHtml = reasons.length
+          ? '<ul class="small pl-3 mb-0">' +
+            reasons
+              .map(function (reason) {
+                return '<li>' + escapeHtml(reason) + '</li>';
+              })
+              .join('') +
+            '</ul>'
+          : '<span class="text-muted small">No additional notes recorded.</span>';
+
+        var rowClass = '';
+        if (center.is_high_vulnerability_center && center.is_high_child_protection_center) {
+          rowClass = 'table-danger';
+        } else if (center.is_high_vulnerability_center || center.is_high_child_protection_center) {
+          rowClass = 'table-warning';
+        }
+
+        return (
+          '<tr class="' + rowClass + '">' +
+          '<td><strong>' + escapeHtml(name) + '</strong>' + badgeHtml + '</td>' +
+          '<td>' + totalHtml + '</td>' +
+          '<td>' + highSummary + '</td>' +
+          '<td>' + protectionSummary + '</td>' +
+          '<td>' + averageHtml + '</td>' +
+          '<td>' + reasonHtml + '</td>' +
+          '</tr>'
+        );
+      })
+      .filter(function (row) {
+        return row;
+      })
+      .join('');
+
+    if (!rows) {
+      return '<p class="text-muted mb-0">No centre wellbeing data available.</p>';
+    }
+
+    return (
+      '<div class="table-responsive">' +
+      '<table class="table table-sm mb-0">' +
+      '<thead class="thead-light">' +
+      '<tr>' +
+      '<th>Centre</th>' +
+      '<th>Children analysed</th>' +
+      '<th>High vulnerability</th>' +
+      '<th>Child protection</th>' +
+      '<th>Average score</th>' +
+      '<th>Notes</th>' +
+      '</tr>' +
+      '</thead>' +
+      '<tbody>' +
+      rows +
+      '</tbody>' +
+      '</table>' +
+      '</div>'
+    );
+  }
+
   function renderChildren(children) {
     if (!children || !children.length) {
       return '<p class="text-muted mb-0">No children met the selected criteria.</p>';
@@ -1492,6 +1617,11 @@
     var questionActionEl = document.getElementById('health-agent-question-action');
     var analysisContainer = document.getElementById('health-agent-analysis');
     var childrenContainer = document.getElementById('health-agent-children');
+    var centersContainer = document.getElementById('health-agent-centers');
+    var viewToggleButtons = Array.prototype.slice.call(
+      container.querySelectorAll('[data-health-agent-view]')
+    );
+    var currentView = 'children';
     var metadataContainer = document.getElementById('health-agent-metadata');
 
     overviewElements.card = document.getElementById('health-agent-overview-card');
@@ -1520,6 +1650,51 @@
     if (!limitField.value) {
       limitField.value = defaultLimit;
     }
+
+    function setViewMode(mode) {
+      if (mode !== 'centers') {
+        mode = 'children';
+      }
+      currentView = mode;
+
+      if (childrenContainer) {
+        if (mode === 'children') {
+          childrenContainer.classList.remove('d-none');
+        } else {
+          childrenContainer.classList.add('d-none');
+        }
+      }
+
+      if (centersContainer) {
+        if (mode === 'centers') {
+          centersContainer.classList.remove('d-none');
+        } else {
+          centersContainer.classList.add('d-none');
+        }
+      }
+
+      viewToggleButtons.forEach(function (button) {
+        var buttonMode = button.dataset.healthAgentView || 'children';
+        var isActive = buttonMode === mode;
+        button.classList.toggle('active', isActive);
+        button.classList.remove('btn-primary', 'btn-outline-primary');
+        if (isActive) {
+          button.classList.add('btn-primary');
+        } else {
+          button.classList.add('btn-outline-primary');
+        }
+        button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      });
+    }
+
+    viewToggleButtons.forEach(function (button) {
+      button.addEventListener('click', function (event) {
+        event.preventDefault();
+        setViewMode(button.dataset.healthAgentView || 'children');
+      });
+    });
+
+    setViewMode(currentView);
 
     function showStatus(message, level) {
       if (!statusBox) {
@@ -1605,6 +1780,14 @@
       }
 
       var shouldAbort = assessment && assessment.should_abort;
+      var centerAssessments = [];
+      if (
+        payload &&
+        payload.vulnerability_overview &&
+        Array.isArray(payload.vulnerability_overview.center_risk_assessment)
+      ) {
+        centerAssessments = payload.vulnerability_overview.center_risk_assessment;
+      }
       if (shouldAbort) {
         analysisContainer.innerHTML = '<p class="text-muted mb-0">Question needs clarification before an AI summary can be generated.</p>';
         childrenContainer.innerHTML = '<p class="text-muted mb-0">No children were evaluated because the focus question was unclear.</p>';
@@ -1612,8 +1795,12 @@
         analysisContainer.innerHTML = renderMarkdown(payload.analysis || '');
         childrenContainer.innerHTML = renderChildren(payload.children || []);
       }
+      if (centersContainer) {
+        centersContainer.innerHTML = renderCenters(centerAssessments);
+      }
       updateOverviewCharts(payload.vulnerability_overview || null, payload.total_children);
       metadataContainer.textContent = buildMetadata(payload);
+      setViewMode(currentView);
       if (questionField && payload.question !== undefined) {
         questionField.value = payload.question;
       }
