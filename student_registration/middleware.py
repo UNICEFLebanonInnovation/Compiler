@@ -61,14 +61,33 @@ class AutoLogout:
                 last_touch = datetime.fromisoformat(last_touch_str)
                 if datetime.now() - last_touch > timedelta(minutes=settings.AUTO_LOGOUT_DELAY):
                     auth.logout(request)
-                    request.session.flush()  # Clears the session completely
+                    self._flush_session_safely(request)
                     return
             except ValueError:
                 # Invalid date format — reset session
-                request.session.flush()
+                self._flush_session_safely(request)
                 return
 
         request.session['last_touch'] = datetime.now().isoformat()
 
     def process_response(self, request, response):
         return response
+
+    def _flush_session_safely(self, request):
+        """Flush the current session while ensuring Django's cache is initialised."""
+        session = getattr(request, "session", None)
+        if session is None:
+            return
+
+        # ``SessionStore`` instances should expose ``_session_cache``. In Django
+        # 5.2, some third-party backends may not initialise it until ``load`` is
+        # called. Accessing ``flush()`` without the attribute raises an
+        # ``AttributeError``. Guard against that situation by initialising the
+        # cache before flushing so that ``flush`` can run safely.
+        if not hasattr(session, "_session_cache"):
+            try:
+                session._session_cache = session.load()
+            except Exception:  # pragma: no cover - best effort initialisation
+                session._session_cache = {}
+
+        session.flush()
