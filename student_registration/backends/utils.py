@@ -120,25 +120,33 @@ def send_push_to_web_0(user, title, body, data=None):
 
 
 def send_push_to_web(user, title, body, data=None):
+    """Send a web push notification to all tokens registered for ``user``."""
+
     import firebase_admin
     from firebase_admin import credentials, messaging
 
     from student_registration.users.models import WebPushToken
 
     root_dirt = Path(__file__).parents[2]
-    FIREBASE_CREDENTIALS_FILE = os.path.join(str(root_dirt / "utility"), 'firebase-creds.json')
+    FIREBASE_CREDENTIALS_FILE = os.path.join(
+        str(root_dirt / "utility"), "firebase-creds.json"
+    )
     cred = credentials.Certificate(FIREBASE_CREDENTIALS_FILE)
-    # firebase_app = firebase_admin.initialize_app(cred)
 
     if not firebase_admin._apps:
         firebase_admin.initialize_app(cred)
 
-    try:
-        token_obj = WebPushToken.objects.get(user=user)
-    except WebPushToken.DoesNotExist:
-        logger.exception("Error Sending Push notifications")
+    tokens = list(
+        WebPushToken.objects.filter(user=user).values_list("token", flat=True)
+    )
+    if not tokens:
+        logger.warning("No web push tokens found for user %s", user.pk)
         return False
-    message = messaging.Message(
+
+    payload_data = {k: str(v) for k, v in (data or {}).items()}
+
+    message = messaging.MulticastMessage(
+        tokens=tokens,
         notification=messaging.Notification(
             title=title,
             body=body,
@@ -151,7 +159,7 @@ def send_push_to_web(user, title, body, data=None):
                 icon="/static/images/logo.png",
             ),
         ),
-        token=token_obj.token,
-        data=data or {},
+        data=payload_data,
     )
-    return messaging.send(message)
+    response = messaging.send_multicast(message)
+    return response.success_count > 0
