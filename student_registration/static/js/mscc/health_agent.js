@@ -2206,7 +2206,28 @@
 
       startStatusProgressSequence();
 
-      fetch(endpoint, {
+      var abortController = null;
+      var abortTimeoutId = null;
+
+      if (
+        typeof window !== 'undefined' &&
+        typeof window.AbortController === 'function'
+      ) {
+        abortController = new window.AbortController();
+        abortTimeoutId = window.setTimeout(function () {
+          abortTimeoutId = null;
+          abortController.abort();
+        }, 60000);
+      }
+
+      function clearAbortTimeout() {
+        if (abortTimeoutId !== null) {
+          window.clearTimeout(abortTimeoutId);
+          abortTimeoutId = null;
+        }
+      }
+
+      var fetchOptions = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -2215,8 +2236,15 @@
         },
         body: JSON.stringify(payload),
         credentials: 'same-origin',
-      })
+      };
+
+      if (abortController) {
+        fetchOptions.signal = abortController.signal;
+      }
+
+      fetch(endpoint, fetchOptions)
         .then(function (response) {
+          clearAbortTimeout();
           if (!response.ok) {
             throw new Error('Failed to fetch health support insights.');
           }
@@ -2227,8 +2255,17 @@
           showResults(data);
         })
         .catch(function (error) {
+          clearAbortTimeout();
           stopStatusProgressSequence();
-          showStatus(error.message || 'Unable to fetch data.', 'error');
+          if (error && error.name === 'AbortError') {
+            showStatus(
+              'The request timed out while consulting the AI model. Please try again.',
+              'error'
+            );
+            return;
+          }
+          var message = error && error.message ? error.message : 'Unable to fetch data.';
+          showStatus(message, 'error');
         });
     }
 
