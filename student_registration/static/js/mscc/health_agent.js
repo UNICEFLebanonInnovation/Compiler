@@ -1601,7 +1601,7 @@
 
     var defaultLimit = parseInt(container.dataset.defaultLimit || '5', 10);
     var maxLimit = parseInt(container.dataset.maxLimit || '20', 10);
-    var defaultScope = container.dataset.defaultScope || 'all';
+    var defaultScope = container.dataset.defaultScope || 'centers';
 
     var form = qs(container, '#health-agent-form');
     var idsField = qs(container, '#health-agent-registration-ids');
@@ -1657,7 +1657,7 @@
       scopeField.value = defaultScope;
     }
 
-    setCenterViewEnabled(defaultScope !== 'children');
+    setCenterViewEnabled(defaultScope === 'centers');
 
     function setCenterViewEnabled(allowCenters) {
       centerViewEnabled = !!allowCenters;
@@ -1804,10 +1804,16 @@
       }
 
       var shouldAbort = assessment && assessment.should_abort;
-      var includeCenters = payload && payload.include_centers !== false;
-      if (scopeField && payload && payload.include_centers !== undefined) {
-        scopeField.value = payload.include_centers ? 'all' : 'children';
+      var normalizedScope = defaultScope;
+      if (payload && typeof payload.insight_scope === 'string') {
+        normalizedScope = payload.insight_scope;
+      } else if (payload && payload.include_centers !== undefined) {
+        normalizedScope = payload.include_centers ? 'centers' : 'children';
       }
+      if (scopeField) {
+        scopeField.value = normalizedScope;
+      }
+      var includeCenters = normalizedScope === 'centers';
       setCenterViewEnabled(includeCenters);
       var centerAssessments = [];
       if (
@@ -1830,7 +1836,11 @@
       if (centersContainer) {
         centersContainer.innerHTML = renderCenters(centerAssessments);
       }
-      updateOverviewCharts(payload.vulnerability_overview || null, payload.total_children);
+      if (normalizedScope === 'children') {
+        clearOverviewCard();
+      } else {
+        updateOverviewCharts(payload.vulnerability_overview || null, payload.total_children);
+      }
       metadataContainer.textContent = buildMetadata(payload);
       setViewMode(currentView);
       if (questionField && payload.question !== undefined) {
@@ -1892,7 +1902,7 @@
         resultsPanel.classList.add('d-none');
       }
       clearOverviewCard();
-      setCenterViewEnabled(defaultScope !== 'children');
+      setCenterViewEnabled(defaultScope === 'centers');
       showStatus('', 'info');
     }
 
@@ -1913,7 +1923,8 @@
         limit: limitValue,
       };
 
-      var includeCenters = scopeValue !== 'children';
+      payload.insight_scope = scopeValue;
+      var includeCenters = scopeValue === 'centers';
       payload.include_centers = includeCenters;
 
       var registrationIds = parseRegistrationInput(registrationInput);

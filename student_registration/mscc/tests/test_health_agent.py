@@ -826,6 +826,7 @@ def test_health_agent_view_can_exclude_centre_overview(settings):
     payload = {
         'registration_ids': [registration.id],
         'include_centers': False,
+        'insight_scope': 'children',
     }
     request = factory.post(
         '/mscc/ai/health-support/',
@@ -839,6 +840,48 @@ def test_health_agent_view_can_exclude_centre_overview(settings):
     assert response.status_code == 200
     body = json.loads(response.content)
     assert body['include_centers'] is False
+    assert body['insight_scope'] == 'children'
     overview = body.get('vulnerability_overview') or {}
-    assert overview.get('center_risk_assessment') == []
-    assert 'flagged_centers' not in overview
+    assert overview == {}
+
+
+def test_health_agent_view_programme_scope_returns_aggregated_overview(settings):
+    settings.OPENAI_API_KEY = ''
+    child = _create_child('Lina', 'Programme', 'Focus', age_years=9, gender='Female')
+    registration = Registration.objects.create(
+        child=child,
+        type='Core-Package',
+        education_program='BLN Level 3',
+    )
+
+    PSSService.objects.create(registration=registration)
+    ProvidedServices.objects.create(
+        registration=registration,
+        name='Health Awareness',
+        category='Health',
+        required=True,
+        completed=False,
+    )
+
+    factory = RequestFactory()
+    payload = {
+        'registration_ids': [registration.id],
+        'insight_scope': 'programme',
+    }
+    request = factory.post(
+        '/mscc/ai/health-support/',
+        data=json.dumps(payload),
+        content_type='application/json',
+    )
+    request.user = SimpleNamespace(is_authenticated=True)
+
+    response = HealthSupportAgentView.as_view()(request)
+
+    assert response.status_code == 200
+    body = json.loads(response.content)
+    assert body['include_centers'] is False
+    assert body['insight_scope'] == 'programme'
+    overview = body.get('vulnerability_overview') or {}
+    assert overview.get('total_children') == 1
+    assert 'center_risk_assessment' not in overview
+    assert body['total_children'] == 1

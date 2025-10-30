@@ -187,7 +187,7 @@
      data-endpoint="{{ endpoint }}"
      data-default-limit="{{ default_limit }}"
      data-max-limit="{{ max_limit }}"
-     data-default-scope="all">
+     data-default-scope="centers">
   <div class="row">
     <div class="col-lg-4">
       <div class="card mb-3">
@@ -225,10 +225,11 @@
             <div class="mb-3">
               <label class="form-label" for="health-agent-scope">Insight scope</label>
               <select id="health-agent-scope" class="form-control">
-                <option value="all" selected>Child insights and centre overview</option>
+                <option value="centers" selected>Child insights with centre-level overview</option>
+                <option value="programme">Programme overview across all centres</option>
                 <option value="children">Child insights only</option>
               </select>
-              <small class="form-text text-muted">Choose whether to include centre-level wellbeing insights in the results.</small>
+              <small class="form-text text-muted">Choose the level of aggregation for wellbeing insights.</small>
             </div>
             <div class="mb-3">
               <label class="form-label" for="health-agent-limit">Maximum children to review</label>
