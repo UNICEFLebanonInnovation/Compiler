@@ -2119,6 +2119,7 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
 
         enriched_children.sort(key=lambda child: child['risk_score'], reverse=True)
         children_context = enriched_children[:limit_value]
+        compiled_summary = knowledge_engine.render_subset_summary(children_context)
 
         analysis = ''
         error = None
@@ -2133,6 +2134,8 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
                     focus_topics=focus_topics,
                     keywords=question_keywords,
                     programme_overview=vulnerability_overview if include_programme_overview else None,
+                    compiled_summary=compiled_summary,
+                    include_center_insights=include_programme_overview,
                 )
                 model_name = agent.model
             except AgentConfigurationError as exc:

@@ -113,6 +113,7 @@ class MSCCKnowledgeEngine:
     ) -> None:
         self._children = [copy.deepcopy(child) for child in (children_context or []) if isinstance(child, dict)]
         self._documents: list[dict] = []
+        self._document_lookup: dict[tuple[int | None, int | None], dict] = {}
         self._vulnerability_profiles: list[dict] = []
         self._compiled_summary: str = ""
         self._include_center_insights = bool(include_center_insights)
@@ -165,8 +166,12 @@ class MSCCKnowledgeEngine:
                     'numbers': numbers,
                     'context': copy.deepcopy(child),
                     'vulnerability_profile': child.get('vulnerability_profile'),
+                    'header': f"Child {index} – Registration {registration_id}",
+                    'order': index,
                 }
             )
+            lookup_key = (registration_id, child_id)
+            self._document_lookup.setdefault(lookup_key, documents[-1])
             header = f"Child {index} – Registration {registration_id}"
             compiled_sections.append(f"{header}\n{document_text}")
 
@@ -804,6 +809,22 @@ class MSCCKnowledgeEngine:
 
         return self._compiled_summary
 
+    def render_subset_summary(self, children: Sequence[dict]) -> str:
+        """Return a compiled summary limited to the supplied children."""
+
+        sections: list[str] = []
+        for position, child in enumerate(children, start=1):
+            if not isinstance(child, dict):
+                continue
+            registration_id = child.get('registration_id')
+            child_id = child.get('child_id')
+            document = self._document_lookup.get((registration_id, child_id))
+            if not document:
+                continue
+            header = f"Child {position} – Registration {registration_id}"
+            sections.append(f"{header}\n{document['text']}")
+        return self.SECTION_SEPARATOR.join(sections).strip()
+
     def search(self, query: str, *, limit: int = 5) -> list[KnowledgeSearchResult]:
         """Search the compiled knowledge using keyword and numeric matches."""
 
@@ -939,6 +960,9 @@ class HealthSupportAgent:
         focus_topics: set[str] | None = None,
         keywords: Sequence[str] | None = None,
         programme_overview: dict | None = None,
+        *,
+        compiled_summary: str | None = None,
+        include_center_insights: bool | None = None,
     ) -> str:
         """Generate an analysis for the supplied children context."""
 
@@ -948,12 +972,17 @@ class HealthSupportAgent:
         if keywords is None:
             keywords = self.extract_keywords(question)
 
+        if include_center_insights is None:
+            include_center_insights = bool(programme_overview)
+
         messages = self._build_prompt(
             children_context,
             question=question,
             focus_topics=focus_topics,
             keywords=keywords,
             programme_overview=programme_overview,
+            compiled_summary=compiled_summary,
+            include_center_insights=include_center_insights,
         )
         return self._request_chat_completion(messages)
 
@@ -964,11 +993,20 @@ class HealthSupportAgent:
         focus_topics: set[str] | None = None,
         keywords: Sequence[str] | None = None,
         programme_overview: dict | None = None,
+        *,
+        compiled_summary: str | None = None,
+        include_center_insights: bool = True,
     ) -> List[dict]:
-        knowledge_engine = MSCCKnowledgeEngine(children_context)
-        summary = knowledge_engine.render_compiled_summary() or json.dumps(
-            children_context, indent=2, default=str
-        )
+        if compiled_summary is not None:
+            summary = compiled_summary
+        else:
+            knowledge_engine = MSCCKnowledgeEngine(
+                children_context,
+                include_center_insights=include_center_insights,
+            )
+            summary = knowledge_engine.render_compiled_summary() or json.dumps(
+                children_context, indent=2, default=str
+            )
         system_message = (
             "You are an expert public health analyst supporting the MSCC "
             "(Makani Strategic Child Care) programme."
