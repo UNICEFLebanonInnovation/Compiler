@@ -960,25 +960,15 @@ class HealthSupportAgent:
                     url, headers=headers, json=payload, timeout=self.timeout
                 )
             except requests.exceptions.Timeout as exc:  # pragma: no cover - explicit timeout guard
-                if attempt == self.max_retries:
-                    logger.exception(
-                        "OpenAI API request timed out after %s seconds", self.timeout
-                    )
-                    raise AgentAPIError(
-                        "OpenAI API request timed out. Please try again in a moment."
-                    ) from exc
-
-                delay = self._retry_delay(attempt)
                 logger.warning(
-                    "OpenAI API request timed out after %s seconds (attempt %s/%s). Retrying in %.1fs.",
+                    "OpenAI API request timed out after %s seconds (attempt %s/%s). Failing fast.",
                     self.timeout,
                     attempt,
                     self.max_retries,
-                    delay,
                 )
-                if delay:
-                    time.sleep(delay)
-                continue
+                raise AgentAPIError(
+                    "OpenAI API request timed out. Please try again in a moment."
+                ) from exc
             except requests.RequestException as exc:  # pragma: no cover - network failure guard
                 if attempt == self.max_retries:
                     logger.exception("Failed to contact OpenAI API")

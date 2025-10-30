@@ -9,6 +9,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.test')
 
 import django
 import pytest
+import requests
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import CommandError
@@ -24,6 +25,7 @@ from student_registration.attendances.models import (
 )
 from student_registration.child.models import Child
 from student_registration.mscc.ai_agent import (
+    AgentAPIError,
     HealthSupportAgent,
     MSCCKnowledgeEngine,
     PreAssessmentAgent,
@@ -709,6 +711,22 @@ def test_agent_prompt_includes_programme_overview(settings):
     assert 'Aggregated programme overview (all eligible children before applying review limits):' in user_content
     assert '"total_children": 25' in user_content
     assert 'Maximum children to review setting' in user_content
+
+
+@patch('student_registration.mscc.ai_agent.time.sleep')
+@patch('student_registration.mscc.ai_agent.requests.post', side_effect=requests.exceptions.Timeout)
+def test_agent_timeout_fails_fast(mock_post, mock_sleep, settings):
+    settings.OPENAI_API_KEY = 'test-key'
+    agent = HealthSupportAgent(api_key='test-key', timeout=5, max_retries=3)
+
+    with pytest.raises(AgentAPIError) as excinfo:
+        agent._request_chat_completion([
+            {'role': 'user', 'content': 'Test timeout handling'},
+        ])
+
+    assert 'timed out' in str(excinfo.value).lower()
+    assert mock_post.call_count == 1
+    mock_sleep.assert_not_called()
 
 
 def test_education_progress_positive_trend():
