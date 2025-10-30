@@ -1869,7 +1869,15 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
             registration_ids = [single_id]
         limit = request.GET.get('limit')
         question = request.GET.get('question')
-        return self._generate_response(registration_ids, limit, question)
+        include_centers = request.GET.get('include_centers')
+        insight_scope = request.GET.get('insight_scope') or request.GET.get('scope')
+        return self._generate_response(
+            registration_ids,
+            limit,
+            question,
+            include_centers,
+            insight_scope,
+        )
 
     def post(self, request, *args, **kwargs):
         try:
@@ -1880,12 +1888,31 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
         registration_ids = payload.get('registration_ids')
         limit = payload.get('limit')
         question = payload.get('question')
-        return self._generate_response(registration_ids, limit, question)
+        include_centers = payload.get('include_centers')
+        insight_scope = payload.get('insight_scope') or payload.get('scope')
+        return self._generate_response(
+            registration_ids,
+            limit,
+            question,
+            include_centers,
+            insight_scope,
+        )
 
-    def _generate_response(self, registration_ids, limit, question):
+    def _generate_response(
+        self,
+        registration_ids,
+        limit,
+        question,
+        include_centers,
+        insight_scope,
+    ):
         normalized_ids = self._normalize_ids(registration_ids)
         limit_value = self._normalize_limit(limit)
         question_text = self._normalize_question(question)
+        include_centers_default = self._normalize_include_centers(include_centers)
+        scope_value = self._normalize_insight_scope(insight_scope, include_centers_default)
+        include_centers_flag = scope_value == 'centers'
+        include_programme_overview = scope_value in {'centers', 'programme'}
         assessment_agent = PreAssessmentAgent()
         question_assessment = assessment_agent.evaluate(question_text)
 
@@ -1910,6 +1937,8 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
                 'limit': limit_value,
                 'count': 0,
                 'question_assessment': question_assessment,
+                'include_centers': include_centers_flag,
+                'insight_scope': scope_value,
             }
             if normalized_ids:
                 response_payload['filters'] = {'registration_ids': normalized_ids}
@@ -2066,9 +2095,14 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
             for registration in registrations
         ]
 
-        knowledge_engine = MSCCKnowledgeEngine(children_context)
+        knowledge_engine = MSCCKnowledgeEngine(
+            children_context,
+            include_center_insights=include_centers_flag,
+        )
         enriched_children = knowledge_engine.enriched_children
-        vulnerability_overview = knowledge_engine.vulnerability_overview
+        vulnerability_overview = (
+            knowledge_engine.vulnerability_overview if include_programme_overview else {}
+        )
 
         for child in enriched_children:
             if focus_topics:
@@ -2098,7 +2132,7 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
                     question=question_text,
                     focus_topics=focus_topics,
                     keywords=question_keywords,
-                    programme_overview=vulnerability_overview,
+                    programme_overview=vulnerability_overview if include_programme_overview else None,
                 )
                 model_name = agent.model
             except AgentConfigurationError as exc:
@@ -2117,6 +2151,8 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
             'limit': limit_value,
             'count': len(children_context),
             'question_assessment': question_assessment,
+            'include_centers': include_centers_flag,
+            'insight_scope': scope_value,
         }
 
         if vulnerability_overview:
@@ -2177,6 +2213,85 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
         if not isinstance(question, str):
             return ''
         return question.strip()
+
+    @staticmethod
+    def _normalize_include_centers(include_centers):
+        if isinstance(include_centers, bool):
+            return include_centers
+        if include_centers is None:
+            return True
+        if isinstance(include_centers, (int, float)):
+            try:
+                return bool(int(include_centers))
+            except (TypeError, ValueError):  # pragma: no cover - defensive guard
+                return True
+        if isinstance(include_centers, str):
+            value = include_centers.strip().lower()
+            if not value:
+                return True
+            normalized = value.replace('-', '').replace('_', '').replace(' ', '')
+            false_values = {
+                '0',
+                'false',
+                'no',
+                'off',
+                'child',
+                'children',
+                'childonly',
+                'childrenonly',
+                'childlevel',
+                'childrenlevel',
+            }
+            true_values = {
+                '1',
+                'true',
+                'yes',
+                'on',
+                'all',
+                'centers',
+                'center',
+                'centres',
+                'centre',
+                'allcenters',
+                'allcentres',
+                'allcentre',
+            }
+            if normalized in false_values:
+                return False
+            if normalized in true_values:
+                return True
+        return True
+
+    @staticmethod
+    def _normalize_insight_scope(insight_scope, include_centers_default):
+        if isinstance(insight_scope, str):
+            value = insight_scope.strip().lower()
+            normalized = value.replace('-', '').replace('_', '').replace(' ', '')
+            scope_map = {
+                'child': 'children',
+                'children': 'children',
+                'childonly': 'children',
+                'childrenonly': 'children',
+                'childlevel': 'children',
+                'childrenlevel': 'children',
+                'centers': 'centers',
+                'center': 'centers',
+                'centres': 'centers',
+                'centre': 'centers',
+                'all': 'centers',
+                'allcenters': 'centers',
+                'allcentres': 'centers',
+                'allcentre': 'centers',
+                'programme': 'programme',
+                'program': 'programme',
+                'programmelevel': 'programme',
+                'programlevel': 'programme',
+                'programmeoverview': 'programme',
+                'programoverview': 'programme',
+            }
+            if normalized in scope_map:
+                return scope_map[normalized]
+        return 'centers' if include_centers_default else 'children'
 
 
 class HealthSupportAgentPageView(LoginRequiredMixin, TemplateView):

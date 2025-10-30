@@ -186,7 +186,8 @@
 <div id="health-agent-app"
      data-endpoint="{{ endpoint }}"
      data-default-limit="{{ default_limit }}"
-     data-max-limit="{{ max_limit }}">
+     data-max-limit="{{ max_limit }}"
+     data-default-scope="centers">
   <div class="row">
     <div class="col-lg-4">
       <div class="card mb-3">
@@ -220,6 +221,15 @@
                         rows="3"
                         placeholder="e.g. Which children show concerning nutrition trends?"></textarea>
               <small class="form-text text-muted">Optional. Tailor the AI analysis with a specific question or focus.</small>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="health-agent-scope">Insight scope</label>
+              <select id="health-agent-scope" class="form-control">
+                <option value="centers" selected>Child insights with centre-level overview</option>
+                <option value="programme">Programme overview across all centres</option>
+                <option value="children">Child insights only</option>
+              </select>
+              <small class="form-text text-muted">Choose the level of aggregation for wellbeing insights.</small>
             </div>
             <div class="mb-3">
               <label class="form-label" for="health-agent-limit">Maximum children to review</label>
@@ -306,6 +316,15 @@
                 <div class="agent-chart">
                   <canvas id="health-agent-concerns-chart" height="240" class="d-none"></canvas>
                   <p id="health-agent-concerns-empty" class="agent-chart-empty mb-0">Run the assessment to surface priority concerns.</p>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-12">
+                <h6 class="text-muted text-uppercase small mb-2">Trend over time</h6>
+                <div class="agent-chart">
+                  <canvas id="health-agent-trend-chart" height="260" class="d-none"></canvas>
+                  <p id="health-agent-trend-empty" class="agent-chart-empty mb-0">Run the assessment to track vulnerability trends.</p>
                 </div>
               </div>
             </div>
