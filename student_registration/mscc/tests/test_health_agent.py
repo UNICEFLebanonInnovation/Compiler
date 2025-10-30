@@ -323,6 +323,9 @@ def test_mscc_knowledge_compiler_creates_daily_snapshot():
     overview = knowledge_engine.vulnerability_overview
     assert overview.get('severity_counts')
     assert 'center_risk_assessment' in overview
+    assert overview.get('trend_timeline')
+    latest_timeline = overview['trend_timeline'][-1]
+    assert latest_timeline['total_registrations'] >= 1
 
     search_results = knowledge_engine.search('attendance 2')
     assert search_results
@@ -884,4 +887,6 @@ def test_health_agent_view_programme_scope_returns_aggregated_overview(settings)
     overview = body.get('vulnerability_overview') or {}
     assert overview.get('total_children') == 1
     assert 'center_risk_assessment' not in overview
+    assert overview.get('trend_timeline')
+    assert overview['trend_timeline'][0]['total_registrations'] >= 1
     assert body['total_children'] == 1

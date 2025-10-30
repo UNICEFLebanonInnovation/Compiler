@@ -417,6 +417,47 @@ class MSCCKnowledgeEngine:
         severity_counts: Counter[str] = Counter()
         domain_counts: Counter[str] = Counter()
         concern_counts: Counter[str] = Counter()
+        trend_years: dict[int, dict[str, float]] = {}
+
+        def register_trend_entry(year_candidate, count_candidate, severity_value, score_value):
+            """Aggregate timeline metrics for vulnerability trends."""
+
+            try:
+                year_int = int(year_candidate)
+            except (TypeError, ValueError):
+                return False
+
+            weight: int
+            if isinstance(count_candidate, (int, float, Decimal)):
+                weight = int(count_candidate)
+            else:
+                try:
+                    weight = int(float(str(count_candidate)))
+                except (TypeError, ValueError):
+                    weight = 0
+
+            if weight <= 0:
+                weight = 1
+
+            bucket = trend_years.setdefault(
+                year_int,
+                {
+                    'total': 0,
+                    'high': 0,
+                    'score_sum': 0.0,
+                    'score_weight': 0,
+                },
+            )
+            bucket['total'] += weight
+            if isinstance(score_value, (int, float, Decimal)):
+                bucket['score_sum'] += float(score_value) * weight
+                bucket['score_weight'] += weight
+
+            normalized_severity = str(severity_value or '').lower()
+            if normalized_severity in {'critical', 'high'}:
+                bucket['high'] += weight
+
+            return True
 
         for child in self._children:
             profile = child.get('vulnerability_profile') or {}
@@ -428,6 +469,32 @@ class MSCCKnowledgeEngine:
                     domain_counts[domain] += 1
             for concern in profile.get('top_concerns') or []:
                 concern_counts[concern] += 1
+
+            history = child.get('registration_history') if isinstance(child, dict) else None
+            yearly_counts = []
+            if isinstance(history, dict):
+                yearly_counts = history.get('yearly_counts') or []
+
+            recorded_year = False
+            if isinstance(yearly_counts, list):
+                for year_entry in yearly_counts:
+                    if not isinstance(year_entry, dict):
+                        continue
+                    year = year_entry.get('year')
+                    registrations = year_entry.get('registrations', 0)
+                    try:
+                        registrations_value = float(registrations)
+                    except (TypeError, ValueError):
+                        registrations_value = None
+                    if registrations_value is not None and registrations_value <= 0:
+                        continue
+                    if register_trend_entry(year, registrations, severity, profile.get('score')):
+                        recorded_year = True
+
+            if not recorded_year:
+                fallback_year = self._extract_child_current_year(child)
+                if fallback_year is not None:
+                    register_trend_entry(fallback_year, 1, severity, profile.get('score'))
 
         overview: dict = {'total_children': len(self._children)}
         if severity_counts:
@@ -455,6 +522,29 @@ class MSCCKnowledgeEngine:
             ]
             if flagged_centers:
                 overview['flagged_centers'] = flagged_centers
+
+        if trend_years:
+            timeline: list[dict] = []
+            for year in sorted(trend_years):
+                data = trend_years[year]
+                total = int(data.get('total', 0))
+                high = int(data.get('high', 0))
+                avg_score = None
+                score_sum = data.get('score_sum', 0.0)
+                score_weight = data.get('score_weight', 0)
+                if score_weight:
+                    avg_score = round(score_sum / score_weight, 2)
+                if total or high or avg_score is not None:
+                    timeline.append(
+                        {
+                            'year': year,
+                            'total_registrations': total,
+                            'high_vulnerability_registrations': high,
+                            'average_vulnerability_score': avg_score,
+                        }
+                    )
+            if timeline:
+                overview['trend_timeline'] = timeline
         return overview
 
     @staticmethod
@@ -468,6 +558,81 @@ class MSCCKnowledgeEngine:
                 value = entry.get('value')
                 if value:
                     return str(value)
+        return None
+
+    @staticmethod
+    def _extract_year(value) -> int | None:
+        if value in (None, ''):
+            return None
+        if isinstance(value, int):
+            return value
+        if isinstance(value, (float, Decimal)):
+            return int(value)
+        if isinstance(value, (datetime, date)):
+            return value.year
+        if isinstance(value, str):
+            text = value.strip()
+            if not text:
+                return None
+            if text.isdigit() and len(text) <= 4:
+                return int(text)
+            try:
+                parsed = datetime.fromisoformat(text)
+            except ValueError:
+                try:
+                    parsed = date.fromisoformat(text)
+                except ValueError:
+                    return None
+            return parsed.year
+        return None
+
+    @classmethod
+    def _extract_child_current_year(cls, child: dict) -> int | None:
+        history = child.get('registration_history')
+        if isinstance(history, dict):
+            entries = history.get('entries') or []
+            for entry in entries:
+                if not isinstance(entry, dict):
+                    continue
+                if entry.get('is_current'):
+                    round_year = cls._extract_year(entry.get('round_year'))
+                    if round_year is not None:
+                        return round_year
+                    registration_year = cls._extract_year(entry.get('registration_date'))
+                    if registration_year is not None:
+                        return registration_year
+            if entries:
+                latest_entry = max(
+                    (
+                        (
+                            cls._extract_year(entry.get('registration_date')),
+                            entry,
+                        )
+                        for entry in entries
+                        if isinstance(entry, dict)
+                    ),
+                    default=(None, None),
+                    key=lambda item: item[0] or -1,
+                )[1]
+                if isinstance(latest_entry, dict):
+                    round_year = cls._extract_year(latest_entry.get('round_year'))
+                    if round_year is not None:
+                        return round_year
+                    registration_year = cls._extract_year(
+                        latest_entry.get('registration_date')
+                    )
+                    if registration_year is not None:
+                        return registration_year
+
+        registration_details = child.get('registration_details')
+        if isinstance(registration_details, list):
+            for entry in registration_details:
+                if not isinstance(entry, dict):
+                    continue
+                if entry.get('field') == 'registration_date':
+                    year = cls._extract_year(entry.get('value'))
+                    if year is not None:
+                        return year
         return None
 
     def detect_high_risk_centers(

@@ -5,6 +5,7 @@
     severity: null,
     domain: null,
     concerns: null,
+    trend: null,
   };
 
   var chartPalette = [
@@ -29,6 +30,8 @@
     domainEmpty: null,
     concernsCanvas: null,
     concernsEmpty: null,
+    trendCanvas: null,
+    trendEmpty: null,
     flaggedContainer: null,
     flaggedList: null,
   };
@@ -37,6 +40,7 @@
     severity: '',
     domain: '',
     concerns: '',
+    trend: '',
   };
 
   function qs(scope, selector) {
@@ -102,6 +106,7 @@
     destroyChartInstance('severity');
     destroyChartInstance('domain');
     destroyChartInstance('concerns');
+    destroyChartInstance('trend');
   }
 
   function prepareCountEntries(counts) {
@@ -150,6 +155,71 @@
       });
   }
 
+  function prepareTrendEntries(timeline) {
+    if (!Array.isArray(timeline)) {
+      return [];
+    }
+    return timeline
+      .map(function (item) {
+        if (!item) {
+          return null;
+        }
+        var yearValue = item.year !== undefined ? item.year : item.label;
+        if (yearValue === undefined || yearValue === null || yearValue === '') {
+          return null;
+        }
+        var label = String(yearValue);
+        var totalRaw =
+          item.total_registrations !== undefined
+            ? item.total_registrations
+            : item.total_children !== undefined
+            ? item.total_children
+            : item.total;
+        var highRaw =
+          item.high_vulnerability_registrations !== undefined
+            ? item.high_vulnerability_registrations
+            : item.high_children !== undefined
+            ? item.high_children
+            : item.high;
+        var averageRaw =
+          item.average_vulnerability_score !== undefined
+            ? item.average_vulnerability_score
+            : item.average_score;
+
+        var total = Number(totalRaw);
+        if (isNaN(total)) {
+          total = 0;
+        }
+        var high = Number(highRaw);
+        if (isNaN(high)) {
+          high = 0;
+        }
+
+        var average = null;
+        if (averageRaw !== undefined && averageRaw !== null && averageRaw !== '') {
+          var averageNumber = Number(averageRaw);
+          if (!isNaN(averageNumber)) {
+            average = Number(averageNumber.toFixed(2));
+          }
+        }
+
+        if (!total && !high && average === null) {
+          return null;
+        }
+
+        return {
+          label: label,
+          year: label,
+          total: total,
+          high: high,
+          average_score: average,
+        };
+      })
+      .filter(function (entry) {
+        return entry !== null;
+      });
+  }
+
   function formatCountSummary(entries) {
     if (!entries || !entries.length) {
       return '';
@@ -159,6 +229,58 @@
         return entry.label + ' (' + entry.value + ')';
       })
       .join(', ');
+  }
+
+  function formatTrendSummary(entries) {
+    if (!entries || !entries.length) {
+      return '';
+    }
+
+    var latest = entries[entries.length - 1];
+    var highest = entries.reduce(function (acc, entry) {
+      if (!acc || entry.high > acc.high) {
+        return entry;
+      }
+      return acc;
+    }, null);
+    var withAverage = entries.filter(function (entry) {
+      return entry.average_score !== null && entry.average_score !== undefined;
+    });
+
+    var parts = [];
+    if (latest) {
+      var latestText =
+        'Latest year ' +
+        latest.label +
+        ' recorded ' +
+        latest.high +
+        ' high vulnerability ' +
+        (latest.high === 1 ? 'registration' : 'registrations');
+      if (latest.total) {
+        latestText += ' out of ' + latest.total + ' total';
+      }
+      latestText += '.';
+      parts.push(latestText);
+    }
+
+    if (highest && latest && highest.label !== latest.label && highest.high > latest.high) {
+      parts.push(
+        'Peak high vulnerability registrations occurred in ' +
+          highest.label +
+          ' (' +
+          highest.high +
+          ').'
+      );
+    }
+
+    if (withAverage.length) {
+      var latestAverage = withAverage[withAverage.length - 1];
+      parts.push(
+        'Average vulnerability score: ' + latestAverage.average_score.toFixed(2) + '.'
+      );
+    }
+
+    return parts.join(' ');
   }
 
   function updateFlaggedCenters(flaggedCenters) {
@@ -228,6 +350,7 @@
     setChartVisibility(overviewElements.severityCanvas, overviewElements.severityEmpty, false);
     setChartVisibility(overviewElements.domainCanvas, overviewElements.domainEmpty, false);
     setChartVisibility(overviewElements.concernsCanvas, overviewElements.concernsEmpty, false);
+    setChartVisibility(overviewElements.trendCanvas, overviewElements.trendEmpty, false);
     if (overviewElements.severityEmpty) {
       overviewElements.severityEmpty.textContent = overviewEmptyDefaults.severity;
     }
@@ -236,6 +359,9 @@
     }
     if (overviewElements.concernsEmpty) {
       overviewElements.concernsEmpty.textContent = overviewEmptyDefaults.concerns;
+    }
+    if (overviewElements.trendEmpty) {
+      overviewElements.trendEmpty.textContent = overviewEmptyDefaults.trend;
     }
     updateFlaggedCenters([]);
   }
@@ -248,11 +374,13 @@
     var severityEntries = prepareCountEntries(overview && overview.severity_counts);
     var domainEntries = prepareCountEntries(overview && overview.domain_counts);
     var concernEntries = prepareConcernEntries(overview && overview.top_concerns);
+    var trendEntries = prepareTrendEntries(overview && overview.trend_timeline);
 
     var hasData = Boolean(
       (severityEntries && severityEntries.length) ||
         (domainEntries && domainEntries.length) ||
-        (concernEntries && concernEntries.length)
+        (concernEntries && concernEntries.length) ||
+        (trendEntries && trendEntries.length)
     );
 
     if (!overview || !hasData) {
@@ -421,6 +549,109 @@
           overviewElements.concernsEmpty.textContent = formatCountSummary(concernsToDisplay);
         } else {
           overviewElements.concernsEmpty.textContent = 'No priority concern data available.';
+        }
+      }
+    }
+
+    if (trendEntries.length && chartSupported && overviewElements.trendCanvas) {
+      setChartVisibility(overviewElements.trendCanvas, overviewElements.trendEmpty, true);
+      destroyChartInstance('trend');
+      var trendCtx = overviewElements.trendCanvas.getContext('2d');
+      var hasAverage = trendEntries.some(function (entry) {
+        return entry.average_score !== null && entry.average_score !== undefined;
+      });
+      var datasets = [
+        {
+          label: 'High vulnerability registrations',
+          data: trendEntries.map(function (entry) {
+            return entry.high;
+          }),
+          borderColor: '#d92550',
+          backgroundColor: 'rgba(217, 37, 80, 0.1)',
+          tension: 0.25,
+          fill: false,
+          pointRadius: 4,
+          yAxisID: 'y',
+        },
+        {
+          label: 'Total registrations',
+          data: trendEntries.map(function (entry) {
+            return entry.total;
+          }),
+          borderColor: '#3f6ad8',
+          backgroundColor: 'rgba(63, 106, 216, 0.1)',
+          tension: 0.25,
+          fill: false,
+          borderDash: [5, 3],
+          pointRadius: 3,
+          yAxisID: 'y',
+        },
+      ];
+
+      if (hasAverage) {
+        datasets.push({
+          label: 'Average vulnerability score',
+          data: trendEntries.map(function (entry) {
+            return entry.average_score !== null && entry.average_score !== undefined
+              ? entry.average_score
+              : null;
+          }),
+          borderColor: '#20c997',
+          backgroundColor: 'rgba(32, 201, 151, 0.1)',
+          tension: 0.25,
+          fill: false,
+          spanGaps: true,
+          pointRadius: 3,
+          yAxisID: 'y1',
+        });
+      }
+
+      chartInstances.trend = new Chart(trendCtx, {
+        type: 'line',
+        data: {
+          labels: trendEntries.map(function (entry) {
+            return entry.label;
+          }),
+          datasets: datasets,
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: 'index',
+            intersect: false,
+          },
+          plugins: {
+            legend: {
+              position: 'bottom',
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                precision: 0,
+              },
+            },
+            y1: {
+              beginAtZero: true,
+              position: 'right',
+              grid: {
+                drawOnChartArea: false,
+              },
+              display: hasAverage,
+            },
+          },
+        },
+      });
+    } else {
+      destroyChartInstance('trend');
+      setChartVisibility(overviewElements.trendCanvas, overviewElements.trendEmpty, false);
+      if (overviewElements.trendEmpty) {
+        if (trendEntries.length) {
+          overviewElements.trendEmpty.textContent = formatTrendSummary(trendEntries);
+        } else {
+          overviewElements.trendEmpty.textContent = 'No vulnerability trend data available.';
         }
       }
     }
@@ -1635,6 +1866,8 @@
     overviewElements.domainEmpty = document.getElementById('health-agent-domain-empty');
     overviewElements.concernsCanvas = document.getElementById('health-agent-concerns-chart');
     overviewElements.concernsEmpty = document.getElementById('health-agent-concerns-empty');
+    overviewElements.trendCanvas = document.getElementById('health-agent-trend-chart');
+    overviewElements.trendEmpty = document.getElementById('health-agent-trend-empty');
     overviewElements.flaggedContainer = document.getElementById('health-agent-flagged-centers');
     overviewElements.flaggedList = document.getElementById('health-agent-flagged-centers-list');
 
@@ -1646,6 +1879,9 @@
     }
     if (overviewElements.concernsEmpty) {
       overviewEmptyDefaults.concerns = overviewElements.concernsEmpty.textContent;
+    }
+    if (overviewElements.trendEmpty) {
+      overviewEmptyDefaults.trend = overviewElements.trendEmpty.textContent;
     }
 
     clearOverviewCard();
