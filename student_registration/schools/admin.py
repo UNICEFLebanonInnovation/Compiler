@@ -196,7 +196,7 @@ class PartnerOrganizationAdmin(ImportExportModelAdmin):
         'is_unrwa',
         'is_youth',
         'is_dirasa',
-        'is_bma',
+        'is_makani',
         'active',
     )
     list_display = (
@@ -206,7 +206,7 @@ class PartnerOrganizationAdmin(ImportExportModelAdmin):
         'is_unrwa',
         'is_youth',
         'is_dirasa',
-        'is_bma',
+        'is_makani',
         'active',
     )
     fields = (
@@ -216,7 +216,7 @@ class PartnerOrganizationAdmin(ImportExportModelAdmin):
         'is_unrwa',
         'is_youth',
         'is_dirasa',
-        'is_bma',
+        'is_makani',
         'active',
         'schools'
     )
