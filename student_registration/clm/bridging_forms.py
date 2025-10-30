@@ -1768,18 +1768,24 @@ class BridgingForm(CommonForm):
 
         queryset = School.objects.filter(is_closed=False).all()
 
-        if not clm_bridging_all:
-            if school_id and school_id > 0:
+        if clm_bridging_all:
+            queryset = School.objects.filter(
+                is_closed=False,
+                partner_schools__is_dirasa=True,
+            ).distinct()
+        elif school_id and school_id > 0:
                 queryset = School.objects.filter(id=school_id)
 
-            elif partner_id and partner_id > 0:
+        elif partner_id and partner_id > 0:
                 queryset = School.objects.filter(is_closed=False,
                                                  id__in=PartnerOrganization
                                                  .objects
                                                  .filter(id=partner_id)
                                                  .values_list('schools', flat=True))
-            else:
+        else:
                 queryset =queryset.none()
+
+        print(queryset.query)
 
         self.fields['school'] = forms.ModelChoiceField(
             queryset=queryset, widget=forms.Select,

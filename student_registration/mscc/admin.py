@@ -105,7 +105,7 @@ class RegistrationAdmin(admin.ModelAdmin):
         'have_labour',
         'partner',
         'center',
-        'round', 
+        'round',
         'created',
         'modified',
     )
