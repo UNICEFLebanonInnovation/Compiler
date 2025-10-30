@@ -186,7 +186,8 @@
 <div id="health-agent-app"
      data-endpoint="{{ endpoint }}"
      data-default-limit="{{ default_limit }}"
-     data-max-limit="{{ max_limit }}">
+     data-max-limit="{{ max_limit }}"
+     data-default-scope="all">
   <div class="row">
     <div class="col-lg-4">
       <div class="card mb-3">
@@ -220,6 +221,14 @@
                         rows="3"
                         placeholder="e.g. Which children show concerning nutrition trends?"></textarea>
               <small class="form-text text-muted">Optional. Tailor the AI analysis with a specific question or focus.</small>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="health-agent-scope">Insight scope</label>
+              <select id="health-agent-scope" class="form-control">
+                <option value="all" selected>Child insights and centre overview</option>
+                <option value="children">Child insights only</option>
+              </select>
+              <small class="form-text text-muted">Choose whether to include centre-level wellbeing insights in the results.</small>
             </div>
             <div class="mb-3">
               <label class="form-label" for="health-agent-limit">Maximum children to review</label>

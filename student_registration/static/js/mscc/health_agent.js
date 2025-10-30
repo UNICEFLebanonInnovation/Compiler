@@ -1601,11 +1601,13 @@
 
     var defaultLimit = parseInt(container.dataset.defaultLimit || '5', 10);
     var maxLimit = parseInt(container.dataset.maxLimit || '20', 10);
+    var defaultScope = container.dataset.defaultScope || 'all';
 
     var form = qs(container, '#health-agent-form');
     var idsField = qs(container, '#health-agent-registration-ids');
     var limitField = qs(container, '#health-agent-limit');
     var questionField = qs(container, '#health-agent-question');
+    var scopeField = qs(container, '#health-agent-scope');
     var resetButton = qs(container, '#health-agent-reset');
     var statusBox = document.getElementById('health-agent-status');
     var resultsPanel = document.getElementById('health-agent-results');
@@ -1622,6 +1624,7 @@
       container.querySelectorAll('[data-health-agent-view]')
     );
     var currentView = 'children';
+    var centerViewEnabled = true;
     var metadataContainer = document.getElementById('health-agent-metadata');
 
     overviewElements.card = document.getElementById('health-agent-overview-card');
@@ -1650,8 +1653,24 @@
     if (!limitField.value) {
       limitField.value = defaultLimit;
     }
+    if (scopeField && !scopeField.value) {
+      scopeField.value = defaultScope;
+    }
+
+    setCenterViewEnabled(defaultScope !== 'children');
+
+    function setCenterViewEnabled(allowCenters) {
+      centerViewEnabled = !!allowCenters;
+      if (!centerViewEnabled && currentView === 'centers') {
+        currentView = 'children';
+      }
+      setViewMode(currentView);
+    }
 
     function setViewMode(mode) {
+      if (mode === 'centers' && !centerViewEnabled) {
+        mode = 'children';
+      }
       if (mode !== 'centers') {
         mode = 'children';
       }
@@ -1675,6 +1694,10 @@
 
       viewToggleButtons.forEach(function (button) {
         var buttonMode = button.dataset.healthAgentView || 'children';
+        var isCenterButton = buttonMode === 'centers';
+        var disableCenter = isCenterButton && !centerViewEnabled;
+        button.disabled = disableCenter;
+        button.classList.toggle('d-none', disableCenter);
         var isActive = buttonMode === mode;
         button.classList.toggle('active', isActive);
         button.classList.remove('btn-primary', 'btn-outline-primary');
@@ -1690,11 +1713,12 @@
     viewToggleButtons.forEach(function (button) {
       button.addEventListener('click', function (event) {
         event.preventDefault();
+        if (button.disabled) {
+          return;
+        }
         setViewMode(button.dataset.healthAgentView || 'children');
       });
     });
-
-    setViewMode(currentView);
 
     function showStatus(message, level) {
       if (!statusBox) {
@@ -1780,6 +1804,11 @@
       }
 
       var shouldAbort = assessment && assessment.should_abort;
+      var includeCenters = payload && payload.include_centers !== false;
+      if (scopeField && payload && payload.include_centers !== undefined) {
+        scopeField.value = payload.include_centers ? 'all' : 'children';
+      }
+      setCenterViewEnabled(includeCenters);
       var centerAssessments = [];
       if (
         payload &&
@@ -1787,6 +1816,9 @@
         Array.isArray(payload.vulnerability_overview.center_risk_assessment)
       ) {
         centerAssessments = payload.vulnerability_overview.center_risk_assessment;
+      }
+      if (!includeCenters) {
+        centerAssessments = [];
       }
       if (shouldAbort) {
         analysisContainer.innerHTML = '<p class="text-muted mb-0">Question needs clarification before an AI summary can be generated.</p>';
@@ -1853,10 +1885,14 @@
       if (questionField) {
         questionField.value = '';
       }
+      if (scopeField) {
+        scopeField.value = defaultScope;
+      }
       if (resultsPanel) {
         resultsPanel.classList.add('d-none');
       }
       clearOverviewCard();
+      setCenterViewEnabled(defaultScope !== 'children');
       showStatus('', 'info');
     }
 
@@ -1866,6 +1902,7 @@
       var limitInput = limitField ? limitField.value : defaultLimit;
       var questionInput = questionField ? questionField.value : '';
       var trimmedQuestion = questionInput ? questionInput.trim() : '';
+      var scopeValue = scopeField ? scopeField.value || defaultScope : defaultScope;
       var limitValue = clamp(limitInput, 1, maxLimit);
 
       if (limitField) {
@@ -1875,6 +1912,9 @@
       var payload = {
         limit: limitValue,
       };
+
+      var includeCenters = scopeValue !== 'children';
+      payload.include_centers = includeCenters;
 
       var registrationIds = parseRegistrationInput(registrationInput);
       if (registrationIds.length) {

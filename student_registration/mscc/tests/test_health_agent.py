@@ -390,6 +390,29 @@ def test_detect_high_risk_centers_flags_vulnerability_and_protection():
     assert overview['center_risk_assessment'][0]['center_name'] == 'Center Alpha'
 
 
+def test_knowledge_engine_can_skip_center_overview():
+    children = [
+        _build_child_context_for_center(
+            registration_id=1,
+            center_id=10,
+            center_name='Center One',
+            risk_score=15,
+        ),
+        _build_child_context_for_center(
+            registration_id=2,
+            center_id=20,
+            center_name='Center Two',
+            risk_score=12,
+        ),
+    ]
+
+    engine = MSCCKnowledgeEngine(children, include_center_insights=False)
+    overview = engine.vulnerability_overview
+
+    assert overview['center_risk_assessment'] == []
+    assert 'flagged_centers' not in overview
+
+
 @patch('student_registration.mscc.management.commands.compile_mscc_knowledge.MSCCKnowledgeCompiler')
 def test_compile_mscc_knowledge_command_creates_snapshot(mock_compiler, capsys):
     snapshot = SimpleNamespace(
@@ -778,3 +801,44 @@ def test_education_progress_positive_trend():
     assert programme_impact
     assert programme_impact['direction'] in {'positive', 'mixed'}
     assert any('improved' in (factor['message'] or '').lower() for factor in programme_impact['factors'])
+
+
+def test_health_agent_view_can_exclude_centre_overview(settings):
+    settings.OPENAI_API_KEY = ''
+    child = _create_child('Maya', 'Insight', 'Child', age_years=11, gender='Female')
+    registration = Registration.objects.create(
+        child=child,
+        type='Core-Package',
+        education_program='BLN Level 1',
+    )
+
+    PSSService.objects.create(registration=registration)
+    HealthNutritionService.objects.create(registration=registration, eating_minimum_meals='Yes')
+    ProvidedServices.objects.create(
+        registration=registration,
+        name='PSS',
+        category='Child Protection',
+        required=True,
+        completed=False,
+    )
+
+    factory = RequestFactory()
+    payload = {
+        'registration_ids': [registration.id],
+        'include_centers': False,
+    }
+    request = factory.post(
+        '/mscc/ai/health-support/',
+        data=json.dumps(payload),
+        content_type='application/json',
+    )
+    request.user = SimpleNamespace(is_authenticated=True)
+
+    response = HealthSupportAgentView.as_view()(request)
+
+    assert response.status_code == 200
+    body = json.loads(response.content)
+    assert body['include_centers'] is False
+    overview = body.get('vulnerability_overview') or {}
+    assert overview.get('center_risk_assessment') == []
+    assert 'flagged_centers' not in overview

@@ -1860,7 +1860,13 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
             registration_ids = [single_id]
         limit = request.GET.get('limit')
         question = request.GET.get('question')
-        return self._generate_response(registration_ids, limit, question)
+        include_centers = request.GET.get('include_centers')
+        return self._generate_response(
+            registration_ids,
+            limit,
+            question,
+            include_centers,
+        )
 
     def post(self, request, *args, **kwargs):
         try:
@@ -1871,12 +1877,19 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
         registration_ids = payload.get('registration_ids')
         limit = payload.get('limit')
         question = payload.get('question')
-        return self._generate_response(registration_ids, limit, question)
+        include_centers = payload.get('include_centers')
+        return self._generate_response(
+            registration_ids,
+            limit,
+            question,
+            include_centers,
+        )
 
-    def _generate_response(self, registration_ids, limit, question):
+    def _generate_response(self, registration_ids, limit, question, include_centers):
         normalized_ids = self._normalize_ids(registration_ids)
         limit_value = self._normalize_limit(limit)
         question_text = self._normalize_question(question)
+        include_centers_flag = self._normalize_include_centers(include_centers)
         assessment_agent = PreAssessmentAgent()
         question_assessment = assessment_agent.evaluate(question_text)
 
@@ -1901,6 +1914,7 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
                 'limit': limit_value,
                 'count': 0,
                 'question_assessment': question_assessment,
+                'include_centers': include_centers_flag,
             }
             if normalized_ids:
                 response_payload['filters'] = {'registration_ids': normalized_ids}
@@ -2057,7 +2071,10 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
             for registration in registrations
         ]
 
-        knowledge_engine = MSCCKnowledgeEngine(children_context)
+        knowledge_engine = MSCCKnowledgeEngine(
+            children_context,
+            include_center_insights=include_centers_flag,
+        )
         enriched_children = knowledge_engine.enriched_children
         vulnerability_overview = knowledge_engine.vulnerability_overview
 
@@ -2108,6 +2125,7 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
             'limit': limit_value,
             'count': len(children_context),
             'question_assessment': question_assessment,
+            'include_centers': include_centers_flag,
         }
 
         if vulnerability_overview:
@@ -2168,6 +2186,54 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
         if not isinstance(question, str):
             return ''
         return question.strip()
+
+    @staticmethod
+    def _normalize_include_centers(include_centers):
+        if isinstance(include_centers, bool):
+            return include_centers
+        if include_centers is None:
+            return True
+        if isinstance(include_centers, (int, float)):
+            try:
+                return bool(int(include_centers))
+            except (TypeError, ValueError):  # pragma: no cover - defensive guard
+                return True
+        if isinstance(include_centers, str):
+            value = include_centers.strip().lower()
+            if not value:
+                return True
+            normalized = value.replace('-', '').replace('_', '').replace(' ', '')
+            false_values = {
+                '0',
+                'false',
+                'no',
+                'off',
+                'child',
+                'children',
+                'childonly',
+                'childrenonly',
+                'childlevel',
+                'childrenlevel',
+            }
+            true_values = {
+                '1',
+                'true',
+                'yes',
+                'on',
+                'all',
+                'centers',
+                'center',
+                'centres',
+                'centre',
+                'allcenters',
+                'allcentres',
+                'allcentre',
+            }
+            if normalized in false_values:
+                return False
+            if normalized in true_values:
+                return True
+        return True
 
 
 class HealthSupportAgentPageView(LoginRequiredMixin, TemplateView):

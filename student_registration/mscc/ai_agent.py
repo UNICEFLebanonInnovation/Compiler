@@ -105,11 +105,17 @@ class MSCCKnowledgeEngine:
 
     SECTION_SEPARATOR = "\n\n"
 
-    def __init__(self, children_context: Iterable[dict] | None) -> None:
+    def __init__(
+        self,
+        children_context: Iterable[dict] | None,
+        *,
+        include_center_insights: bool = True,
+    ) -> None:
         self._children = [copy.deepcopy(child) for child in (children_context or []) if isinstance(child, dict)]
         self._documents: list[dict] = []
         self._vulnerability_profiles: list[dict] = []
         self._compiled_summary: str = ""
+        self._include_center_insights = bool(include_center_insights)
         self._enrich_children_with_vulnerabilities()
         self._build_documents()
 
@@ -437,15 +443,18 @@ class MSCCKnowledgeEngine:
                 {'concern': concern, 'count': count}
                 for concern, count in concern_counts.most_common(10)
             ]
-        center_risk_assessment = self.detect_high_risk_centers()
+        center_risk_assessment: list[dict] = []
+        if self._include_center_insights:
+            center_risk_assessment = self.detect_high_risk_centers()
         overview['center_risk_assessment'] = center_risk_assessment
-        flagged_centers = [
-            entry
-            for entry in center_risk_assessment
-            if entry['is_high_vulnerability_center'] or entry['is_high_child_protection_center']
-        ]
-        if flagged_centers:
-            overview['flagged_centers'] = flagged_centers
+        if self._include_center_insights:
+            flagged_centers = [
+                entry
+                for entry in center_risk_assessment
+                if entry['is_high_vulnerability_center'] or entry['is_high_child_protection_center']
+            ]
+            if flagged_centers:
+                overview['flagged_centers'] = flagged_centers
         return overview
 
     @staticmethod
