@@ -1857,6 +1857,16 @@
     var currentView = 'children';
     var centerViewEnabled = true;
     var metadataContainer = document.getElementById('health-agent-metadata');
+    var statusProgressController = {
+      timeouts: [],
+      active: false,
+    };
+    var statusProgressStages = [
+      'Stage 1 of 4 – Preparing registration data for assessment…',
+      'Stage 2 of 4 – Analysing health and nutrition history…',
+      'Stage 3 of 4 – Prioritising key risk indicators…',
+      'Stage 4 of 4 – Consulting the AI model for recommendations…',
+    ];
 
     overviewElements.card = document.getElementById('health-agent-overview-card');
     overviewElements.total = document.getElementById('health-agent-overview-total');
@@ -1955,6 +1965,28 @@
         setViewMode(button.dataset.healthAgentView || 'children');
       });
     });
+
+    function stopStatusProgressSequence() {
+      statusProgressController.timeouts.forEach(function (timeoutId) {
+        clearTimeout(timeoutId);
+      });
+      statusProgressController.timeouts = [];
+      statusProgressController.active = false;
+    }
+
+    function startStatusProgressSequence() {
+      stopStatusProgressSequence();
+      statusProgressController.active = true;
+      statusProgressStages.forEach(function (message, index) {
+        var timeoutId = window.setTimeout(function () {
+          if (!statusProgressController.active) {
+            return;
+          }
+          showStatus(message, 'info');
+        }, index * 2000);
+        statusProgressController.timeouts.push(timeoutId);
+      });
+    }
 
     function showStatus(message, level) {
       if (!statusBox) {
@@ -2092,6 +2124,7 @@
     }
 
     function resetForm() {
+      stopStatusProgressSequence();
       if (idsField) {
         idsField.value = '';
       }
@@ -2171,7 +2204,7 @@
         payload.question = trimmedQuestion;
       }
 
-      showStatus('Fetching recommendations…', 'info');
+      startStatusProgressSequence();
 
       fetch(endpoint, {
         method: 'POST',
@@ -2190,9 +2223,11 @@
           return response.json();
         })
         .then(function (data) {
+          stopStatusProgressSequence();
           showResults(data);
         })
         .catch(function (error) {
+          stopStatusProgressSequence();
           showStatus(error.message || 'Unable to fetch data.', 'error');
         });
     }
