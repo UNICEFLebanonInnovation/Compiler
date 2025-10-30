@@ -1026,10 +1026,49 @@ class HealthSupportAgent:
 
         try:
             payload = response.json()
-            return payload["choices"][0]["message"]["content"].strip()
-        except (KeyError, IndexError, TypeError, ValueError) as exc:  # pragma: no cover - defensive
+        except ValueError as exc:  # pragma: no cover - defensive
+            logger.exception("Unable to decode OpenAI response: %s", response.text)
+            raise AgentAPIError("Unexpected response from OpenAI") from exc
+
+        try:
+            choice = payload["choices"][0]
+        except (KeyError, IndexError, TypeError) as exc:  # pragma: no cover - defensive
             logger.exception("Unexpected OpenAI response structure: %s", response.text)
             raise AgentAPIError("Unexpected response from OpenAI") from exc
+
+        message = choice.get("message", {}) if isinstance(choice, dict) else {}
+        content = message.get("content") if isinstance(message, dict) else None
+        if content is None and isinstance(choice, dict):  # pragma: no branch - compatibility guard
+            content = choice.get("content")
+
+        text = self._coerce_response_content(content)
+        if not text:
+            logger.error("OpenAI API returned empty or unrecognised content: %s", response.text)
+            raise AgentAPIError("Unexpected response from OpenAI")
+
+        return text
+
+    @staticmethod
+    def _coerce_response_content(content) -> str:
+        """Normalise chat completion content to a plain string."""
+
+        if isinstance(content, str):
+            return content.strip()
+
+        if isinstance(content, list):
+            fragments: list[str] = []
+            for part in content:
+                if isinstance(part, str):
+                    fragments.append(part)
+                elif isinstance(part, dict):
+                    text = part.get("text") or part.get("content")
+                    if isinstance(text, str):
+                        fragments.append(text)
+            combined = "".join(fragments).strip()
+            if combined:
+                return combined
+
+        return ""
 
 
 class PreAssessmentAgent:

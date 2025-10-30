@@ -729,6 +729,45 @@ def test_agent_timeout_fails_fast(mock_post, mock_sleep, settings):
     mock_sleep.assert_not_called()
 
 
+@patch('student_registration.mscc.ai_agent.requests.post')
+def test_agent_handles_structured_response_content(mock_post, settings):
+    settings.OPENAI_API_KEY = 'test-key'
+
+    class DummyResponse:
+        def __init__(self, payload, status_code=200):
+            self._payload = payload
+            self.status_code = status_code
+            self.text = json.dumps(payload)
+
+        def json(self):
+            return self._payload
+
+    mock_post.return_value = DummyResponse(
+        {
+            'choices': [
+                {
+                    'message': {
+                        'role': 'assistant',
+                        'content': [
+                            {'type': 'output_text', 'text': 'First part. '},
+                            {'type': 'text', 'text': 'Second part.'},
+                            'Trailing text',
+                        ],
+                    }
+                }
+            ]
+        }
+    )
+
+    agent = HealthSupportAgent(api_key='test-key')
+    result = agent._request_chat_completion([
+        {'role': 'user', 'content': 'Hello'},
+    ])
+
+    assert result == 'First part. Second part.Trailing text'
+    mock_post.assert_called_once()
+
+
 def test_education_progress_positive_trend():
     settings.OPENAI_API_KEY = ''
     child = _create_child('Sara', 'Bright', 'Child', age_years=9, gender='Female')
