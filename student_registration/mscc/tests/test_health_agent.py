@@ -720,6 +720,21 @@ def test_agent_prompt_limits_scope_for_nutrition(settings):
     assert 'Detected question keywords: nutrition' in user_content
 
 
+def test_agent_prompt_reuses_compiled_summary(settings):
+    settings.OPENAI_API_KEY = 'test-key'
+    agent = HealthSupportAgent(api_key='test-key')
+    summary = 'Child 1 – Registration 7\nname = Demo Child'
+
+    with patch('student_registration.mscc.ai_agent.MSCCKnowledgeEngine') as engine_mock:
+        messages = agent._build_prompt(
+            [{'registration_id': 7}],
+            compiled_summary=summary,
+        )
+
+    engine_mock.assert_not_called()
+    assert summary in messages[1]['content']
+
+
 def test_agent_prompt_includes_programme_overview(settings):
     settings.OPENAI_API_KEY = 'test-key'
     agent = HealthSupportAgent(api_key='test-key')
@@ -890,3 +905,28 @@ def test_health_agent_view_programme_scope_returns_aggregated_overview(settings)
     assert overview.get('trend_timeline')
     assert overview['trend_timeline'][0]['total_registrations'] >= 1
     assert body['total_children'] == 1
+
+
+def test_knowledge_engine_subset_summary_uses_existing_documents():
+    children = [
+        {
+            'registration_id': 101,
+            'child_id': 1,
+            'profile': {'name': 'First Child'},
+            'services': {'health': {'total': 1}},
+        },
+        {
+            'registration_id': 102,
+            'child_id': 2,
+            'profile': {'name': 'Second Child'},
+            'services': {'pss': {'total': 2}},
+        },
+    ]
+
+    engine = MSCCKnowledgeEngine(children, include_center_insights=False)
+    subset = engine.enriched_children[:1]
+    summary = engine.render_subset_summary(subset)
+
+    assert 'Child 1 – Registration 101' in summary
+    assert 'profile.name = First Child' in summary
+    assert 'services.health.total = 1' in summary
