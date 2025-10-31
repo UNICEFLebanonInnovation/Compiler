@@ -207,6 +207,14 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
         'ID number of the youth': 'other_number',
     }
 
+    def _build_error_entry(self, row_values, row_number, error_message):
+        ordered = OrderedDict()
+        ordered['error'] = error_message
+        ordered['row'] = row_number
+        for field in self.mapping.values():
+            ordered[field] = row_values.get(field, '')
+        return ordered
+
     mandatory_fields = [
         'first_name',
         'father_name',
@@ -334,10 +342,13 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             # ---- Missing mandatory fields
             missing = [f for f in self.mandatory_fields if not values.get(f)]
             if missing:
-                error_entry = dict(values)
-                error_entry['row'] = row_number
-                error_entry['error'] = 'Missing fields: ' + ', '.join(missing)
-                not_imported.append(error_entry)
+                not_imported.append(
+                    self._build_error_entry(
+                        values,
+                        row_number,
+                        'Missing fields: ' + ', '.join(missing)
+                    )
+                )
                 continue
 
             invalid_fields = []
@@ -353,9 +364,26 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             values['main_caregiver'] = main_caregiver_norm
 
             nationality = Nationality.objects.filter(name=values.get('nationality')).first()
-            gov = Location.objects.filter(name=values.get('governorate'), type_id=1).first()
-            dist = Location.objects.filter(name=values.get('district'), type_id=2).first()
-            cad = Location.objects.filter(name=values.get('cadaster'), type_id=3).first()
+
+            gov_name = (values.get('governorate') or '').strip()
+            dist_name = (values.get('district') or '').strip()
+            cad_name = (values.get('cadaster') or '').strip()
+
+            gov = Location.objects.filter(name=gov_name, type_id=1).first()
+
+            district_qs = Location.objects.none()
+            dist = None
+            if dist_name:
+                district_qs = Location.objects.filter(name=dist_name, type_id=2)
+                if gov:
+                    dist = district_qs.filter(parent_id=gov.id).first()
+
+            cadaster_qs = Location.objects.none()
+            cad = None
+            if cad_name:
+                cadaster_qs = Location.objects.filter(name=cad_name, type_id=3)
+                if dist:
+                    cad = cadaster_qs.filter(parent_id=dist.id).first()
             disability = Disability.objects.filter(name=values.get('disability')).first()
 
             if not nationality:
@@ -363,9 +391,52 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             if not gov:
                 invalid_fields.append("governorate ({0})".format(values.get('governorate')))
             if not dist:
-                invalid_fields.append("district ({0})".format(values.get('district')))
+                if gov and district_qs.exists():
+                    parent_ids = [pid for pid in district_qs.values_list('parent_id', flat=True) if pid]
+                    parent_names = list(
+                        Location.objects.filter(id__in=parent_ids).values_list('name', flat=True)
+                    )
+                    if parent_names:
+                        parent_names = sorted(set(parent_names))
+                        invalid_fields.append(
+                            "district ({0}) belongs to governorate ({1}), not governorate ({2})".format(
+                                values.get('district'),
+                                ', '.join(parent_names),
+                                values.get('governorate')
+                            )
+                        )
+                    else:
+                        invalid_fields.append(
+                            "district ({0}) does not belong to governorate ({1})".format(
+                                values.get('district'), values.get('governorate')
+                            )
+                        )
+                else:
+                    invalid_fields.append("district ({0})".format(values.get('district')))
             if not cad:
-                invalid_fields.append("cadaster ({0})".format(values.get('cadaster')))
+                if cadaster_qs.exists():
+                    if dist:
+                        invalid_fields.append(
+                            "cadaster ({0}) does not belong to district ({1})".format(
+                                values.get('cadaster'), values.get('district')
+                            )
+                        )
+                    else:
+                        parent_ids = [pid for pid in cadaster_qs.values_list('parent_id', flat=True) if pid]
+                        parent_names = list(
+                            Location.objects.filter(id__in=parent_ids).values_list('name', flat=True)
+                        )
+                        if parent_names:
+                            parent_names = sorted(set(parent_names))
+                            invalid_fields.append(
+                                "cadaster ({0}) belongs to district ({1}), but district is invalid".format(
+                                    values.get('cadaster'), ', '.join(parent_names)
+                                )
+                            )
+                        else:
+                            invalid_fields.append("cadaster ({0})".format(values.get('cadaster')))
+                else:
+                    invalid_fields.append("cadaster ({0})".format(values.get('cadaster')))
             if not disability:
                 invalid_fields.append("disability ({0})".format(values.get('disability')))
 
@@ -412,10 +483,13 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
 
             # ---- If any invalids, log and skip row
             if invalid_fields:
-                error_entry = dict(values)
-                error_entry['row'] = row_number
-                error_entry['error'] = "Invalid: " + "; ".join(invalid_fields)
-                not_imported.append(error_entry)
+                not_imported.append(
+                    self._build_error_entry(
+                        values,
+                        row_number,
+                        "Invalid: " + "; ".join(invalid_fields)
+                    )
+                )
                 continue
 
             values['gender'] = gender_norm
@@ -471,17 +545,23 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             prospective_unicef_id = bulk_ids.get(idx)
 
             if not prospective_unicef_id:
-                error_entry = dict(values)
-                error_entry['row'] = row_number
-                error_entry['error'] = "Unable to generate UNICEF ID"
-                not_imported.append(error_entry)
+                not_imported.append(
+                    self._build_error_entry(
+                        values,
+                        row_number,
+                        "Unable to generate UNICEF ID"
+                    )
+                )
                 continue
 
             if Registration.objects.filter(adolescent__unicef_id=prospective_unicef_id, deleted=False).exists():
-                error_entry = dict(values)
-                error_entry['row'] = row_number
-                error_entry['error'] = "Invalid: duplicate unicef_id ({0})".format(prospective_unicef_id)
-                not_imported.append(error_entry)
+                not_imported.append(
+                    self._build_error_entry(
+                        values,
+                        row_number,
+                        "Invalid: duplicate unicef_id ({0})".format(prospective_unicef_id)
+                    )
+                )
                 continue
 
             try:
@@ -541,10 +621,13 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                 imported += 1
 
             except Exception as ex:
-                error_entry = dict(values)
-                error_entry['row'] = row_number
-                error_entry['error'] = str(ex)
-                not_imported.append(error_entry)
+                not_imported.append(
+                    self._build_error_entry(
+                        values,
+                        row_number,
+                        str(ex)
+                    )
+                )
 
         # ---- Write failed rows CSV
         if not_imported:
