@@ -353,9 +353,26 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             values['main_caregiver'] = main_caregiver_norm
 
             nationality = Nationality.objects.filter(name=values.get('nationality')).first()
-            gov = Location.objects.filter(name=values.get('governorate'), type_id=1).first()
-            dist = Location.objects.filter(name=values.get('district'), type_id=2).first()
-            cad = Location.objects.filter(name=values.get('cadaster'), type_id=3).first()
+
+            gov_name = (values.get('governorate') or '').strip()
+            dist_name = (values.get('district') or '').strip()
+            cad_name = (values.get('cadaster') or '').strip()
+
+            gov = Location.objects.filter(name=gov_name, type_id=1).first()
+
+            district_qs = Location.objects.none()
+            dist = None
+            if dist_name:
+                district_qs = Location.objects.filter(name=dist_name, type_id=2)
+                if gov:
+                    dist = district_qs.filter(parent_id=gov.id).first()
+
+            cadaster_qs = Location.objects.none()
+            cad = None
+            if cad_name:
+                cadaster_qs = Location.objects.filter(name=cad_name, type_id=3)
+                if dist:
+                    cad = cadaster_qs.filter(parent_id=dist.id).first()
             disability = Disability.objects.filter(name=values.get('disability')).first()
 
             if not nationality:
@@ -363,9 +380,52 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             if not gov:
                 invalid_fields.append("governorate ({0})".format(values.get('governorate')))
             if not dist:
-                invalid_fields.append("district ({0})".format(values.get('district')))
+                if gov and district_qs.exists():
+                    parent_ids = [pid for pid in district_qs.values_list('parent_id', flat=True) if pid]
+                    parent_names = list(
+                        Location.objects.filter(id__in=parent_ids).values_list('name', flat=True)
+                    )
+                    if parent_names:
+                        parent_names = sorted(set(parent_names))
+                        invalid_fields.append(
+                            "district ({0}) belongs to governorate ({1}), not governorate ({2})".format(
+                                values.get('district'),
+                                ', '.join(parent_names),
+                                values.get('governorate')
+                            )
+                        )
+                    else:
+                        invalid_fields.append(
+                            "district ({0}) does not belong to governorate ({1})".format(
+                                values.get('district'), values.get('governorate')
+                            )
+                        )
+                else:
+                    invalid_fields.append("district ({0})".format(values.get('district')))
             if not cad:
-                invalid_fields.append("cadaster ({0})".format(values.get('cadaster')))
+                if cadaster_qs.exists():
+                    if dist:
+                        invalid_fields.append(
+                            "cadaster ({0}) does not belong to district ({1})".format(
+                                values.get('cadaster'), values.get('district')
+                            )
+                        )
+                    else:
+                        parent_ids = [pid for pid in cadaster_qs.values_list('parent_id', flat=True) if pid]
+                        parent_names = list(
+                            Location.objects.filter(id__in=parent_ids).values_list('name', flat=True)
+                        )
+                        if parent_names:
+                            parent_names = sorted(set(parent_names))
+                            invalid_fields.append(
+                                "cadaster ({0}) belongs to district ({1}), but district is invalid".format(
+                                    values.get('cadaster'), ', '.join(parent_names)
+                                )
+                            )
+                        else:
+                            invalid_fields.append("cadaster ({0})".format(values.get('cadaster')))
+                else:
+                    invalid_fields.append("cadaster ({0})".format(values.get('cadaster')))
             if not disability:
                 invalid_fields.append("disability ({0})".format(values.get('disability')))
 
