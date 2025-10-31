@@ -207,6 +207,14 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
         'ID number of the youth': 'other_number',
     }
 
+    def _build_error_entry(self, row_values, row_number, error_message):
+        ordered = OrderedDict()
+        ordered['error'] = error_message
+        ordered['row'] = row_number
+        for field in self.mapping.values():
+            ordered[field] = row_values.get(field, '')
+        return ordered
+
     mandatory_fields = [
         'first_name',
         'father_name',
@@ -334,10 +342,13 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             # ---- Missing mandatory fields
             missing = [f for f in self.mandatory_fields if not values.get(f)]
             if missing:
-                error_entry = dict(values)
-                error_entry['row'] = row_number
-                error_entry['error'] = 'Missing fields: ' + ', '.join(missing)
-                not_imported.append(error_entry)
+                not_imported.append(
+                    self._build_error_entry(
+                        values,
+                        row_number,
+                        'Missing fields: ' + ', '.join(missing)
+                    )
+                )
                 continue
 
             invalid_fields = []
@@ -472,10 +483,13 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
 
             # ---- If any invalids, log and skip row
             if invalid_fields:
-                error_entry = dict(values)
-                error_entry['row'] = row_number
-                error_entry['error'] = "Invalid: " + "; ".join(invalid_fields)
-                not_imported.append(error_entry)
+                not_imported.append(
+                    self._build_error_entry(
+                        values,
+                        row_number,
+                        "Invalid: " + "; ".join(invalid_fields)
+                    )
+                )
                 continue
 
             values['gender'] = gender_norm
@@ -531,17 +545,23 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             prospective_unicef_id = bulk_ids.get(idx)
 
             if not prospective_unicef_id:
-                error_entry = dict(values)
-                error_entry['row'] = row_number
-                error_entry['error'] = "Unable to generate UNICEF ID"
-                not_imported.append(error_entry)
+                not_imported.append(
+                    self._build_error_entry(
+                        values,
+                        row_number,
+                        "Unable to generate UNICEF ID"
+                    )
+                )
                 continue
 
             if Registration.objects.filter(adolescent__unicef_id=prospective_unicef_id, deleted=False).exists():
-                error_entry = dict(values)
-                error_entry['row'] = row_number
-                error_entry['error'] = "Invalid: duplicate unicef_id ({0})".format(prospective_unicef_id)
-                not_imported.append(error_entry)
+                not_imported.append(
+                    self._build_error_entry(
+                        values,
+                        row_number,
+                        "Invalid: duplicate unicef_id ({0})".format(prospective_unicef_id)
+                    )
+                )
                 continue
 
             try:
@@ -601,10 +621,13 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                 imported += 1
 
             except Exception as ex:
-                error_entry = dict(values)
-                error_entry['row'] = row_number
-                error_entry['error'] = str(ex)
-                not_imported.append(error_entry)
+                not_imported.append(
+                    self._build_error_entry(
+                        values,
+                        row_number,
+                        str(ex)
+                    )
+                )
 
         # ---- Write failed rows CSV
         if not_imported:
