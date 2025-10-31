@@ -353,9 +353,34 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             values['main_caregiver'] = main_caregiver_norm
 
             nationality = Nationality.objects.filter(name=values.get('nationality')).first()
-            gov = Location.objects.filter(name=values.get('governorate'), type_id=1).first()
-            dist = Location.objects.filter(name=values.get('district'), type_id=2).first()
-            cad = Location.objects.filter(name=values.get('cadaster'), type_id=3).first()
+
+            gov_name = (values.get('governorate') or '').strip()
+            dist_name = (values.get('district') or '').strip()
+            cad_name = (values.get('cadaster') or '').strip()
+
+            gov = Location.objects.filter(name=gov_name, type_id=1).first()
+
+            dist = None
+            district_mismatch = False
+            if dist_name:
+                district_qs = Location.objects.filter(name=dist_name, type_id=2)
+                if gov:
+                    dist = district_qs.filter(parent_id=gov.id).first()
+                    if not dist and district_qs.exists():
+                        district_mismatch = True
+                if not dist:
+                    dist = None
+
+            cad = None
+            cadaster_mismatch = False
+            if cad_name:
+                cadaster_qs = Location.objects.filter(name=cad_name, type_id=3)
+                if dist:
+                    cad = cadaster_qs.filter(parent_id=dist.id).first()
+                    if not cad and cadaster_qs.exists():
+                        cadaster_mismatch = True
+                if not cad:
+                    cad = None
             disability = Disability.objects.filter(name=values.get('disability')).first()
 
             if not nationality:
@@ -363,9 +388,23 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             if not gov:
                 invalid_fields.append("governorate ({0})".format(values.get('governorate')))
             if not dist:
-                invalid_fields.append("district ({0})".format(values.get('district')))
+                if district_mismatch and gov:
+                    invalid_fields.append(
+                        "district ({0}) does not belong to governorate ({1})".format(
+                            values.get('district'), values.get('governorate')
+                        )
+                    )
+                else:
+                    invalid_fields.append("district ({0})".format(values.get('district')))
             if not cad:
-                invalid_fields.append("cadaster ({0})".format(values.get('cadaster')))
+                if cadaster_mismatch and dist:
+                    invalid_fields.append(
+                        "cadaster ({0}) does not belong to district ({1})".format(
+                            values.get('cadaster'), values.get('district')
+                        )
+                    )
+                else:
+                    invalid_fields.append("cadaster ({0})".format(values.get('cadaster')))
             if not disability:
                 invalid_fields.append("disability ({0})".format(values.get('disability')))
 
