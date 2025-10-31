@@ -437,6 +437,9 @@ class MSCCKnowledgeEngine:
                 {'concern': concern, 'count': count}
                 for concern, count in concern_counts.most_common(10)
             ]
+        education_overview = self._aggregate_education_outcomes()
+        if education_overview:
+            overview['education_improvement'] = education_overview
         center_risk_assessment = self.detect_high_risk_centers()
         overview['center_risk_assessment'] = center_risk_assessment
         flagged_centers = [
@@ -650,6 +653,159 @@ class MSCCKnowledgeEngine:
                     return line
         return lines[0]
 
+    def _aggregate_education_outcomes(self) -> dict | None:
+        """Aggregate education pre/post-test outcomes across all children."""
+
+        subject_stats: dict[str, dict] = {}
+        average_changes: list[float] = []
+        children_with_assessment = 0
+        post_test_completed = 0
+
+        def _coerce_number(value):
+            if isinstance(value, Decimal):
+                return float(value)
+            if isinstance(value, (int, float)):
+                return float(value)
+            return None
+
+        for child in self._children:
+            progress = child.get('education_progress') or {}
+            if not isinstance(progress, dict) or not progress:
+                continue
+
+            children_with_assessment += 1
+            avg_change = _coerce_number(progress.get('average_change'))
+            if avg_change is not None:
+                average_changes.append(avg_change)
+
+            post_test_flag = str(progress.get('post_test_done') or '').strip().lower()
+            if post_test_flag == 'yes':
+                post_test_completed += 1
+
+            for subject in progress.get('subjects') or []:
+                if not isinstance(subject, dict):
+                    continue
+
+                field = subject.get('field')
+                label = subject.get('label') or (field.replace('_', ' ').title() if isinstance(field, str) else None)
+                key = field or label
+                if not key:
+                    continue
+
+                entry = subject_stats.setdefault(
+                    key,
+                    {
+                        'field': field,
+                        'label': label,
+                        'pre_scores': [],
+                        'post_scores': [],
+                        'changes': [],
+                        'improved_children': 0,
+                        'declined_children': 0,
+                        'stable_children': 0,
+                        'observations': 0,
+                    },
+                )
+
+                observed = False
+                pre_score = _coerce_number(subject.get('pre'))
+                if pre_score is not None:
+                    entry['pre_scores'].append(pre_score)
+                    observed = True
+
+                post_score = _coerce_number(subject.get('post'))
+                if post_score is not None:
+                    entry['post_scores'].append(post_score)
+                    observed = True
+
+                change_value = _coerce_number(subject.get('change'))
+                if change_value is not None:
+                    entry['changes'].append(change_value)
+                    if change_value > 0:
+                        entry['improved_children'] += 1
+                    elif change_value < 0:
+                        entry['declined_children'] += 1
+                    else:
+                        entry['stable_children'] += 1
+                    observed = True
+
+                if observed:
+                    entry['observations'] += 1
+
+        if not subject_stats and not average_changes and not children_with_assessment:
+            return None
+
+        def _classify_trend(value: float | None) -> str | None:
+            if value is None:
+                return None
+            if value >= 5:
+                return 'improved'
+            if value <= -5:
+                return 'declined'
+            return 'stable'
+
+        subjects_overview: list[dict] = []
+        improving_subjects: list[str] = []
+        declining_subjects: list[str] = []
+
+        for key, stats in sorted(subject_stats.items(), key=lambda item: (item[1]['label'] or item[0] or '')):
+            avg_change = None
+            if stats['changes']:
+                avg_change = round(sum(stats['changes']) / len(stats['changes']), 2)
+            avg_pre = None
+            if stats['pre_scores']:
+                avg_pre = round(sum(stats['pre_scores']) / len(stats['pre_scores']), 2)
+            avg_post = None
+            if stats['post_scores']:
+                avg_post = round(sum(stats['post_scores']) / len(stats['post_scores']), 2)
+
+            trend = _classify_trend(avg_change)
+            if trend == 'improved' and stats['label']:
+                improving_subjects.append(stats['label'])
+            if trend == 'declined' and stats['label']:
+                declining_subjects.append(stats['label'])
+
+            change_observations = len(stats['changes'])
+            improvement_rate = None
+            if change_observations:
+                improvement_rate = round(stats['improved_children'] / change_observations, 2)
+
+            subjects_overview.append(
+                {
+                    'field': stats['field'],
+                    'label': stats['label'],
+                    'average_pre': avg_pre,
+                    'average_post': avg_post,
+                    'average_change': avg_change,
+                    'direction': trend,
+                    'observations': stats['observations'],
+                    'change_observations': change_observations,
+                    'improved_children': stats['improved_children'],
+                    'declined_children': stats['declined_children'],
+                    'stable_children': stats['stable_children'],
+                    'improvement_rate': improvement_rate,
+                }
+            )
+
+        overall_change = None
+        if average_changes:
+            overall_change = round(sum(average_changes) / len(average_changes), 2)
+        overall_direction = _classify_trend(overall_change)
+
+        completion_rate = None
+        if children_with_assessment:
+            completion_rate = round(post_test_completed / children_with_assessment, 2)
+
+        return {
+            'children_with_assessments': children_with_assessment,
+            'average_change': overall_change,
+            'overall_direction': overall_direction,
+            'post_test_completion_rate': completion_rate,
+            'subjects': subjects_overview,
+            'subjects_improving': improving_subjects,
+            'subjects_declining': declining_subjects,
+        }
+
 
 class HealthSupportAgent:
     """Simple wrapper around the OpenAI chat completion endpoint."""
@@ -786,7 +942,9 @@ class HealthSupportAgent:
             "supports children's wellbeing by reporting proportions or counts "
             "of children who regularly attend, complete core services, or need "
             "further follow-up, and flag data gaps when calculations are not "
-            "possible."
+            "possible. Summarise education improvement for each learning "
+            "material using available pre-test and post-test results, noting "
+            "notable gains or declines."
         )
         formatting = (
             "Return your response in markdown with the sections 'Priority Cases', "

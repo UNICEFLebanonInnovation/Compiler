@@ -390,6 +390,75 @@ def test_detect_high_risk_centers_flags_vulnerability_and_protection():
     assert overview['center_risk_assessment'][0]['center_name'] == 'Center Alpha'
 
 
+def test_knowledge_engine_aggregates_education_improvement():
+    children = [
+        {
+            'registration_id': 1,
+            'education_progress': {
+                'average_change': 8,
+                'post_test_done': 'Yes',
+                'subjects': [
+                    {
+                        'field': 'arabic_grade',
+                        'label': 'Arabic',
+                        'pre': 20,
+                        'post': 32,
+                        'change': 12,
+                    },
+                    {
+                        'field': 'math_grade',
+                        'label': 'Mathematics',
+                        'pre': 18,
+                        'post': 22,
+                        'change': 4,
+                    },
+                ],
+            },
+        },
+        {
+            'registration_id': 2,
+            'education_progress': {
+                'average_change': -4,
+                'post_test_done': 'Yes',
+                'subjects': [
+                    {
+                        'field': 'arabic_grade',
+                        'label': 'Arabic',
+                        'pre': 25,
+                        'post': 33,
+                        'change': 8,
+                    },
+                    {
+                        'field': 'math_grade',
+                        'label': 'Mathematics',
+                        'pre': 24,
+                        'post': 8,
+                        'change': -16,
+                    },
+                ],
+            },
+        },
+    ]
+
+    engine = MSCCKnowledgeEngine(children)
+    overview = engine.vulnerability_overview
+    education = overview.get('education_improvement')
+
+    assert education
+    assert education['children_with_assessments'] == 2
+    assert education['average_change'] == pytest.approx(2.0)
+    assert education['overall_direction'] == 'stable'
+    assert education['post_test_completion_rate'] == pytest.approx(1.0)
+
+    subjects = {entry['field']: entry for entry in education['subjects']}
+    assert subjects['arabic_grade']['average_change'] == pytest.approx(10.0)
+    assert subjects['arabic_grade']['direction'] == 'improved'
+    assert subjects['math_grade']['average_change'] == pytest.approx(-6.0)
+    assert subjects['math_grade']['direction'] == 'declined'
+    assert 'Arabic' in education['subjects_improving']
+    assert 'Mathematics' in education['subjects_declining']
+
+
 @patch('student_registration.mscc.management.commands.compile_mscc_knowledge.MSCCKnowledgeCompiler')
 def test_compile_mscc_knowledge_command_creates_snapshot(mock_compiler, capsys):
     snapshot = SimpleNamespace(
@@ -709,6 +778,7 @@ def test_agent_prompt_includes_programme_overview(settings):
     assert 'Aggregated programme overview (all eligible children before applying review limits):' in user_content
     assert '"total_children": 25' in user_content
     assert 'Maximum children to review setting' in user_content
+    assert 'Summarise education improvement for each learning material' in user_content
 
 
 def test_education_progress_positive_trend():
