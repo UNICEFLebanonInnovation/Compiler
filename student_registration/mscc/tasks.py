@@ -9,6 +9,7 @@ import threading
 
 from concurrent.futures import ThreadPoolExecutor
 
+from celery import shared_task
 from django.conf import settings
 from django.utils.encoding import smart_str
 from django.db import connection, close_old_connections
@@ -19,6 +20,8 @@ from student_registration.backends.models import ExportHistory
 from student_registration.backends.utils import ExportStorage, send_push_to_web
 from student_registration.users.templatetags.custom_tags import has_group
 from django.urls import reverse
+
+from student_registration.mscc.knowledge import MSCCKnowledgeCompiler
 
 logger = logging.getLogger(__name__)
 
@@ -121,6 +124,26 @@ def _generate_mscc_export(export_id, fields=None, file_format='csv'):
                     str(e),
                     data={"type": "mscc_export_failed", "reason": str(e)},
                 )
+
+
+@shared_task(bind=True, name='student_registration.mscc.tasks.compile_mscc_knowledge_snapshot')
+def compile_mscc_knowledge_snapshot(self, limit=None):
+    """Daily task that compiles the MSCC knowledge snapshot for the AI agent."""
+
+    try:
+        compiler = MSCCKnowledgeCompiler(limit=limit)
+        snapshot = compiler.create_snapshot()
+        logger.info(
+            "MSCC knowledge snapshot generated for %s (id=%s)",
+            snapshot.generated_for,
+            snapshot.pk,
+        )
+        return snapshot.pk
+    except Exception:  # pragma: no cover - defensive guard for Celery task
+        logger.exception('Failed to compile the MSCC knowledge snapshot')
+        raise
+
+
 def _generate_filtered_mscc_export(export_id, nationality="", first_name="", last_name="",
                                    father_name="", mother_fullname="", round=""):
     """Generate an MSCC export with optional filtering and notify the user.

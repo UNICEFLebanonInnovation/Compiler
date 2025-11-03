@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
+import json
+
 from django.contrib import admin
+from django.utils.html import format_html
 from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
@@ -213,6 +216,62 @@ class PSSServiceAdmin(admin.ModelAdmin):
         'registration__child__father_name',
         'registration__child__last_name',
     )
+
+
+class MSCCKnowledgeSnapshotAdmin(admin.ModelAdmin):
+    list_display = (
+        'generated_for',
+        'document_count',
+        'created',
+        'modified',
+    )
+    list_filter = ('generated_for',)
+    search_fields = (
+        'summary',
+        'metadata__digest',
+    )
+    readonly_fields = (
+        'generated_for',
+        'document_count',
+        'summary',
+        'metadata_pretty',
+        'children_pretty',
+        'created',
+        'modified',
+    )
+    fields = (
+        'generated_for',
+        'document_count',
+        'summary',
+        'metadata_pretty',
+        'children_pretty',
+        'created',
+        'modified',
+    )
+
+    def metadata_pretty(self, obj):
+        return self._format_json(obj.metadata)
+
+    metadata_pretty.short_description = 'Metadata'
+
+    def children_pretty(self, obj):
+        return self._format_json(obj.children)
+
+    children_pretty.short_description = 'Children'
+
+    def _format_json(self, data):
+        if not data:
+            return '—'
+
+        try:
+            formatted = json.dumps(data, indent=2, sort_keys=True)
+        except TypeError:
+            formatted = str(data)
+
+        return format_html(
+            '<pre style="white-space: pre-wrap; word-wrap: break-word;">{}</pre>',
+            formatted,
+        )
 
 
 class HealthNutritionServiceAdmin(admin.ModelAdmin):
@@ -474,3 +533,4 @@ admin.site.register(YouthAssessment, YouthAssessmentAdmin)
 admin.site.register(YouthReferral, YouthReferralAdmin)
 admin.site.register(Recreational, RecreationalAdmin)
 admin.site.register(Round, RoundAdmin)
+admin.site.register(MSCCKnowledgeSnapshot, MSCCKnowledgeSnapshotAdmin)

@@ -1,0 +1,363 @@
+{% extends "mscc/base.html" %}
+{% load static i18n %}
+{% load django_bootstrap5 %}
+
+{% block project_title %}Health Support Insights{% endblock %}
+{% block module_name %}Makani - Health Support Insights{% endblock %}
+
+{% block extra_head %}
+{{ block.super }}
+<style>
+  .priority-children-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .priority-child-card {
+    border: 1px solid #e9ecef;
+    border-left: 4px solid #3f6ad8;
+    border-radius: 0.75rem;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .priority-child-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1.2rem rgba(63, 106, 216, 0.15);
+  }
+
+  .priority-card-header h5 {
+    font-weight: 600;
+  }
+
+  .priority-metric {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 0.65rem;
+    padding: 1rem;
+  }
+
+  .priority-metric-title {
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.35rem;
+  }
+
+  .priority-metric-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.1;
+    margin-bottom: 0.25rem;
+  }
+
+  .priority-service-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .priority-service-item {
+    background: #fff;
+    border: 1px solid rgba(63, 106, 216, 0.08);
+    border-radius: 0.55rem;
+    height: 100%;
+  }
+
+  .priority-service-item .badge {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.5rem;
+  }
+
+  .priority-focus-topics .badge {
+    font-size: 0.75rem;
+    border: 1px solid rgba(63, 106, 216, 0.25);
+    background: rgba(63, 106, 216, 0.1);
+  }
+
+  .priority-section-title {
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+  }
+
+  .priority-section-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .priority-section-toggle:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .priority-section-toggle .collapse-icon {
+    display: inline-flex;
+    transition: transform 0.2s ease;
+  }
+
+  .priority-section-toggle[aria-expanded="true"] .collapse-icon {
+    transform: rotate(180deg);
+  }
+
+  .priority-section-body.collapse.show {
+    margin-top: 0.75rem;
+  }
+
+  .priority-section-body {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 0.65rem;
+    padding: 0.85rem;
+  }
+
+  .priority-alerts .badge {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.6rem;
+  }
+
+  #health-agent-question-card .badge {
+    font-size: 0.75rem;
+  }
+
+  .question-assessment-issues li {
+    margin-bottom: 0.25rem;
+  }
+
+  .agent-chart-card .agent-chart {
+    min-height: 220px;
+    position: relative;
+  }
+
+  .agent-chart-card canvas {
+    max-width: 100%;
+  }
+
+  .agent-chart-empty {
+    font-size: 0.85rem;
+    color: #6c757d;
+  }
+
+  @media (max-width: 767.98px) {
+    .priority-child-card {
+      border-left-width: 3px;
+    }
+
+    .priority-card-header {
+      flex-direction: column;
+      align-items: flex-start !important;
+    }
+
+    .priority-card-header .text-right {
+      text-align: left !important;
+      margin-left: 0 !important;
+    }
+
+    .priority-service-grid {
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="app-page-title">
+  <div class="page-title-wrapper">
+    <div class="page-title-heading">
+      <div>
+        <div class="page-title-head center-elem page-title-heading">
+          <span class="d-inline-block pr-2">
+            <i class="pe-7s-medal"></i>
+          </span>
+          <span class="d-inline-block">Health Support AI Insights</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="health-agent-app"
+     data-endpoint="{{ endpoint }}"
+     data-default-limit="{{ default_limit }}"
+     data-max-limit="{{ max_limit }}"
+     data-default-scope="centers">
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Generate an insight</h5>
+        </div>
+        <div class="card-body">
+          <p class="text-muted small">
+            Request a prioritised list of children based on attendance and service follow-up needs.
+            Leave the registration list empty to let the assistant surface the highest-risk profiles automatically.
+          </p>
+          {% if not is_agent_configured %}
+          <div class="alert alert-warning" role="alert">
+            <strong>OpenAI configuration missing.</strong> The analysis step will be skipped until the
+            <code>OPENAI_API_KEY</code> setting is provided.
+          </div>
+          {% endif %}
+          <form id="health-agent-form" novalidate>
+            <div class="mb-3">
+              <label class="form-label" for="health-agent-registration-ids">Registration IDs</label>
+              <textarea id="health-agent-registration-ids"
+                        class="form-control"
+                        rows="4"
+                        placeholder="e.g. 1024, 2048 or one ID per line"></textarea>
+              <small class="form-text text-muted">Optional. Separate IDs with commas or new lines.</small>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="health-agent-question">Focus question</label>
+              <textarea id="health-agent-question"
+                        class="form-control"
+                        rows="3"
+                        placeholder="e.g. Which children show concerning nutrition trends?"></textarea>
+              <small class="form-text text-muted">Optional. Tailor the AI analysis with a specific question or focus.</small>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="health-agent-scope">Insight scope</label>
+              <select id="health-agent-scope" class="form-control">
+                <option value="centers" selected>Child insights with centre-level overview</option>
+                <option value="programme">Programme overview across all centres</option>
+                <option value="children">Child insights only</option>
+              </select>
+              <small class="form-text text-muted">Choose the level of aggregation for wellbeing insights.</small>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="health-agent-limit">Maximum children to review</label>
+              <input type="number"
+                     id="health-agent-limit"
+                     class="form-control"
+                     min="1"
+                     max="{{ max_limit }}"
+                     value="{{ default_limit }}">
+              <small class="form-text text-muted">Between 1 and {{ max_limit }} children.</small>
+            </div>
+            <div class="d-flex">
+              <button type="submit" class="btn btn-primary flex-grow-1">Run assessment</button>
+              <button type="button" id="health-agent-reset" class="btn btn-outline-secondary ml-2">Reset</button>
+            </div>
+          </form>
+          <hr>
+          <div class="small text-muted">
+            <p class="mb-1"><strong>How it works</strong></p>
+            <ul class="pl-3 mb-0">
+              <li>Children are scored using attendance gaps and pending support services.</li>
+              <li>The top results are summarised with AI-generated recommendations.</li>
+              <li>Review alerts to trigger targeted follow-up with caregivers.</li>
+              <li>Programme impact panels surface positive or negative trends across multiple years of Makani support.</li>
+            </ul>
+            {% if configured_model %}
+            <p class="mt-2 mb-0"><strong>Model:</strong> {{ configured_model }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-8">
+      <div id="health-agent-status" class="alert d-none" role="alert"></div>
+      <div id="health-agent-results" class="d-none">
+        <div class="card mb-3 d-none" id="health-agent-question-card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Question pre-assessment</h5>
+            <span id="health-agent-question-quality" class="badge badge-secondary"></span>
+          </div>
+          <div class="card-body">
+            <p id="health-agent-question-summary" class="small text-muted mb-2"></p>
+            <div id="health-agent-question-topics" class="mb-2"></div>
+            <p id="health-agent-question-action" class="small mb-2 d-none"></p>
+            <ul id="health-agent-question-issues" class="question-assessment-issues small pl-3 mb-0"></ul>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">AI Analysis</h5>
+            <small class="text-muted" id="health-agent-metadata"></small>
+          </div>
+          <div class="card-body">
+            <div id="health-agent-analysis" class="markdown-body"></div>
+          </div>
+        </div>
+        <div class="card mb-3 d-none" id="health-agent-overview-card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Vulnerability overview</h5>
+            <small class="text-muted">
+              Analysed children: <span id="health-agent-overview-total">&mdash;</span>
+            </small>
+          </div>
+          <div class="card-body agent-chart-card">
+            <div class="row">
+              <div class="col-md-6 mb-3 mb-md-0">
+                <h6 class="text-muted text-uppercase small mb-2">Severity mix</h6>
+                <div class="agent-chart">
+                  <canvas id="health-agent-severity-chart" height="220" class="d-none"></canvas>
+                  <p id="health-agent-severity-empty" class="agent-chart-empty mb-0">Run the assessment to visualise severity levels.</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-muted text-uppercase small mb-2">Domain focus</h6>
+                <div class="agent-chart">
+                  <canvas id="health-agent-domain-chart" height="220" class="d-none"></canvas>
+                  <p id="health-agent-domain-empty" class="agent-chart-empty mb-0">Run the assessment to see domain coverage.</p>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-12">
+                <h6 class="text-muted text-uppercase small mb-2">Top concerns</h6>
+                <div class="agent-chart">
+                  <canvas id="health-agent-concerns-chart" height="240" class="d-none"></canvas>
+                  <p id="health-agent-concerns-empty" class="agent-chart-empty mb-0">Run the assessment to surface priority concerns.</p>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-12">
+                <h6 class="text-muted text-uppercase small mb-2">Trend over time</h6>
+                <div class="agent-chart">
+                  <canvas id="health-agent-trend-chart" height="260" class="d-none"></canvas>
+                  <p id="health-agent-trend-empty" class="agent-chart-empty mb-0">Run the assessment to track vulnerability trends.</p>
+                </div>
+              </div>
+            </div>
+            <div id="health-agent-flagged-centers" class="mt-3 d-none">
+              <h6 class="text-muted text-uppercase small mb-2">Flagged centres</h6>
+              <ul id="health-agent-flagged-centers-list" class="small pl-3 mb-0"></ul>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Wellbeing review</h5>
+            <div class="btn-group btn-group-sm" role="group" aria-label="Health agent view">
+              <button type="button"
+                      class="btn btn-primary"
+                      data-health-agent-view="children">Children</button>
+              <button type="button"
+                      class="btn btn-outline-primary"
+                      data-health-agent-view="centers">Centres</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="health-agent-children"></div>
+            <div id="health-agent-centers" class="d-none"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="{% static 'js/mscc/health_agent.js' %}"></script>
+{% endblock %}

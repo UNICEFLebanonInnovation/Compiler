@@ -14,6 +14,7 @@ import environ
 import os
 import logging
 from kombu import Queue
+from celery.schedules import crontab
 
 logger = logging.getLogger(__name__)
 
@@ -154,6 +155,13 @@ IMPORT_EXPORT_SKIP_ADMIN_LOG = False
 # EMAIL CONFIGURATION
 # ------------------------------------------------------------------------------
 EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
+
+# OPENAI / AI AGENT CONFIGURATION
+# ------------------------------------------------------------------------------
+OPENAI_API_KEY = env('OPENAI_API_KEY', default='')
+OPENAI_HEALTH_AGENT_MODEL = env('OPENAI_HEALTH_AGENT_MODEL', default='gpt-4o-mini')
+OPENAI_API_BASE = env('OPENAI_API_BASE', default='https://api.openai.com/v1')
+OPENAI_TIMEOUT = env.int('OPENAI_TIMEOUT', default=30)
 
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -369,6 +377,21 @@ CELERY_TASK_ROUTES = {
     'student_registration.mscc.tasks.generate_mscc_export': {
         'queue': 'mscc_export',
         'routing_key': 'mscc_export',
+    },
+}
+
+MSCC_KNOWLEDGE_SNAPSHOT_LIMIT = env.int('MSCC_KNOWLEDGE_SNAPSHOT_LIMIT', default=200)
+MSCC_KNOWLEDGE_SNAPSHOT_HOUR = env.int('MSCC_KNOWLEDGE_SNAPSHOT_HOUR', default=3)
+MSCC_KNOWLEDGE_SNAPSHOT_MINUTE = env.int('MSCC_KNOWLEDGE_SNAPSHOT_MINUTE', default=15)
+
+CELERY_BEAT_SCHEDULE = {
+    'compile-mscc-knowledge-daily': {
+        'task': 'student_registration.mscc.tasks.compile_mscc_knowledge_snapshot',
+        'schedule': crontab(
+            hour=MSCC_KNOWLEDGE_SNAPSHOT_HOUR,
+            minute=MSCC_KNOWLEDGE_SNAPSHOT_MINUTE,
+        ),
+        'options': {'queue': 'default'},
     },
 }
 ########## END CELERY
