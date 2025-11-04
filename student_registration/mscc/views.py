@@ -27,6 +27,7 @@ import traceback
 
 from rest_framework import status
 from django.db.models import F, Q, OuterRef, Exists, Subquery, IntegerField
+from django.db.models.functions import Coalesce
 from django.urls import reverse, reverse_lazy
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
@@ -76,7 +77,7 @@ from .serializers import (
 from .utils import *
 
 from student_registration.mscc.templatetags.simple_tags import education_history_model, education_history_programmes
-from .tasks import generate_mscc_export, generate_filtered_mscc_export
+from .tasks import queue_mscc_export, queue_filtered_mscc_export
 from student_registration.users.templatetags.custom_tags import has_group
 
 
@@ -500,7 +501,8 @@ class MainListView(LoginRequiredMixin,
         center_id = user.center_id
         partner_id = user.partner_id
 
-        qs = Registration.objects.select_related(
+        qs = (Registration.objects
+              .select_related(
             'child',
             'child__nationality',
             'partner',
@@ -511,7 +513,9 @@ class MainListView(LoginRequiredMixin,
             'owner',
             'modified_by',
             'round',
-        ).prefetch_related('education_service')
+        )
+              .prefetch_related('education_service')
+              .filter(deleted=False))
 
         previous_registration = Registration.objects.filter(
             child_id=OuterRef('child_id'),
@@ -519,35 +523,29 @@ class MainListView(LoginRequiredMixin,
         )
 
         absent_days = (
-            MSCCAttendanceChild.objects.filter(
-                registration_id=OuterRef('pk'),
-                attended='No'
-            )
-            .values('registration')
-            .annotate(count=Count('id'))
-            .values('count')
+            MSCCAttendanceChild.objects
+                .filter(registration_id=OuterRef('pk'), attended='No')
+                .values('registration')
+                .annotate(count=Count('id'))
+                .values('count')
         )
 
         qs = qs.annotate(
             has_previous=Exists(previous_registration),
-            _total_absent_days=Subquery(absent_days, output_field=IntegerField()),
+            _total_absent_days=Coalesce(Subquery(absent_days, output_field=IntegerField()), 0),
         )
 
+        round_filter = Q(round__isnull=True) | Q(round__current_year=True)
+
         if has_group(user, 'MSCC_UNICEF'):
-            return qs.filter(
-                Q(round__isnull=True) | Q(round__current_year=True)
-            ).order_by('-id')
+            return qs.filter(round_filter).order_by('-id')
 
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
-            return qs.filter(
-                Q(round__isnull=True) | Q(round__current_year=True),
-                deleted=False, partner=partner_id
-            ).order_by('-id')
+            return qs.filter(round_filter, partner=partner_id).order_by('-id')
+
         elif has_group(user, 'MSCC_CENTER') and center_id:
-            return qs.filter(
-                Q(round__isnull=True) | Q(round__current_year=True),
-                deleted=False, center=center_id
-            ).order_by('-id')
+            return qs.filter(round_filter, center=center_id).order_by('-id')
+
         return Registration.objects.none()
 
     def get_table_class(self):
@@ -979,8 +977,7 @@ def export_list_background(request):
         created_by=user,
         partner_name=user.partner.name if user.partner else ''
     )
-    generate_filtered_mscc_export.delay(
-    # generate_filtered_mscc_export(
+    queue_filtered_mscc_export(
         export_record.id,
         nationality,
         first_name,
@@ -1055,7 +1052,7 @@ def export_list_async(request):
         fields=fields,
         file_format=file_format,
     )
-    generate_mscc_export.delay(export_record.id, fields, file_format)
+    queue_mscc_export(export_record.id, fields, file_format)
     return JsonResponse({'status': 'started'})
 
 

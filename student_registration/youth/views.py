@@ -184,9 +184,9 @@ class MainListView(LoginRequiredMixin,
         user = self.request.user
         partner_id = user.partner_id
 
-        queryset = (
+        qs = (
             Registration.objects.filter(deleted=False)
-            .select_related(
+                .select_related(
                 'adolescent',
                 'adolescent__disability',
                 'adolescent__nationality',
@@ -197,17 +197,15 @@ class MainListView(LoginRequiredMixin,
                 'owner',
                 'modified_by',
             )
-            .order_by('-id')
+                .order_by('-id')
         )
-
-        if not has_group(user, 'YOUTH_UNICEF'):
+        if has_group(user, 'YOUTH_UNICEF'):
             pass
-        elif has_group(user, 'YOUTH_PARTNER') and partner_id:
-            queryset = queryset.filter(partner=partner_id)
-        elif not has_group(user, 'YOUTH_UNICEF'):
+        elif has_group(user, 'YOUTH_PARTNER') and partner_id is not None:
+            qs = qs.filter(partner_id=partner_id)
+        else:
             return Registration.objects.none()
-
-        return queryset.distinct('id')
+        return qs.distinct()
 
     def get_table_class(self):
         return RegistrationTable
@@ -248,20 +246,6 @@ class MainViewSet(mixins.RetrieveModelMixin,
         instance = self.model.objects.get(id=kwargs['pk'])
         instance.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
-
-
-def main_registration_cancel_view(request, pk):
-    if request.user.is_authenticated:
-        try:
-            registration = Registration.objects.get(id=pk)
-            registration.deleted = True
-            registration.save()
-            return redirect('/youth/List/')
-        except Registration.DoesNotExist:
-            result = {"isSuccessful": False}
-    else:
-        result = {"isSuccessful": False}
-    return JsonResponse(result)
 
 
 def outreach_child_search(request):
@@ -546,11 +530,18 @@ def export_data(request, **kwargs):
 
         registration_qs = Registration.objects.filter(deleted=False)
 
-        if partner:
-            registration_qs = registration_qs.filter(partner__id=partner)
+        def _safe_int(value):
+            if value in (None, "", "undefined", "null"):
+                return None
+            try:
+                return int(value)
+            except (TypeError, ValueError):
+                return None
 
-
-        logger.debug("governorate: %s", governorate)
+        print("partner: ", partner)
+        partner_id_filter = _safe_int(partner)
+        if partner_id_filter is not None:
+            registration_qs = registration_qs.filter(partner__id=partner_id_filter)
 
         if governorate:
             registration_qs = registration_qs.filter(adolescent__governorate__id=governorate)
@@ -789,7 +780,7 @@ class PDListView(LoginRequiredMixin,
         user = self.request.user
         partner_id = user.partner_id
 
-        queryset = (
+        qs = (
             ProgramDocument.objects.select_related(
                 'partner',
                 'funded_by',
@@ -810,12 +801,12 @@ class PDListView(LoginRequiredMixin,
 
         if has_group(user, 'YOUTH_UNICEF'):
             pass
-        elif has_group(user, 'YOUTH_PARTNER') and partner_id:
-            queryset = queryset.filter(partner=partner_id)
-        elif not has_group(user, 'YOUTH_UNICEF'):
+        elif has_group(user, 'YOUTH_PARTNER') and partner_id is not None:
+            qs = qs.filter(partner_id=partner_id)
+        else:
             return ProgramDocument.objects.none()
 
-        return queryset.distinct('id')
+        return qs.distinct('id')
 
     def get_table_class(self):
         if has_group(self.request.user, 'YOUTH_UNICEF'):

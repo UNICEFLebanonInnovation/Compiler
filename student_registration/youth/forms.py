@@ -165,7 +165,7 @@ class MainForm(forms.ModelForm):
     )
     caregiver_middle_name = forms.CharField(
         label=_("Caregiver Middle Name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput, required=False
     )
     caregiver_last_name = forms.CharField(
         label=_("Caregiver Last Name"),
@@ -462,8 +462,6 @@ class MainForm(forms.ModelForm):
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
 
                 ),
                 css_id='step-2',

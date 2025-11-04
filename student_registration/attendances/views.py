@@ -16,12 +16,14 @@ from django.http import StreamingHttpResponse
 from openpyxl import Workbook
 from django.db import connection
 from django.core.files.storage import default_storage
+from storages.backends.azure_storage import AzureStorage
 from django.core.files.base import ContentFile
 
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView, CreateView
 from django.forms import inlineformset_factory
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Sum, Avg, F, Func, When ,OuterRef, Subquery
+
 from django.http import HttpResponse, JsonResponse, FileResponse
 from django.contrib import messages
 
@@ -854,6 +856,9 @@ def attendance_export_xlsx(request, **kwargs):
 
     return response
 
+class ExportStorage(AzureStorage):
+    """Azure storage backend dedicated for exported files."""
+    location = "export"
 
 @login_required(login_url='/users/login')
 def attendance_export(request, **kwargs):
@@ -919,12 +924,17 @@ def attendance_export(request, **kwargs):
         file_path = os.path.join('export', file_name)
 
         # Save file
-        default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+        # default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+        storage = ExportStorage()
+        storage.save(file_name, ContentFile(csv_output.getvalue().encode('utf-8')))
+        file_url = reverse('mscc:export_download', args=[file_name])
 
         # Store export history
         ExportHistory.objects.create(
             export_type='Bridging Absence Raw Data',
             created_by=user,
+            file_url=file_url,
+            status='done',
             partner_name=partner_name
         )
 
@@ -986,12 +996,17 @@ def total_attendance_export(request, **kwargs):
         file_path = os.path.join('export', file_name)
 
         # Save file
-        default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+        # default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+        storage = ExportStorage()
+        storage.save(file_name, ContentFile(csv_output.getvalue().encode('utf-8')))
+        file_url = reverse('mscc:export_download', args=[file_name])
 
         # Store export history
         ExportHistory.objects.create(
             export_type='Bridging Attendance Total',
             created_by=user,
+            file_url=file_url,
+            status='done',
             partner_name=partner_name
         )
 
@@ -1051,12 +1066,17 @@ def consecutive_absence_export(request, **kwargs):
         file_path = os.path.join('export', file_name)
 
         # Save file
-        default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+        # default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+        storage = ExportStorage()
+        storage.save(file_name, ContentFile(csv_output.getvalue().encode('utf-8')))
+        file_url = reverse('mscc:export_download', args=[file_name])
 
         # Store export history
         ExportHistory.objects.create(
             export_type='Bridging Absence Consecutive',
             created_by=user,
+            file_url=file_url,
+            status='done',
             partner_name=partner_name
         )
 
@@ -1161,12 +1181,17 @@ def mscc_attendance_export(request, **kwargs):
         file_path = os.path.join('export', file_name)
 
         # Save file
-        default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+        # default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+        storage = ExportStorage()
+        storage.save(file_name, ContentFile(csv_output.getvalue().encode('utf-8')))
+        file_url = reverse('mscc:export_download', args=[file_name])
 
         # Store export history
         ExportHistory.objects.create(
             export_type='Makani Raw Attendance',
             created_by=user,
+            file_url=file_url,
+            status='done',
             partner_name=partner_name
         )
 
@@ -1271,12 +1296,17 @@ def mscc_total_attendance_export(request, **kwargs):
         file_path = os.path.join('export', file_name)
 
         # Save file
-        default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+        # default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+        storage = ExportStorage()
+        storage.save(file_name, ContentFile(csv_output.getvalue().encode('utf-8')))
+        file_url = reverse('mscc:export_download', args=[file_name])
 
         # Store export history
         ExportHistory.objects.create(
             export_type='Makani Total Attendance',
             created_by=user,
+            file_url=file_url,
+            status='done',
             partner_name=partner_name
         )
 
@@ -1383,10 +1413,16 @@ def mscc_total_attendance_export1(request, **kwargs):
         file_name = "out_file_{}.zip".format(unique_id)
         file_path = os.path.join('export', file_name)
 
-        default_storage.save(file_path, ContentFile(zip_output.getvalue()))
+        # default_storage.save(file_path, ContentFile(zip_output.getvalue()))
+        storage = ExportStorage()
+        storage.save(file_name, ContentFile(zip_output.getvalue()))
+        file_url = reverse('mscc:export_download', args=[file_name])
+
         ExportHistory.objects.create(
             export_type='Makani Total Attendance',
             created_by=user,
+            file_url=file_url,
+            status='done',
             partner_name=partner_name
         )
         return HttpResponse(file_name)

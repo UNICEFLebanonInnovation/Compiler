@@ -23,9 +23,12 @@ import os
 import uuid
 import codecs
 from django.core.files.storage import default_storage
+from storages.backends.azure_storage import AzureStorage
+
 from django.core.files.base import ContentFile
 
 from django.shortcuts import render, redirect
+from django.urls import reverse
 
 from student_registration.users.templatetags.custom_tags import has_group
 from django.contrib.auth.decorators import login_required
@@ -539,7 +542,10 @@ class SchoolListView(LoginRequiredMixin,
     table_class = SchoolTable
     model = School
     template_name = 'schools/school_list.html'
-    table = SchoolTable(School.objects.all(), order_by='id')
+    table = SchoolTable(
+        School.objects.filter(partner_schools__is_dirasa=True).distinct(),
+        order_by='id'
+    )
     group_required = [u"CLM_Bridging"]
     filterset_class = SchoolFilter
 
@@ -548,10 +554,10 @@ class SchoolListView(LoginRequiredMixin,
         clm_bridging_all = has_group(self.request.user, 'CLM_BRIDGING_ALL')
         is_staff = self.request.user.is_staff
 
-        queryset = School.objects.filter(is_bma=True).all()
+        queryset = School.objects.filter(partner_schools__is_dirasa=True).distinct()
 
         if clm_bridging_all or is_staff:
-            queryset = School.objects.filter(is_bma=True).all()
+            queryset = School.objects.filter(partner_schools__is_dirasa=True).distinct()
         else:
             school_id = 0
             partner_id = 0
@@ -565,11 +571,13 @@ class SchoolListView(LoginRequiredMixin,
                 queryset = School.objects.filter(id=school_id)
 
             elif partner_id > 0:
-                queryset = School.objects.filter(is_bma=True,
-                                                 id__in=PartnerOrganization
-                                                 .objects
-                                                 .filter(id=partner_id)
-                                                 .values_list('schools', flat=True))
+                queryset = School.objects.filter(
+                    is_bma=True,
+                    id__in=PartnerOrganization
+                    .objects
+                    .filter(id=partner_id)
+                    .values_list('schools', flat=True),
+                )
             else:
                 queryset = queryset.none()
 
@@ -812,17 +820,27 @@ class MeetingFormView(LoginRequiredMixin,
         return super(MeetingFormView, self).form_valid(form)
 
 
-def meeting_delete(request, pk):
-    if request.user.is_authenticated:
-        try:
-            meeting = Meeting.objects.get(pk=pk)
-            meeting.delete()
-            result = {"isSuccessful": True}
-        except Meeting.DoesNotExist:
-            result = {"isSuccessful": False}
-    else:
+def meeting_delete(request, school_id, pk):
+    redirect_url = reverse('schools:meeting_list', kwargs={'school_id': school_id})
+
+    if not request.user.is_authenticated:
         result = {"isSuccessful": False}
-    return JsonResponse(result)
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse(result, status=403)
+        return redirect(redirect_url)
+
+    try:
+        meeting = Meeting.objects.get(pk=pk, school_id=school_id)
+        meeting.delete()
+        result = {"isSuccessful": True}
+    except Meeting.DoesNotExist:
+        result = {"isSuccessful": False}
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        status = 200 if result["isSuccessful"] else 404
+        return JsonResponse(result, status=status)
+
+    return redirect(redirect_url)
 
 
 class CommunityInitiativeListView(LoginRequiredMixin,
@@ -989,6 +1007,9 @@ def add_csv_to_zip(zipfile_obj, filename, queryset):
 
     zipfile_obj.writestr(filename, csv_output.getvalue())
 
+class ExportStorage(AzureStorage):
+    """Azure storage backend dedicated for exported files."""
+    location = "export"
 
 @login_required(login_url='/users/login')
 def export_school_background(request):
@@ -1029,15 +1050,20 @@ def export_school_background(request):
 
         file_path = os.path.join('export', file_name)
 
-        try:
-            default_storage.save(file_path, ContentFile(zip_output.getvalue()))
-        except Exception as e:
-            logging.error("Error saving file: %s", str(e))
-            return HttpResponse("An error occurred while saving the file.", status=500)
+        # try:
+        #     default_storage.save(file_path, ContentFile(zip_output.getvalue()))
+        # except Exception as e:
+        #     logging.error("Error saving file: %s", str(e))
+        #     return HttpResponse("An error occurred while saving the file.", status=500)
+        storage = ExportStorage()
+        storage.save(file_name, ContentFile(zip_output.getvalue()))
+        file_url = reverse('mscc:export_download', args=[file_name])
 
         ExportHistory.objects.create(
             export_type='School List',
             created_by=request.user,
+            file_url=file_url,
+            status='done',
             partner_name=partner_name
         )
 

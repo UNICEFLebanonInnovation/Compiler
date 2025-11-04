@@ -46,7 +46,11 @@ class PDTable(tables.Table):
     sectors = tables.Column(verbose_name=_('Sectors'))
     governorate = tables.Column(accessor='get_governorate_names', verbose_name=_('Governorates'))
     population_groups = tables.Column(accessor='get_population_groups_name', verbose_name=_('Population Groups'))
-    master_programs = tables.Column(accessor='get_master_program_names', verbose_name=_('Master Programs'))
+    master_programs = tables.Column(
+        accessor='get_master_program_names',
+        verbose_name=_('Master Programs'),
+        attrs={'td': {'class': 'master-programs-col'}, 'th': {'class': 'master-programs-col'}},
+    )
     donor_names = tables.Column(accessor='get_donor_names', verbose_name=_('Donors'))
     budget = tables.Column(verbose_name=_('Budget'))
 

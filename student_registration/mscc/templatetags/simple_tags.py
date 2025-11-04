@@ -2,6 +2,8 @@ from django import template
 from django.apps import apps
 from django.db.models import QuerySet
 import logging
+from typing import Iterable, Union
+
 
 from student_registration.mscc.models import (
     ProvidedServices,
@@ -20,24 +22,34 @@ logger = logging.getLogger(__name__)
 _SERVICES_CACHE_ATTR = "_provided_services_cache"
 
 
-def _get_services_for_registry(registry):
+def _get_services_for_registry(registry: Union[int, "Registration", str, None]) -> list:
+
     if not registry:
         return []
 
-    if isinstance(registry, Registration):
-        cached_services = getattr(registry, _SERVICES_CACHE_ATTR, None)
-        if cached_services is not None:
-            return cached_services
+    try:
+        if isinstance(registry, Registration):
+            registry_obj = registry
+        elif isinstance(registry, int):
+            registry_obj = Registration.objects.get(pk=registry)
+        elif isinstance(registry, str):
+            registry_obj = Registration.objects.get(pk=int(registry))
+        else:
+            return []
+    except (ValueError, Registration.DoesNotExist):
+        return []
 
-        services = list(
-            ProvidedServices.objects.filter(registration=registry).order_by("id")
-        )
-        setattr(registry, _SERVICES_CACHE_ATTR, services)
-        return services
+    cached_services = getattr(registry_obj, _SERVICES_CACHE_ATTR, None)
+    if cached_services is not None:
+        return cached_services
 
-    return list(
-        ProvidedServices.objects.filter(registration_id=registry).order_by("id")
+    services = list(
+        ProvidedServices.objects
+        .filter(registration=registry_obj)
+        .order_by("id")
     )
+    setattr(registry_obj, _SERVICES_CACHE_ATTR, services)
+    return services
 
 
 def _coerce_services(services, registry=None):

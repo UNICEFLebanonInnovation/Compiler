@@ -48,8 +48,8 @@ def download_file(file_name, returned_file_name, content_type="application/octet
     except Exception as exc:  # pragma: no cover - logged for debugging purposes
         logger.exception("Error reading file %s", file_name)
         response = HttpResponse(f"Error reading file: {exc}")
-    if delete_after:
-        storage.delete(file_name)
+    # if delete_after:
+    #     storage.delete(file_name)
     return response
 
 

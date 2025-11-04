@@ -490,7 +490,8 @@ class ProgramStaffForm(forms.ModelForm):
         instance.subject = validated_data.getlist('subject')
         instance.programs = validated_data.getlist('programs')
         weekly_hours = validated_data.get('weekly_hours_taught')
-        instance.weekly_hours_taught = int(weekly_hours) if weekly_hours.strip() else 0
+        weekly_hours_str = (weekly_hours or '').strip()
+        instance.weekly_hours_taught = int(weekly_hours_str) if weekly_hours_str else 0
         instance.attendance_training = validated_data.get('attendance_training')
         instance.training_topics = validated_data.getlist('training_topics')
         attach_cv = request.FILES.get('attach_cv', False)

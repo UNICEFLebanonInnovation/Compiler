@@ -130,6 +130,7 @@ class ExportHistoryAdmin(admin.ModelAdmin):
 
     list_display = (
         'export_type',
+        'status',
         'created_by',
         'partner_name',
         'created',

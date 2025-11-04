@@ -14,10 +14,6 @@ class BootstrapTable(tables.Table):
 
 
 class CommonTable(tables.Table):
-
-    edit_column = tables.TemplateColumn(verbose_name=_('Edit'),
-                                        template_name='django_tables2/edit_column.html',
-                                        attrs={'url': ''})
     # delete_column = tables.TemplateColumn(verbose_name=_('Delete school'),
     #                                       template_name='django_tables2/delete_column.html',
     #                                       attrs={'url': ''})
@@ -26,8 +22,6 @@ class CommonTable(tables.Table):
         model = Teacher
         template = 'django_tables2/bootstrap.html'
         fields = (
-            'edit_column',
-            # 'delete_column',
         )
 
 

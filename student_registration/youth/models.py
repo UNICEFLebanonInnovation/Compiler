@@ -439,16 +439,13 @@ class ProgramDocument(TimeStampedModel):
     )
     project_code = models.CharField(
         max_length=100,
-        default='project_code',
         verbose_name=_('Project Code')
     )
     project_name = models.CharField(
         max_length=250,
-        default='project_name',
         verbose_name=_('Project Name')
     )
-    project_description = models.CharField(
-        max_length=300,
+    project_description = models.TextField(
         blank=True, null=True,
         verbose_name=_('Project Description')
     )
@@ -583,13 +580,6 @@ class ProgramDocument(TimeStampedModel):
         return ", ".join(donor.name for donor in self.donors.all())
         # return "\n".join(donor.name for donor in self.donors.all())
 
-    def clean(self):
-        super(ProgramDocument, self).clean()
-
-        if not self.project_name:
-            raise ValidationError({'project_name': _('Project Name cannot be empty')})
-        if not self.project_code:
-            raise ValidationError({'project_code': _('Project Code cannot be empty')})
 
 
 class ProgramDocumentIndicator(TimeStampedModel):

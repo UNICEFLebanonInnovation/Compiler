@@ -228,7 +228,7 @@ class EnrolledProgramsForm(forms.ModelForm):
                 Reset('reset', 'Reset',
                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 HTML(
-                    '<a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="/youth/Child-Registration-Cancel/{}/">Cancel</a>'.format(
+                    '<a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="/youth/child-profile/{}/">Cancel</a>'.format(
                         registry)
                 )
             ),
@@ -359,8 +359,8 @@ class ProgramDocumentForm(forms.ModelForm):
         widget=forms.TextInput, required=True
     )
     project_description = forms.CharField(
-        label=_("Project Description"),
-        widget=forms.TextInput, required=True
+        label=_('Project Description'),
+        widget=forms.Textarea, required=True
     )
     implementing_partners = forms.CharField(
         label=_("Key Implementing Partner(s)"),
@@ -456,6 +456,17 @@ class ProgramDocumentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         instance = kwargs.pop('instance', None)
+        self.instance_pk = None
+        if isinstance(instance, ProgramDocument):
+            self.instance_pk = instance.pk
+            kwargs['instance'] = instance
+        elif instance is not None:
+            self.instance_pk = instance
+            try:
+                kwargs['instance'] = ProgramDocument.objects.get(pk=instance)
+            except ProgramDocument.DoesNotExist:
+                kwargs['instance'] = None
+
 
         super(ProgramDocumentForm, self).__init__(*args, **kwargs)
 
@@ -572,8 +583,6 @@ class ProgramDocumentForm(forms.ModelForm):
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                        Reset('reset', 'Reset',
-                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                     ),
                     css_id='step-2'
                 )
@@ -671,8 +680,6 @@ class ProgramDocumentForm(forms.ModelForm):
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                        Reset('reset', 'Reset',
-                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                     ),
                     css_id='step-1'
                 ),
@@ -762,6 +769,38 @@ class ProgramDocumentForm(forms.ModelForm):
         end_date = cleaned_data.get("end_date")
         if start_date and end_date and start_date >= end_date:
             self.add_error('start_date', 'Start Date must be less than End Date')
+
+        project_code = cleaned_data.get('project_code')
+        if project_code:
+            project_code = project_code.strip()
+            cleaned_data['project_code'] = project_code
+            existing_code = ProgramDocument.objects.filter(
+                project_code__iexact=project_code
+            )
+            instance_pk = self.instance_pk or getattr(self.instance, 'pk', None)
+            if instance_pk:
+                existing_code = existing_code.exclude(pk=instance_pk)
+            if existing_code.exists():
+                self.add_error(
+                    'project_code',
+                    _('A Program Document with this project code already exists.')
+                )
+
+        project_name = cleaned_data.get('project_name')
+        if project_name:
+            project_name = project_name.strip()
+            cleaned_data['project_name'] = project_name
+            existing_name = ProgramDocument.objects.filter(
+                project_name__iexact=project_name
+            )
+            instance_pk = self.instance_pk or getattr(self.instance, 'pk', None)
+            if instance_pk:
+                existing_name = existing_name.exclude(pk=instance_pk)
+            if existing_name.exists():
+                self.add_error(
+                    'project_name',
+                    _('A Program Document with this project name already exists.')
+                )
 
         return cleaned_data
 

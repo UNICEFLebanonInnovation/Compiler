@@ -108,7 +108,10 @@ class TeacherForm(forms.ModelForm):
         required=True, to_field_name='id',
     )
     school = forms.ModelChoiceField(
-        queryset=School.objects.filter(is_closed=False).order_by('-id'), widget=forms.Select,
+        queryset=School.objects.filter(
+            is_closed=False,
+            partner_schools__is_dirasa=True,
+        ).order_by('-id').distinct(), widget=forms.Select,
         label=_('School'),
         empty_label='-------',
         required=True, to_field_name='id',
@@ -460,23 +463,28 @@ class TeacherForm(forms.ModelForm):
             partner_id = self.request.user.partner_id
         clm_bridging_all = has_group(self.request.user, 'CLM_BRIDGING_ALL')
 
-        queryset = School.objects.filter(is_closed=False).all()
+        queryset = School.objects.filter(
+            is_closed=False,
+            partner_schools__is_dirasa=True,
+        ).distinct()
 
         if not clm_bridging_all:
             if school_id and school_id > 0:
                 queryset = School.objects.filter(id=school_id)
 
             elif partner_id and partner_id > 0:
-                queryset = School.objects.filter(is_closed=False,
-                                                 id__in=PartnerOrganization
-                                                 .objects
-                                                 .filter(id=partner_id)
-                                                 .values_list('schools', flat=True))
+                queryset = School.objects.filter(
+                    is_closed=False,
+                    id__in=PartnerOrganization
+                    .objects
+                    .filter(id=partner_id)
+                    .values_list('schools', flat=True),
+                )
             else:
-                queryset =queryset.none()
+                queryset = queryset.none()
 
         self.fields['school'] = forms.ModelChoiceField(
-            queryset=queryset, widget=forms.Select,
+            queryset=queryset.order_by('name'), widget=forms.Select,
             label=_('School Name'),
             empty_label='-------',
             required=True, to_field_name='id',

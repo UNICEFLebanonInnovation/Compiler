@@ -1756,6 +1756,9 @@ function fill_outreach_child_data(data)
             $('#id_main_caregiver').val(item['main_caregiver']);
             $('#id_main_caregiver_nationality').val(item['main_caregiver_nationality']);
             $('#id_id_type').val(item['id_type']);
+            $('#id_student_sex').val(item['student_sex']);
+            $('#id_hh_educational_level').val(item['hh_educational_level']);
+            $('#id_father_educational_level').val(item['father_educational_level']);
             $('#id_have_labour_single_selection').val(item['have_labour_single_selection']);
             reorganizeForm();
             Object.keys(item).forEach(key => {

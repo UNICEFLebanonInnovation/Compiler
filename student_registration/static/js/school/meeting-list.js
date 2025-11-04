@@ -5,9 +5,8 @@ $(document).ready(function() {
 
         e.preventDefault();
 
-        var buttonId = $(this).attr("id");
-        var meetingId = $(this).data("meeting-id");
-        var parentTR = $(this).closest('tr');
+        var schoolId = $(this).data("school-id");
+        var deleteUrl = $(this).attr("href");
 
         var confirmed = confirm("Are you sure you want to delete this meeting?");
         requestHeaders = getHeader();
@@ -15,16 +14,13 @@ $(document).ready(function() {
 
         if (confirmed) {
             $.ajax({
-                url: "/schools/meeting-delete/" + meetingId + "/",
+                url: deleteUrl,
                 type: "GET",
                 headers: requestHeaders,
                 success: function(data) {
-                    console.log(parentTR.html());
-                    parentTR.remove();
+                    var redirectUrl = "/schools/meeting-list/" + schoolId + "/";
+                    window.location.href = redirectUrl;
                 },
-                error: function(error) {
-                    // Handle error if needed
-                }
             });
         } else {
             console.log("User canceled deleting for meeting with ID: " + meetingId);
