@@ -94,6 +94,7 @@ LOCAL_APPS = [
     'student_registration.backends',  # custom storage app
     'student_registration.staffenroll',
     'student_registration.staffs',
+    'ai_agent.apps.AiAgentConfig',
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

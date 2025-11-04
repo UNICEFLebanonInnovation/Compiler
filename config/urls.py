@@ -119,6 +119,8 @@ urlpatterns = [
 
     url(r'^api/', include(api.urls)),
 
+    url(r'^agent/', include('ai_agent.urls', namespace='ai_agent')),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

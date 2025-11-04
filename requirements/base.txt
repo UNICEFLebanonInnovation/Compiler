@@ -5,7 +5,7 @@
 wheel==0.29.0
 
 # Bleeding edge Django
-django==1.11.23 # pyup: >=1.10,<1.11
+django # pyup: >=1.10,<1.11
 
 # Configuration
 django-environ==0.4.3
@@ -19,7 +19,7 @@ django-crispy-forms==1.6.1
 django-model-utils==3.0.0
 
 # Images
-Pillow==4.2.1
+Pillow
 
 # Password storage
 argon2-cffi==16.3.0
@@ -29,7 +29,7 @@ argon2-cffi==16.3.0
 django-allauth==0.32.0
 
 # Python-PostgreSQL Database Adapter
-psycopg2==2.7.3.2
+psycopg2-binary
 
 # Unicode slugification
 awesome-slugify==1.6.5
@@ -41,9 +41,9 @@ pytz==2017.2
 django-redis==4.8.0
 redis>=2.10.5
 
-celery==4.2.0
-django-celery-beat==1.1.0
-django-celery-results==1.0.1
+celery
+django-celery-beat
+django-celery-results
 honcho==1.0.1
 
 rcssmin==1.0.6
@@ -54,7 +54,7 @@ django-datatables-view==1.13.0
 django-mptt==0.8.7
 django-makemessages-xgettext==0.1.1
 djangorestframework==3.9.1
-markdown==2.6.6
+markdown
 django-filter==1.1.0
 django-rest-swagger==2.1.2
 drf-nested-routers==0.11.1
@@ -64,15 +64,16 @@ django-import-export==0.5.0
 django-suit==0.2.21
 django-autocomplete-light==3.2.1
 django-helpdesk==0.1.18
-mongoengine==0.11.0
+mongoengine
 django-admin-rangefilter==0.3.0
 django-bootstrap3==8.2.3
 bootstrap3-datetime==2.4
-django-tables2==1.10.0
+django-tables2
 #azure-storage==0.36.0
 azure-storage==0.20.0
 openpyxl==2.4.9
 django-prettyjson==0.4.1
 unicodecsv==0.14.1
 django-lockout==0.1.1
-djangosecure==0.0.11
+djangosecure
+openai

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Agent</title>
+</head>
+<body>
+    <h1>Ask the AI Agent a Question</h1>
+    <form method="post">
+        {% csrf_token %}
+        <textarea name="question" rows="4" cols="50"></textarea>
+        <br>
+        <input type="submit" value="Ask">
+    </form>
+    {% if answer %}
+        <h2>Answer:</h2>
+        <p>{{ answer }}</p>
+    {% endif %}
+</body>
+</html>
