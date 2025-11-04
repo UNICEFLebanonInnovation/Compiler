@@ -1119,6 +1119,20 @@ class HealthNutritionReferral(TimeStampedModel):
         verbose_name_plural = "Health & Nutrition Referrals"
 
 
+class ServiceProgramOption(models.Model):
+    service_name = models.CharField(max_length=100)
+    program_code = models.CharField(max_length=100)
+
+    class Meta:
+        ordering = ['service_name', 'program_code']
+        unique_together = ('service_name', 'program_code')
+        verbose_name = _('Service Program Option')
+        verbose_name_plural = _('Service Program Options')
+
+    def __str__(self):
+        return '{} - {}'.format(self.service_name, self.program_code)
+
+
 class EducationService(TimeStampedModel):
 
     EDUCATION_STATUS = Choices(
