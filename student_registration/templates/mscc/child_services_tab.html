@@ -86,7 +86,8 @@
 {% have_service_category 'Education' instance as result2 %}
 {% have_education_programme result1.education_program as result3 %}
 
-  {% if result1 and result2 and result1.education_program and (result3 or result1.education_program == 'PPL') %}
+{% if result1 and result2 and result1.education_program %}
+  {% if result3 or result1.education_program == 'PPL' %}
   {% service_data 'EducationProgrammeAssessment' instance as result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
 
@@ -1667,6 +1668,7 @@
                                     </div>
                                 </div>
                             </div>
+  {% endif %}
 {% endif %}
 
 
@@ -1675,7 +1677,8 @@
 {% have_service_category 'Youth' instance as result2 %}
 {% have_youth_programme result1.education_program as result3 %}
 
-  {% if result1 and result2 and result1.education_program and (result3 or result1.education_program == 'PPL') %}
+  {% if result1 and result2 and result1.education_program %}
+    {% if result3 or result1.education_program == 'PPL' %}
   {% service_data 'EducationProgrammeAssessment' instance as result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
 
@@ -3364,6 +3367,7 @@
                                     </div>
                                 </div>
                             </div>
+    {% endif %}
   {% endif %}
 
   <!--Follow-up / Caregivers Package	 -->
