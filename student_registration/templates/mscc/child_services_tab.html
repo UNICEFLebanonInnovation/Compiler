@@ -117,16 +117,13 @@
                                             </div>
                                         </div>
                                         <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
-                                          {% if result1.education_program != 'PPL' %}
                                             <li class="nav-item">
                                                 <a role="tab" class="nav-link mb-2 mr-2 active show" id="tab-c-11" data-toggle="tab" href="#tab-animated-11" aria-selected="true">
                                                   <span>Pre Grading</span>
                                                 </a>
                                             </li>
-                                          {% endif %}
                                           {% if result1.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, RS Grade 7, RS Grade 8, RS Grade 9' and instance.type == 'Walk-in' %}
                                           {% else %}
-                                            {% if result1.education_program != 'PPL' %}
                                             <li class="nav-item">
                                                 <a role="tab" class="nav-link" id="tab-c-12" data-toggle="tab" href="#tab-animated-12">
                                                     <span>Post Grading </span>
@@ -137,10 +134,9 @@
                                                     <span>Improvement</span>
                                                 </a>
                                             </li>
-                                            {% endif %}
 
                                             {% endif %}
-                                          {% if result1.education_program != 'PPL' and result1.education_program in 'RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 -RS Grade 9, YFS Level 2 - RS Grade 9' %}
+                                          {% if result1.education_program in 'RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 -RS Grade 9, YFS Level 2 - RS Grade 9' %}
                                             <li class="nav-item">
                                                 <a role="tab" class="nav-link" id="tab-c-16" data-toggle="tab" href="#tab-animated-16">
                                                     <span>School Grading</span>
@@ -148,7 +144,7 @@
                                             </li>
                                             {% endif %}
 
-                                          {% if result1.education_program != 'PPL' and result1.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6' %}
+                                          {% if result1.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6' %}
                                             <li class="nav-item">
                                                 <a role="tab" class="nav-link" id="tab-c-17" data-toggle="tab" href="#tab-animated-17">
                                                     <span>School Grading</span>
@@ -161,17 +157,16 @@
                                         <div class="tab-content">
 
                                           <!-- Pre Test -->
-                                          {% if result1.education_program != 'PPL' %}
                                           <div class="tab-pane active show" id="tab-animated-11" role="tabpanel">
-                                                    <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                     {% if result1.education_program != 'PPL' %}
+                                                    <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                       {% if result %}
                                                         <a href="{% url 'mscc:service_education_grading_edit' instance.id result1.education_program 'pre' result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Pre Grades">Edit</a>
                                                       {% else %}
                                                         <a href="{% url 'mscc:service_education_grading_add' instance.id result1.education_program %}" data-toggle="tooltip" data-placement="top" data-original-title="Add Education Pre Grades">Add</a>
                                                       {% endif %}
-                                                    {% endif %}
                                                     </div>
+                                                    {% endif %}
 
                                                 <div class="scroll-area-sm" style="height: 200px;">
                                                     <div class="scrollbar-container ps ps--active-y">
@@ -582,13 +577,12 @@
                                             </div>
 
                                           <!-- Post Test -->
-                                          {% if result1.education_program != 'PPL' %}
                                           <div class="tab-pane" id="tab-animated-12" role="tabpanel">
-                                                    <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                     {% if result and result1.education_program != 'PPL' %}
+                                                    <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                       <a href="{% url 'mscc:service_education_grading_edit' instance.id result1.education_program 'post' result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Post Grades">Edit</a>
-                                                    {% endif %}
                                                     </div>
+                                                    {% endif %}
 
                                                 <div class="scroll-area-sm" style="height: 200px;">
                                                     <div class="scrollbar-container ps ps--active-y">
@@ -1544,13 +1538,13 @@
                                           </div>
 
                                           {% endif %}
-                                        {% if result1.education_program != 'PPL' and result1.education_program  in 'RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
+                                        {% if result1.education_program  in 'RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
                                           <div class="tab-pane" id="tab-animated-16" role="tabpanel">
-                                                    <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                     {% if result and result1.education_program != 'PPL' %}
+                                                    <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                      <a href="{% url 'mscc:service_school_grading' instance.id result1.education_program result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education School Grades">Edit</a>
-                                                    {% endif %}
                                                     </div>
+                                                    {% endif %}
 
                                                 <div class="scroll-area-sm" style="height: 200px;">
                                                     <div class="scrollbar-container ps ps--active-y">
@@ -1607,13 +1601,13 @@
                                             </div>
                                         {% endif %}
 
-                                            {% if result1.education_program != 'PPL' and result1.education_program  in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6' %}
+                                            {% if result1.education_program  in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6' %}
                                           <div class="tab-pane" id="tab-animated-17" role="tabpanel">
-                                                    <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                     {% if result and result1.education_program != 'PPL' %}
+                                                    <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                       <a href="{% url 'mscc:service_school_grading' instance.id result1.education_program result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education School Grades">Edit</a>
-                                                    {% endif %}
                                                     </div>
+                                                    {% endif %}
                                                 <div class="scroll-area-sm" style="height: 200px;">
                                                     <div class="scrollbar-container ps ps--active-y">
                                                         <div class="p-3">
@@ -1707,7 +1701,6 @@
                                                         <!--unread messages-->
                                                     <!--</h6>-->
                                         <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
-                                          {% if result1.education_program != 'PPL' %}
                                             <li class="nav-item">
                                                 <a role="tab" class="nav-link mb-2 mr-2 active show" id="tab-c-111" data-toggle="tab" href="#tab-animated-111" aria-selected="true">
                                                   <span>Pre Scoring</span>
@@ -1723,21 +1716,19 @@
                                                     <span>Improvement</span>
                                                 </a>
                                             </li>
-                                          {% endif %}
                                         </ul>
                                         <div class="tab-content">
 
-                                          {% if result1.education_program != 'PPL' %}
                                           <div class="tab-pane active show" id="tab-animated-111" role="tabpanel">
-                                                    <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                     {% if result1.education_program != 'PPL' %}
+                                                    <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                       {% if result %}
                                                         <a href="{% url 'mscc:service_youth_scoring_edit' instance.id result1.education_program 'pre' result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Pre Grades">Edit</a>
                                                       {% else %}
                                                         <a href="{% url 'mscc:service_youth_scoring_add' instance.id result1.education_program %}" data-toggle="tooltip" data-placement="top" data-original-title="Add Education Pre Grades">Add</a>
                                                       {% endif %}
-                                                    {% endif %}
                                                     </div>
+                                                    {% endif %}
 
                                                 <div class="scroll-area-sm" style="height: 200px;">
                                                     <div class="scrollbar-container ps ps--active-y">
@@ -1866,14 +1857,12 @@
                                                 </div>
                                             </div>
 
-                                          {% endif %}
-                                          {% if result1.education_program != 'PPL' %}
                                           <div class="tab-pane" id="tab-animated-121" role="tabpanel">
-                                                    <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                     {% if result and result1.education_program != 'PPL' %}
+                                                    <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                       <a href="{% url 'mscc:service_youth_scoring_edit' instance.id result1.education_program 'post' result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Post Grades">Edit</a>
-                                                    {% endif %}
                                                     </div>
+                                                    {% endif %}
 
                                                 <div class="scroll-area-sm" style="height: 200px;">
                                                     <div class="scrollbar-container ps ps--active-y">
@@ -2033,8 +2022,6 @@
                                                 </div>
                                             </div>
 
-                                          {% endif %}
-                                          {% if result1.education_program != 'PPL' %}
                                           <div class="tab-pane" id="tab-animated-151" role="tabpanel">
 
                                                 <div class="scroll-area-sm" style="height: 200px;">
