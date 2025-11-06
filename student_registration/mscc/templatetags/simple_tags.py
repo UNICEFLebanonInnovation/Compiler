@@ -229,10 +229,13 @@ def have_service_category(category, obj):
 @register.simple_tag
 def have_education_programme(programme_type):
     try:
-        programmes = ['BLN Level 1', 'BLN Level 2', 'BLN Level 3','BLN Catch-up' ,'ABLN Level 1', 'ABLN Level 2',
-                      'ABLN Catch-up', 'CBECE Level 1', 'CBECE Level 2', 'CBECE Level 3', 'RS Grade 1', 'RS Grade 2',
-                      'RS Grade 3', 'RS Grade 4', 'RS Grade 5', 'RS Grade 6', 'RS Grade 7', 'RS Grade 8', 'RS Grade 9',
-                      'YFS Level 1 - RS Grade 9', 'YFS Level 2 - RS Grade 9']
+        programmes = [
+            'BLN Level 1', 'BLN Level 2', 'BLN Level 3', 'BLN Catch-up', 'ABLN Level 1',
+            'ABLN Level 2', 'ABLN Catch-up', 'CBECE Level 1', 'CBECE Level 2', 'CBECE Level 3',
+            'PPL', 'RS Grade 1', 'RS Grade 2', 'RS Grade 3', 'RS Grade 4', 'RS Grade 5',
+            'RS Grade 6', 'RS Grade 7', 'RS Grade 8', 'RS Grade 9', 'YFS Level 1 - RS Grade 9',
+            'YFS Level 2 - RS Grade 9'
+        ]
         if programme_type in programmes:
             return True
     except Exception as ex:
@@ -242,9 +245,10 @@ def have_education_programme(programme_type):
 @register.simple_tag
 def have_youth_programme(programme_type):
     try:
-        programmes = ['YBLN Level 1', 'YBLN Level 2','YBLN Catch-up',
-                      'YFS Level 1', 'YFS Level 2',
-                      'YFS Level 1 - RS Grade 9', 'YFS Level 2 - RS Grade 9']
+        programmes = [
+            'YBLN Level 1', 'YBLN Level 2', 'YBLN Catch-up', 'YFS Level 1',
+            'YFS Level 2', 'YFS Level 1 - RS Grade 9', 'YFS Level 2 - RS Grade 9', 'PPL'
+        ]
         if programme_type in programmes:
             return True
     except Exception as ex:

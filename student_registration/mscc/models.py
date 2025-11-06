@@ -1188,6 +1188,7 @@ class EducationService(TimeStampedModel):
         ('RS Grade 8', _('RS Grade 8')),
         ('RS Grade 9', _('RS Grade 9')),
         ('ECD', _('ECD')),
+        ('PPL', _('PPL')),
     )
     YOUTH_PROGRAM = Choices(
         ('YBLN Level 1', _('YBLN Level 1')),
