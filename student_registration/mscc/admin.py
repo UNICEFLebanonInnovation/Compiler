@@ -86,6 +86,7 @@ class RegistrationAdmin(admin.ModelAdmin):
         'partner',
         'center',
         'round',
+        'deleted',
         'created',
         'modified',
     )
@@ -106,6 +107,7 @@ class RegistrationAdmin(admin.ModelAdmin):
         'partner',
         'center',
         'round',
+        'deleted',
         'created',
         'modified',
     )
@@ -118,11 +120,12 @@ class RegistrationAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.select_related('child', 'partner', 'center', 'round').filter(deleted=False)
+        return qs.select_related('child', 'partner', 'center', 'round')
 
     def get_unicef_id(self, obj):
         return obj.child.unicef_id
     get_unicef_id.short_description = 'Unicef ID'
+
 
 class EducationHistoryAdmin(admin.ModelAdmin):
 

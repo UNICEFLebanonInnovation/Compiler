@@ -200,6 +200,7 @@ class BridgingAdmin(admin.ModelAdmin):
         'student__family_status',
         'student__have_children',
         'have_labour',
+        'deleted',
         'created',
         'modified',
     )
