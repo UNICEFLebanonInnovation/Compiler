@@ -84,12 +84,12 @@ urlpatterns = [
         name='service_diagnostic_assessment_edit'
     ),
     re_path(
-        r'^services/education-add/(?P<registry>[\w.@+-]+)/(?P<package_type>[^/]+)/$',
+        r'^services/education-add/(?P<registry>[\w.@+-]+)/(?:(?P<package_type>[^/]+)/)?$',
         view=education_view.EducationServiceFormView.as_view(),
         name='service_education_add'
     ),
     re_path(
-        r'^services/education-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/(?P<package_type>[\w\s.@+-]+)/$',
+        r'^services/education-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/(?:(?P<package_type>[\w\s.@+-]+)/)?$',
         view=education_view.EducationServiceFormView.as_view(),
         name='service_education_edit'
     ),

@@ -562,10 +562,17 @@ class EducationServiceForm(forms.ModelForm):
 
             self.fields['round'].queryset = available_rounds
 
-        form_action = reverse('mscc:service_education_add', kwargs={'registry': registry, 'package_type': package_type})
+        add_kwargs = {'registry': registry}
+        if package_type:
+            add_kwargs['package_type'] = package_type
+
+        form_action = reverse('mscc:service_education_add', kwargs=add_kwargs)
+
         if instance:
-            form_action = reverse('mscc:service_education_edit',
-                                  kwargs={'registry': registry, 'package_type': package_type, 'pk': instance})
+            edit_kwargs = {'registry': registry, 'pk': instance}
+            if package_type:
+                edit_kwargs['package_type'] = package_type
+            form_action = reverse('mscc:service_education_edit', kwargs=edit_kwargs)
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True

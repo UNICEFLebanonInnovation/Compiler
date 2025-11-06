@@ -461,7 +461,10 @@ class NewRoundRedirectView(LoginRequiredMixin, RedirectView):
             new_registration.save()
 
             generate_services(new_registration.child.age, new_registration, self.request.user)
-            return reverse('mscc:service_education_add', kwargs={'registry': new_registration.id, 'package_type': type})
+            redirect_kwargs = {'registry': new_registration.id}
+            if type:
+                redirect_kwargs['package_type'] = type
+            return reverse('mscc:service_education_add', kwargs=redirect_kwargs)
 
         return reverse('mscc:new_round', kwargs={'registry': registry})
 
