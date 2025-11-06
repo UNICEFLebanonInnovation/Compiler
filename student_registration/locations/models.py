@@ -263,6 +263,13 @@ class Center(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Does the center have a digital hub?')
     )
+    is_tarl = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the center a TARL center?')
+    )
     neaby_phcc = models.CharField(
         max_length=200,
         blank=True,

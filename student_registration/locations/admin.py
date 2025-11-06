@@ -58,6 +58,7 @@ class CenterResource(resources.ModelResource):
             'manager_name',
             'phone_number',
             'email',
+            'is_tarl',
             'is_active',
             'p_code',
         )
@@ -81,6 +82,7 @@ class CenterAdmin(ImportExportModelAdmin):
             'p_code',
             'type',
             'partner',
+            'is_tarl',
             'is_active',
     )
     list_filter = (
@@ -88,6 +90,7 @@ class CenterAdmin(ImportExportModelAdmin):
         'governorate',
         'type',
         'partner',
+        'is_tarl',
         'is_active',
     )
     search_fields = (

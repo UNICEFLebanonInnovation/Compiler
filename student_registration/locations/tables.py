@@ -32,7 +32,9 @@ class CenterTable(tables.Table):
             'phone_number',
             'email',
             'type',
+            'is_tarl',
             'owner_name',
-            'modified_by_name',)
+            'modified_by_name'
+        )
 
 

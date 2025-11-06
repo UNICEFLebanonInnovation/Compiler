@@ -50,6 +50,10 @@ class CenterFilter(PlaceholderFilterSet):
         ('True', _("Yes")),
         ('False', _("No")),
     )
+    YES_NO = Choices(
+        ('Yes', _("Yes")),
+        ('No', _("No")),
+    )
     name = CharFilter(lookup_expr='icontains' )
     governorate = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=True), empty_label=_('Governorate'))
     is_active = ChoiceFilter(
@@ -58,6 +62,16 @@ class CenterFilter(PlaceholderFilterSet):
         label=_('Is Active'),
         method='filter_is_active'
     )
+    type = ChoiceFilter(
+        choices=Center.TYPE,
+        empty_label=_('Type'),
+        label=_('Type'),
+    )
+    is_tarl = ChoiceFilter(
+        choices=YES_NO,
+        empty_label=_('Is TARL center'),
+        label=_('Is TARL center'),
+    )
 
     class Meta:
         model = Center
@@ -65,7 +79,7 @@ class CenterFilter(PlaceholderFilterSet):
             'name',
             'type',
             'governorate',
-
+            'is_tarl'
         ]
 
     def filter_is_active(self, queryset, name, value):
