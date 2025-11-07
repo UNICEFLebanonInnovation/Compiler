@@ -26,6 +26,9 @@ logger = logging.getLogger(__name__)
 
 
 
+DEFAULT_PACKAGE_TYPE = 'Core-Package'
+
+
 def to_array(fields, obj):
     data = {}
     for field_name in fields:

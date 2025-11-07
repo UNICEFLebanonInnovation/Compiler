@@ -52,18 +52,20 @@
 {% endif %}
 {% if record.child_age > 2 %}
 {% service_data 'EducationService' record as result %}
-      {% if result %}
-        <a type="button" href="{% url 'mscc:service_education_edit' record.id result.id record.type %}" tabindex="0" class="dropdown-item">
-          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
-          Education Situation
-        </a>
-      {% else %}
-        <a type="button" href="{% url 'mscc:service_education_add' record.id record.type %}" tabindex="0" class="dropdown-item">
-          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
-          Education Situation
-        </a>
+      {% with package_type=record.type|default:'Core-Package' %}
+        {% if result %}
+          <a type="button" href="{% url 'mscc:service_education_edit' record.id result.id package_type %}" tabindex="0" class="dropdown-item">
+            <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
+            Education Situation
+          </a>
+        {% else %}
+          <a type="button" href="{% url 'mscc:service_education_add' record.id package_type %}" tabindex="0" class="dropdown-item">
+            <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
+            Education Situation
+          </a>
+        {% endif %}
+      {% endwith %}
       {% endif %}
-{% endif %}
 
 
         {% get_service_info services record 'RS' as result %}

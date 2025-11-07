@@ -524,11 +524,13 @@
                                                 <div class="menu-header-content text-dark">
                                                     <h5 class="menu-header-title">Education
                                                       <div style="float:right;">
-                                                            {% if result %}
-                                                              <a href="{% url 'mscc:service_education_edit' instance.id result.id instance.type %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Infos.">Edit</a>
-                                                            {% else %}
-                                                              <a href="{% url 'mscc:service_education_add' instance.id instance.type %}" data-toggle="tooltip" data-placement="top" data-original-title="Add Education Infos.">Add</a>
-                                                            {% endif %}
+                                                            {% with package_type=instance.type|default:'Core-Package' %}
+                                                              {% if result %}
+                                                                <a href="{% url 'mscc:service_education_edit' instance.id result.id package_type %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Infos.">Edit</a>
+                                                              {% else %}
+                                                                <a href="{% url 'mscc:service_education_add' instance.id package_type %}" data-toggle="tooltip" data-placement="top" data-original-title="Add Education Infos.">Add</a>
+                                                              {% endif %}
+                                                            {% endwith %}
                                                       </div>
                                                     </h5>
                                                     <!--<h6 class="menu-header-subtitle">-->

@@ -17,7 +17,7 @@ from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HT
 from dal import autocomplete
 
 from student_registration.mscc.templatetags.simple_tags import get_service
-from student_registration.mscc.utils import validate_date
+from student_registration.mscc.utils import DEFAULT_PACKAGE_TYPE, validate_date
 from .models import (
     Registration,
     EducationAssessment,
@@ -480,6 +480,13 @@ class EducationServiceForm(forms.ModelForm):
         registry = kwargs.pop('registry', None)
         instance = kwargs.pop('instance', None)
         package_type = kwargs.pop('package_type', None)
+
+        if not package_type:
+            package_type = (
+                Registration.objects.filter(id=registry)
+                .values_list('type', flat=True)
+                .first()
+            ) or DEFAULT_PACKAGE_TYPE
 
         super(EducationServiceForm, self).__init__(*args, **kwargs)
 

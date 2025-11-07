@@ -10,6 +10,7 @@ from dal import autocomplete
 from student_registration.schools.models import School
 
 from .education_form import *
+from .models import Registration
 from .utils import *
 
 
@@ -106,6 +107,22 @@ class EducationServiceFormView(LoginRequiredMixin,
     success_url = ''
     group_required = [u"MSCC", u"MSCC_CENTER"]
 
+    def _resolve_package_type(self):
+        package_type = self.kwargs.get('package_type')
+
+        if package_type:
+            return package_type
+
+        registry_id = self.kwargs.get('registry')
+        if registry_id:
+            package_type = (
+                Registration.objects.filter(id=registry_id)
+                .values_list('type', flat=True)
+                .first()
+            )
+
+        return package_type or DEFAULT_PACKAGE_TYPE
+
     def get_success_url(self):
         return reverse('mscc:child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
 
@@ -114,13 +131,13 @@ class EducationServiceFormView(LoginRequiredMixin,
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
         kwargs['registry'] = self.kwargs['registry']
-        kwargs['package_type'] = self.kwargs['package_type'] if 'package_type' in self.kwargs else None
+        kwargs['package_type'] = self._resolve_package_type()
         return super(EducationServiceFormView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         registry = self.kwargs['registry']
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
-        package_type = self.kwargs['package_type'] if 'package_type' in self.kwargs else None
+        package_type = self._resolve_package_type()
         data = {}
         if self.request.method == "POST":
             return EducationServiceForm(self.request.POST, instance=instance, registry=registry,
@@ -134,7 +151,7 @@ class EducationServiceFormView(LoginRequiredMixin,
     def form_valid(self, form):
         registry = self.kwargs['registry']
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
-        package_type = self.kwargs['package_type'] if 'package_type' in self.kwargs else None
+        package_type = self._resolve_package_type()
         form.save(request=self.request, registry=registry, package_type=package_type, instance=instance)
         return super(EducationServiceFormView, self).form_valid(form)
 
