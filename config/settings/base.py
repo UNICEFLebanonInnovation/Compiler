@@ -153,7 +153,19 @@ IMPORT_EXPORT_SKIP_ADMIN_LOG = False
 
 # EMAIL CONFIGURATION
 # ------------------------------------------------------------------------------
-EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
+EMAIL_BACKEND = env(
+    "DJANGO_EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend"
+)
+EMAIL_HOST = env("DJANGO_EMAIL_HOST", default=None)
+EMAIL_PORT = env.int("DJANGO_EMAIL_PORT", default=None)
+
+if (
+    EMAIL_BACKEND == "django.core.mail.backends.smtp.EmailBackend"
+    and not EMAIL_HOST
+):
+    # Fallback to console emails when SMTP configuration is missing to avoid
+    # runtime socket errors when sending messages such as password reset emails.
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
