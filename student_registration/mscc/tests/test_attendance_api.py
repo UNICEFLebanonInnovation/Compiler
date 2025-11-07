@@ -21,6 +21,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.test')
 django.setup()
 
 from student_registration.mscc.attendance_views import AttendanceHeatmapViewSet
+from student_registration.mscc.utils import parse_attendance_date
 
 
 def test_attendance_heatmap_api_monthly_percentages():
@@ -117,3 +118,18 @@ def test_attendance_heatmap_api_monthly_percentages():
 
     assert all(entry['year'] == 2024 for entry in monthly)
     assert all(entry['available_years'] == '2023,2024' for entry in monthly)
+
+
+def test_parse_attendance_date_handles_trailing_characters():
+    parsed = parse_attendance_date('07/01/20241')
+    assert parsed == datetime.date(2024, 7, 1)
+
+
+def test_parse_attendance_date_handles_iso_timestamps():
+    parsed = parse_attendance_date('2024-07-01T00:00:00Z')
+    assert parsed == datetime.date(2024, 7, 1)
+
+
+def test_parse_attendance_date_invalid_input():
+    with pytest.raises(ValueError):
+        parse_attendance_date('not-a-date')
