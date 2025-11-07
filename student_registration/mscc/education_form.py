@@ -463,6 +463,12 @@ class EducationServiceForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=EducationService.EDUCATION_PROGRAM,
     )
+    ppl_sector = forms.ChoiceField(
+        label=_('PPL Sector'),
+        widget=forms.Select,
+        required=False,
+        choices=EducationService.PPL_SECTOR,
+    )
     catch_up_registered = forms.ChoiceField(
         label=_("Is the child registered in catch-up program"),
         widget=forms.Select, required=False,
@@ -527,15 +533,19 @@ class EducationServiceForm(forms.ModelForm):
             self.fields['education_program'].required = False
             self.fields['class_section'].required = False
             self.fields['registration_date'].required = False
+            self.fields['ppl_sector'].required = False
+
+        education_service_instance = None
 
         if registry:
             child_id = Registration.objects.filter(id=registry).values_list('child_id', flat=True).first()
 
             if instance:
                 try:
-                    education_service = EducationService.objects.get(pk=instance)
-                    current_round_id = education_service.round_id
+                    education_service_instance = EducationService.objects.get(pk=instance)
+                    current_round_id = education_service_instance.round_id
                 except EducationService.DoesNotExist:
+                    education_service_instance = None
                     current_round_id = None
             else:
                 current_round_id = None
@@ -569,6 +579,18 @@ class EducationServiceForm(forms.ModelForm):
 
             self.fields['round'].queryset = available_rounds
 
+        if education_service_instance and education_service_instance.ppl_sector:
+            self.initial.setdefault('ppl_sector', education_service_instance.ppl_sector)
+
+        education_program_value = (
+            self.data.get('education_program')
+            or self.initial.get('education_program')
+            or (education_service_instance.education_program if education_service_instance else None)
+        )
+
+        if education_program_value == 'PPL':
+            self.fields['ppl_sector'].required = True
+
         form_action = reverse('mscc:service_education_add', kwargs={'registry': registry, 'package_type': package_type})
         if instance:
             form_action = reverse('mscc:service_education_edit',
@@ -594,6 +616,7 @@ class EducationServiceForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('education_program', css_class='col-md-3'),
+                    Div('ppl_sector', css_class='col-md-3'),
                     Div('catch_up_registered', css_class='col-md-3'),
                     css_class='row card-body' + display_edu_section
                 ),
@@ -640,6 +663,10 @@ class EducationServiceForm(forms.ModelForm):
             except ValidationError as e:
                 raise ValidationError("Dropout date error: {}".format(e))
         instance.education_program = validated_data.get('education_program')
+        if instance.education_program == 'PPL':
+            instance.ppl_sector = validated_data.get('ppl_sector')
+        else:
+            instance.ppl_sector = None
         instance.class_section = validated_data.get('class_section')
         instance.round_id = validated_data.get('round')
 
@@ -680,10 +707,17 @@ class EducationServiceForm(forms.ModelForm):
 
         education_status = cleaned_data.get("education_status")
         dropout_date = cleaned_data.get("dropout_date")
+        education_program = cleaned_data.get("education_program")
+        ppl_sector = cleaned_data.get("ppl_sector")
 
         if education_status and education_status == 'Currently registered in Formal Education school but not attending'\
             and not dropout_date:
             self.add_error('dropout_date', 'This field is required')
+
+        if education_program != 'PPL':
+            cleaned_data['ppl_sector'] = None
+        elif not ppl_sector:
+            self.add_error('ppl_sector', _('This field is required'))
 
         return cleaned_data
 
@@ -721,6 +755,7 @@ class EducationServiceForm(forms.ModelForm):
             'dropout_date',
             'round',
             'education_program',
+            'ppl_sector',
             'class_section',
             'registration_date',
         )

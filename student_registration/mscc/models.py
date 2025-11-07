@@ -1190,6 +1190,14 @@ class EducationService(TimeStampedModel):
         ('ECD', _('ECD')),
         ('PPL', _('PPL')),
     )
+    PPL_SECTOR = Choices(
+        ('', '----------'),
+        ('YAD', _('YAD')),
+        ('CP', _('CP')),
+        ('Health', _('Health')),
+        ('WASH', _('WASH')),
+        ('Nutrition', _('Nutrition')),
+    )
     YOUTH_PROGRAM = Choices(
         ('YBLN Level 1', _('YBLN Level 1')),
         ('YBLN Level 2', _('YBLN Level 2')),
@@ -1270,6 +1278,13 @@ class EducationService(TimeStampedModel):
         null=True,
         choices=CLASS_SECTION,
         verbose_name=_('Class Section')
+    )
+    ppl_sector = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=PPL_SECTOR,
+        verbose_name=_('PPL Sector')
     )
     # @todo not sure about this field
     registration_date = models.DateField(

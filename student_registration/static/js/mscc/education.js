@@ -43,6 +43,10 @@ function reorganizeForm()
    var education_program = $('select#id_education_program').val();
     $('div#div_id_catch_up_registered').addClass('d-none');
     $('#span_catch_up_registered').addClass('d-none');
+    $('div#div_id_ppl_sector').addClass('d-none');
+
+    $('#id_ppl_sector').prop('required', false);
+    $('#id_ppl_sector').removeClass('error-field');
 
     const CatchUpPrograms = [
       'BLN Catch-up',
@@ -62,6 +66,14 @@ function reorganizeForm()
         $('div#div_id_catch_up_registered').addClass('d-none');
         $('#id_catch_up_registered').removeClass('error-field');
         $('#id_catch_up_registered').val('');
+    }
+
+    if (education_program === 'PPL') {
+        $('#div_id_ppl_sector').removeClass('d-none');
+        $('#id_ppl_sector').prop('required', true);
+        $('#id_ppl_sector').addClass('error-field');
+    } else {
+        $('#id_ppl_sector').val('');
     }
 }
 
