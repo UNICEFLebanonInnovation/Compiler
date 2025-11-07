@@ -68,7 +68,7 @@ function reorganizeForm()
         $('#id_catch_up_registered').val('');
     }
 
-    if (education_program === 'PPL') {
+    if (education_program == 'PPL') {
         $('#div_id_ppl_sector').removeClass('d-none');
         $('#id_ppl_sector').prop('required', true);
         $('#id_ppl_sector').addClass('error-field');

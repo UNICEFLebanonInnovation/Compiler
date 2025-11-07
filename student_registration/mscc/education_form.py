@@ -533,19 +533,16 @@ class EducationServiceForm(forms.ModelForm):
             self.fields['education_program'].required = False
             self.fields['class_section'].required = False
             self.fields['registration_date'].required = False
-            self.fields['ppl_sector'].required = False
 
-        education_service_instance = None
 
         if registry:
             child_id = Registration.objects.filter(id=registry).values_list('child_id', flat=True).first()
 
             if instance:
                 try:
-                    education_service_instance = EducationService.objects.get(pk=instance)
-                    current_round_id = education_service_instance.round_id
+                    education_service = EducationService.objects.get(pk=instance)
+                    current_round_id = education_service.round_id
                 except EducationService.DoesNotExist:
-                    education_service_instance = None
                     current_round_id = None
             else:
                 current_round_id = None
@@ -579,17 +576,6 @@ class EducationServiceForm(forms.ModelForm):
 
             self.fields['round'].queryset = available_rounds
 
-        if education_service_instance and education_service_instance.ppl_sector:
-            self.initial.setdefault('ppl_sector', education_service_instance.ppl_sector)
-
-        education_program_value = (
-            self.data.get('education_program')
-            or self.initial.get('education_program')
-            or (education_service_instance.education_program if education_service_instance else None)
-        )
-
-        if education_program_value == 'PPL':
-            self.fields['ppl_sector'].required = True
 
         form_action = reverse('mscc:service_education_add', kwargs={'registry': registry, 'package_type': package_type})
         if instance:
