@@ -5,6 +5,7 @@ from django import forms
 from django.urls import reverse
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 from crispy_forms.helper import FormHelper
 
@@ -1487,9 +1488,13 @@ class YouthKitServiceForm(forms.ModelForm):
         widget=forms.TextInput,
         label=_('Reason for dropout')
     )
-    adolescent_dropout_date = forms.DateField(
+    _base_date_input_formats = tuple(getattr(settings, 'DATE_INPUT_FORMATS', ['%Y-%m-%d']))
+    _extended_date_input_formats = _base_date_input_formats + ('%d/%m/%Y', '%d-%m-%Y')
+
+    adolescent_dropout_date = TrimmedDateField(
         label=_("Dropout Date"),
-        required=False
+        required=False,
+        input_formats=_extended_date_input_formats
     )
     youth_trained_mental_health = forms.ChoiceField(
         widget=forms.Select, required=True,
@@ -1596,7 +1601,7 @@ class YouthKitServiceForm(forms.ModelForm):
 
     def save(self, request=None, instance=None, registry=None):
 
-        validated_data = request.POST
+        validated_data = self.cleaned_data
 
         if not instance:
             instance = YouthKitService.objects.create(registration_id=registry)
@@ -1620,8 +1625,9 @@ class YouthKitServiceForm(forms.ModelForm):
         instance.community_initiatives_specify = validated_data.get('community_initiatives_specify')
         instance.adolescent_attendance = validated_data.get('adolescent_attendance')
         instance.adolescent_dropout_reason = validated_data.get('adolescent_dropout_reason')
-        if validated_data.get('adolescent_dropout_date'):
-            instance.adolescent_dropout_date = validated_data.get('adolescent_dropout_date')
+        dropout_date = validated_data.get('adolescent_dropout_date')
+        if dropout_date:
+            instance.adolescent_dropout_date = dropout_date
         instance.youth_trained_mental_health = validated_data.get('youth_trained_mental_health')
         instance.modified_by = request.user
         instance.save()
