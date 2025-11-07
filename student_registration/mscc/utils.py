@@ -1,6 +1,7 @@
 # -- coding: utf-8 --
 from itertools import chain
 import logging
+import re
 
 from datetime import datetime, date
 from django.core.exceptions import ValidationError
@@ -24,6 +25,39 @@ from student_registration.mscc.models import Registration, EducationService, Ref
 
 logger = logging.getLogger(__name__)
 
+
+def parse_attendance_date(value):
+    """Parse flexible date strings used by the attendance UI.
+
+    Some browsers submit dates with additional characters (for example
+    ``07/01/20241``) or ISO timestamps like ``2024-07-01T00:00:00``.  Relying on
+    ``datetime.strptime`` directly raises ``ValueError('unconverted data remains')``
+    which prevents the attendance form from being saved.  This helper extracts
+    the first recognised date fragment and returns it as ``datetime.date``.
+    """
+
+    if value in (None, ""):
+        raise ValueError("attendance_date is required")
+
+    value = str(value).strip()
+
+    patterns = (
+        (r"(\d{1,2}/\d{1,2}/\d{4})", "%m/%d/%Y"),
+        (r"(\d{4}-\d{1,2}-\d{1,2})", "%Y-%m-%d"),
+    )
+
+    for pattern, fmt in patterns:
+        match = re.search(pattern, value)
+        if not match:
+            continue
+
+        candidate = match.group(1)
+        try:
+            return datetime.strptime(candidate, fmt).date()
+        except ValueError:
+            continue
+
+    raise ValueError(f"Unsupported attendance_date format: {value}")
 
 
 DEFAULT_PACKAGE_TYPE = 'Core-Package'
@@ -448,16 +482,20 @@ def get_old_child(student_id):
 
 
 def create_attendance(data, center_id):
-    from datetime import datetime
     round_id = data["round_id"]
     education_program = data["education_program"]
     class_section = data["class_section"]
+
     try:
-        attendance, created = MSCCAttendance.objects.get_or_create(round_id=round_id, center_id=center_id,
-                                                                   attendance_date=datetime.strptime(data["attendance_date"], '%m/%d/%Y'),
-                                                                   education_program=education_program,
-                                                                   class_section=class_section
-                                                                   )
+        attendance_date = parse_attendance_date(data["attendance_date"])
+
+        attendance, created = MSCCAttendance.objects.get_or_create(
+            round_id=round_id,
+            center_id=center_id,
+            attendance_date=attendance_date,
+            education_program=education_program,
+            class_section=class_section,
+        )
         attendance.day_off = data["attendance_day_off"]
         attendance.close_reason = data["close_reason"]
         attendance.save()
@@ -489,12 +527,15 @@ def create_attendance(data, center_id):
 
 
 def load_child_attendance(center_id, round_id, attendance_date, education_program, class_section):
-    from datetime import datetime
-
     attendance = None
 
     if attendance_date is not None:
-        attendance_date = datetime.strptime(attendance_date, '%m/%d/%Y')
+        attendance_date_input = attendance_date
+        try:
+            attendance_date = parse_attendance_date(attendance_date_input)
+        except ValueError:
+            logger.exception("Invalid attendance_date received: %s", attendance_date_input)
+            return {'instances': [], 'new_instances': []}
 
         attendance = MSCCAttendance.objects.filter(
             center_id=center_id,
