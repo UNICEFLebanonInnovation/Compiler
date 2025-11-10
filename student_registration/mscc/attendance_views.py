@@ -350,7 +350,7 @@ class AttendanceHeatmapViewSet(mixins.ListModelMixin,
     model = MSCCAttendanceChild
     queryset = MSCCAttendanceChild.objects.all()
     serializer_class = MSCCAttendanceChildSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.AllowAny,)
 
     """Provide attendance percentages per month and per programme."""
 
