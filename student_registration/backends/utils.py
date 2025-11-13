@@ -133,10 +133,13 @@ def send_push_to_web(user, title, body, data=None):
     if not firebase_admin._apps:
         firebase_admin.initialize_app(cred)
 
-    try:
-        token_obj = WebPushToken.objects.get(user=user)
-    except WebPushToken.DoesNotExist:
-        logger.exception("Error Sending Push notifications")
+    token_obj = (
+        WebPushToken.objects.filter(user=user)
+        .order_by("-pk")
+        .first()
+    )
+    if token_obj is None:
+        logger.info("No web push token registered for user %s", user.pk)
         return False
     message = messaging.Message(
         notification=messaging.Notification(
