@@ -125,6 +125,9 @@ def send_push_to_web(user, title, body, data=None):
 
     from student_registration.users.models import WebPushToken
 
+    # Tokens are registered from the client via the save_fcm_token view
+    # (``/api/save-fcm-token/``).  If a user has never visited the app with
+    # notifications enabled there will be no token to use here.
     root_dirt = Path(__file__).parents[2]
     FIREBASE_CREDENTIALS_FILE = os.path.join(str(root_dirt / "utility"), 'firebase-creds.json')
     cred = credentials.Certificate(FIREBASE_CREDENTIALS_FILE)
@@ -133,10 +136,16 @@ def send_push_to_web(user, title, body, data=None):
     if not firebase_admin._apps:
         firebase_admin.initialize_app(cred)
 
-    try:
-        token_obj = WebPushToken.objects.get(user=user)
-    except WebPushToken.DoesNotExist:
-        logger.exception("Error Sending Push notifications")
+    token_obj = (
+        WebPushToken.objects.filter(user=user)
+        .order_by("-pk")
+        .first()
+    )
+    if token_obj is None:
+        logger.warning(
+            "No web push token registered for user %s; call the save_fcm_token endpoint to register one before sending.",
+            user.pk,
+        )
         return False
     message = messaging.Message(
         notification=messaging.Notification(
