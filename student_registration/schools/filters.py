@@ -2,10 +2,17 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from django_filters import FilterSet, ChoiceFilter, ModelChoiceFilter
 from student_registration.locations.models import Location
-from student_registration.schools.models import CLMRound, School, Section, ClassRoom
+from student_registration.schools.models import (
+    CLMRound,
+    School,
+    Section,
+    ClassRoom,
+    PartnerOrganization,
+)
 from model_utils import Choices
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, ButtonHolder, Submit, HTML
+from student_registration.users.templatetags.custom_tags import has_group
 
 class PlaceholderFilterSet(FilterSet):
     """Base FilterSet that hides labels and uses placeholders."""
@@ -46,6 +53,11 @@ class SchoolFilter(PlaceholderFilterSet):
 
     governorate = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=True), empty_label=_('Governorate'))
     district = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=False), empty_label=_('District'))
+    partner = ModelChoiceFilter(
+        queryset=PartnerOrganization.objects.filter(is_dirasa=True).order_by('name'),
+        empty_label=_('Partner'),
+        field_name='partner_schools',
+    )
     is_closed = ChoiceFilter(
         choices=TRUE_FALSE,
         empty_label=_('School is closed'),
@@ -59,6 +71,26 @@ class SchoolFilter(PlaceholderFilterSet):
             'number': ['exact'],
             'name': ['contains'],
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        can_filter_by_partner = (
+            hasattr(self, 'request')
+            and self.request
+            and (
+                has_group(self.request.user, 'CLM_BRIDGING_ALL')
+                or getattr(self.request.user, 'is_staff', False)
+            )
+        )
+
+        partner_filter = self.filters.get('partner')
+        if partner_filter:
+            partner_filter.field.label = ''
+            partner_filter.field.widget.attrs.setdefault('placeholder', _('Partner'))
+
+            if not can_filter_by_partner:
+                partner_filter.field.widget = forms.HiddenInput()
 
     def filter_is_closed(self, queryset, name, value):
         if value == 'True':

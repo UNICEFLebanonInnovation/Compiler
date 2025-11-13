@@ -11,8 +11,15 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, ButtonHolder, Submit, HTML
 from django import forms
 from student_registration.locations.models import Location
-from student_registration.schools.models import CLMRound, School, Section, ClassRoom
+from student_registration.schools.models import (
+    CLMRound,
+    School,
+    Section,
+    ClassRoom,
+    PartnerOrganization,
+)
 from student_registration.students.models import Nationality
+from student_registration.users.templatetags.custom_tags import has_group
 from .models import (
     BLN,
     ABLN,
@@ -206,6 +213,10 @@ class BridgingFilter(PlaceholderFilterSet):
     student__nationality = ModelChoiceFilter(queryset=Nationality.objects.exclude(id=9), empty_label=_('Nationality'))
     disability = ModelChoiceFilter(queryset=Disability.objects.filter(active=True), empty_label=_('Disability'))
     learning_result = ChoiceFilter(choices=Bridging.LEARNING_RESULT, empty_label='Learning Result')
+    partner = ModelChoiceFilter(
+        queryset=PartnerOrganization.objects.filter(is_dirasa=True).order_by('name'),
+        empty_label=_('Partner'),
+    )
 
     student__first_name = CharFilter(lookup_expr='icontains')
     student__father_name = CharFilter(lookup_expr='icontains')
@@ -238,8 +249,29 @@ class BridgingFilter(PlaceholderFilterSet):
             'phone_number',
             'second_phone_number',
             'learning_result',
+            'partner',
             'owner__username'
         ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        can_filter_by_partner = (
+            hasattr(self, 'request')
+            and self.request
+            and (
+                has_group(self.request.user, 'CLM_BRIDGING_ALL')
+                or getattr(self.request.user, 'is_staff', False)
+            )
+        )
+
+        partner_filter = self.filters.get('partner')
+        if partner_filter:
+            partner_filter.field.label = ''
+            partner_filter.field.widget.attrs.setdefault('placeholder', _('Partner'))
+
+            if not can_filter_by_partner:
+                partner_filter.field.widget = forms.HiddenInput()
 
 
 class AttendanceFilter(CommonFilter):
