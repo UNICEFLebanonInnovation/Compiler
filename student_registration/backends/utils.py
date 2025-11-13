@@ -139,8 +139,13 @@ def send_push_to_web(user, title, body, data=None):
         .first()
     )
     if token_obj is None:
-        logger.info("No web push token registered for user %s", user.pk)
-        return False
+        logger.error(
+            "No web push token registered for user %s; create the WebPushToken before sending.",
+            user.pk,
+        )
+        raise WebPushToken.DoesNotExist(
+            f"No WebPushToken is registered for user {user.pk}"
+        )
     message = messaging.Message(
         notification=messaging.Notification(
             title=title,
