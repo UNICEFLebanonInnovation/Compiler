@@ -582,6 +582,7 @@ def load_child_attendance(center_id, round_id, attendance_date, education_progra
                             registration_id=OuterRef('pk'),
                             education_program=education_program,
                             class_section=class_section,
+                            registration_date__lte=attendance_date,
                         )
                     )
                 )
@@ -625,6 +626,7 @@ def load_child_attendance(center_id, round_id, attendance_date, education_progra
                             registration_id=OuterRef('pk'),
                             education_program=education_program,
                             class_section=class_section,
+                            registration_date__lte=attendance_date,
                         )
                     )
                 )
