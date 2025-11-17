@@ -451,7 +451,7 @@ class BridgingForm(CommonForm):
         # ('level_six', _('Level six'))
     )
 
-    YEARS_Bridging = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 14, Person.CURRENT_YEAR - 5)))
+    YEARS_Bridging = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 20, Person.CURRENT_YEAR - 5)))
     YEARS_Bridging.insert(0, ('', '---------'))
     language = forms.ChoiceField(
         label=_("The language supported in the program"),
