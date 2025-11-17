@@ -69,7 +69,7 @@ from .tables import (
 from student_registration.backends.models import ExportHistory
 
 from .filters import (
-    SchoolFilter
+    SchoolFullFilter, SchoolPartnerFilter
 )
 from .forms import ProfileForm,SchoolForm, ClubForm, MeetingForm, CommunityInitiativeForm , HealthVisitForm,  \
     PartnerForm, EvaluationForm,Classroom_Form, Classroom_Form_c1, Classroom_Form_c3,\
@@ -547,7 +547,7 @@ class SchoolListView(LoginRequiredMixin,
         order_by='id'
     )
     group_required = [u"CLM_Bridging"]
-    filterset_class = SchoolFilter
+    filterset_class = SchoolPartnerFilter
 
     def get_queryset(self):
 
@@ -595,6 +595,12 @@ class SchoolListView(LoginRequiredMixin,
             return SchoolTable
 
         return self.table_class
+
+    def get_filterset_class(self):
+        if has_group(self.request.user, 'CLM_BRIDGING_ALL'):
+            return SchoolFullFilter
+        else:
+            return self.filterset_class
 
 
 class SchoolAddView(LoginRequiredMixin,

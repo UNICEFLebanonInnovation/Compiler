@@ -47,7 +47,7 @@ from .filters import (
     CBECEFilter,
     GeneralQuestionnaireFilter,
     OutreachFilter,
-    BridgingFilter
+    BridgingFullFilter
 )
 from .tables import (
     BLNTable,
@@ -3505,7 +3505,7 @@ class BridgingListView(LoginRequiredMixin,
     template_name = 'clm/bridging_list.html'
     group_required = [u"CLM_Bridging"]
 
-    filterset_class = BridgingFilter
+    filterset_class = BridgingFullFilter
 
     def get_queryset(self):
         qs = Bridging.objects.filter(round__current_year=True, deleted=False)

@@ -41,7 +41,7 @@ from student_registration.outreach.models import Child, OutreachChild
 from student_registration.outreach.serializers import ChildSerializer
 from student_registration.locations.models import Location
 from .filters import (
-    BridgingFilter
+    BridgingFullFilter, BridgingPartnerFilter
 )
 from .tables import (
     BridgingTable
@@ -155,7 +155,7 @@ class BridgingListView(LoginRequiredMixin,
     template_name = 'clm/bridging_list.html'
     group_required = [u"CLM_Bridging"]
 
-    filterset_class = BridgingFilter
+    filterset_class = BridgingPartnerFilter
 
     def get_queryset(self):
         qs = (
@@ -189,6 +189,12 @@ class BridgingListView(LoginRequiredMixin,
                 qs = qs.none()
 
         return qs
+
+    def get_filterset_class(self):
+        if has_group(self.request.user, 'CLM_BRIDGING_ALL'):
+            return BridgingFullFilter
+        else:
+            return self.filterset_class
 
 
 class BridgingAddView(LoginRequiredMixin,

@@ -11,7 +11,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, ButtonHolder, Submit, HTML
 from django import forms
 from student_registration.locations.models import Location
-from student_registration.schools.models import CLMRound, School, Section, ClassRoom
+from student_registration.schools.models import CLMRound, School, Section, ClassRoom, PartnerOrganization
 from student_registration.students.models import Nationality
 from .models import (
     BLN,
@@ -198,7 +198,54 @@ class PlaceholderFilterSet(FilterSet):
                 field.widget.attrs.setdefault('placeholder', label)
 
 
-class BridgingFilter(PlaceholderFilterSet):
+class BridgingFullFilter(PlaceholderFilterSet):
+
+    round = ModelChoiceFilter(queryset=CLMRound.objects.filter(current_year=True).all(), empty_label=_('Round'))
+    governorate = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=True), empty_label=_('Governorate'))
+    district = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=False), empty_label=_('District'))
+    partner = ModelChoiceFilter(queryset=PartnerOrganization.objects.filter(is_dirasa=True).order_by('name'),
+                                empty_label=_('Partner'))
+    student__nationality = ModelChoiceFilter(queryset=Nationality.objects.exclude(id=9), empty_label=_('Nationality'))
+    disability = ModelChoiceFilter(queryset=Disability.objects.filter(active=True), empty_label=_('Disability'))
+    learning_result = ChoiceFilter(choices=Bridging.LEARNING_RESULT, empty_label='Learning Result')
+
+    student__first_name = CharFilter(lookup_expr='icontains')
+    student__father_name = CharFilter(lookup_expr='icontains')
+    student__last_name = CharFilter(lookup_expr='icontains')
+    student__mother_fullname = CharFilter(lookup_expr='icontains')
+    student__id_number = CharFilter(lookup_expr='icontains')
+    student__number = CharFilter(lookup_expr='icontains')
+    student__unicef_id = CharFilter(lookup_expr='icontains')
+    internal_number = CharFilter(lookup_expr='icontains')
+    phone_number = CharFilter(lookup_expr='icontains')
+    second_phone_number = CharFilter(lookup_expr='icontains')
+    owner__username = CharFilter(lookup_expr='icontains')
+
+    class Meta:
+        model = Bridging
+        fields = [
+            'round',
+            'governorate',
+            'district',
+            'partner',
+            'student__first_name',
+            'student__father_name',
+            'student__last_name',
+            'student__mother_fullname',
+            'student__id_number',
+            'student__number',
+            'student__unicef_id',
+            'internal_number',
+            'student__nationality',
+            'disability',
+            'phone_number',
+            'second_phone_number',
+            'learning_result',
+            'owner__username'
+        ]
+
+
+class BridgingPartnerFilter(PlaceholderFilterSet):
 
     round = ModelChoiceFilter(queryset=CLMRound.objects.filter(current_year=True).all(), empty_label=_('Round'))
     governorate = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=True), empty_label=_('Governorate'))

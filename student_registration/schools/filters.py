@@ -2,7 +2,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from django_filters import FilterSet, ChoiceFilter, ModelChoiceFilter
 from student_registration.locations.models import Location
-from student_registration.schools.models import CLMRound, School, Section, ClassRoom
+from student_registration.schools.models import CLMRound, School, Section, ClassRoom, PartnerOrganization
 from model_utils import Choices
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, ButtonHolder, Submit, HTML
@@ -38,7 +38,42 @@ class PlaceholderFilterSet(FilterSet):
                 field.widget.attrs.setdefault('placeholder', label)
 
 
-class SchoolFilter(PlaceholderFilterSet):
+class SchoolFullFilter(PlaceholderFilterSet):
+    TRUE_FALSE = Choices(
+        ('True', _("Yes")),
+        ('False', _("No")),
+    )
+
+    governorate = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=True), empty_label=_('Governorate'))
+    district = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=False), empty_label=_('District'))
+    partner = ModelChoiceFilter(
+        queryset=PartnerOrganization.objects.filter(is_dirasa=True).order_by('name'),
+        empty_label=_('Partner'),
+        field_name='partner_schools',
+    )
+    is_closed = ChoiceFilter(
+        choices=TRUE_FALSE,
+        empty_label=_('School is closed'),
+        label=_('Is Closed'),
+        method='filter_is_closed'
+    )
+
+    class Meta:
+        model = School
+        fields = {
+            'number': ['exact'],
+            'name': ['contains'],
+        }
+
+    def filter_is_closed(self, queryset, name, value):
+        if value == 'True':
+            return queryset.filter(is_closed=True)
+        elif value == 'False':
+            return queryset.filter(is_closed=False)
+        return queryset
+
+
+class SchoolPartnerFilter(PlaceholderFilterSet):
     TRUE_FALSE = Choices(
         ('True', _("Yes")),
         ('False', _("No")),
