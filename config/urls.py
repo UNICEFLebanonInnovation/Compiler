@@ -49,6 +49,8 @@ from student_registration.clm.inclusion_views import (
 from student_registration.locations.views import (
     LocationViewSet,
     LocationAutocomplete,
+    CazaAutocomplete,
+    CadasterAutocomplete,
     ProgramStaffViewSet
 )
 
@@ -89,6 +91,8 @@ urlpatterns = [
     re_path(r'^student-autocomplete/$', StudentAutocomplete.as_view(), name='student_autocomplete'),
     re_path(r'^school-autocomplete/$', SchoolAutocomplete.as_view(), name='school_autocomplete'),
     re_path(r'^location-autocomplete/$', LocationAutocomplete.as_view(), name='location_autocomplete'),
+    re_path(r'^caza-autocomplete/$', CazaAutocomplete.as_view(), name='caza_autocomplete'),
+    re_path(r'^cadaster-autocomplete/$', CadasterAutocomplete.as_view(), name='cadaster_autocomplete'),
 
     # Django Admin, use {% url 'admin:index' %}
     re_path(settings.ADMIN_URL, admin.site.urls),

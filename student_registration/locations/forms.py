@@ -51,6 +51,28 @@ class CenterAdminForm(forms.ModelForm):
         required=True,
         to_field_name='id',
     )
+    caza = forms.ModelChoiceField(
+        queryset=Location.objects.filter(parent__isnull=False, type=2),
+        widget=autocomplete.ModelSelect2(
+            url='caza_autocomplete',
+            forward=('governorate',),
+            attrs={'data-placeholder': '-------'}
+        ),
+        label=_('Caza'),
+        required=False,
+        to_field_name='id',
+    )
+    cadaster = forms.ModelChoiceField(
+        queryset=Location.objects.filter(parent__isnull=False, type=3),
+        widget=autocomplete.ModelSelect2(
+            url='cadaster_autocomplete',
+            forward=('caza',),
+            attrs={'data-placeholder': '-------'}
+        ),
+        label=_('Cadaster'),
+        required=False,
+        to_field_name='id',
+    )
     type = forms.ChoiceField(
         label=_('Type'),
         widget=forms.Select, required=True,
@@ -91,6 +113,8 @@ class CenterAdminForm(forms.ModelForm):
             'name',
             'partner',
             'governorate',
+            'caza',
+            'cadaster',
             'type',
             'is_tarl',
             'provided_packages',

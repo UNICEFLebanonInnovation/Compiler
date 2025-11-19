@@ -89,6 +89,34 @@ class LocationAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
 
+class CazaAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Location.objects.none()
+
+        qs = Location.objects.filter(type=2)
+        governorate = self.forwarded.get('governorate')
+        if governorate:
+            qs = qs.filter(parent_id=governorate)
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+        return qs
+
+
+class CadasterAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Location.objects.none()
+
+        qs = Location.objects.filter(type=3)
+        caza = self.forwarded.get('caza')
+        if caza:
+            qs = qs.filter(parent_id=caza)
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+        return qs
+
+
 class ProfileView(LoginRequiredMixin,
                   TemplateView):
     template_name = 'location/center_profile.html'

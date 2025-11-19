@@ -88,6 +88,8 @@ class CenterAdmin(ImportExportModelAdmin):
     list_filter = (
         'name',
         'governorate',
+        'caza',
+        'cadaster',
         'type',
         'partner',
         'is_tarl',
