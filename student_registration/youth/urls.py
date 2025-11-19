@@ -2,6 +2,8 @@ from __future__ import absolute_import, unicode_literals
 
 from django.urls import re_path
 
+from student_registration.locations.urls import location_dropdown_urlpatterns
+
 from . import views, program_view, services_view
 
 app_name = 'youth'
@@ -124,17 +126,6 @@ urlpatterns = [
         name='child_profile_preview'
     ),
     re_path(
-        r'^load-districts/$',
-        views.load_districts,
-        name='load_districts'
-    ),
-    re_path(
-        r'^load-cadasters/$',
-        views.load_cadasters,
-        name='load_cadasters'
-    ),
-
-    re_path(
         r'^load-program-document/$',
         views.load_program_document,
         name='load_program_document'
@@ -165,4 +156,4 @@ urlpatterns = [
         name='program_document_indicators_save'
     ),
 
-]
+] + location_dropdown_urlpatterns

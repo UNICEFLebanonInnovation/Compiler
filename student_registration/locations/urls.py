@@ -6,6 +6,25 @@ from . import views
 
 app_name = 'locations'
 
+location_dropdown_urlpatterns = [
+    re_path(
+        r'^load-districts/$',
+        view=views.load_districts,
+        name='load_districts'
+    ),
+    re_path(
+        r'^load-cadasters/$',
+        view=views.load_cadasters,
+        name='load_cadasters'
+    ),
+    re_path(
+        r'^load-schools/$',
+        view=views.load_schools,
+        name='load_schools'
+    ),
+]
+
+
 urlpatterns = [
     re_path(
         r'^center-add/$',
@@ -52,4 +71,4 @@ urlpatterns = [
         view=views.program_staff_delete,
         name='program_staff_delete'
     ),
-]
+] + location_dropdown_urlpatterns

@@ -451,19 +451,77 @@ class LocationViewSet(mixins.RetrieveModelMixin,
             return self.queryset
 
 
+def _get_first_param(request, *keys):
+    for key in keys:
+        value = request.GET.get(key)
+        if value:
+            return value
+    return None
+
+
+def _get_template(request, default_template, youth_template=None):
+    template_override = request.GET.get('template')
+    if template_override:
+        return template_override
+
+    namespace = getattr(getattr(request, 'resolver_match', None), 'namespace', '')
+    if namespace == 'youth' and youth_template:
+        return youth_template
+    return default_template
+
+
 def load_districts(request):
-    id_governorate = request.GET.get('id_governorate')
-    cities = Location.objects.filter(parent_id=id_governorate).order_by('name')
-    return render(request, 'clm/city_dropdown_list_options.html', {'cities': cities})
+    id_governorate = _get_first_param(
+        request,
+        'id_governorate',
+        'id_adolescent_governorate',
+    )
+
+    if id_governorate:
+        cities = Location.objects.filter(parent_id=id_governorate).order_by('name')
+    else:
+        cities = Location.objects.none()
+
+    template = _get_template(
+        request,
+        'location/city_dropdown_list_options.html'
+    )
+    return render(request, template, {'cities': cities})
 
 
 def load_cadasters(request):
-    id_district = request.GET.get('id_district')
-    cities = Location.objects.filter(parent_id=id_district).order_by('name')
-    return render(request, 'clm/cadaster_dropdown_list_options.html', {'cities': cities})
+    id_district = _get_first_param(
+        request,
+        'id_district',
+        'id_adolescent_district',
+    )
+
+    if id_district:
+        cities = Location.objects.filter(parent_id=id_district).order_by('name')
+    else:
+        cities = Location.objects.none()
+
+    template = _get_template(
+        request,
+        'location/cadaster_dropdown_list_options.html'
+    )
+    return render(request, template, {'cities': cities})
 
 
 def load_schools(request):
-    id_governorate = request.GET.get('id_governorate')
-    schools = School.objects.filter(location_id=id_governorate).order_by('name')
-    return render(request, 'clm/school_dropdown_list_options.html', {'schools': schools})
+    id_governorate = _get_first_param(
+        request,
+        'id_governorate',
+        'id_adolescent_governorate',
+    )
+
+    if id_governorate:
+        schools = School.objects.filter(location_id=id_governorate).order_by('name')
+    else:
+        schools = School.objects.none()
+
+    template = _get_template(
+        request,
+        'location/school_dropdown_list_options.html'
+    )
+    return render(request, template, {'schools': schools})

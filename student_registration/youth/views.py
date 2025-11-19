@@ -59,6 +59,7 @@ from .serializers import (
 from .utils import *
 
 from student_registration.users.templatetags.custom_tags import has_group
+from student_registration.locations import views as location_views
 
 
 class ProfileView(LoginRequiredMixin,
@@ -823,20 +824,8 @@ class PDListView(LoginRequiredMixin,
         return PDPartnerFilter
 
 
-def load_districts(request):
-    cities = []
-    if request.GET.get('id_adolescent_governorate'):
-        id_adolescent_governorate = request.GET.get('id_adolescent_governorate')
-        cities = Location.objects.filter(parent_id=id_adolescent_governorate).order_by('name')
-    return render(request, 'youth/city_dropdown_list_options.html', {'cities': cities})
-
-
-def load_cadasters(request):
-    cities = []
-    if request.GET.get('id_adolescent_district'):
-        id_adolescent_district = request.GET.get('id_adolescent_district')
-        cities = Location.objects.filter(parent_id=id_adolescent_district).order_by('name')
-    return render(request, 'youth/cadaster_dropdown_list_options.html', {'cities': cities})
+load_districts = location_views.load_districts
+load_cadasters = location_views.load_cadasters
 
 
 def load_program_document(request):

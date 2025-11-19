@@ -2,6 +2,8 @@ from __future__ import absolute_import, unicode_literals
 
 from django.urls import re_path
 
+from student_registration.locations.urls import location_dropdown_urlpatterns
+
 from . import views
 
 app_name = 'schools'
@@ -179,23 +181,8 @@ urlpatterns = [
         name='health_visit_delete'
     ),
     re_path(
-        'load-districts/$',
-        views.load_districts,
-        name='load_districts'
-    ),
-    re_path(
-        'load-cadasters/$',
-        views.load_cadasters,
-        name='load_cadasters'
-    ),
-    re_path(
-        'load-schools/$',
-        views.load_schools,
-        name='load_schools'
-    ),
-    re_path(
         r'^school-export-background/$',
         view=views.export_school_background,
         name='school_export_background'
     ),
-]
+] + location_dropdown_urlpatterns

@@ -40,6 +40,7 @@ from django_tables2.export.views import ExportMixin
 from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
 from student_registration.locations.models import Location
+from student_registration.locations import views as location_views
 from .filters import (
     BLNFilter,
     ABLNFilter,
@@ -3139,28 +3140,9 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
         return rs_build_xls_extraction(self.get_queryset_students(), self.get_queryset_fc())
 
 
-def load_districts(request):
-    cities = []
-    if request.GET.get('id_governorate'):
-        id_governorate = request.GET.get('id_governorate')
-        cities = Location.objects.filter(parent_id=id_governorate).order_by('name')
-    return render(request, 'clm/city_dropdown_list_options.html', {'cities': cities})
-
-
-def load_cadasters(request):
-    cities = []
-    if request.GET.get('id_district'):
-        id_district = request.GET.get('id_district')
-        cities = Location.objects.filter(parent_id=id_district).order_by('name')
-    return render(request, 'clm/cadaster_dropdown_list_options.html', {'cities': cities})
-
-
-def load_schools(request):
-    schools = []
-    if request.GET.get('id_governorate'):
-        id_governorate = request.GET.get('id_governorate')
-        schools = School.objects.filter(location_id=id_governorate).order_by('name')
-    return render(request, 'clm/school_dropdown_list_options.html', {'schools': schools})
+load_districts = location_views.load_districts
+load_cadasters = location_views.load_cadasters
+load_schools = location_views.load_schools
 
 
 
