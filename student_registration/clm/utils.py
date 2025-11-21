@@ -27,8 +27,6 @@ from student_registration.schools.models import (
 )
 
 
-
-
 def is_allowed_create(programme):
     from student_registration.schools.models import CLMRound
     try:
@@ -79,8 +77,6 @@ def is_allowed_create(programme):
             if current_round.start_date_bridging < current < current_round.end_date_bridging:
                 return True
             return False
-
-
     except Exception as ex:
         return False
 
