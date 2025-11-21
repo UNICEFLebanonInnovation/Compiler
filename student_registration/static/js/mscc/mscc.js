@@ -437,8 +437,10 @@ function child_duplication_check() {
 
         var path = window.location.pathname;
         var match = path.match(/Child-Edit\/([^\/]+)\//);
+        var registration_id = null;
         if (match) {
-            data.registration_id = match[1];
+            registration_id = match[1];
+            data.registration_id = registration_id;
         }
 
         var requestHeaders = getHeader();
@@ -453,10 +455,18 @@ function child_duplication_check() {
             headers: requestHeaders,
             dataType: 'json',
             success: function (response) {
-                if(response.result.length > 0){
+                var duplicateResults = response.result;
+
+                if (registration_id) {
+                    duplicateResults = $.grep(duplicateResults, function(item) {
+                        return String(item.id) !== String(registration_id);
+                    });
+                }
+
+                if(duplicateResults.length > 0){
                     var text = ''
-                    $(response.result).each(function(i, item){
-                        text = 'This <a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="/mscc/child-profile-preview/?registry_id='+item.id+'">Child</a> is already registered under the MSCC progarmme in the Center: ' + item.center__name+'</br>';
+                    $(duplicateResults).each(function(i, item){
+                        text = 'This <a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="/mscc/child-profile-preview/?registry_id='+item.id+'">Child</a> is already registered under the MSCC progarmme in the Center:' + item.center__name+'</br>';
                         text = text + 'Click <a href="/mscc/new-round/'+item.id+'/">here</a> to register this child in a new Round.'
                     })
                     $('#child-duplication-error-text').html(text);
@@ -464,6 +474,7 @@ function child_duplication_check() {
                     $('#submit-id-save').prop('disabled', true);
                 }
             },
+
             error: function (response) {
                 console.log(response);
             }
@@ -552,6 +563,10 @@ function fill_old_child_data(data)
     });
     $('#nfe_search_loader').addClass('hidden');
 }
+
+
+
+
 
 
 function isAddPage()
