@@ -153,7 +153,14 @@ IMPORT_EXPORT_SKIP_ADMIN_LOG = False
 
 # EMAIL CONFIGURATION
 # ------------------------------------------------------------------------------
-EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
+# Use the console email backend by default so password reset and similar views
+# do not attempt to open a real SMTP connection in environments without mail
+# infrastructure. Production deployments can override this via
+# DJANGO_EMAIL_BACKEND.
+EMAIL_BACKEND = env(
+    'DJANGO_EMAIL_BACKEND',
+    default='django.core.mail.backends.console.EmailBackend'
+)
 
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
