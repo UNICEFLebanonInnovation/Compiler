@@ -12,6 +12,14 @@ def test_validate_date_strip_ok():
     assert validate_date('2025-02-11 ').isoformat() == '2025-02-11'
 
 
+def test_validate_date_iso_datetime_ok():
+    assert validate_date('2024-12-24T00:00:00Z').isoformat() == '2024-12-24'
+
+
+def test_validate_date_slash_ok():
+    assert validate_date('05/01/2024').isoformat() == '2024-05-01'
+
+
 def test_validate_date_error():
     with pytest.raises(ValidationError):
         validate_date('invalid')

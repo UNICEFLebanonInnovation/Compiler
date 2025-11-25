@@ -838,17 +838,36 @@ def validate_date(date_str):
     if isinstance(date_str, date):
         return date_str
 
+    # Handle datetime values without forcing callers to cast manually
+    if isinstance(date_str, datetime):
+        return date_str.date()
+
     # Trim white spaces from the provided value
     if hasattr(date_str, 'strip'):
         date_str = date_str.strip()
 
-    # Supported date format
-    formats = ['%Y-%m-%d']
-    for fmt in formats:
+    # Try ISO parsing first to support values such as ``2024-01-03T00:00:00Z``
+    iso_candidates = {str(date_str), str(date_str).rstrip('Zz')}
+    for candidate in iso_candidates:
         try:
-            return datetime.strptime(date_str, fmt).date()
+            return datetime.fromisoformat(candidate).date()
         except ValueError:
             continue
+
+    # Supported date format
+    formats = ['%Y-%m-%d', '%d/%m/%Y', '%m/%d/%Y']
+    candidates = [
+        str(date_str),
+        str(date_str).split('T')[0],
+        str(date_str).split(' ')[0],
+    ]
+
+    for candidate in candidates:
+        for fmt in formats:
+            try:
+                return datetime.strptime(candidate, fmt).date()
+            except ValueError:
+                continue
 
     raise ValidationError("Date is not valid. Please use the format YYYY-MM-DD.")
 
