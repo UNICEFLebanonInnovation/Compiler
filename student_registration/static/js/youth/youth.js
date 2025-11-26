@@ -365,8 +365,10 @@ function adolescent_duplication_check() {
 
         var path = window.location.pathname;
         var match = path.match(/Child-Edit\/([^\/]+)\//);
+        var registrationId = null;
         if (match) {
-            data.registration_id = match[1];
+            registrationId = match[1];
+            data.registration_id = registrationId;
         }
 
         var requestHeaders = getHeader();
@@ -381,10 +383,33 @@ function adolescent_duplication_check() {
             headers: requestHeaders,
             dataType: 'json',
             success: function (response) {
-                if (response.has_duplicate) {
-                    const partnerName = response.partner_name || 'another partner';
-                    $('#child-duplication-error-text')
-                      .html(`Another adolescent already has this UNICEF ID with partner <b>${partnerName}</b>.`);
+                var duplicateResults = response.result || [];
+
+                if (registrationId) {
+                    duplicateResults = $.grep(duplicateResults, function(item) {
+                        return String(item.id) !== String(registrationId);
+                    });
+                }
+
+                if (duplicateResults.length > 0) {
+                    var text = '';
+
+                    $(duplicateResults).each(function(i, item) {
+                        text += 'This <a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="/youth/child-profile-preview/?registry_id=' +
+                            item.id + '">adolescent</a> already has this UNICEF ID';
+
+                        if (item.partner__name) {
+                            text += ' with the Partner: ' + item.partner__name;
+                        }
+
+                        text += '.';
+
+                        if (i !== duplicateResults.length - 1) {
+                            text += '<br />';
+                        }
+                    });
+
+                    $('#child-duplication-error-text').html(text);
                     $('#child-duplication-error').show();
                     $('#submit-id-save').prop('disabled', true);
                 }

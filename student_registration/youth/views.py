@@ -451,15 +451,10 @@ def child_duplication_check(request):
             if registration_id:
                 qs = qs.exclude(pk=registration_id)
 
-            latest = qs.order_by('-id').values('id', 'partner__name').first()
-            if latest:
-                return JsonResponse({
-                    'has_duplicate': True,
-                    'partner_name': latest['partner__name'],
-                    'registration_id': latest['id'],
-                })
+            qs = qs.values('id', 'partner__name')
+            return JsonResponse({'result': list(qs)})
 
-        return JsonResponse({'has_duplicate': False})
+    return JsonResponse({'result': []})
 
 
 def quick_search(request):
