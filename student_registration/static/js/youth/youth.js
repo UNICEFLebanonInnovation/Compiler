@@ -335,10 +335,13 @@ function old_child_search() {
     }
 }
 
+var adolescentHasDuplicate = false;
+
 function adolescent_duplication_check() {
 
     $('#child-duplication-error').hide();
     $('#submit-id-save').prop('disabled', false);
+    adolescentHasDuplicate = false;
 
     var birthday_year = $('#id_adolescent_birthday_year').val();
     var birthday_month = $('#id_adolescent_birthday_month').val();
@@ -364,7 +367,7 @@ function adolescent_duplication_check() {
         };
 
         var path = window.location.pathname;
-        var match = path.match(/Child-Edit\/([^\/]+)\//);
+        var match = path.match(/child-edit\/([^\/]+)\//i);
         if (match) {
             data.registration_id = match[1];
         }
@@ -382,9 +385,19 @@ function adolescent_duplication_check() {
             dataType: 'json',
             success: function (response) {
                 if (response.has_duplicate) {
+                    adolescentHasDuplicate = true;
                     const partnerName = response.partner_name || 'another partner';
-                    $('#child-duplication-error-text')
-                      .html(`Another adolescent already has this UNICEF ID with partner <b>${partnerName}</b>.`);
+                    const registrationId = response.registration_id;
+
+                    var duplicationText = '';
+                    if (registrationId) {
+                        duplicationText = 'This <a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" ' +
+                            'href="/youth/child-profile-preview/?registry_id=' + registrationId + '">Child</a> is already registered under the Youth programme with the partner: <b>' + partnerName + '</b>.';
+                    } else {
+                        duplicationText = 'Another adolescent already has this UNICEF ID with partner <b>' + partnerName + '</b>.';
+                    }
+
+                    $('#child-duplication-error-text').html(duplicationText);
                     $('#child-duplication-error').show();
                     $('#submit-id-save').prop('disabled', true);
                 }
@@ -395,6 +408,12 @@ function adolescent_duplication_check() {
         });
     }
 }
+
+$(document).on('submit', 'form', function(event) {
+    if (adolescentHasDuplicate) {
+        event.preventDefault();
+    }
+});
 
 function append_old_result(data)
 {
