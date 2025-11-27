@@ -377,7 +377,7 @@ function adolescent_duplication_check() {
 
         $.ajax({
             type: "POST",
-            url: '/youth/Child-Duplication-Check/',
+            url: '/youth/child-duplication-check/',
             data: JSON.stringify(data),
             cache: false,
             async: true,
