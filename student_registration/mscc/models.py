@@ -1656,6 +1656,57 @@ class EducationProgrammeAssessment(TimeStampedModel):
         verbose_name_plural = "Education Programme Assessments"
 
 
+class TarlAssessment(TimeStampedModel):
+    ARABIC_LEVELS = Choices(
+        ('Beginner', _('Beginner')),
+        ('Letter', _('Letter')),
+        ('Word', _('Word')),
+        ('Paragraph', _('Paragraph')),
+        ('Story', _('Story')),
+        ('Comprehension', _('Comprehension')),
+    )
+
+    FRENCH_LEVELS = Choices(
+        ('Beginner', _('Beginner')),
+        ('Letter', _('Letter')),
+        ('Word', _('Word')),
+        ('Paragraph', _('Paragraph')),
+        ('Story', _('Story')),
+        ('Comprehension', _('Comprehension')),
+    )
+
+    MATH_LEVELS = Choices(
+        ('Beginner', _('Beginner')),
+        ('1-digit', _('1-digit')),
+        ('2-digits', _('2-digits')),
+        ('Subtraction', _('Subtraction')),
+        ('Division', _('Division')),
+        ('Word Problem', _('Word Problem')),
+    )
+
+    registration = models.ForeignKey(
+        Registration,
+        blank=False,
+        null=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+    )
+    pre_test = JSONField(default=dict)
+    post_test = JSONField(default=dict)
+    mid_test = JSONField(default=dict)
+    programme_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Education Programme Type')
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "TARL Assessment"
+        verbose_name_plural = "TARL Assessments"
+
+
 class YouthKitService(TimeStampedModel):
 
     VOLUNTEERING = Choices(
