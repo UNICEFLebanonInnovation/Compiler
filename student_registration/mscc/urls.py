@@ -314,6 +314,16 @@ urlpatterns = [
         name='service_education_grading_edit'
     ),
     re_path(
+        r'^services/tarl-grading-add/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/(?P<pre_post>pre|post|mid)/$',
+        view=education_view.TarlGradingFormView.as_view(),
+        name='service_tarl_grading_add'
+    ),
+    re_path(
+        r'^services/tarl-grading-edit/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/(?P<pre_post>pre|post|mid)/(?P<pk>[\w.@+-]+)/$',
+        view=education_view.TarlGradingFormView.as_view(),
+        name='service_tarl_grading_edit'
+    ),
+    re_path(
         r'^services/youth-scoring-add/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/$',
         view=education_view.YouthScoringFormView.as_view(),
         name='service_youth_scoring_add'
