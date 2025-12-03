@@ -25,6 +25,7 @@ from .models import (
     ServiceProgramOption,
     EducationRSService,
     EducationProgrammeAssessment,
+    TarlAssessment,
     YES_NO,
     Round
 )
@@ -1565,6 +1566,126 @@ class EducationGradingForm(forms.ModelForm):
 
     class Meta:
         model = EducationProgrammeAssessment
+        fields = (
+            'programme_type',
+        )
+
+
+class TarlGradingForm(forms.ModelForm):
+    programme_type = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    arabic_assessment_number = forms.IntegerField(
+        label=_('Arabic Assessment Number'),
+        widget=forms.NumberInput(attrs={'maxlength': 4}),
+        required=True,
+    )
+    arabic_level_reached = forms.ChoiceField(
+        label=_('Arabic Level Reached / المستوى الذي وصل إليه المتعلم/ة'),
+        widget=forms.Select,
+        choices=TarlAssessment.ARABIC_LEVELS,
+        required=True,
+    )
+    french_assessment_number = forms.IntegerField(
+        label=_('French Assessment Number'),
+        widget=forms.NumberInput(attrs={'maxlength': 4}),
+        required=True,
+    )
+    french_level_reached = forms.ChoiceField(
+        label=_('French Level Reached / المستوى الذي وصل إليه المتعلم/ة'),
+        widget=forms.Select,
+        choices=TarlAssessment.FRENCH_LEVELS,
+        required=True,
+    )
+    math_assessment_number = forms.IntegerField(
+        label=_('Math Assessment Number'),
+        widget=forms.NumberInput(attrs={'maxlength': 4}),
+        required=True,
+    )
+    math_level_reached = forms.ChoiceField(
+        label=_('Math Level Reached / المستوى الذي وصل إليه المتعلم/ة'),
+        widget=forms.Select,
+        choices=TarlAssessment.MATH_LEVELS,
+        required=True,
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        registry = kwargs.pop('registry', None)
+        programme_type = kwargs.pop('programme_type', None)
+        pre_post = kwargs.pop('pre_post', 'pre')
+        instance = kwargs.pop('instance', None)
+
+        super(TarlGradingForm, self).__init__(*args, **kwargs)
+
+        form_action = reverse('mscc:service_tarl_grading_add',
+                              kwargs={'registry': registry, 'programme_type': programme_type, 'pre_post': pre_post})
+        if instance:
+            form_action = reverse('mscc:service_tarl_grading_edit',
+                                  kwargs={'registry': registry, 'programme_type': programme_type, 'pre_post': pre_post,
+                                          'pk': instance})
+
+        if programme_type:
+            self.fields['programme_type'].initial = programme_type
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    HTML('<span class="badge-form badge-pill">1</span>'),
+                    Div('arabic_assessment_number', css_class='col-md-5'),
+                    HTML('<span class="badge-form badge-pill">2</span>'),
+                    Div('arabic_level_reached', css_class='col-md-5'),
+                    css_class='row card-body '
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">1</span>'),
+                    Div('french_assessment_number', css_class='col-md-5'),
+                    HTML('<span class="badge-form badge-pill">2</span>'),
+                    Div('french_level_reached', css_class='col-md-5'),
+                    css_class='row card-body '
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">1</span>'),
+                    Div('math_assessment_number', css_class='col-md-5'),
+                    HTML('<span class="badge-form badge-pill">2</span>'),
+                    Div('math_level_reached', css_class='col-md-5'),
+                    css_class='row card-body '
+                ),  
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                ),
+                css_id='step-1'
+            )
+        )
+
+    def save(self, request=None, instance=None, registry=None, programme_type=None, pre_post=None):
+        if not instance:
+            instance = TarlAssessment.objects.create(registration_id=registry)
+            instance.pre_test = request.POST
+        else:
+            instance = TarlAssessment.objects.get(id=instance)
+            if pre_post == "pre":
+                instance.pre_test = request.POST
+            if pre_post == "mid":
+                instance.mid_test = request.POST
+            if pre_post == "post":
+                instance.post_test = request.POST
+
+        instance.programme_type = programme_type
+        instance.save()
+
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+        return instance
+
+
+    class Meta:
+        model = TarlAssessment
         fields = (
             'programme_type',
         )
