@@ -5,13 +5,12 @@ from django.views.generic import ListView, FormView, TemplateView, UpdateView, V
 from django.contrib.auth.mixins import LoginRequiredMixin
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 from django.urls import reverse
-from django.http import Http404
 
 from dal import autocomplete
 from student_registration.schools.models import School
 
 from .education_form import *
-from .models import Registration, TarlAssessment
+from .models import Registration
 from .utils import *
 
 
@@ -241,71 +240,6 @@ class EducationGradingFormView(LoginRequiredMixin,
         form.save(request=self.request, registry=registry,  programme_type=programme_type, pre_post=pre_post,
                   instance=instance)
         return super(EducationGradingFormView, self).form_valid(form)
-
-
-class TarlGradingFormView(LoginRequiredMixin,
-                          GroupRequiredMixin,
-                          FormView):
-    template_name = 'mscc/service_tarl_grading_form.html'
-    form_class = TarlGradingForm
-    success_url = ''
-    group_required = [u"MSCC", u"MSCC_CENTER"]
-
-    def dispatch(self, request, *args, **kwargs):
-        programme_type = self.kwargs.get('programme_type')
-        allowed_programmes = ["BLN Level 1", "BLN Level 2", "BLN Level 3"]
-        center = getattr(getattr(request, 'user', None), 'center', None)
-        is_tarl_center = getattr(center, 'is_tarl', None) == "Yes"
-        pre_post = self.kwargs.get('pre_post', 'pre')
-
-        allowed_periods = ["pre", "mid", "post"]
-
-        if (programme_type not in allowed_programmes or
-                not is_tarl_center or
-                pre_post not in allowed_periods):
-            raise Http404("TARL grading is not available for this request.")
-
-        return super(TarlGradingFormView, self).dispatch(request, *args, **kwargs)
-
-    def get_success_url(self):
-        return reverse('mscc:child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
-
-    def get_context_data(self, **kwargs):
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        kwargs['registry'] = self.kwargs['registry']
-        kwargs['programme_type'] = self.kwargs['programme_type']
-        kwargs['pre_post'] = self.kwargs.get('pre_post', 'pre')
-        return super(TarlGradingFormView, self).get_context_data(**kwargs)
-
-    def get_form(self, form_class=None):
-        registry = self.kwargs['registry']
-        programme_type = self.kwargs['programme_type']
-        pre_post = self.kwargs.get('pre_post', 'pre')
-        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
-
-        if self.request.method == "POST":
-            return TarlGradingForm(self.request.POST, instance=instance, registry=registry,
-                                   programme_type=programme_type, pre_post=pre_post, request=self.request)
-        else:
-            if instance:
-                assessment = TarlAssessment.objects.get(id=instance)
-                stage_data = getattr(assessment, f"{pre_post}_test", {}) or {}
-                stage_data['programme_type'] = assessment.programme_type
-                return TarlGradingForm(stage_data, registry=registry, programme_type=programme_type,
-                                       pre_post=pre_post,
-                                       instance=instance, request=self.request)
-            return TarlGradingForm(registry=registry, programme_type=programme_type, instance=instance,
-                                   pre_post=pre_post, request=self.request)
-
-    def form_valid(self, form):
-        registry = self.kwargs['registry']
-        programme_type = self.kwargs['programme_type']
-        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
-        pre_post = self.kwargs.get('pre_post', 'pre')
-        form.save(request=self.request, registry=registry, programme_type=programme_type,
-                  instance=instance, pre_post=pre_post)
-        return super(TarlGradingFormView, self).form_valid(form)
 
 
 class YouthScoringFormView(LoginRequiredMixin,
