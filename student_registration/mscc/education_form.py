@@ -1632,70 +1632,57 @@ class TarlGradingForm(forms.ModelForm):
         self.helper.form_action = form_action
         self.helper.layout = Layout(
             Div(
-                HTML('<h5 class="card-title">Arabic Assessment / تقييم اللغة العربية</h5>'),
-                Div('arabic_assessment_number', css_class='col-md-6'),
-                Div('arabic_level_reached', css_class='col-md-6'),
-                css_class='row card-body'
-            ),
-            Div(
-                HTML('<h5 class="card-title">French Assessment / تقييم اللغة الفرنسية</h5>'),
-                Div('french_assessment_number', css_class='col-md-6'),
-                Div('french_level_reached', css_class='col-md-6'),
-                css_class='row card-body'
-            ),
-            Div(
-                HTML('<h5 class="card-title">Math Assessment / تقييم الرياضيات</h5>'),
-                Div('math_assessment_number', css_class='col-md-6'),
-                Div('math_level_reached', css_class='col-md-6'),
-                css_class='row card-body'
-            ),
-            FormActions(
-                Submit('save', 'Save',
-                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                Reset('reset', 'Reset',
-                      css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-            ),
-            css_id='step-1'
+                Div(
+                    HTML('<span class="badge-form badge-pill">1</span>'),
+                    Div('arabic_assessment_number', css_class='col-md-5'),
+                    HTML('<span class="badge-form badge-pill">2</span>'),
+                    Div('arabic_level_reached', css_class='col-md-5'),
+                    css_class='row card-body '
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">1</span>'),
+                    Div('french_assessment_number', css_class='col-md-5'),
+                    HTML('<span class="badge-form badge-pill">2</span>'),
+                    Div('french_level_reached', css_class='col-md-5'),
+                    css_class='row card-body '
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">1</span>'),
+                    Div('math_assessment_number', css_class='col-md-5'),
+                    HTML('<span class="badge-form badge-pill">2</span>'),
+                    Div('math_level_reached', css_class='col-md-5'),
+                    css_class='row card-body '
+                ),  
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                ),
+                css_id='step-1'
+            )
         )
 
-    def save(self, request=None, instance=None, registry=None, programme_type=None, pre_post='pre'):
-        stage_payload = {
-            'arabic_assessment_number': self.cleaned_data.get('arabic_assessment_number'),
-            'arabic_level_reached': self.cleaned_data.get('arabic_level_reached'),
-            'french_assessment_number': self.cleaned_data.get('french_assessment_number'),
-            'french_level_reached': self.cleaned_data.get('french_level_reached'),
-            'math_assessment_number': self.cleaned_data.get('math_assessment_number'),
-            'math_level_reached': self.cleaned_data.get('math_level_reached'),
-        }
-
-        if instance:
-            instance = TarlAssessment.objects.get(id=instance)
+    def save(self, request=None, instance=None, registry=None, programme_type=None, pre_post=None):
+        if not instance:
+            instance = TarlAssessment.objects.create(registration_id=registry)
+            instance.pre_test = request.POST
         else:
-            instance, _ = TarlAssessment.objects.get_or_create(registration_id=registry)
+            instance = TarlAssessment.objects.get(id=instance)
+            if pre_post == "pre":
+                instance.pre_test = request.POST
+            if pre_post == "mid":
+                instance.mid_test = request.POST
+            if pre_post == "post":
+                instance.post_test = request.POST
 
-        instance.registration_id = registry
         instance.programme_type = programme_type
-        setattr(instance, f"{pre_post}_test", stage_payload)
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
 
         return instance
 
-    def clean(self):
-        cleaned_data = super(TarlGradingForm, self).clean()
-        programme_type = cleaned_data.get('programme_type')
-
-        allowed_programmes = ["BLN Level 1", "BLN Level 2", "BLN Level 3"]
-        if programme_type not in allowed_programmes:
-            raise ValidationError(_('TARL assessments are only allowed for BLN Level 1-3 programmes.'))
-
-        center = getattr(getattr(self.request, 'user', None), 'center', None) if self.request else None
-        is_tarl_center = getattr(center, 'is_tarl', None) == "Yes"
-        if not is_tarl_center:
-            raise ValidationError(_('TARL assessments are only allowed for TARL centers.'))
-
-        return cleaned_data
 
     class Meta:
         model = TarlAssessment
