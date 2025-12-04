@@ -1,7 +1,7 @@
 
 
 def get_default_export_formats():
-    from import_export.admin import base_formats
+    from import_export.formats import base_formats
     """
     Return available export formats.
     """
