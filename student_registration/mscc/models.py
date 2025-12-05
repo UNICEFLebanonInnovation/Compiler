@@ -1120,8 +1120,27 @@ class HealthNutritionReferral(TimeStampedModel):
 
 
 class ServiceProgramOption(models.Model):
+    YES_NO = Choices(
+        ('', '----------'),
+        ('Yes', _("Yes")),
+        ('No', _("No"))
+    )
     service_name = models.CharField(max_length=100)
     program_code = models.CharField(max_length=100)
+    is_education = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Educaion')
+    )
+    is_youth = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Youth')
+    )
 
     class Meta:
         ordering = ['service_name', 'program_code']
