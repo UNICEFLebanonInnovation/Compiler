@@ -69,6 +69,11 @@ urlpatterns = [
         name='health_agent_insights'
     ),
     re_path(
+        r'^ai/education-support/insights/$',
+        view=views.EducationSupportAgentPageView.as_view(),
+        name='education_agent_insights'
+    ),
+    re_path(
         r'^dashboard-custom/$',
         view=views.DashboardCustomView.as_view(),
         name='dashboard_custom'
