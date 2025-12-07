@@ -1,4 +1,4 @@
-"""Utility helpers for the MSCC health support AI agent."""
+"""Utility helpers for the MSCC AI agents."""
 
 from __future__ import annotations
 
@@ -1171,6 +1171,147 @@ class HealthSupportAgent:
             raise AgentAPIError("Unexpected response from OpenAI") from exc
 
 
+class EducationSupportAgent(HealthSupportAgent):
+    """AI agent focused exclusively on MSCC education and learning outcomes."""
+
+    KEYWORD_TOPIC_MAP = {
+        'education': {'education'},
+        'learning': {'education'},
+        'literacy': {'education'},
+        'numeracy': {'education'},
+        'grade': {'education'},
+        'assessment': {'education'},
+        'test': {'education'},
+        'attendance': {'attendance'},
+        'absent': {'attendance'},
+        'presence': {'attendance'},
+        'dropout': {'attendance'},
+        'centre': {'location'},
+        'center': {'location'},
+        'location': {'location'},
+        'governorate': {'location'},
+        'life': {'life_quality'},
+        'quality': {'life_quality'},
+        'condition': {'life_quality'},
+        'poverty': {'life_quality'},
+        'vulnerability': {'life_quality'},
+    }
+
+    def __init__(
+        self,
+        api_key: str | None = None,
+        model: str | None = None,
+        base_url: str | None = None,
+        timeout: int | None = None,
+        max_retries: int | None = None,
+        retry_backoff: float | None = None,
+    ) -> None:
+        education_model = model or getattr(
+            settings,
+            "OPENAI_EDUCATION_AGENT_MODEL",
+            getattr(settings, "OPENAI_HEALTH_AGENT_MODEL", "gpt-4o-mini"),
+        )
+        super().__init__(
+            api_key=api_key,
+            model=education_model,
+            base_url=base_url,
+            timeout=timeout,
+            max_retries=max_retries,
+            retry_backoff=retry_backoff,
+        )
+
+    def _build_prompt(
+        self,
+        children_context: Sequence[dict],
+        question: str | None = None,
+        focus_topics: set[str] | None = None,
+        keywords: Sequence[str] | None = None,
+        programme_overview: dict | None = None,
+    ) -> List[dict]:
+        knowledge_engine = MSCCKnowledgeEngine(children_context)
+        summary = knowledge_engine.render_compiled_summary() or json.dumps(
+            children_context, indent=2, default=str
+        )
+
+        system_message = (
+            "You are an education outcomes analyst supporting the MSCC (Makani) programme."
+        )
+        user_instructions = (
+            "Review only the education, learning, and grading information for the children. "
+            "Highlight learning outcomes, assessment changes, and readiness for progression. "
+            "Explain how attendance patterns, living conditions, and each child's centre location "
+            "affect their education results. Recommend practical education follow-up steps and "
+            "flag data gaps that block a conclusion. Do not provide health or protection guidance; "
+            "stay focused on education outcomes."
+        )
+        formatting = (
+            "Return markdown with the sections 'Priority Learning Follow-up', 'Learning Outcomes', "
+            "and 'Centre Insights'. List registration ids with concise rationales. In 'Centre Insights', "
+            "summarise attendance rates, location-specific patterns, and programme-wide learning "
+            "changes using the aggregated overview data provided."
+        )
+
+        focus_topics = set(focus_topics or [])
+        question_text = (question or "").strip()
+        keywords = [keyword for keyword in (keywords or []) if keyword]
+
+        if question_text:
+            user_instructions = f"{user_instructions}\n\nFocus specifically on: {question_text}"
+        else:
+            user_instructions = (
+                f"{user_instructions}\n\nIf no question is provided, prioritise the strongest "
+                "learning risks inferred from attendance, education assessments, and location trends."
+            )
+
+        if keywords:
+            detected = ", ".join(keywords)
+            user_instructions = (
+                f"{user_instructions}\n\nDetected question keywords: {detected}. Address these themes explicitly."
+            )
+
+        if focus_topics:
+            topics_text = ", ".join(sorted(focus_topics))
+            scope_instruction = (
+                " Limit your response to the requested focus topics "
+                f"({topics_text}) and avoid unrelated domains."
+            )
+            if 'attendance' in focus_topics:
+                scope_instruction += (
+                    " Provide precise attendance rates and explain how they influence learning outcomes."
+                )
+            if 'location' in focus_topics:
+                scope_instruction += (
+                    " Compare centres and locations, noting where children face barriers or succeed."
+                )
+            if {'life_quality', 'vulnerability'} & focus_topics:
+                scope_instruction += (
+                    " Clarify how living conditions or vulnerability signals hinder learning progress."
+                )
+            user_instructions = f"{user_instructions}{scope_instruction}"
+
+        overview_appendix = ""
+        if programme_overview:
+            try:
+                overview_text = json.dumps(programme_overview, indent=2, default=str)
+            except TypeError:
+                overview_text = str(programme_overview)
+            overview_appendix = (
+                "\n\nAggregated programme overview (all eligible children before applying review limits):\n"
+                f"{overview_text}"
+            )
+
+        messages = [
+            {"role": "system", "content": system_message},
+            {
+                "role": "user",
+                "content": (
+                    f"{user_instructions}\n\n{formatting}\n\nChildren data:\n{summary}{overview_appendix}"
+                ),
+            },
+        ]
+        return messages
+
+
 class PreAssessmentAgent:
     """Lightweight analyser that validates staff questions before querying."""
 
@@ -1346,5 +1487,6 @@ __all__ = [
     "KnowledgeSearchResult",
     "MSCCKnowledgeEngine",
     "HealthSupportAgent",
+    "EducationSupportAgent",
     "PreAssessmentAgent",
 ]

@@ -24,6 +24,7 @@ from student_registration.attendances.models import (
 )
 from student_registration.child.models import Child
 from student_registration.mscc.ai_agent import (
+    EducationSupportAgent,
     HealthSupportAgent,
     MSCCKnowledgeEngine,
     PreAssessmentAgent,
@@ -40,7 +41,7 @@ from student_registration.mscc.models import (
     Round,
     MSCCKnowledgeSnapshot,
 )
-from student_registration.mscc.views import HealthSupportAgentView
+from student_registration.mscc.views import EducationSupportAgentView, HealthSupportAgentView
 
 
 _DATABASES = setup_databases(verbosity=0, interactive=False)
@@ -218,6 +219,41 @@ def test_health_agent_view_without_api_key():
     )
     assert child_payload['education_progress'] is None
     assert child_payload['life_quality']['label'] in {'Needs attention', 'Critical concern'}
+
+
+def test_education_agent_view_without_api_key():
+    settings.OPENAI_API_KEY = ''
+    child = _create_child('Sara', 'Test', 'Child', age_years=11, gender='Female')
+    round_instance = Round.objects.create(name='2025 Round', year=2025)
+    registration = Registration.objects.create(
+        child=child,
+        type='Core-Package',
+        registration_date=datetime.date(2025, 2, 10),
+        round=round_instance,
+    )
+
+    EducationProgrammeAssessment.objects.create(
+        registration=registration,
+        learning_material='Arabic',
+        pre_test_total=10,
+        post_test_total=15,
+    )
+
+    factory = RequestFactory()
+    request = factory.get(
+        '/mscc/ai/education-support/',
+        {'registration_id': str(registration.id)},
+    )
+    request.user = SimpleNamespace(is_authenticated=True)
+
+    response = EducationSupportAgentView.as_view()(request)
+
+    assert response.status_code == 200
+    payload = json.loads(response.content)
+    assert payload['analysis'] == ''
+    assert 'error' in payload
+    assert 'OpenAI API key is not configured' in payload['error']
+    assert payload['children'][0]['education_progress'] is not None
     assert child_payload['life_quality']['score'] < 0
     assert any(
         signal['message'].startswith('Attendance below')
@@ -779,6 +815,37 @@ def test_agent_prompt_includes_programme_overview(settings):
     assert '"total_children": 25' in user_content
     assert 'Maximum children to review setting' in user_content
     assert 'Summarise education improvement for each learning material' in user_content
+
+
+def test_education_agent_prompt_prioritises_learning_scope(settings):
+    settings.OPENAI_API_KEY = 'test-key'
+    agent = EducationSupportAgent(api_key='test-key')
+    messages = agent._build_prompt(
+        [
+            {
+                'registration_id': 1,
+                'attendance': {'attendance_rate': 0.7},
+                'education_progress': {
+                    'learning_material': 'Math',
+                    'pre_test_total': 12,
+                    'post_test_total': 16,
+                },
+                'life_quality': {'label': 'Needs attention'},
+                'center_name': 'Center A',
+            }
+        ],
+        question='How are learning outcomes improving at Center A?',
+        focus_topics={'attendance', 'location'},
+        keywords=['learning', 'location'],
+        programme_overview={'total_children': 1},
+    )
+
+    assert messages[0]['role'] == 'system'
+    assert 'education outcomes analyst' in messages[0]['content']
+    assert 'Focus specifically on' in messages[1]['content']
+    assert 'attendance' in messages[1]['content'].lower()
+    assert 'location' in messages[1]['content'].lower()
+    assert 'Aggregated programme overview' in messages[1]['content']
 
 
 def test_education_progress_positive_trend():

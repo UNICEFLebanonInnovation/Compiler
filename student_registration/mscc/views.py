@@ -94,6 +94,7 @@ from student_registration.users.templatetags.custom_tags import has_group
 from .ai_agent import (
     AgentAPIError,
     AgentConfigurationError,
+    EducationSupportAgent,
     HealthSupportAgent,
     MSCCKnowledgeEngine,
     PreAssessmentAgent,
@@ -1852,6 +1853,7 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
     DEFAULT_LIMIT = 5
     MIN_LIMIT = 1
     MAX_LIMIT = 20
+    AGENT_CLASS = HealthSupportAgent
 
     def get(self, request, *args, **kwargs):
         registration_ids = request.GET.getlist('registration_id')
@@ -2083,7 +2085,8 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
 
         if children_context:
             try:
-                agent = HealthSupportAgent()
+                agent_class = getattr(self, 'AGENT_CLASS', HealthSupportAgent)
+                agent = agent_class()
                 analysis = agent.analyze_children(
                     children_context,
                     question=question_text,
@@ -2188,6 +2191,12 @@ class HealthSupportAgentPageView(LoginRequiredMixin, TemplateView):
             }
         )
         return context
+
+
+class EducationSupportAgentView(HealthSupportAgentView):
+    """Return AI-assisted education insights scoped to learning outcomes."""
+
+    AGENT_CLASS = EducationSupportAgent
 
 
 class ProfileView(LoginRequiredMixin,
