@@ -1234,21 +1234,23 @@ class EducationSupportAgent(HealthSupportAgent):
         )
 
         system_message = (
-            "You are an education outcomes analyst supporting the MSCC (Makani) programme."
+            "You are an education outcomes analyst supporting the MSCC (Makani) programme. "
+            "Your job is to explain programme-wide learning results rather than individual cases."
         )
         user_instructions = (
-            "Review only the education, learning, and grading information for the children. "
-            "Highlight learning outcomes, assessment changes, and readiness for progression. "
-            "Explain how attendance patterns, living conditions, and each child's centre location "
-            "affect their education results. Recommend practical education follow-up steps and "
-            "flag data gaps that block a conclusion. Do not provide health or protection guidance; "
-            "stay focused on education outcomes."
+            "Review only the education, learning, and grading information. Summarise trends across the "
+            "full cohort: learning outcomes, assessment changes, attendance patterns, living conditions, "
+            "and centre locations. Prioritise programme-wide conclusions and cohort signals over "
+            "individual children. Recommend practical education follow-up steps at centre or cohort "
+            "level, and flag data gaps that block an aggregated conclusion. Do not provide health or "
+            "protection guidance; stay focused on education outcomes."
         )
         formatting = (
-            "Return markdown with the sections 'Priority Learning Follow-up', 'Learning Outcomes', "
-            "and 'Centre Insights'. List registration ids with concise rationales. In 'Centre Insights', "
-            "summarise attendance rates, location-specific patterns, and programme-wide learning "
-            "changes using the aggregated overview data provided."
+            "Return markdown with the sections 'Programme Learning Snapshot', 'Key Trends & Risks', "
+            "and 'Centre & Cohort Actions'. Use counts, percentages, and comparisons to describe patterns. "
+            "Refer to individual children only when necessary to illustrate a trend, and avoid listing "
+            "registration ids unless strictly required for context. In all sections, rely on the aggregated "
+            "overview data provided to keep the emphasis on overall insights rather than per-child follow-up."
         )
 
         focus_topics = set(focus_topics or [])
@@ -1260,7 +1262,8 @@ class EducationSupportAgent(HealthSupportAgent):
         else:
             user_instructions = (
                 f"{user_instructions}\n\nIf no question is provided, prioritise the strongest "
-                "learning risks inferred from attendance, education assessments, and location trends."
+                "learning risks inferred from attendance, education assessments, and location trends, "
+                "summarising them at programme level."
             )
 
         if keywords:
@@ -1273,19 +1276,23 @@ class EducationSupportAgent(HealthSupportAgent):
             topics_text = ", ".join(sorted(focus_topics))
             scope_instruction = (
                 " Limit your response to the requested focus topics "
-                f"({topics_text}) and avoid unrelated domains."
+                f"({topics_text}) and avoid unrelated domains while keeping the discussion at "
+                "programme or centre level."
             )
             if 'attendance' in focus_topics:
                 scope_instruction += (
-                    " Provide precise attendance rates and explain how they influence learning outcomes."
+                    " Provide precise attendance rates and explain how they influence learning outcomes "
+                    "for the wider cohort."
                 )
             if 'location' in focus_topics:
                 scope_instruction += (
-                    " Compare centres and locations, noting where children face barriers or succeed."
+                    " Compare centres and locations, noting where children face barriers or succeed "
+                    "as groups."
                 )
             if {'life_quality', 'vulnerability'} & focus_topics:
                 scope_instruction += (
-                    " Clarify how living conditions or vulnerability signals hinder learning progress."
+                    " Clarify how living conditions or vulnerability signals hinder learning progress "
+                    "across the cohort."
                 )
             user_instructions = f"{user_instructions}{scope_instruction}"
 

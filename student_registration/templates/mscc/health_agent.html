@@ -194,10 +194,18 @@
           <h5 class="card-title mb-0">Generate an insight</h5>
         </div>
         <div class="card-body">
+          {% if is_education_agent %}
+          <p class="text-muted small">
+            Generate programme-wide education insights. The assistant focuses on cohort and centre trends instead of
+            individual case notes. Leave the registration list empty for a broad overview, or add IDs to anchor the
+            analysis while keeping results aggregated.
+          </p>
+          {% else %}
           <p class="text-muted small">
             Request a prioritised list of children based on attendance and service follow-up needs.
             Leave the registration list empty to let the assistant surface the highest-risk profiles automatically.
           </p>
+          {% endif %}
           {% if not is_agent_configured %}
           <div class="alert alert-warning" role="alert">
             <strong>OpenAI configuration missing.</strong> The analysis step will be skipped until the
@@ -218,18 +226,22 @@
               <textarea id="health-agent-question"
                         class="form-control"
                         rows="3"
-                        placeholder="e.g. Which children show concerning nutrition trends?"></textarea>
+                        placeholder="{% if is_education_agent %}e.g. Which centres show declining literacy scores?{% else %}e.g. Which children show concerning nutrition trends?{% endif %}"></textarea>
               <small class="form-text text-muted">Optional. Tailor the AI analysis with a specific question or focus.</small>
             </div>
             <div class="mb-3">
-              <label class="form-label" for="health-agent-limit">Maximum children to review</label>
+              <label class="form-label" for="health-agent-limit">{% if is_education_agent %}Maximum children to sample{% else %}Maximum children to review{% endif %}</label>
               <input type="number"
                      id="health-agent-limit"
                      class="form-control"
                      min="1"
-                     max="{{ max_limit }}"
+                      max="{{ max_limit }}"
                      value="{{ default_limit }}">
+              {% if is_education_agent %}
+              <small class="form-text text-muted">Between 1 and {{ max_limit }} children. The analysis will stay focused on overall trends.</small>
+              {% else %}
               <small class="form-text text-muted">Between 1 and {{ max_limit }} children.</small>
+              {% endif %}
             </div>
             <div class="d-flex">
               <button type="submit" class="btn btn-primary flex-grow-1">Run assessment</button>
@@ -240,10 +252,17 @@
           <div class="small text-muted">
             <p class="mb-1"><strong>How it works</strong></p>
             <ul class="pl-3 mb-0">
+              {% if is_education_agent %}
+              <li>The assistant highlights programme-wide learning and attendance trends using aggregated data.</li>
+              <li>Registration IDs limit the learner sample but insights stay centred on overall patterns.</li>
+              <li>Recommendations focus on centre or cohort actions rather than individual case notes.</li>
+              <li>Programme impact panels summarise changes across multiple years of Makani education support.</li>
+              {% else %}
               <li>Children are scored using attendance gaps and pending support services.</li>
               <li>The top results are summarised with AI-generated recommendations.</li>
               <li>Review alerts to trigger targeted follow-up with caregivers.</li>
               <li>Programme impact panels surface positive or negative trends across multiple years of Makani support.</li>
+              {% endif %}
             </ul>
             {% if configured_model %}
             <p class="mt-2 mb-0"><strong>Model:</strong> {{ configured_model }}</p>
@@ -317,7 +336,7 @@
         </div>
         <div class="card">
           <div class="card-header">
-            <h5 class="card-title mb-0">Prioritised children</h5>
+            <h5 class="card-title mb-0">{% if is_education_agent %}Reviewed learners (sample){% else %}Prioritised children{% endif %}</h5>
           </div>
           <div class="card-body">
             <div id="health-agent-children"></div>

@@ -2196,6 +2196,7 @@ class SupportAgentPageView(LoginRequiredMixin, TemplateView):
                 'page_title': self.page_title,
                 'module_heading': self.module_heading,
                 'hero_heading': self.hero_heading,
+                'is_education_agent': False,
             }
         )
         return context
@@ -2215,6 +2216,11 @@ class EducationSupportAgentPageView(SupportAgentPageView):
     module_heading = 'Makani - Education Support Insights'
     hero_heading = 'Education Support AI Insights'
     model_setting = 'OPENAI_EDUCATION_AGENT_MODEL'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_education_agent'] = True
+        return context
 
 
 class EducationSupportAgentView(HealthSupportAgentView):

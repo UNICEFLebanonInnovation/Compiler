@@ -842,10 +842,12 @@ def test_education_agent_prompt_prioritises_learning_scope(settings):
 
     assert messages[0]['role'] == 'system'
     assert 'education outcomes analyst' in messages[0]['content']
+    assert 'programme-wide learning results' in messages[0]['content']
     assert 'Focus specifically on' in messages[1]['content']
     assert 'attendance' in messages[1]['content'].lower()
     assert 'location' in messages[1]['content'].lower()
     assert 'Aggregated programme overview' in messages[1]['content']
+    assert 'Programme Learning Snapshot' in messages[1]['content']
 
 
 def test_education_progress_positive_trend():
