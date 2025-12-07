@@ -9,7 +9,7 @@ from datetime import datetime
 from typing import List
 
 from django.conf import settings
-from django.db.models import Count, Exists, IntegerField, OuterRef, Q, Subquery
+from django.db.models import Count, Exists, IntegerField, OuterRef, Subquery
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 
@@ -17,6 +17,7 @@ from student_registration.attendances.models import MSCCAttendanceChild
 from student_registration.mscc.ai_agent import MSCCKnowledgeEngine
 from student_registration.mscc.models import (
     EducationProgrammeAssessment,
+    EducationService,
     FollowUpService,
     HealthNutritionReferral,
     HealthNutritionService,
@@ -145,25 +146,14 @@ class MSCCKnowledgeCompiler:
         )
         return snapshot
 
-    def _build_children_context(self) -> List[dict]:
-        queryset = Registration.objects.filter(
+    def _get_base_queryset(self):
+        return Registration.objects.filter(
             deleted=False,
             type__in=['Core-Package', 'Core Package'],
         )
 
-        pss_exists = PSSService.objects.filter(registration_id=OuterRef('pk'))
-        health_service_exists = HealthNutritionService.objects.filter(registration_id=OuterRef('pk'))
-        health_referral_exists = HealthNutritionReferral.objects.filter(registration_id=OuterRef('pk'))
-
-        queryset = queryset.annotate(
-            has_pss=Exists(pss_exists),
-            has_health_service=Exists(health_service_exists),
-            has_health_referral=Exists(health_referral_exists),
-        ).filter(
-            has_pss=True,
-        ).filter(
-            Q(has_health_service=True) | Q(has_health_referral=True)
-        )
+    def _build_children_context(self) -> List[dict]:
+        queryset = self._get_base_queryset()
 
         absence_subquery = Subquery(
             MSCCAttendanceChild.objects.filter(
@@ -273,4 +263,22 @@ class MSCCKnowledgeCompiler:
         return children_context
 
 
-__all__ = ['MSCCKnowledgeCompiler', 'KnowledgeCompilation']
+class MSCCEducationKnowledgeCompiler(MSCCKnowledgeCompiler):
+    """Compile MSCC registrations focused on education services only."""
+
+    def _get_base_queryset(self):
+        queryset = Registration.objects.filter(
+            deleted=False,
+            type__in=['Core-Package', 'Core Package'],
+        )
+
+        education_service_exists = EducationService.objects.filter(registration_id=OuterRef('pk'))
+
+        return queryset.annotate(
+            has_education_service=Exists(education_service_exists),
+        ).filter(
+            has_education_service=True,
+        )
+
+
+__all__ = ['MSCCKnowledgeCompiler', 'MSCCEducationKnowledgeCompiler', 'KnowledgeCompilation']
