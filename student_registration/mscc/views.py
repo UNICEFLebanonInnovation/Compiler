@@ -2173,10 +2173,15 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
         return question.strip()
 
 
-class HealthSupportAgentPageView(LoginRequiredMixin, TemplateView):
-    """Render the interactive dashboard for the health support agent."""
+class SupportAgentPageView(LoginRequiredMixin, TemplateView):
+    """Render the interactive dashboard for a support agent."""
 
     template_name = 'mscc/health_agent.html'
+    agent_endpoint_name = 'mscc:health_agent'
+    page_title = 'Health Support Insights'
+    module_heading = 'Makani - Health Support Insights'
+    hero_heading = 'Health Support AI Insights'
+    model_setting = 'OPENAI_HEALTH_AGENT_MODEL'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -2185,12 +2190,31 @@ class HealthSupportAgentPageView(LoginRequiredMixin, TemplateView):
             {
                 'default_limit': default_limit,
                 'max_limit': HealthSupportAgentView.MAX_LIMIT,
-                'endpoint': reverse('mscc:health_agent'),
+                'endpoint': reverse(self.agent_endpoint_name),
                 'is_agent_configured': bool(getattr(settings, 'OPENAI_API_KEY', '')),
-                'configured_model': getattr(settings, 'OPENAI_HEALTH_AGENT_MODEL', ''),
+                'configured_model': getattr(settings, self.model_setting, ''),
+                'page_title': self.page_title,
+                'module_heading': self.module_heading,
+                'hero_heading': self.hero_heading,
             }
         )
         return context
+
+
+class HealthSupportAgentPageView(SupportAgentPageView):
+    """Render the interactive dashboard for the health support agent."""
+
+    agent_endpoint_name = 'mscc:health_agent'
+
+
+class EducationSupportAgentPageView(SupportAgentPageView):
+    """Render the interactive dashboard for the education support agent."""
+
+    agent_endpoint_name = 'mscc:education_agent'
+    page_title = 'Education Support Insights'
+    module_heading = 'Makani - Education Support Insights'
+    hero_heading = 'Education Support AI Insights'
+    model_setting = 'OPENAI_EDUCATION_AGENT_MODEL'
 
 
 class EducationSupportAgentView(HealthSupportAgentView):

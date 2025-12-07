@@ -2,8 +2,8 @@
 {% load static i18n %}
 {% load django_bootstrap5 %}
 
-{% block project_title %}Health Support Insights{% endblock %}
-{% block module_name %}Makani - Health Support Insights{% endblock %}
+{% block project_title %}{{ page_title|default:"Health Support Insights" }}{% endblock %}
+{% block module_name %}{{ module_heading|default:"Makani - Health Support Insights" }}{% endblock %}
 
 {% block extra_head %}
 {{ block.super }}
@@ -176,7 +176,7 @@
           <span class="d-inline-block pr-2">
             <i class="pe-7s-medal"></i>
           </span>
-          <span class="d-inline-block">Health Support AI Insights</span>
+          <span class="d-inline-block">{{ hero_heading|default:"Health Support AI Insights" }}</span>
         </div>
       </div>
     </div>
