@@ -477,7 +477,7 @@ class EducationServiceForm(forms.ModelForm):
     )
     registration_date = forms.DateField(
         label=_("Date of registration in the round"),
-        required=False
+        required=True
     )
 
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -1652,7 +1652,7 @@ class TarlGradingForm(forms.ModelForm):
                     HTML('<span class="badge-form badge-pill">2</span>'),
                     Div('math_level_reached', css_class='col-md-5'),
                     css_class='row card-body '
-                ),  
+                ),
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
