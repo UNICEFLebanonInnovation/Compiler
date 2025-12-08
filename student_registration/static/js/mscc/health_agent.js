@@ -1474,12 +1474,17 @@
       return;
     }
 
-    var defaultLimit = parseInt(container.dataset.defaultLimit || '5', 10);
-    var maxLimit = parseInt(container.dataset.maxLimit || '20', 10);
+    var isEducationAgent = container.dataset.isEducation === 'true';
+    var defaultLimit = isEducationAgent
+      ? null
+      : parseInt(container.dataset.defaultLimit || '5', 10);
+    var maxLimit = isEducationAgent
+      ? null
+      : parseInt(container.dataset.maxLimit || '20', 10);
 
     var form = qs(container, '#health-agent-form');
     var idsField = qs(container, '#health-agent-registration-ids');
-    var limitField = qs(container, '#health-agent-limit');
+    var limitField = isEducationAgent ? null : qs(container, '#health-agent-limit');
     var questionField = qs(container, '#health-agent-question');
     var resetButton = qs(container, '#health-agent-reset');
     var statusBox = document.getElementById('health-agent-status');
@@ -1517,7 +1522,7 @@
 
     clearOverviewCard();
 
-    if (!limitField.value) {
+    if (!isEducationAgent && limitField && !limitField.value) {
       limitField.value = defaultLimit;
     }
 
@@ -1630,7 +1635,7 @@
       if (idsField) {
         idsField.value = '';
       }
-      if (limitField) {
+      if (!isEducationAgent && limitField) {
         limitField.value = defaultLimit;
       }
       if (childrenContainer) {
@@ -1676,18 +1681,20 @@
     function handleSubmit(event) {
       event.preventDefault();
       var registrationInput = idsField ? idsField.value : '';
-      var limitInput = limitField ? limitField.value : defaultLimit;
+      var limitInput = isEducationAgent ? null : limitField ? limitField.value : defaultLimit;
       var questionInput = questionField ? questionField.value : '';
       var trimmedQuestion = questionInput ? questionInput.trim() : '';
-      var limitValue = clamp(limitInput, 1, maxLimit);
+      var payload = {};
 
-      if (limitField) {
-        limitField.value = limitValue;
+      if (!isEducationAgent) {
+        var limitValue = clamp(limitInput, 1, maxLimit);
+
+        if (limitField) {
+          limitField.value = limitValue;
+        }
+
+        payload.limit = limitValue;
       }
-
-      var payload = {
-        limit: limitValue,
-      };
 
       var registrationIds = parseRegistrationInput(registrationInput);
       if (registrationIds.length) {

@@ -186,7 +186,8 @@
 <div id="health-agent-app"
      data-endpoint="{{ endpoint }}"
      data-default-limit="{{ default_limit }}"
-     data-max-limit="{{ max_limit }}">
+     data-max-limit="{{ max_limit }}"
+     data-is-education="{{ is_education_agent|yesno:'true,false' }}">
   <div class="row">
     <div class="col-lg-4">
       <div class="card mb-3">
@@ -229,20 +230,18 @@
                         placeholder="{% if is_education_agent %}e.g. Which centres show declining literacy scores?{% else %}e.g. Which children show concerning nutrition trends?{% endif %}"></textarea>
               <small class="form-text text-muted">Optional. Tailor the AI analysis with a specific question or focus.</small>
             </div>
+            {% if not is_education_agent %}
             <div class="mb-3">
-              <label class="form-label" for="health-agent-limit">{% if is_education_agent %}Maximum children to sample{% else %}Maximum children to review{% endif %}</label>
+              <label class="form-label" for="health-agent-limit">Maximum children to review</label>
               <input type="number"
                      id="health-agent-limit"
                      class="form-control"
                      min="1"
                       max="{{ max_limit }}"
                      value="{{ default_limit }}">
-              {% if is_education_agent %}
-              <small class="form-text text-muted">Between 1 and {{ max_limit }} children. The analysis will stay focused on overall trends.</small>
-              {% else %}
               <small class="form-text text-muted">Between 1 and {{ max_limit }} children.</small>
-              {% endif %}
             </div>
+            {% endif %}
             <div class="d-flex">
               <button type="submit" class="btn btn-primary flex-grow-1">Run assessment</button>
               <button type="button" id="health-agent-reset" class="btn btn-outline-secondary ml-2">Reset</button>
