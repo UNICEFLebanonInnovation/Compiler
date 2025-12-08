@@ -1972,7 +1972,7 @@ class HealthSupportAgentView(LoginRequiredMixin, View):
         if normalized_ids:
             registrations = list(registrations_queryset[:fetch_limit])
         else:
-            registrations = list(registrations_queryset)
+            registrations = list(registrations_queryset[:fetch_limit])
 
         if not registrations:
             empty_payload = {
