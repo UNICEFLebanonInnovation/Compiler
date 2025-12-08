@@ -1469,11 +1469,6 @@
       return;
     }
 
-    var endpoint = container.dataset.endpoint;
-    if (!endpoint) {
-      return;
-    }
-
     var isEducationAgent = container.dataset.isEducation === 'true';
     var defaultLimit = isEducationAgent
       ? null
@@ -1483,6 +1478,10 @@
       : parseInt(container.dataset.maxLimit || '20', 10);
 
     var form = qs(container, '#health-agent-form');
+    var endpoint = container.dataset.endpoint || (form ? form.getAttribute('action') : '');
+    if (!endpoint) {
+      return;
+    }
     var idsField = qs(container, '#health-agent-registration-ids');
     var limitField = isEducationAgent ? null : qs(container, '#health-agent-limit');
     var questionField = qs(container, '#health-agent-question');
