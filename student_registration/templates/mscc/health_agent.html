@@ -213,7 +213,10 @@
             <code>OPENAI_API_KEY</code> setting is provided.
           </div>
           {% endif %}
-          <form id="health-agent-form" action="{% url 'mscc:health_agent_insights' %}" novalidate>
+          <form
+              id="health-agent-form"
+              action="{% if is_education_agent %}{% url 'mscc:education_agent_insights' %}{% else %}{% url 'mscc:health_agent_insights' %}{% endif %}"
+              novalidate>
             <div class="mb-3">
               <label class="form-label" for="health-agent-registration-ids">Registration IDs</label>
               <textarea id="health-agent-registration-ids"
