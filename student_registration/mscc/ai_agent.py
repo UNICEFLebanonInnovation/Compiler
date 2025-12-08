@@ -1206,13 +1206,14 @@ class EducationSupportAgent(HealthSupportAgent):
         max_retries: int | None = None,
         retry_backoff: float | None = None,
     ) -> None:
+        education_api_key = api_key or getattr(settings, "OPENAI_EDUCATION_API_KEY", None)
         education_model = model or getattr(
             settings,
             "OPENAI_EDUCATION_AGENT_MODEL",
             getattr(settings, "OPENAI_HEALTH_AGENT_MODEL", "gpt-4o-mini"),
         )
         super().__init__(
-            api_key=api_key,
+            api_key=education_api_key,
             model=education_model,
             base_url=base_url,
             timeout=timeout,
