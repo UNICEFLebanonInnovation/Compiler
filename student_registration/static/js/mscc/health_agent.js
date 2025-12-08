@@ -1610,12 +1610,19 @@
       }
 
       var shouldAbort = assessment && assessment.should_abort;
-      if (shouldAbort) {
-        analysisContainer.innerHTML = '<p class="text-muted mb-0">Question needs clarification before an AI summary can be generated.</p>';
-        childrenContainer.innerHTML = '<p class="text-muted mb-0">No children were evaluated because the focus question was unclear.</p>';
-      } else {
-        analysisContainer.innerHTML = renderMarkdown(payload.analysis || '');
-        childrenContainer.innerHTML = renderChildren(payload.children || []);
+      if (analysisContainer) {
+        if (shouldAbort) {
+          analysisContainer.innerHTML = '<p class="text-muted mb-0">Question needs clarification before an AI summary can be generated.</p>';
+        } else {
+          analysisContainer.innerHTML = renderMarkdown(payload.analysis || '');
+        }
+      }
+      if (childrenContainer) {
+        if (shouldAbort) {
+          childrenContainer.innerHTML = '<p class="text-muted mb-0">No children were evaluated because the focus question was unclear.</p>';
+        } else {
+          childrenContainer.innerHTML = renderChildren(payload.children || []);
+        }
       }
       updateOverviewCharts(payload.vulnerability_overview || null, payload.total_children);
       metadataContainer.textContent = buildMetadata(payload);

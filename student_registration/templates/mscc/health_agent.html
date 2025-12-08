@@ -294,6 +294,7 @@
             <div id="health-agent-analysis" class="markdown-body"></div>
           </div>
         </div>
+        {% if not is_education_agent %}
         <div class="card mb-3 d-none" id="health-agent-overview-card">
           <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="card-title mb-0">Vulnerability overview</h5>
@@ -335,12 +336,13 @@
         </div>
         <div class="card">
           <div class="card-header">
-            <h5 class="card-title mb-0">{% if is_education_agent %}Reviewed learners (sample){% else %}Prioritised children{% endif %}</h5>
+            <h5 class="card-title mb-0">Prioritised children</h5>
           </div>
           <div class="card-body">
             <div id="health-agent-children"></div>
           </div>
         </div>
+        {% endif %}
       </div>
     </div>
   </div>
