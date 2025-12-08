@@ -850,6 +850,15 @@ def test_education_agent_prompt_prioritises_learning_scope(settings):
     assert 'Programme Learning Snapshot' in messages[1]['content']
 
 
+def test_education_agent_uses_dedicated_api_key(settings):
+    settings.OPENAI_API_KEY = ''
+    settings.OPENAI_EDUCATION_API_KEY = 'edu-key'
+
+    agent = EducationSupportAgent()
+
+    assert agent.api_key == 'edu-key'
+
+
 def test_education_progress_positive_trend():
     settings.OPENAI_API_KEY = ''
     child = _create_child('Sara', 'Bright', 'Child', age_years=9, gender='Female')
