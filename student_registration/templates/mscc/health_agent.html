@@ -213,7 +213,7 @@
             <code>OPENAI_API_KEY</code> setting is provided.
           </div>
           {% endif %}
-          <form id="health-agent-form" novalidate>
+          <form id="health-agent-form" action="{{ endpoint }}" novalidate>
             <div class="mb-3">
               <label class="form-label" for="health-agent-registration-ids">Registration IDs</label>
               <textarea id="health-agent-registration-ids"
