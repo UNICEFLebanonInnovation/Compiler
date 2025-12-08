@@ -151,6 +151,10 @@ class MSCCKnowledgeCompiler:
         # eligible for the knowledge snapshot. Downstream compilers (e.g.,
         # education-focused) can add their own filters as needed.
         return Registration.objects.filter(deleted=False)
+        return Registration.objects.filter(
+            deleted=False,
+            type__in=['Core-Package', 'Core Package'],
+        )
 
     def _build_children_context(self) -> List[dict]:
         queryset = self._get_base_queryset()
@@ -267,7 +271,10 @@ class MSCCEducationKnowledgeCompiler(MSCCKnowledgeCompiler):
     """Compile MSCC registrations focused on education services only."""
 
     def _get_base_queryset(self):
-        queryset = super()._get_base_queryset()
+        queryset = Registration.objects.filter(
+            deleted=False,
+            type__in=['Core-Package', 'Core Package'],
+        )
 
         education_service_exists = EducationService.objects.filter(registration_id=OuterRef('pk'))
 
