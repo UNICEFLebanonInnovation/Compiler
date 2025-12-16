@@ -8,17 +8,26 @@ import sys
 import os
 
 import django
+from django.conf import settings
 
 import pytest
-from rest_framework.test import APIRequestFactory
+os.environ['DATABASE_URL'] = 'sqlite:///test.sqlite3'
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.test')
+
+from rest_framework.test import APIRequestFactory, force_authenticate
 
 PROJECT_ROOT = pathlib.Path(__file__).resolve().parents[3]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-os.environ.setdefault('DATABASE_URL', 'sqlite:///test.sqlite3')
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.test')
 django.setup()
+
+import student_registration.mscc.attendance_views as attendance_views
+
+settings.DATABASES['default'] = {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': ':memory:',
+}
 
 from student_registration.mscc.attendance_views import AttendanceHeatmapViewSet
 from student_registration.mscc.utils import parse_attendance_date
@@ -26,17 +35,19 @@ from student_registration.mscc.utils import parse_attendance_date
 
 def test_attendance_heatmap_api_monthly_percentages():
     request = APIRequestFactory().get('/attendance-heatmap-data/percentage/', {'year': '2024'})
-    request.user = SimpleNamespace(is_authenticated=True)
+    request.user = SimpleNamespace(is_authenticated=True, is_active=True)
+    force_authenticate(request, request.user)
 
     base_qs = MagicMock(name='base_qs')
+    base_qs.filter.return_value = base_qs
+    base_qs.filter.return_value = base_qs
 
     with patch(
-        'student_registration.mscc.attendance_views.MSCCAttendanceChild.objects.filter',
-        return_value=base_qs,
-    ) as mock_filter, patch(
-        'student_registration.mscc.attendance_views.MSCCAttendanceChild.objects.dates',
-        return_value=[datetime.date(2023, 1, 1), datetime.date(2024, 1, 1)],
-    ) as mock_dates:
+        'student_registration.mscc.attendance_views.MSCCAttendanceChild.objects'
+    ) as mock_manager:
+        mock_manager.filter.return_value = base_qs
+        mock_manager.dates.return_value = [datetime.date(2023, 1, 1), datetime.date(2024, 1, 1)]
+        mock_manager.all.return_value = base_qs
 
         def aggregate_side_effect(qs, *groups):
             assert qs is base_qs
@@ -74,12 +85,16 @@ def test_attendance_heatmap_api_monthly_percentages():
         with patch(
             'student_registration.mscc.attendance_views._aggregate_attendance',
             side_effect=aggregate_side_effect,
-        ) as mock_aggregate:
+        ) as mock_aggregate, patch(
+            'student_registration.mscc.attendance_views._get_service_program_mapping',
+            return_value=[],
+        ):
+            attendance_views._programme_category_lookup.cache_clear()
             view = AttendanceHeatmapViewSet.as_view({'get': 'percentage'})
             response = view(request)
 
-    mock_filter.assert_called_once()
-    mock_dates.assert_called_once_with('attendance_day__attendance_date', 'year')
+    mock_manager.filter.assert_called_once()
+    mock_manager.dates.assert_called_once_with('attendance_day__attendance_date', 'year')
 
     assert response.status_code == 200
     payload = json.loads(response.content)
@@ -106,18 +121,84 @@ def test_attendance_heatmap_api_monthly_percentages():
     for entry in programme_entries:
         grouped_programmes.setdefault(entry['programme'], []).append(entry)
 
-    assert set(grouped_programmes.keys()) == {'BLN', 'YFS'}
+    assert set(grouped_programmes.keys()) == {'BLN Level 1', 'YFS Level 1'}
 
-    bln_entries = sorted(grouped_programmes['BLN'], key=lambda item: item['month'])
+    bln_entries = sorted(grouped_programmes['BLN Level 1'], key=lambda item: item['month'])
     assert [entry['attendance_percentage'] for entry in bln_entries] == [100.0, 0.0]
     assert [entry['month'] for entry in bln_entries] == [1, 2]
 
-    yfs_entries = grouped_programmes['YFS']
+    yfs_entries = grouped_programmes['YFS Level 1']
     assert [entry['attendance_percentage'] for entry in yfs_entries] == [50.0]
     assert [entry['month'] for entry in yfs_entries] == [1]
 
     assert all(entry['year'] == 2024 for entry in monthly)
     assert all(entry['available_years'] == '2023,2024' for entry in monthly)
+
+
+def test_attendance_heatmap_disability_percentages():
+    request = APIRequestFactory().get(
+        '/attendance-heatmap-data/disability-percentage/',
+        {'round_id': '7'},
+    )
+    request.user = SimpleNamespace(is_authenticated=True, is_active=True)
+    force_authenticate(request, request.user)
+
+    base_qs = MagicMock(name='base_qs')
+    base_qs.filter.return_value = base_qs
+
+    with patch(
+        'student_registration.mscc.attendance_views.MSCCAttendanceChild.objects'
+    ) as mock_manager:
+        mock_manager.filter.return_value = base_qs
+        mock_manager.all.return_value = base_qs
+
+        def aggregate_side_effect(qs, *groups):
+            assert qs is base_qs
+            assert groups == (
+                'registration__round_id',
+                'registration__round__name',
+                'registration__education_service__education_program',
+                'child__disability__name',
+            )
+            return [
+                {
+                    'registration__round_id': 1,
+                    'registration__round__name': 'Cycle 1',
+                    'registration__education_service__education_program': 'BLN Level 1',
+                    'child__disability__name': 'Visual',
+                    'total': 3,
+                    'absent': 1,
+                },
+                {
+                    'registration__round_id': 1,
+                    'registration__round__name': 'Cycle 1',
+                    'registration__education_service__education_program': 'BLN Level 1',
+                    'child__disability__name': 'Hearing',
+                    'total': 2,
+                    'absent': 0,
+                },
+            ]
+
+        with patch(
+            'student_registration.mscc.attendance_views._aggregate_attendance',
+            side_effect=aggregate_side_effect,
+        ), patch(
+            'student_registration.mscc.attendance_views._get_service_program_mapping',
+            return_value=[],
+        ):
+            attendance_views._programme_category_lookup.cache_clear()
+            view = AttendanceHeatmapViewSet.as_view({'get': 'disability_percentage'})
+            response = view(request)
+
+    base_qs.filter.assert_called_once_with(attendance_day__round_id='7')
+
+    assert response.status_code == 200
+    payload = json.loads(response.content)
+
+    assert [entry['disability'] for entry in payload] == ['Hearing', 'Visual']
+    assert [entry['attendance_percentage'] for entry in payload] == [100.0, 66.67]
+    assert all(entry['programme'] == 'BLN Level 1' for entry in payload)
+    assert all(entry['cycle'] == 'Cycle 1' for entry in payload)
 
 
 def test_parse_attendance_date_handles_trailing_characters():

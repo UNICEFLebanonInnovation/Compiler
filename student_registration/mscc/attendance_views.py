@@ -436,3 +436,60 @@ class AttendanceHeatmapViewSet(mixins.ListModelMixin,
                 })
 
         return JsonResponse(flat_rows, safe=False)
+
+    @action(detail=False, methods=['get'], url_path='disability-percentage')
+    def disability_percentage(self, request, *args, **kwargs):
+        """Attendance rate grouped by disability, programme and cycle."""
+
+        round_id = self.request.GET.get('round_id')
+
+        base_qs = MSCCAttendanceChild.objects.all()
+
+        if round_id:
+            base_qs = base_qs.filter(attendance_day__round_id=round_id)
+
+        disability_rows = _aggregate_attendance(
+            base_qs,
+            'registration__round_id',
+            'registration__round__name',
+            'registration__education_service__education_program',
+            'child__disability__name',
+        )
+
+        programme_choices = dict(EducationService.EDUCATION_PROGRAM)
+
+        records = []
+
+        for row in disability_rows:
+            programme = row['registration__education_service__education_program'] or 'Unknown'
+            programme_label = programme_choices.get(programme, programme)
+            category = _programme_category_lookup().get(programme)
+
+            if category is None:
+                category = force_str(programme_label) if programme_label else 'Unknown'
+
+            total = row['total'] or 0
+            absent = row['absent'] or 0
+            present = total - absent
+            percentage = round((present * 100.0) / total, 2) if total else 0.0
+
+            records.append({
+                'record_type': 'disability_programme_cycle',
+                'round_id': row['registration__round_id'],
+                'cycle': row['registration__round__name'] or 'Unknown',
+                'programme': category,
+                'education_program': force_str(programme_label) if programme_label else 'Unknown',
+                'disability': row['child__disability__name'] or 'Unknown',
+                'attendance_percentage': percentage,
+                'present': present,
+                'absent': absent,
+                'total': total,
+            })
+
+        records.sort(key=lambda item: (
+            force_str(item['cycle']),
+            force_str(item['programme']),
+            force_str(item['disability']),
+        ))
+
+        return JsonResponse(records, safe=False)
