@@ -144,5 +144,6 @@ class AbsenteeSerializer(serializers.ModelSerializer):
             'last_absent_date',
             'total_absent_days',
             'total_attended_days',
+            'attendance_rate',
             'last_modification_date',
         )

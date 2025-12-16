@@ -1,0 +1,16 @@
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ('attendances', '0065_alter_absentee_alp_round_alter_absentee_disabled_and_more'),
+    ]
+
+    operations = [
+        migrations.AddField(
+            model_name='absentee',
+            name='attendance_rate',
+            field=models.FloatField(blank=True, null=True),
+        ),
+    ]
