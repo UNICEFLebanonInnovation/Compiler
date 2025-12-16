@@ -493,3 +493,48 @@ class AttendanceHeatmapViewSet(mixins.ListModelMixin,
         ))
 
         return JsonResponse(records, safe=False)
+
+    @action(detail=False, methods=['get'], url_path='disability-child-percentage')
+    def disability_child_percentage(self, request, *args, **kwargs):
+        """Attendance rate for children with a recorded disability."""
+
+        year = int(self.request.GET.get('year', timezone.now().year))
+
+        base_qs = MSCCAttendanceChild.objects.filter(
+            attendance_day__attendance_date__year=year,
+            child__disability__isnull=False,
+        )
+
+        disability_rows = _aggregate_attendance(
+            base_qs,
+            'child_id',
+            'child__full_name',
+            'child__disability__name',
+        )
+
+        records = []
+
+        for row in disability_rows:
+            total = row['total'] or 0
+            absent = row['absent'] or 0
+            present = total - absent
+            percentage = round((present * 100.0) / total, 2) if total else 0.0
+
+            records.append({
+                'record_type': 'disability_child',
+                'child_id': row['child_id'],
+                'child_name': row['child__full_name'] or 'Unknown',
+                'disability': row['child__disability__name'] or 'Unknown',
+                'attendance_percentage': percentage,
+                'present': present,
+                'absent': absent,
+                'total': total,
+                'year': year,
+            })
+
+        records.sort(key=lambda item: (
+            force_str(item['child_name']),
+            force_str(item['disability']),
+        ))
+
+        return JsonResponse(records, safe=False)
