@@ -201,6 +201,67 @@ def test_attendance_heatmap_disability_percentages():
     assert all(entry['cycle'] == 'Cycle 1' for entry in payload)
 
 
+def test_attendance_heatmap_disability_child_percentages():
+    request = APIRequestFactory().get(
+        '/attendance-heatmap-data/disability-child-percentage/',
+        {'year': '2025'},
+    )
+    request.user = SimpleNamespace(is_authenticated=True, is_active=True)
+    force_authenticate(request, request.user)
+
+    base_qs = MagicMock(name='base_qs')
+
+    with patch(
+        'student_registration.mscc.attendance_views.MSCCAttendanceChild.objects'
+    ) as mock_manager:
+        mock_manager.filter.return_value = base_qs
+
+        def aggregate_side_effect(qs, *groups):
+            assert qs is base_qs
+            assert groups == (
+                'child_id',
+                'child__full_name',
+                'child__disability__name',
+            )
+            return [
+                {
+                    'child_id': 1,
+                    'child__full_name': 'Alice',
+                    'child__disability__name': 'Hearing',
+                    'total': 3,
+                    'absent': 1,
+                },
+                {
+                    'child_id': 2,
+                    'child__full_name': None,
+                    'child__disability__name': None,
+                    'total': 2,
+                    'absent': 0,
+                },
+            ]
+
+        with patch(
+            'student_registration.mscc.attendance_views._aggregate_attendance',
+            side_effect=aggregate_side_effect,
+        ):
+            view = AttendanceHeatmapViewSet.as_view({'get': 'disability_child_percentage'})
+            response = view(request)
+
+    mock_manager.filter.assert_called_once_with(
+        attendance_day__attendance_date__year=2025,
+        child__disability__isnull=False,
+    )
+
+    assert response.status_code == 200
+    payload = json.loads(response.content)
+
+    assert [entry['child_name'] for entry in payload] == ['Alice', 'Unknown']
+    assert [entry['disability'] for entry in payload] == ['Hearing', 'Unknown']
+    assert [entry['attendance_percentage'] for entry in payload] == [66.67, 100.0]
+    assert all(entry['record_type'] == 'disability_child' for entry in payload)
+    assert all(entry['year'] == 2025 for entry in payload)
+
+
 def test_parse_attendance_date_handles_trailing_characters():
     parsed = parse_attendance_date('07/01/20241')
     assert parsed == datetime.date(2024, 7, 1)
