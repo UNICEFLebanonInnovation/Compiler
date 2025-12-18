@@ -64,5 +64,10 @@ urlpatterns = [
         view=views.mscc_total_attendance_export,
         name='mscc_total_attendance_export'
     ),
+    re_path(
+        r'^mscc-attendance-rates/$',
+        view=views.MSCCAttendanceRateViewSet.as_view({'get': 'list'}),
+        name='mscc_attendance_rates'
+    ),
 
 ]
