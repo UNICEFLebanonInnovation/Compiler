@@ -29,14 +29,25 @@ class Command(BaseCommand):
                 continue
 
             attendance_rate = round(entry['attended_days'] / float(total_days), 4)
-            updates[attendance_rate].append(entry['registration_id'])
+            total_attendance = entry['attended_days']
+            total_absence = total_days - total_attendance
+            updates[(attendance_rate, total_attendance, total_absence)].append(entry['registration_id'])
 
         updated = 0
         with transaction.atomic():
-            for rate, registration_ids in updates.items():
+            for values, registration_ids in updates.items():
+                attendance_rate, total_attendance, total_absence = values
                 affected = Registration.objects.filter(id__in=registration_ids)
-                affected = affected.exclude(attendance_rate=rate)
-                count = affected.update(attendance_rate=rate)
+                affected = affected.exclude(
+                    attendance_rate=attendance_rate,
+                    total_attendance=total_attendance,
+                    total_absence=total_absence,
+                )
+                count = affected.update(
+                    attendance_rate=attendance_rate,
+                    total_attendance=total_attendance,
+                    total_absence=total_absence,
+                )
                 updated += count
 
         self.stdout.write(self.style.SUCCESS(f"Updated attendance rates for {updated} registration rows."))

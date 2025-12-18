@@ -146,6 +146,8 @@ class RegistrationAttendanceRateSerializer(serializers.ModelSerializer):
             'registration_id',
             'child',
             'attendance_rate',
+            'total_attendance',
+            'total_absence',
             'programme',
             'round',
             'disability',

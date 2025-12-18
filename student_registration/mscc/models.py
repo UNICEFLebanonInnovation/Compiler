@@ -295,6 +295,8 @@ class Registration(TimeStampedModel):
         verbose_name=_('Registration date')
     )
     attendance_rate = models.FloatField(blank=True, null=True)
+    total_attendance = models.IntegerField(blank=True, null=True)
+    total_absence = models.IntegerField(blank=True, null=True)
     partner_unique_number = models.CharField(
         max_length=50,
         blank=True,
