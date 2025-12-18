@@ -205,8 +205,6 @@ class Absentee(TimeStampedModel):
 
     total_absent_days = models.IntegerField(blank=True, null=True)
     total_attended_days = models.IntegerField(blank=True, null=True)
-    attendance_rate = models.FloatField(blank=True, null=True)
-
     reattend_date = models.DateField(blank=True, null=True)
     validation_status = models.BooleanField(default=False)
     last_modification_date = models.DateField(blank=True, null=True)

@@ -132,7 +132,7 @@ class AbsenteeViewSet(mixins.ListModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        queryset = self.queryset.exclude(attendance_rate__isnull=True)
+        queryset = self.queryset
         if self.request.GET.get('days', None):
             return queryset.filter(
                 absent_days__lte=self.request.GET.get('days', None),
