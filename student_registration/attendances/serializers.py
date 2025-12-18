@@ -1,6 +1,7 @@
 
 from rest_framework import serializers
 from .models import Attendance, Absentee, CLMAttendanceStudent, MSCCAttendanceChild
+from student_registration.mscc.models import Registration
 
 
 class AttendanceSerializer(serializers.ModelSerializer):
@@ -129,6 +130,51 @@ class MSCCAttendanceChildSerializer(serializers.ModelSerializer):
         fields = (
             '__all__'
         )
+
+
+class RegistrationAttendanceRateSerializer(serializers.ModelSerializer):
+
+    programme = serializers.CharField(source='education_program', read_only=True)
+    round = serializers.CharField(source='round.name', read_only=True)
+    disability = serializers.SerializerMethodField()
+    child_bio_data = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Registration
+        fields = (
+            'id',
+            'registration_id',
+            'child',
+            'attendance_rate',
+            'total_attendance',
+            'total_absence',
+            'programme',
+            'round',
+            'disability',
+            'child_bio_data',
+        )
+
+    def get_disability(self, obj):
+        child = getattr(obj, 'child', None)
+        if child and child.disability:
+            return getattr(child.disability, 'name', None)
+        return None
+
+    def get_child_bio_data(self, obj):
+        child = getattr(obj, 'child', None)
+        if not child:
+            return None
+
+        return {
+            'id': child.id,
+            'first_name': child.first_name,
+            'father_name': child.father_name,
+            'last_name': child.last_name,
+            'gender': child.gender,
+            'birthday': child.birthday,
+            'age': child.age,
+            'nationality': getattr(child.nationality, 'name', None),
+        }
 
 
 class AbsenteeSerializer(serializers.ModelSerializer):
