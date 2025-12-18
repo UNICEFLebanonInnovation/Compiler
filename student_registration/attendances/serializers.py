@@ -134,6 +134,11 @@ class MSCCAttendanceChildSerializer(serializers.ModelSerializer):
 
 class RegistrationAttendanceRateSerializer(serializers.ModelSerializer):
 
+    programme = serializers.CharField(source='education_program', read_only=True)
+    round = serializers.CharField(source='round.name', read_only=True)
+    disability = serializers.SerializerMethodField()
+    child_bio_data = serializers.SerializerMethodField()
+
     class Meta:
         model = Registration
         fields = (
@@ -141,7 +146,33 @@ class RegistrationAttendanceRateSerializer(serializers.ModelSerializer):
             'registration_id',
             'child',
             'attendance_rate',
+            'programme',
+            'round',
+            'disability',
+            'child_bio_data',
         )
+
+    def get_disability(self, obj):
+        child = getattr(obj, 'child', None)
+        if child and child.disability:
+            return getattr(child.disability, 'name', None)
+        return None
+
+    def get_child_bio_data(self, obj):
+        child = getattr(obj, 'child', None)
+        if not child:
+            return None
+
+        return {
+            'id': child.id,
+            'first_name': child.first_name,
+            'father_name': child.father_name,
+            'last_name': child.last_name,
+            'gender': child.gender,
+            'birthday': child.birthday,
+            'age': child.age,
+            'nationality': getattr(child.nationality, 'name', None),
+        }
 
 
 class AbsenteeSerializer(serializers.ModelSerializer):
