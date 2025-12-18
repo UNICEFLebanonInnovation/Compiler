@@ -722,7 +722,6 @@ class MSCCAttendanceChild(TimeStampedModel):
         choices=Child.YES_NO,
         verbose_name=_('Child Attended?')
     )
-    attendance_rate = models.FloatField(blank=True, null=True)
     absence_reason = models.CharField(
         max_length=50,
         blank=True,

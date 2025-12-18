@@ -5,15 +5,17 @@ from django.db import transaction
 from django.db.models import Count, Q
 
 from student_registration.attendances.models import MSCCAttendanceChild
+from student_registration.mscc.models import Registration
 
 
 class Command(BaseCommand):
-    help = "Pre-calculate attendance rates per MSCC child to avoid expensive on-demand queries."
+    help = "Pre-calculate attendance rates per MSCC registration to avoid expensive on-demand queries."
 
     def handle(self, *args, **options):
         stats = (
             MSCCAttendanceChild.objects
-            .values('child_id')
+            .exclude(registration_id__isnull=True)
+            .values('registration_id')
             .annotate(
                 attended_days=Count('id', filter=Q(attended='yes')),
                 total_days=Count('id'),
@@ -27,14 +29,14 @@ class Command(BaseCommand):
                 continue
 
             attendance_rate = round(entry['attended_days'] / float(total_days), 4)
-            updates[attendance_rate].append(entry['child_id'])
+            updates[attendance_rate].append(entry['registration_id'])
 
         updated = 0
         with transaction.atomic():
-            for rate, child_ids in updates.items():
-                affected = MSCCAttendanceChild.objects.filter(child_id__in=child_ids)
+            for rate, registration_ids in updates.items():
+                affected = Registration.objects.filter(id__in=registration_ids)
                 affected = affected.exclude(attendance_rate=rate)
                 count = affected.update(attendance_rate=rate)
                 updated += count
 
-        self.stdout.write(self.style.SUCCESS(f"Updated attendance rates for {updated} attendance rows."))
+        self.stdout.write(self.style.SUCCESS(f"Updated attendance rates for {updated} registration rows."))

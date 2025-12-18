@@ -37,6 +37,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework import status
 from django.views.generic.edit import FormView
 
+from student_registration.mscc.models import Registration
 from student_registration.schools.models import School
 from student_registration.backends.tasks import export_attendance
 from .utils import find_attendances, fill_attendancedt
@@ -46,7 +47,13 @@ from student_registration.clm.models import Bridging
 from student_registration.schools.models import CLMRound
 from student_registration.backends.models import ExportHistory
 
-from .serializers import AttendanceSerializer, AbsenteeSerializer, AttendanceExportSerializer, MSCCAttendanceChildSerializer
+from .serializers import (
+    AttendanceSerializer,
+    AbsenteeSerializer,
+    AttendanceExportSerializer,
+    MSCCAttendanceChildSerializer,
+    RegistrationAttendanceRateSerializer,
+)
 from .forms import MainAttendanceForm, AttendanceStudentForm, AttendanceAbsenceForm
 from student_registration.users.templatetags.custom_tags import has_group
 
@@ -142,9 +149,9 @@ class AbsenteeViewSet(mixins.ListModelMixin,
 
 
 class MSCCAttendanceRateViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    model = MSCCAttendanceChild
-    queryset = MSCCAttendanceChild.objects.exclude(attendance_rate__isnull=True)
-    serializer_class = MSCCAttendanceChildSerializer
+    model = Registration
+    queryset = Registration.objects.exclude(attendance_rate__isnull=True)
+    serializer_class = RegistrationAttendanceRateSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):

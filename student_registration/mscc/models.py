@@ -294,6 +294,7 @@ class Registration(TimeStampedModel):
         null=True,
         verbose_name=_('Registration date')
     )
+    attendance_rate = models.FloatField(blank=True, null=True)
     partner_unique_number = models.CharField(
         max_length=50,
         blank=True,

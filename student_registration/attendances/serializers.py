@@ -1,6 +1,7 @@
 
 from rest_framework import serializers
 from .models import Attendance, Absentee, CLMAttendanceStudent, MSCCAttendanceChild
+from student_registration.mscc.models import Registration
 
 
 class AttendanceSerializer(serializers.ModelSerializer):
@@ -128,6 +129,18 @@ class MSCCAttendanceChildSerializer(serializers.ModelSerializer):
         model = MSCCAttendanceChild
         fields = (
             '__all__'
+        )
+
+
+class RegistrationAttendanceRateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Registration
+        fields = (
+            'id',
+            'registration_id',
+            'child',
+            'attendance_rate',
         )
 
 
