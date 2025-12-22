@@ -1635,32 +1635,24 @@ class TarlGradingForm(forms.ModelForm):
             Div(
                 Div(
                     HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('test_taken', css_class='col-md-5'),
+                    Div('test_taken', css_class='col-md-4'),
                     css_class='row card-body '
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('arabic_level_reached', css_class='col-md-5 tarl-dependent'),
+                    HTML('<span class="badge-form badge-pill">2</span>'),
+                    Div('arabic_level_reached', css_class='col-md-4 tarl-dependent'),
                     css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('french_level_reached', css_class='col-md-5 tarl-dependent'),
+                    HTML('<span class="badge-form badge-pill">3</span>'),
+                    Div('french_level_reached', css_class='col-md-4 tarl-dependent'),
                     css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('math_level_reached', css_class='col-md-5 tarl-dependent'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('word_problem_q1', css_class='col-md-5 tarl-dependent tarl-word-problem'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('word_problem_q2', css_class='col-md-5 tarl-dependent tarl-word-problem'),
+                    HTML('<span class="badge-form badge-pill">4</span>'),
+                    Div('math_level_reached', css_class='col-md-4 tarl-dependent'),
+                    Div('word_problem_q1', css_class='col-md-3 tarl-dependent tarl-word-problem'),
+                    Div('word_problem_q2', css_class='col-md-3 tarl-dependent tarl-word-problem'),
                     css_class='row card-body'
                 ),
                 FormActions(
