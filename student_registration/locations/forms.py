@@ -98,6 +98,13 @@ class CenterAdminForm(forms.ModelForm):
         choices=Center.YES_NO,
         initial='',
     )
+    provide_french_language = forms.ChoiceField(
+        label=_("Provide French language"),
+        widget=forms.Select,
+        required=False,
+        choices=Center.YES_NO,
+        initial='',
+    )
     is_active = forms.BooleanField(
         label="Is the center active?",
         required=False,
@@ -117,6 +124,7 @@ class CenterAdminForm(forms.ModelForm):
             'cadaster',
             'type',
             'is_tarl',
+            'provide_french_language',
             'provided_packages',
             'is_active'
         )
@@ -227,6 +235,11 @@ class CenterForm(forms.ModelForm):
         widget=forms.Select, required=False,
         choices=Center.YES_NO,
     )
+    provide_french_language = forms.ChoiceField(
+        label=_("Provide French language"),
+        widget=forms.Select, required=False,
+        choices=Center.YES_NO,
+    )
     neaby_phcc = forms.CharField(
         label=_("Nearby PHCC name"),
         widget=forms.TextInput, required=True
@@ -267,48 +280,50 @@ class CenterForm(forms.ModelForm):
                     Div('latitude', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">7</span>'),
                     Div('is_tarl', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">8</span>'),
+                    Div('provide_french_language', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">8</span>'),
-                    Div('manager_name', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">9</span>'),
+                    Div('manager_name', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">10</span>'),
                     Div('phone_number', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">10</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">11</span>'),
                     Div('email', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">11</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">12</span>'),
                     Div('type', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">12</span>'),
-                    Div('provided_packages', css_class='col-md-3  multiple-choice'),
                     HTML('<span class="badge-form-2 badge-pill">13</span>'),
+                    Div('provided_packages', css_class='col-md-3  multiple-choice'),
+                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
                     Div('programs', css_class='col-md-3  multiple-choice'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
-                    Div('cwd_accessible', css_class='col-md-3'),
                     HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                    Div('cwd_accessible', css_class='col-md-3'),
+                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
                     Div('admin_staff_number', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
 
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
-                    Div('offer_digital_learning', css_class='col-md-3'),
                     HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                    Div('offer_digital_learning', css_class='col-md-3'),
+                    HTML('<span class="badge-form-2 badge-pill">18</span>'),
                     Div('have_digital_hub', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">18</span>'),
-                    Div('neaby_phcc', css_class='col-md-3'),
                     HTML('<span class="badge-form-2 badge-pill">19</span>'),
+                    Div('neaby_phcc', css_class='col-md-3'),
+                    HTML('<span class="badge-form-2 badge-pill">20</span>'),
                     Div('is_active', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
@@ -353,6 +368,7 @@ class CenterForm(forms.ModelForm):
         instance.modified_by = request.user
         instance.offer_digital_learning = validated_data.get('offer_digital_learning')
         instance.have_digital_hub = validated_data.get('have_digital_hub')
+        instance.provide_french_language = validated_data.get('provide_french_language')
         instance.neaby_phcc = validated_data.get('neaby_phcc')
 
         instance.save()
@@ -379,6 +395,7 @@ class CenterForm(forms.ModelForm):
             'is_active',
             'offer_digital_learning',
             'have_digital_hub',
+            'provide_french_language',
             'neaby_phcc',
             'is_tarl',
         )
