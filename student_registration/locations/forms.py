@@ -278,6 +278,9 @@ class CenterForm(forms.ModelForm):
                     Div('longitude', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">6</span>'),
                     Div('latitude', css_class='col-md-3'),
+                    css_class='row card-body',
+                ),
+                Div(
                     HTML('<span class="badge-form badge-pill">7</span>'),
                     Div('is_tarl', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">8</span>'),
@@ -287,7 +290,7 @@ class CenterForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge-form badge-pill">9</span>'),
                     Div('manager_name', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">10</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">10</span>'),
                     Div('phone_number', css_class='col-md-3'),
                     HTML('<span class="badge-form-2 badge-pill">11</span>'),
                     Div('email', css_class='col-md-3'),
