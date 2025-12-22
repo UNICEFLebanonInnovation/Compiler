@@ -1574,38 +1574,39 @@ class EducationGradingForm(forms.ModelForm):
 class TarlGradingForm(forms.ModelForm):
     programme_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
-    arabic_assessment_number = forms.IntegerField(
-        label=_('Arabic Assessment Number'),
-        widget=forms.NumberInput(attrs={'maxlength': 4}),
+    test_taken = forms.ChoiceField(
+        label=_('Test Taken'),
+        widget=forms.Select,
+        choices=YES_NO,
         required=True,
     )
     arabic_level_reached = forms.ChoiceField(
         label=_('Arabic Level Reached / المستوى الذي وصل إليه المتعلم/ة'),
         widget=forms.Select,
         choices=TarlAssessment.ARABIC_LEVELS,
-        required=True,
-    )
-    french_assessment_number = forms.IntegerField(
-        label=_('French Assessment Number'),
-        widget=forms.NumberInput(attrs={'maxlength': 4}),
-        required=True,
+        required=False,
     )
     french_level_reached = forms.ChoiceField(
         label=_('French Level Reached / المستوى الذي وصل إليه المتعلم/ة'),
         widget=forms.Select,
         choices=TarlAssessment.FRENCH_LEVELS,
-        required=True,
-    )
-    math_assessment_number = forms.IntegerField(
-        label=_('Math Assessment Number'),
-        widget=forms.NumberInput(attrs={'maxlength': 4}),
-        required=True,
+        required=False,
     )
     math_level_reached = forms.ChoiceField(
         label=_('Math Level Reached / المستوى الذي وصل إليه المتعلم/ة'),
         widget=forms.Select,
         choices=TarlAssessment.MATH_LEVELS,
-        required=True,
+        required=False,
+    )
+    word_problem_q1 = forms.CharField(
+        label=_('Word Problem Q1'),
+        widget=forms.TextInput,
+        required=False,
+    )
+    word_problem_q2 = forms.CharField(
+        label=_('Word Problem Q2'),
+        widget=forms.TextInput,
+        required=False,
     )
 
     def __init__(self, *args, **kwargs):
@@ -1634,24 +1635,33 @@ class TarlGradingForm(forms.ModelForm):
             Div(
                 Div(
                     HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('arabic_assessment_number', css_class='col-md-5'),
-                    HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('arabic_level_reached', css_class='col-md-5'),
+                    Div('test_taken', css_class='col-md-5'),
                     css_class='row card-body '
                 ),
                 Div(
                     HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('french_assessment_number', css_class='col-md-5'),
-                    HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('french_level_reached', css_class='col-md-5'),
-                    css_class='row card-body '
+                    Div('arabic_level_reached', css_class='col-md-5 tarl-dependent'),
+                    css_class='row card-body'
                 ),
                 Div(
                     HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('math_assessment_number', css_class='col-md-5'),
-                    HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('math_level_reached', css_class='col-md-5'),
-                    css_class='row card-body '
+                    Div('french_level_reached', css_class='col-md-5 tarl-dependent'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">1</span>'),
+                    Div('math_level_reached', css_class='col-md-5 tarl-dependent'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">1</span>'),
+                    Div('word_problem_q1', css_class='col-md-5 tarl-dependent tarl-word-problem'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">1</span>'),
+                    Div('word_problem_q2', css_class='col-md-5 tarl-dependent tarl-word-problem'),
+                    css_class='row card-body'
                 ),
                 FormActions(
                     Submit('save', 'Save',
@@ -1662,6 +1672,28 @@ class TarlGradingForm(forms.ModelForm):
                 css_id='step-1'
             )
         )
+
+    def clean(self):
+        cleaned_data = super(TarlGradingForm, self).clean()
+        test_taken = cleaned_data.get('test_taken')
+        required_fields = [
+            'arabic_level_reached',
+            'french_level_reached',
+            'math_level_reached',
+        ]
+        if test_taken == 'Yes':
+            for field in required_fields:
+                if not cleaned_data.get(field):
+                    self.add_error(field, _('This field is required.'))
+
+            math_level_reached = cleaned_data.get('math_level_reached')
+            if math_level_reached in ['Subtraction', 'Division']:
+                if not cleaned_data.get('word_problem_q1'):
+                    self.add_error('word_problem_q1', _('This field is required.'))
+                if not cleaned_data.get('word_problem_q2'):
+                    self.add_error('word_problem_q2', _('This field is required.'))
+
+        return cleaned_data
 
     def save(self, request=None, instance=None, registry=None, programme_type=None, pre_post=None):
         if not instance:
