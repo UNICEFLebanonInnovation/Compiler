@@ -1707,52 +1707,51 @@
                                                         <div class="p-3">
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
+                                                                      <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                          <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Test Taken?</h4>
+                                                                             <p>{{tarl_result.pre_test.test_taken}}</p>
+                                                                          </div>
+                                                                      </div>
+                                                                  </div>
+                                                              {% if tarl_result.pre_test.test_taken == 'Yes' %}
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Test Taken</h4>
-                                                                           <p> {{tarl_result.pre_test.test_taken}}</p>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Assessment - Level</h4>
+                                                                           <p>{{tarl_result.pre_test.arabic_level_reached}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                {% if tarl_result.pre_test.test_taken == 'Yes' %}
-                                                                    <div class="vertical-timeline-item vertical-timeline-element">
-                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Level Reached</h4>
-                                                                               <p> {{tarl_result.pre_test.arabic_level_reached}}</p>
-                                                                            </div>
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">French Assessment - Level</h4>
+                                                                           <p>{{tarl_result.pre_test.french_level_reached}}</p>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="vertical-timeline-item vertical-timeline-element">
-                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">French Level Reached</h4>
-                                                                               <p> {{tarl_result.pre_test.french_level_reached}}</p>
-                                                                            </div>
+                                                                </div>
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mathematics Assessment - Level</h4>
+                                                                           <p>{{tarl_result.pre_test.math_level_reached}}</p>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="vertical-timeline-item vertical-timeline-element">
-                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Math Level Reached</h4>
-                                                                               <p> {{tarl_result.pre_test.math_level_reached}}</p>
-                                                                            </div>
+                                                                </div>
+                                                              {% if tarl_result.pre_test.math_level_reached == 'Subtraction' or tarl_result.pre_test.math_level_reached == 'Division' %}
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Word Problem Q1</h4>
+                                                                           <p>{{tarl_result.pre_test.word_problem_q1}}</p>
                                                                         </div>
                                                                     </div>
-                                                                    {% if tarl_result.pre_test.math_level_reached == 'Subtraction' or tarl_result.pre_test.math_level_reached == 'Division' %}
-                                                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Word Problem Q1</h4>
-                                                                                   <p> {{tarl_result.pre_test.word_problem_q1}}</p>
-                                                                                </div>
-                                                                            </div>
+                                                                </div>
+                                                              <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Word Problem Q2</h4>
+                                                                           <p>{{tarl_result.pre_test.word_problem_q2}}</p>
                                                                         </div>
-                                                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Word Problem Q2</h4>
-                                                                                   <p> {{tarl_result.pre_test.word_problem_q2}}</p>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    {% endif %}
-                                                                {% endif %}
-                                                            </div>
+                                                                    </div>
+                                                                </div>
+                                                              {% endif %}
+                                                              {% endif %}
                                                             </div>
 
                                                         </div>
@@ -1771,53 +1770,52 @@
                                                     <div class="scrollbar-container ps ps--active-y">
                                                         <div class="p-3">
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
+                                                               <div class="vertical-timeline-item vertical-timeline-element">
+                                                                      <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                          <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Test Taken?</h4>
+                                                                             <p>{{tarl_result.mid_test.test_taken}}</p>
+                                                                          </div>
+                                                                      </div>
+                                                                  </div>
+                                                              {% if tarl_result.mid_test.test_taken == 'Yes' %}
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Test Taken</h4>
-                                                                           <p> {{tarl_result.mid_test.test_taken}}</p>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Assessment - Level</h4>
+                                                                           <p>{{tarl_result.mid_test.arabic_level_reached}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                {% if tarl_result.mid_test.test_taken == 'Yes' %}
-                                                                    <div class="vertical-timeline-item vertical-timeline-element">
-                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Level Reached</h4>
-                                                                               <p> {{tarl_result.mid_test.arabic_level_reached}}</p>
-                                                                            </div>
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">French Assessment - Level</h4>
+                                                                           <p>{{tarl_result.mid_test.french_level_reached}}</p>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="vertical-timeline-item vertical-timeline-element">
-                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">French Level Reached</h4>
-                                                                               <p> {{tarl_result.mid_test.french_level_reached}}</p>
-                                                                            </div>
+                                                                </div>
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mathematics Assessment - Level</h4>
+                                                                           <p>{{tarl_result.mid_test.math_level_reached}}</p>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="vertical-timeline-item vertical-timeline-element">
-                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Math Level Reached</h4>
-                                                                               <p> {{tarl_result.mid_test.math_level_reached}}</p>
-                                                                            </div>
+                                                                </div>
+                                                              {% if tarl_result.mid_test.math_level_reached == 'Subtraction' or tarl_result.mid_test.math_level_reached == 'Division' %}
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Word Problem Q1</h4>
+                                                                           <p>{{tarl_result.mid_test.word_problem_q1}}</p>
                                                                         </div>
                                                                     </div>
-                                                                    {% if tarl_result.mid_test.math_level_reached == 'Subtraction' or tarl_result.mid_test.math_level_reached == 'Division' %}
-                                                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Word Problem Q1</h4>
-                                                                                   <p> {{tarl_result.mid_test.word_problem_q1}}</p>
-                                                                                </div>
-                                                                            </div>
+                                                                </div>
+                                                              <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Word Problem Q2</h4>
+                                                                           <p>{{tarl_result.mid_test.word_problem_q2}}</p>
                                                                         </div>
-                                                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Word Problem Q2</h4>
-                                                                                   <p> {{tarl_result.mid_test.word_problem_q2}}</p>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    {% endif %}
-                                                                {% endif %}
-                                                            </div>
+                                                                    </div>
+                                                                </div>
+                                                              {% endif %}
+                                                              {% endif %}
                                                             </div>
 
                                                         </div>
@@ -1836,53 +1834,52 @@
                                                     <div class="scrollbar-container ps ps--active-y">
                                                         <div class="p-3">
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
+                                                                 <div class="vertical-timeline-item vertical-timeline-element">
+                                                                      <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                          <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Test Taken?</h4>
+                                                                             <p>{{tarl_result.post_test.test_taken}}</p>
+                                                                          </div>
+                                                                      </div>
+                                                                  </div>
+                                                              {% if tarl_result.post_test.test_taken == 'Yes' %}
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Test Taken</h4>
-                                                                           <p> {{tarl_result.post_test.test_taken}}</p>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Assessment - Level</h4>
+                                                                           <p>{{tarl_result.post_test.arabic_level_reached}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                {% if tarl_result.post_test.test_taken == 'Yes' %}
-                                                                    <div class="vertical-timeline-item vertical-timeline-element">
-                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Level Reached</h4>
-                                                                               <p> {{tarl_result.post_test.arabic_level_reached}}</p>
-                                                                            </div>
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">French Assessment - Level</h4>
+                                                                           <p>{{tarl_result.post_test.french_level_reached}}</p>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="vertical-timeline-item vertical-timeline-element">
-                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">French Level Reached</h4>
-                                                                               <p> {{tarl_result.post_test.french_level_reached}}</p>
-                                                                            </div>
+                                                                </div>
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mathematics Assessment - Level</h4>
+                                                                           <p>{{tarl_result.post_test.math_level_reached}}</p>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="vertical-timeline-item vertical-timeline-element">
-                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Math Level Reached</h4>
-                                                                               <p> {{tarl_result.post_test.math_level_reached}}</p>
-                                                                            </div>
+                                                                </div>
+                                                              {% if tarl_result.post_test.math_level_reached == 'Subtraction' or tarl_result.post_test.math_level_reached == 'Division' %}
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Word Problem Q1</h4>
+                                                                           <p>{{tarl_result.post_test.word_problem_q1}}</p>
                                                                         </div>
                                                                     </div>
-                                                                    {% if tarl_result.post_test.math_level_reached == 'Subtraction' or tarl_result.post_test.math_level_reached == 'Division' %}
-                                                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Word Problem Q1</h4>
-                                                                                   <p> {{tarl_result.post_test.word_problem_q1}}</p>
-                                                                                </div>
-                                                                            </div>
+                                                                </div>
+                                                              <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Word Problem Q2</h4>
+                                                                           <p>{{tarl_result.post_test.word_problem_q2}}</p>
                                                                         </div>
-                                                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Word Problem Q2</h4>
-                                                                                   <p> {{tarl_result.post_test.word_problem_q2}}</p>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    {% endif %}
-                                                                {% endif %}
-                                                            </div>
+                                                                    </div>
+                                                                </div>
+                                                              {% endif %}
+                                                              {% endif %}
                                                             </div>
 
                                                         </div>
