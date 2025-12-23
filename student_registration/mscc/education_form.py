@@ -1618,6 +1618,13 @@ class TarlGradingForm(forms.ModelForm):
 
         super(TarlGradingForm, self).__init__(*args, **kwargs)
 
+        center = getattr(getattr(self.request, 'user', None), 'center', None)
+        provide_french_language = getattr(center, 'provide_french_language', None) == "Yes"
+        self.require_french_language = provide_french_language
+
+        if not provide_french_language:
+            self.fields.pop('french_level_reached', None)
+
         form_action = reverse('mscc:service_tarl_grading_add',
                               kwargs={'registry': registry, 'programme_type': programme_type, 'pre_post': pre_post})
         if instance:
@@ -1631,36 +1638,49 @@ class TarlGradingForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
-        self.helper.layout = Layout(
+        tarl_blocks = [
             Div(
-                Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('test_taken', css_class='col-md-4'),
-                    css_class='row card-body '
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('arabic_level_reached', css_class='col-md-4 tarl-dependent'),
-                    css_class='row card-body'
-                ),
+                HTML('<span class="badge-form badge-pill">1</span>'),
+                Div('test_taken', css_class='col-md-4'),
+                css_class='row card-body '
+            ),
+            Div(
+                HTML('<span class="badge-form badge-pill">2</span>'),
+                Div('arabic_level_reached', css_class='col-md-4 tarl-dependent'),
+                css_class='row card-body'
+            ),
+        ]
+
+        if provide_french_language:
+            tarl_blocks.append(
                 Div(
                     HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('french_level_reached', css_class='col-md-4 tarl-dependent'),
                     css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">4</span>'),
-                    Div('math_level_reached', css_class='col-md-4 tarl-dependent'),
-                    Div('word_problem_q1', css_class='col-md-3 tarl-dependent tarl-word-problem'),
-                    Div('word_problem_q2', css_class='col-md-3 tarl-dependent tarl-word-problem'),
-                    css_class='row card-body'
-                ),
-                FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-                ),
+                )
+            )
+
+        tarl_blocks.append(
+            Div(
+                HTML('<span class="badge-form badge-pill">4</span>'),
+                Div('math_level_reached', css_class='col-md-4 tarl-dependent'),
+                Div('word_problem_q1', css_class='col-md-3 tarl-dependent tarl-word-problem'),
+                Div('word_problem_q2', css_class='col-md-3 tarl-dependent tarl-word-problem'),
+                css_class='row card-body'
+            )
+        )
+        tarl_blocks.append(
+            FormActions(
+                Submit('save', 'Save',
+                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                Reset('reset', 'Reset',
+                      css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+            )
+        )
+
+        self.helper.layout = Layout(
+            Div(
+                *tarl_blocks,
                 css_id='step-1'
             )
         )
@@ -1670,9 +1690,10 @@ class TarlGradingForm(forms.ModelForm):
         test_taken = cleaned_data.get('test_taken')
         required_fields = [
             'arabic_level_reached',
-            'french_level_reached',
             'math_level_reached',
         ]
+        if self.require_french_language:
+            required_fields.append('french_level_reached')
         if test_taken == 'Yes':
             for field in required_fields:
                 if not cleaned_data.get(field):
