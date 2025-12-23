@@ -160,12 +160,14 @@ class ProfileView(LoginRequiredMixin,
 
         services = ProvidedServices.objects.filter(registration=instance)
         services_dict = {service.name: service for service in services}
+        provide_french_language = getattr(getattr(instance, 'center', None), 'provide_french_language', None) == "Yes"
 
         return {
             'instance': instance,
             'new_round': new_round,
             'current_tab': current_tab,
             'provided_services': services_dict,
+            'provide_french_language': provide_french_language,
         }
 
 
