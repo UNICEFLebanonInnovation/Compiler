@@ -1572,6 +1572,11 @@ class EducationGradingForm(forms.ModelForm):
 
 
 class TarlGradingForm(forms.ModelForm):
+    WORD_PROBLEM_CHOICES = (
+        ('', '---'),
+        ('1', '1'),
+        ('0', '0'),
+    )
     programme_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
     test_taken = forms.ChoiceField(
@@ -1598,14 +1603,17 @@ class TarlGradingForm(forms.ModelForm):
         choices=TarlAssessment.MATH_LEVELS,
         required=False,
     )
-    word_problem_q1 = forms.CharField(
+    word_problem_q1 = forms.ChoiceField(
         label=_('Word Problem Q1'),
-        widget=forms.TextInput,
+        widget=forms.Select,
+        choices=WORD_PROBLEM_CHOICES,
         required=False,
     )
-    word_problem_q2 = forms.CharField(
+    word_problem_q2=forms.ChoiceField(
         label=_('Word Problem Q2'),
-        widget=forms.TextInput,
+
+        widget=forms.Select,
+        choices=WORD_PROBLEM_CHOICES,
         required=False,
     )
 
