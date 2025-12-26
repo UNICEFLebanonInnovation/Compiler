@@ -441,23 +441,26 @@ class Adolescent(TimeStampedModel):
 
     @property
     def id_number(self):
+        id_type_id = self.id_type_id
+        if not id_type_id:
+            return ""
         # 1	"UNHCR Registered"
-        if self.id_type.id == 1:
+        if id_type_id == 1:
             return  self.individual_case_number
         # 2	"UNHCR Recorded"
-        elif self.id_type.id == 2:
+        elif id_type_id == 2:
             return  ''
         # 3	"Syrian national ID"
-        elif self.id_type.id == 3:
+        elif id_type_id == 3:
             return  self.syrian_national_number
         # 4	"Palestinian national ID"
-        elif self.id_type.id == 4:
+        elif id_type_id == 4:
             return  self.sop_national_number
         # 5	"Lebanese national ID"
-        elif self.id_type.id == 5:
+        elif id_type_id == 5:
             return  self.national_number
         # 6	"Other nationality"
-        elif self.id_type.id == 6:
+        elif id_type_id == 6:
             return  self.other_number
         # 7 "Caregiver has no ID"
         else:
@@ -465,26 +468,29 @@ class Adolescent(TimeStampedModel):
 
     @property
     def caregiver_id_number(self):
+        id_type_id = self.id_type_id
+        if not id_type_id:
+            return ""
         # 1	"UNHCR Registered"
-        if self.id_type.id == 1:
+        if id_type_id == 1:
             return self.parent_individual_case_number
         # 2	"UNHCR Recorded"
-        elif self.id_type.id == 2:
+        elif id_type_id == 2:
             return self.recorded_number
         # 3	"Syrian national ID"
-        elif self.id_type.id == 3:
+        elif id_type_id == 3:
             return self.parent_syrian_national_number
         # 4	"Palestinian national ID"
-        elif self.id_type.id == 4:
+        elif id_type_id == 4:
             return self.parent_sop_national_number
         # 5	"Lebanese national ID"
-        elif self.id_type.id == 5:
+        elif id_type_id == 5:
             return self.parent_national_number
         # 6	"Other nationality"
-        elif self.id_type.id == 6:
+        elif id_type_id == 6:
             return self.parent_other_number
         # 9	"Lebanese Extract of Record "
-        elif self.id_type.id == 9:
+        elif id_type_id == 9:
             return self.parent_extract_record
         # 7 "Caregiver has no ID"
         else:
