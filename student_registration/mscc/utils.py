@@ -42,20 +42,21 @@ def parse_attendance_date(value):
     value = str(value).strip()
 
     patterns = (
-        (r"(\d{1,2}/\d{1,2}/\d{4})", "%m/%d/%Y"),
-        (r"(\d{4}-\d{1,2}-\d{1,2})", "%Y-%m-%d"),
+        (r"(\d{1,2}/\d{1,2}/\d{4})", ("%m/%d/%Y", "%d/%m/%Y")),
+        (r"(\d{4}-\d{1,2}-\d{1,2})", ("%Y-%m-%d",)),
     )
 
-    for pattern, fmt in patterns:
+    for pattern, fmts in patterns:
         match = re.search(pattern, value)
         if not match:
             continue
 
         candidate = match.group(1)
-        try:
-            return datetime.strptime(candidate, fmt).date()
-        except ValueError:
-            continue
+        for fmt in fmts:
+            try:
+                return datetime.strptime(candidate, fmt).date()
+            except ValueError:
+                continue
 
     raise ValueError(f"Unsupported attendance_date format: {value}")
 
