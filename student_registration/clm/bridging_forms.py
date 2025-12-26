@@ -2067,6 +2067,8 @@ class BridgingForm(CommonForm):
         from student_registration.students.utils import generate_one_unique_id
 
         instance = super(BridgingForm, self).save(request=request, instance=instance, serializer=BridgingSerializer)
+        if not instance:
+            return None
         instance.save()
 
         consent_parents = request.FILES.get('consent_parents', False)
