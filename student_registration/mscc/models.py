@@ -1700,7 +1700,6 @@ class TarlAssessment(TimeStampedModel):
         ('2-digits', _('2-digits')),
         ('Subtraction', _('Subtraction')),
         ('Division', _('Division')),
-        ('Word Problem', _('Word Problem')),
     )
 
     registration = models.ForeignKey(

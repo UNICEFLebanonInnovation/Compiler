@@ -1611,7 +1611,6 @@ class TarlGradingForm(forms.ModelForm):
     )
     word_problem_q2=forms.ChoiceField(
         label=_('Word Problem Q2'),
-
         widget=forms.Select,
         choices=WORD_PROBLEM_CHOICES,
         required=False,
