@@ -827,6 +827,9 @@ class TrimmedDateField(forms.DateField):
     def to_python(self, value):
         if hasattr(value, 'strip'):
             value = value.strip()
+            match = re.search(r"(\d{4}-\d{1,2}-\d{1,2}|\d{1,2}/\d{1,2}/\d{4}|\d{1,2}-\d{1,2}-\d{4})", value)
+            if match:
+                value = match.group(1)
         return super().to_python(value)
 
 
