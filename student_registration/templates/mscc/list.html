@@ -100,6 +100,9 @@
     <div class="col-lg-12">
         <div class="card-hover-shadow-2x mb-3 card">
             <div class="card-body">
+                <div class="mb-2 text-muted">
+                    Showing {{ table.rows|length }} record{{ table.rows|length|pluralize }}
+                </div>
                 <div class="table-responsive dataTables_wrapper dt-bootstrap5">
         {% csrf_token %}
         {% render_table table 'django_tables2/bootstrap5.html' %}
