@@ -5,16 +5,13 @@ Production Configurations
 - Use Amazon's S3 for storing static files and uploaded media
 - Use mailgun to send emails
 - Use Redis for cache
-- Use sentry for error logging
+- Use Azure Application Insights for error logging
 - Use opbeat for error reporting
 
 """
 
 from __future__ import absolute_import, unicode_literals
 import logging
-
-import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
 
 from .base import *  # noqa
 
@@ -28,9 +25,6 @@ SECRET_KEY = env('DJANGO_SECRET_KEY')
 # This ensures that Django will be able to detect a secure connection
 # properly on Heroku.
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-# raven sentry client
-# See https://docs.sentry.io/clients/python/integrations/django/
-# INSTALLED_APPS += ['raven.contrib.django.raven_compat','student_registration.accounts', ]
 INSTALLED_APPS += ['student_registration.accounts', ]
 
 # Use Whitenoise to serve static files
@@ -114,16 +108,6 @@ CACHES = {
         'LOCATION': '/var/tmp/django_cache',
     }
 }
-
-# Sentry Configuration
-SENTRY_DSN = env('DJANGO_SENTRY_DSN', default='')
-
-sentry_sdk.init(
-    dsn=SENTRY_DSN,
-    integrations=[DjangoIntegration()],
-    traces_sample_rate=1.0,  # Optional, for performance monitoring
-    send_default_pii=True,   # Optional, if you want to send user info
-)
 
 LOGGING = {
     'version': 1,
