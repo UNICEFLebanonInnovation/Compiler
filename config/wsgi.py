@@ -34,8 +34,18 @@ SAMPLING = 1.0 if ENV == "production" else 0.2
 # ---------------- Azure Application Insights (OpenTelemetry) ----------------
 # Configure BEFORE Django imports its app.
 AZURE_MONITOR_CONNECTION_STRING = os.getenv("AZURE_MONITOR_CONNECTION_STRING")
+AZURE_MONITOR_ENABLED_RAW = os.getenv("AZURE_MONITOR_ENABLED")
+if AZURE_MONITOR_ENABLED_RAW is None:
+    AZURE_MONITOR_ENABLED = ENV == "production"
+else:
+    AZURE_MONITOR_ENABLED = AZURE_MONITOR_ENABLED_RAW.strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
 
-if AZURE_MONITOR_CONNECTION_STRING:
+if AZURE_MONITOR_ENABLED and AZURE_MONITOR_CONNECTION_STRING:
     from azure.monitor.opentelemetry import configure_azure_monitor
 
     try:
@@ -54,6 +64,10 @@ if AZURE_MONITOR_CONNECTION_STRING:
         logging.getLogger(__name__).warning(
             "Azure Monitor telemetry disabled: %s", _appins_exc
         )
+elif not AZURE_MONITOR_ENABLED:
+    logging.getLogger(__name__).info(
+        "Azure Monitor telemetry disabled via AZURE_MONITOR_ENABLED."
+    )
 else:
     logging.getLogger(__name__).info(
         "AZURE_MONITOR_CONNECTION_STRING not set; skipping Azure Monitor configuration."
