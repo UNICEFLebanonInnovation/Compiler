@@ -2,11 +2,17 @@
 from __future__ import absolute_import, unicode_literals
 
 import json
+import calendar
+from collections import OrderedDict
 from django.views.generic import ListView, TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from student_registration.users.templatetags.custom_tags import has_group
 from braces.views import GroupRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.db.models import Count, Q
+from django.utils import timezone
+from rest_framework import viewsets, mixins, permissions
+from rest_framework.decorators import action
 
 from student_registration.attendances.models import CLMAttendance, CLMAttendanceStudent, CLMStudentAbsences, CLMStudentTotalAttendance
 from student_registration.schools.models import (
@@ -16,6 +22,18 @@ from student_registration.schools.models import (
 )
 from student_registration.clm.models import Bridging
 from .utils import load_child_attendance, create_attendance
+
+
+def _aggregate_attendance(queryset, *group_fields):
+    return (
+        queryset
+        .values(*group_fields)
+        .annotate(
+            total=Count('id'),
+            absent=Count('id', filter=Q(attended='no')),
+        )
+        .order_by(*group_fields)
+    )
 
 
 class AttendanceView(LoginRequiredMixin,
@@ -166,3 +184,110 @@ class LoadAttendanceChild(LoginRequiredMixin,
             'nbr_absent': instances.filter(attended='No').count(),
             'attendance_month': calendar.month_name[month]
         }
+
+
+class BridgingAttendanceHeatmapViewSet(mixins.ListModelMixin,
+                                       viewsets.GenericViewSet):
+    model = CLMAttendanceStudent
+    queryset = CLMAttendanceStudent.objects.all()
+    permission_classes = (permissions.AllowAny,)
+
+    @action(detail=False, methods=['get'], url_path='percentage')
+    def percentage(self, request, *args, **kwargs):
+        year = int(self.request.GET.get('year', timezone.now().year))
+
+        base_qs = CLMAttendanceStudent.objects.filter(
+            attendance_day__attendance_date__year=year
+        )
+
+        monthly_rows = _aggregate_attendance(
+            base_qs,
+            'attendance_day__attendance_date__month',
+        )
+
+        monthly = []
+        for row in monthly_rows:
+            month = row['attendance_day__attendance_date__month']
+            total = row['total'] or 0
+            absent = row['absent'] or 0
+            present = total - absent
+            percentage = round((present * 100.0) / total, 2) if total else 0.0
+            monthly.append({
+                'month': month,
+                'month_name': calendar.month_name[month],
+                'attendance_percentage': percentage,
+                'present': present,
+                'absent': absent,
+                'total': total,
+            })
+
+        level_rows = _aggregate_attendance(
+            base_qs,
+            'attendance_day__attendance_date__month',
+            'attendance_day__registration_level',
+        )
+
+        level_choices = dict(CLMAttendance.REGISTRATION_LEVEL)
+        level_monthly_totals = {}
+
+        for row in level_rows:
+            level = row['attendance_day__registration_level'] or 'Unknown'
+            label = level_choices.get(level, level)
+            month = row['attendance_day__attendance_date__month']
+            key = (label or 'Unknown', month)
+            totals = level_monthly_totals.setdefault(key, {'total': 0, 'absent': 0})
+            totals['total'] += row['total'] or 0
+            totals['absent'] += row['absent'] or 0
+
+        level_monthly = OrderedDict()
+
+        for (level, month), data in sorted(level_monthly_totals.items(), key=lambda item: (item[0][0], item[0][1])):
+            total = data['total'] or 0
+            absent = data['absent'] or 0
+            present = total - absent
+            percentage = round((present * 100.0) / total, 2) if total else 0.0
+
+            if level not in level_monthly:
+                level_monthly[level] = []
+
+            level_monthly[level].append({
+                'month': month,
+                'month_name': calendar.month_name[month],
+                'attendance_percentage': percentage,
+                'present': present,
+                'absent': absent,
+                'total': total,
+            })
+
+        for values in level_monthly.values():
+            values.sort(key=lambda item: item['month'])
+
+        years = CLMAttendanceStudent.objects.dates(
+            'attendance_day__attendance_date', 'year'
+        )
+
+        available_years = [d.year for d in years]
+        available_years_str = ','.join(str(item) for item in available_years)
+
+        flat_rows = []
+
+        for entry in sorted(monthly, key=lambda item: item['month']):
+            flat_rows.append({
+                'record_type': 'monthly',
+                'year': year,
+                'available_years': available_years_str,
+                'programme': '',
+                **entry,
+            })
+
+        for level, values in level_monthly.items():
+            for entry in values:
+                flat_rows.append({
+                    'record_type': 'level_monthly',
+                    'year': year,
+                    'available_years': available_years_str,
+                    'programme': level,
+                    **entry,
+                })
+
+        return JsonResponse(flat_rows, safe=False)
