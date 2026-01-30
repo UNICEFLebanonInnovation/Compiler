@@ -235,8 +235,5 @@ class YouthMainTable(CommonTable):
             'child.gender',
             'child_age',
             'child_birthday',
-            'child.nationality',
-            # 'governorate',
-            # 'caza',
-            # 'cadaster',
+            'child.nationality'
         )
