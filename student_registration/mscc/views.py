@@ -76,7 +76,7 @@ from .serializers import (
 
 from .utils import *
 
-from student_registration.mscc.templatetags.simple_tags import education_history_model, education_history_programmes
+from student_registration.mscc.templatetags.simple_tags import education_history_model, get_education_service_history
 from .tasks import queue_mscc_export, queue_filtered_mscc_export
 from student_registration.users.templatetags.custom_tags import has_group
 from student_registration.child.models import Child
@@ -727,7 +727,6 @@ class ReferralFormView(LoginRequiredMixin,
 
 
 def old_child_search(request):
-
     birthday_year = request.GET.get('birthday_year')
     birthday_month = request.GET.get('birthday_month')
     birthday_day = request.GET.get('birthday_day')
@@ -735,7 +734,7 @@ def old_child_search(request):
     father_name = request.GET.get('father_name')
     last_name = request.GET.get('last_name')
     mother_fullname = request.GET.get('mother_fullname')
-    sex = request.GET.get('sex')
+    gender = request.GET.get('gender')
     nationality_id = request.GET.get('nationality')
 
     if not all([
@@ -746,7 +745,7 @@ def old_child_search(request):
         father_name,
         last_name,
         mother_fullname,
-        sex,
+        gender,
         nationality_id,
     ]):
         return JsonResponse({'result': []})
@@ -765,7 +764,7 @@ def old_child_search(request):
         mother_fullname,
         birthdate,
         nationality,
-        sex
+        gender
     )
 
     if not unicef_id:
@@ -788,8 +787,24 @@ def old_child_search(request):
 
     result_match = []
     for result in filtered_results:
-        result['programmes'] = education_history_programmes(result['id'])
-        result_match.append(result)
+        education_services = get_education_service_history(result['id'])
+        education_service_history = []
+        if education_services:
+            education_service_history = list(
+                education_services.select_related('registration__center', 'round').values(
+                    'id',
+                    'education_program',
+                    'registration_date',
+                    'class_section',
+                    'registration__center__name',
+                    'round__name',
+                )
+            )
+
+        result_match.append({
+            'child': result,
+            'education_service_history': education_service_history,
+        })
 
     return JsonResponse({'result': result_match})
 

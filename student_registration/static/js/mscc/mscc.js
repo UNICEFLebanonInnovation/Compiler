@@ -184,11 +184,11 @@ $(document).ready(function() {
         if (first_name && father_name && last_name && year && month && day) {
 
           $('#search_loader').removeClass('hidden');
-          $('#nfe_search_loader').removeClass('hidden');
 
           outreach_child_search();
-          old_child_search();
           if ( mother_fullname && sex && nationality) {
+          $('#nfe_search_loader').removeClass('hidden');
+            old_child_search();
             child_duplication_check();
         }
         }
@@ -392,7 +392,7 @@ function old_child_search() {
         var nationality = $('#id_child_nationality').val();
 
         if (!birthday_year || !birthday_month || !birthday_day || !first_name || !father_name
-            || !last_name || !mother_fullname || !sex || !nationality) {
+            || !last_name || !mother_fullname || !gender || !nationality) {
             return;
         }
 
@@ -531,18 +531,23 @@ function append_old_result(data)
     }
 
     $(data.result).each(function(i, item) {
+        var child = item.child || item;
         var full_name = "";
-        full_name = full_name.concat(item.first_name, " ", item.father_name, " ", item.last_name);
+        full_name = full_name.concat(child.first_name, " ", child.father_name, " ", child.last_name);
+        var educationPrograms = $.map(item.education_service_history || [], function (service) {
+            var roundName = service.round__name ? (' - ' + service.round__name) : '';
+            return service.education_program + roundName;
+        }).join('<br>');
 
-        var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-success"></div></div><div class="vertical-timeline-element-content bounce-in">';
-        var html_line2 = '<h4 class="timeline-title text-success"><a href="javascript:get_old_child_data('+ item.id +');">'+full_name+'</a></h4>';
-        var html_line3 = '<p>'+ item.birthday_day + '/'+ item.birthday_month + '/'+ item.birthday_year + ' - '+ item.mother_fullname +'</p>';
-        var html_line4 = '<p>'+ item.gender + ' - '+ item.nationality__name +'</p>';
-        var html_line5 = '<p>'+ item.programmes +'</p></div></div></div>';
+
+        var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-success"><span class="text-success d-flex align-items-center justify-content-center h-100 w-100">'+ (i + 1) +'</span></div></div><div class="vertical-timeline-element-content bounce-in">';
+        var html_line2 = '<h4 class="timeline-title text-success"><a href="javascript:get_old_child_data('+ child.id +');">'+full_name+'</a></h4>';
+        var html_line3 = '<p>'+ child.birthday_day + '/'+ child.birthday_month + '/'+ child.birthday_year + ' - '+ child.mother_fullname +'</p>';
+        var html_line4 = '<p>'+ child.gender + ' - '+ child.nationality__name +'</p>';
+        var html_line5 = '<p>'+ educationPrograms +'</p></div></div></div>';
         child_html = html_line1 + html_line2 + html_line3 + html_line4 + html_line5;
 
-        $('#nfe_search_result').append(child_html);
-
+        $('#nfe_search_result').append(child_html); 
         return true;
     });
 
