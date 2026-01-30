@@ -246,7 +246,7 @@ def have_youth_programme(programme_type):
         programmes = ServiceProgramOption.objects.filter(
             is_youth='Yes'
         ).values_list('program_code', flat=True)
-        
+
         if programme_type in programmes:
             return True
     except Exception as ex:

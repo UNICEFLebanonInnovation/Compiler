@@ -79,6 +79,7 @@ from .utils import *
 from student_registration.mscc.templatetags.simple_tags import education_history_model, education_history_programmes
 from .tasks import queue_mscc_export, queue_filtered_mscc_export
 from student_registration.users.templatetags.custom_tags import has_group
+from student_registration.child.models import Child
 
 
 def chart_data(request):
@@ -770,7 +771,7 @@ def old_child_search(request):
     if not unicef_id:
         return JsonResponse({'result': []})
 
-    filtered_results = Student.objects.filter(
+    filtered_results = Child.objects.filter(
         unicef_id=unicef_id
     ).values(
         'id',
@@ -778,7 +779,7 @@ def old_child_search(request):
         'father_name',
         'last_name',
         'mother_fullname',
-        'sex',
+        'gender',
         'nationality__name',
         'birthday_year',
         'birthday_month',

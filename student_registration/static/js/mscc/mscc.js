@@ -388,7 +388,7 @@ function old_child_search() {
         var father_name = $('#id_child_father_name').val();
         var last_name = $('#id_child_last_name').val();
         var mother_fullname = $('#id_child_mother_fullname').val();
-        var sex = $('#id_child_gender').val();
+        var gender = $('#id_child_gender').val();
         var nationality = $('#id_child_nationality').val();
 
         if (!birthday_year || !birthday_month || !birthday_day || !first_name || !father_name
@@ -404,7 +404,7 @@ function old_child_search() {
             father_name: father_name,
             last_name: last_name,
             mother_fullname: mother_fullname,
-            sex: sex,
+            gender: gender,
             nationality: nationality,
         };
 
@@ -537,7 +537,7 @@ function append_old_result(data)
         var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-success"></div></div><div class="vertical-timeline-element-content bounce-in">';
         var html_line2 = '<h4 class="timeline-title text-success"><a href="javascript:get_old_child_data('+ item.id +');">'+full_name+'</a></h4>';
         var html_line3 = '<p>'+ item.birthday_day + '/'+ item.birthday_month + '/'+ item.birthday_year + ' - '+ item.mother_fullname +'</p>';
-        var html_line4 = '<p>'+ item.sex + ' - '+ item.nationality__name +'</p>';
+        var html_line4 = '<p>'+ item.gender + ' - '+ item.nationality__name +'</p>';
         var html_line5 = '<p>'+ item.programmes +'</p></div></div></div>';
         child_html = html_line1 + html_line2 + html_line3 + html_line4 + html_line5;
 
