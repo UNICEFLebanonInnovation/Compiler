@@ -733,67 +733,45 @@ def old_child_search(request):
     first_name = request.GET.get('first_name')
     father_name = request.GET.get('father_name')
     last_name = request.GET.get('last_name')
+    mother_fullname = request.GET.get('mother_fullname')
+    sex = request.GET.get('sex')
+    nationality_id = request.GET.get('nationality')
 
-    form_str = '{} {} {}'.format(first_name, father_name, last_name)
+    if not all([
+        birthday_year,
+        birthday_month,
+        birthday_day,
+        first_name,
+        father_name,
+        last_name,
+        mother_fullname,
+        sex,
+        nationality_id,
+    ]):
+        return JsonResponse({'result': []})
 
-    # filtered_results = Student.objects.filter(
-    #     birthday_year=birthday_year
-    # )
-    # if filtered_results.count() > 1000 and not birthday_month and not birthday_day:
-    #     return JsonResponse({'result': {'error': 'Too many records. Please select the Birthday '
-    #                                              'month to get more accurate result'}})
-    #
-    # if birthday_month:
-    #     filtered_results = filtered_results.filter(
-    #         birthday_month=birthday_month
-    #     )
-    #
-    # if filtered_results.count() > 1000 and not birthday_day:
-    #     return JsonResponse({'result': {'error': 'Too many records. Please select the Birthday '
-    #                                              'day to get more accurate result'}})
-    #
-    # if birthday_day:
-    #     filtered_results = filtered_results.filter(
-    #         birthday_day=birthday_day
-    #     )
-    #
-    # filtered_results = filtered_results.values(
-    #     'id',
-    #     'first_name',
-    #     'father_name',
-    #     'last_name',
-    #     'mother_fullname',
-    #     'sex',
-    #     'nationality__name',
-    #     'birthday_year',
-    #     'birthday_month',
-    #     'birthday_day',
-    # ).distinct()
-    #
-    # result_match = []
-    # for result in filtered_results:
-    #     result_str = '{} {} {}'.format(result['first_name'], result['father_name'],
-    #                                    result['last_name'])
-    #     fuzzy_match = fuzz.ratio(form_str, result_str)
-    #     if fuzzy_match > 70:
-    #         result['score'] = fuzzy_match
-    #         result['programmes'] = education_history_programmes(result['id'])
-    #         result_match.append(result)
-    #
-    # return JsonResponse({'result': result_match})
+    try:
+        nationality = Nationality.objects.get(id=nationality_id).name_en
+    except Nationality.DoesNotExist:
+        nationality = ''
 
-    filtered_results = Student.objects.filter(
-        birthday_year=birthday_year
+    birthdate = '{0}-{1}-{2}'.format(birthday_year, birthday_month, birthday_day)
+    unicef_id = generate_one_unique_id(
+        '0',
+        first_name,
+        father_name,
+        last_name,
+        mother_fullname,
+        birthdate,
+        nationality,
+        sex
     )
 
-    if birthday_month:
-        filtered_results = filtered_results.filter(
-            birthday_month=birthday_month
-        )
+    if not unicef_id:
+        return JsonResponse({'result': []})
 
-    filtered_results = filtered_results.filter(
-        Q(first_name__contains=first_name, last_name__contains=last_name) |
-        Q(first_name__contains=first_name, father_name__contains=last_name)
+    filtered_results = Student.objects.filter(
+        unicef_id=unicef_id
     ).values(
         'id',
         'first_name',
@@ -809,13 +787,8 @@ def old_child_search(request):
 
     result_match = []
     for result in filtered_results:
-        result_str = '{} {} {}'.format(result['first_name'], result['father_name'],
-                                       result['last_name'])
-        fuzzy_match = fuzz.ratio(form_str, result_str)
-        if fuzzy_match > 70:
-            result['score'] = fuzzy_match
-            result['programmes'] = education_history_programmes(result['id'])
-            result_match.append(result)
+        result['programmes'] = education_history_programmes(result['id'])
+        result_match.append(result)
 
     return JsonResponse({'result': result_match})
 

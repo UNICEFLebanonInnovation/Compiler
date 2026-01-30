@@ -268,6 +268,9 @@ function outreach_child_search() {
         var first_name = $('#id_child_first_name').val();
         var father_name = $('#id_child_father_name').val();
         var last_name = $('#id_child_last_name').val();
+        var mother_fullname = $('#id_child_mother_fullname').val();
+        var sex = $('#id_child_gender').val();
+        var nationality = $('#id_child_nationality').val();
 
         var data = {
             birthday_year: birthday_year,
@@ -276,6 +279,9 @@ function outreach_child_search() {
             first_name: first_name,
             father_name: father_name,
             last_name: last_name,
+            mother_fullname: mother_fullname,
+            sex: sex,
+            nationality: nationality,
         };
 
         $.ajax({
@@ -381,6 +387,14 @@ function old_child_search() {
         var first_name = $('#id_child_first_name').val();
         var father_name = $('#id_child_father_name').val();
         var last_name = $('#id_child_last_name').val();
+        var mother_fullname = $('#id_child_mother_fullname').val();
+        var sex = $('#id_child_gender').val();
+        var nationality = $('#id_child_nationality').val();
+
+        if (!birthday_year || !birthday_month || !birthday_day || !first_name || !father_name
+            || !last_name || !mother_fullname || !sex || !nationality) {
+            return;
+        }
 
         var data = {
             birthday_year: birthday_year,
@@ -389,6 +403,9 @@ function old_child_search() {
             first_name: first_name,
             father_name: father_name,
             last_name: last_name,
+            mother_fullname: mother_fullname,
+            sex: sex,
+            nationality: nationality,
         };
 
         $.ajax({
@@ -517,7 +534,7 @@ function append_old_result(data)
         var full_name = "";
         full_name = full_name.concat(item.first_name, " ", item.father_name, " ", item.last_name);
 
-        var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-success"><span class="text-success">'+ item.score +'%</span></div></div><div class="vertical-timeline-element-content bounce-in">';
+        var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-success"></div></div><div class="vertical-timeline-element-content bounce-in">';
         var html_line2 = '<h4 class="timeline-title text-success"><a href="javascript:get_old_child_data('+ item.id +');">'+full_name+'</a></h4>';
         var html_line3 = '<p>'+ item.birthday_day + '/'+ item.birthday_month + '/'+ item.birthday_year + ' - '+ item.mother_fullname +'</p>';
         var html_line4 = '<p>'+ item.sex + ' - '+ item.nationality__name +'</p>';
