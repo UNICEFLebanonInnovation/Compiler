@@ -541,13 +541,20 @@ function append_old_result(data)
 
 
         var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-success"><span class="text-success d-flex align-items-center justify-content-center h-100 w-100">'+ (i + 1) +'</span></div></div><div class="vertical-timeline-element-content bounce-in">';
-        var html_line2 = '<h4 class="timeline-title text-success"><a href="javascript:get_old_child_data('+ child.id +');">'+full_name+'</a></h4>';
+
+        var latestRegistrationId = item.latest_registration_id;
+        var childLink = full_name;
+        if (latestRegistrationId) {
+            childLink = '<a href="/mscc/new-round/' + latestRegistrationId + '/">' + full_name + '</a>';
+        }
+        var html_line2 = '<h4 class="timeline-title text-success">'+ childLink +'</h4>';
+
         var html_line3 = '<p>'+ child.birthday_day + '/'+ child.birthday_month + '/'+ child.birthday_year + ' - '+ child.mother_fullname +'</p>';
         var html_line4 = '<p>'+ child.gender + ' - '+ child.nationality__name +'</p>';
         var html_line5 = '<p>'+ educationPrograms +'</p></div></div></div>';
         child_html = html_line1 + html_line2 + html_line3 + html_line4 + html_line5;
 
-        $('#nfe_search_result').append(child_html); 
+        $('#nfe_search_result').append(child_html);
         return true;
     });
 

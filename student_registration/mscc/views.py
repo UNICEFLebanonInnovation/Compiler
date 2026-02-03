@@ -801,9 +801,17 @@ def old_child_search(request):
                 )
             )
 
+        latest_registration_id = (
+            Registration.objects.filter(child_id=result['id'], deleted=False)
+            .order_by('-registration_date', '-id')
+            .values_list('id', flat=True)
+            .first()
+        )
+
         result_match.append({
             'child': result,
             'education_service_history': education_service_history,
+            'latest_registration_id': latest_registration_id,
         })
 
     return JsonResponse({'result': result_match})
