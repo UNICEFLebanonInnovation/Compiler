@@ -23,6 +23,7 @@ from .models import (
     EducationAssessment,
     EducationService,
     ServiceProgramOption,
+    Packages,
     EducationRSService,
     EducationProgrammeAssessment,
     TarlAssessment,
@@ -508,10 +509,23 @@ class EducationServiceForm(forms.ModelForm):
                 service_name: get_service(registry, service_name)
                 for service_name in service_names
             }
+            available_service_names = {
+                name for name, service in available_services.items() if service
+            }
+
+            if registry and not available_service_names:
+                registry_obj = Registration.objects.select_related('child').filter(id=registry).first()
+                if registry_obj:
+                    available_service_names = set(
+                        Packages.objects.filter(
+                            type=registry_obj.type,
+                            age=registry_obj.child_age
+                        ).values_list('name', flat=True)
+                    )
 
             choices = []
             for option in service_programs:
-                if not available_services.get(option.service_name):
+                if available_service_names and option.service_name not in available_service_names:
                     continue
 
                 label = programme_labels.get(option.program_code, _(option.program_code))
