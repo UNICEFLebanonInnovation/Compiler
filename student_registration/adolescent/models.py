@@ -518,10 +518,10 @@ class Adolescent(TimeStampedModel):
 
     @property
     def birthdate(self):
-        return u'{}-{}-{}'.format(
+        return '{}-{:02d}-{:02d}'.format(
             self.birthday_year,
-            self.birthday_month,
-            self.birthday_day,
+            int(self.birthday_month),
+            int(self.birthday_day),
         )
     @property
     def age(self):
