@@ -791,7 +791,9 @@ def old_child_search(request):
         education_service_history = []
         if education_services:
             education_service_history = list(
-                education_services.select_related('registration__center', 'round').values(
+                education_services.select_related('registration__center', 'round')
+                    .order_by('-id')
+                    .values(
                     'id',
                     'education_program',
                     'registration_date',
@@ -801,6 +803,7 @@ def old_child_search(request):
                 )
             )
 
+# gkgkglkg
         latest_registration_id = (
             Registration.objects.filter(child_id=result['id'], deleted=False)
             .order_by('-registration_date', '-id')
