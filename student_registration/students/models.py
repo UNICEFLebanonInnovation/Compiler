@@ -312,6 +312,7 @@ class Person(TimeStampedModel):
     )
     number = models.CharField(max_length=45, blank=True, null=True)
     unicef_id = models.CharField(max_length=45, blank=True, null=True)
+    unicef_id_backup = models.CharField(max_length=45, blank=True, null=True, verbose_name=_('Unicef ID Backup'))
     number_part1 = models.CharField(max_length=45, blank=True, null=True)
     number_part2 = models.CharField(max_length=45, blank=True, null=True)
     std_phone = models.CharField(max_length=74, blank=True, null=True)
