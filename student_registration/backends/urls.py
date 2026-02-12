@@ -34,6 +34,11 @@ urlpatterns = [
         name='generate_student_id'
     ),
     re_path(
+        r'^generate-adolescent-unique-id/$',
+        view=views.generate_adolescent_unique_id,
+        name='generate_adolescent_id'
+    ),
+    re_path(
         r'^generate-child-cash-programme/$',
         view=views.generate_child_cash_programme,
         name='generate_cash_programme'

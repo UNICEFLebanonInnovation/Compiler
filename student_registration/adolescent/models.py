@@ -149,6 +149,7 @@ class Adolescent(TimeStampedModel):
     )
     number = models.CharField(max_length=45, blank=True, null=True)
     unicef_id = models.CharField(max_length=45, blank=True, null=True)
+    unicef_id_backup = models.CharField(max_length=45, blank=True, null=True)
     id_type = models.ForeignKey(
         IDType,
         blank=False, null=True,

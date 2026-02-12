@@ -59,9 +59,15 @@ def generate_child_cash_programme(request):
 def generate_student_unique_id(request):
     from student_registration.backends.threads import generate_student_unique_id
 
-    from student_registration.students.models import Student
-
     generate_student_unique_id()
+    return HttpResponse("records saved successfully")
+
+
+
+def generate_adolescent_unique_id(request):
+    from student_registration.backends.threads import generate_adolescent_unique_id
+
+    generate_adolescent_unique_id()
     return HttpResponse("records saved successfully")
 
 
