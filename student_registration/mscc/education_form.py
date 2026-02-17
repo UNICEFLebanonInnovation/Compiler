@@ -979,7 +979,7 @@ class EducationGradingForm(forms.ModelForm):
                                           'pk': instance})
 
         if programme_type:
-            self.fields['programme_type'].initial = programme_type 
+            self.fields['programme_type'].initial = programme_type
 
         if programme_type == "BLN Level 1":
             field_init(self.fields['arabic_grade'], 'Arabic Language Development', 68)
