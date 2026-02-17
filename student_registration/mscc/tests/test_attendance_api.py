@@ -9,6 +9,7 @@ import os
 
 import django
 from django.conf import settings
+from django.db.utils import OperationalError
 
 import pytest
 os.environ['DATABASE_URL'] = 'sqlite:///test.sqlite3'
@@ -30,7 +31,7 @@ settings.DATABASES['default'] = {
 }
 
 from student_registration.mscc.attendance_views import AttendanceHeatmapViewSet
-from student_registration.mscc.utils import parse_attendance_date
+from student_registration.mscc.utils import parse_attendance_date, create_attendance
 
 
 def test_attendance_heatmap_api_monthly_percentages():
@@ -275,3 +276,32 @@ def test_parse_attendance_date_handles_iso_timestamps():
 def test_parse_attendance_date_invalid_input():
     with pytest.raises(ValueError):
         parse_attendance_date('not-a-date')
+
+
+def test_create_attendance_retries_admin_terminated_connection():
+    payload = {
+        'attendance_date': '07/01/2024',
+        'attendance_day_off': 'No',
+        'close_reason': '',
+        'round_id': 1,
+        'education_program': 'BLN Level 1',
+        'class_section': 'A',
+        'children_attendance': []
+    }
+
+    attendance_obj = MagicMock()
+
+    with patch(
+        'student_registration.mscc.utils.MSCCAttendance.objects.get_or_create',
+        side_effect=[
+            OperationalError('terminating connection due to administrator command'),
+            (attendance_obj, True),
+        ],
+    ) as mock_get_or_create, patch(
+        'student_registration.mscc.utils.close_old_connections'
+    ) as mock_close_old_connections:
+        result = create_attendance(payload, center_id=1)
+
+    assert result is True
+    assert mock_get_or_create.call_count == 2
+    mock_close_old_connections.assert_called_once()
