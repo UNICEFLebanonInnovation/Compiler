@@ -979,23 +979,25 @@ class EducationGradingForm(forms.ModelForm):
                                           'pk': instance})
 
         if programme_type:
-            self.fields['programme_type'].initial = programme_type
+            self.fields['programme_type'].initial = programme_type 
 
         if programme_type == "BLN Level 1":
             field_init(self.fields['arabic_grade'], 'Arabic Language Development', 68)
             field_init(self.fields['english_grade'], 'English Language Development', 43)
             field_init(self.fields['french_grade'], 'French Language Development', 43)
             field_init(self.fields['math_grade'], 'Mathematics', 22)
-            field_init(self.fields['social_emotional_grade'], 'Social-Emotional Development', 24)
-            field_init(self.fields['artistic_grade'], 'Artistic Development', 10)
-            self.fields['language_grade'].hidden_widget()
-            self.fields['language_grade'].required = False
             if provide_french_language:
                 self.fields['english_grade'].hidden_widget()
                 self.fields['english_grade'].required = False
             else:
                 self.fields['french_grade'].hidden_widget()
                 self.fields['french_grade'].required = False
+            self.fields['social_emotional_grade'].hidden_widget()
+            self.fields['social_emotional_grade'].required = False
+            self.fields['artistic_grade'].hidden_widget()
+            self.fields['artistic_grade'].required = False
+            self.fields['language_grade'].hidden_widget()
+            self.fields['language_grade'].required = False
             self.fields['science_grade'].hidden_widget()
             self.fields['biology_grade'].hidden_widget()
             self.fields['chemistry_grade'].hidden_widget()
@@ -1007,16 +1009,18 @@ class EducationGradingForm(forms.ModelForm):
             field_init(self.fields['english_grade'], 'English Language Development', 65)
             field_init(self.fields['french_grade'], 'French Language Development', 65)
             field_init(self.fields['math_grade'], 'Mathematics', 32)
-            field_init(self.fields['social_emotional_grade'], 'Social-Emotional Development', 24)
-            field_init(self.fields['artistic_grade'], 'Artistic Development Grade', 10)
-            self.fields['language_grade'].hidden_widget()
-            self.fields['language_grade'].required = False
             if provide_french_language:
                 self.fields['english_grade'].hidden_widget()
                 self.fields['english_grade'].required = False
             else:
                 self.fields['french_grade'].hidden_widget()
                 self.fields['french_grade'].required = False
+            self.fields['social_emotional_grade'].hidden_widget()
+            self.fields['social_emotional_grade'].required = False
+            self.fields['artistic_grade'].hidden_widget()
+            self.fields['artistic_grade'].required = False
+            self.fields['language_grade'].hidden_widget()
+            self.fields['language_grade'].required = False
             self.fields['science_grade'].hidden_widget()
             self.fields['biology_grade'].hidden_widget()
             self.fields['chemistry_grade'].hidden_widget()
@@ -1028,16 +1032,18 @@ class EducationGradingForm(forms.ModelForm):
             field_init(self.fields['english_grade'], 'English Language Development', 64)
             field_init(self.fields['french_grade'], 'French Language Development', 59)
             field_init(self.fields['math_grade'], 'Mathematics', 32)
-            field_init(self.fields['social_emotional_grade'], 'Social-Emotional Development', 24)
-            field_init(self.fields['artistic_grade'], 'Artistic Development', 10)
-            self.fields['language_grade'].hidden_widget()
-            self.fields['language_grade'].required = False
             if provide_french_language:
                 self.fields['english_grade'].hidden_widget()
                 self.fields['english_grade'].required = False
             else:
                 self.fields['french_grade'].hidden_widget()
                 self.fields['french_grade'].required = False
+            self.fields['social_emotional_grade'].hidden_widget()
+            self.fields['social_emotional_grade'].required = False
+            self.fields['artistic_grade'].hidden_widget()
+            self.fields['artistic_grade'].required = False
+            self.fields['language_grade'].hidden_widget()
+            self.fields['language_grade'].required = False
             self.fields['science_grade'].hidden_widget()
             self.fields['biology_grade'].hidden_widget()
             self.fields['chemistry_grade'].hidden_widget()
@@ -1181,13 +1187,6 @@ class EducationGradingForm(forms.ModelForm):
                     Div(
                         HTML('<span class="badge-form badge-pill">' + str(3 + ctr) + '</span>'),
                         Div('math_grade', css_class='col-md-4'),
-                        HTML('<span class="badge-form badge-pill">' + str(4 + ctr) + '</span>'),
-                        Div('social_emotional_grade', css_class='col-md-4'),
-                        css_class='row card-body ' + grade_field_css + display_pre_fields_css
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">' + str(5 + ctr) + '</span>'),
-                        Div('artistic_grade', css_class='col-md-4'),
                         css_class='row card-body ' + grade_field_css + display_pre_fields_css
                     ),
                     FormActions(
@@ -1450,20 +1449,16 @@ class EducationGradingForm(forms.ModelForm):
             )
 
     def save(self, request=None, instance=None, registry=None, programme_type=None, pre_post=None):
-        payload = request.POST.copy()
-        if programme_type in ["BLN Level 1", "BLN Level 2", "BLN Level 3"]:
-            selected_language_field = 'french_grade' if self.provide_french_language else 'english_grade'
-            payload['language_grade'] = payload.get(selected_language_field, 0)
 
         if not instance:
             instance = EducationProgrammeAssessment.objects.create(registration_id=registry)
-            instance.pre_test = payload
+            instance.pre_test = request.POST
         else:
             instance = EducationProgrammeAssessment.objects.get(id=instance)
             if pre_post == "pre":
-                instance.pre_test = payload
+                instance.pre_test = request.POST
             if pre_post == "post":
-                instance.post_test = payload
+                instance.post_test = request.POST
 
         instance.programme_type = programme_type
         instance.save()
