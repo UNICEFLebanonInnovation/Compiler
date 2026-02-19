@@ -165,11 +165,24 @@
     document.addEventListener("DOMContentLoaded", function () {
         const confirmButton = document.getElementById("submit-id-save");
         const radioButtons = document.querySelectorAll("input[name='registrationType']");
+        let isSubmitting = false;
 
         // Function to update the href of the button based on the selected radio button
         const updateHref = () => {
             const selectedType = document.querySelector("input[name='registrationType']:checked").value;
             confirmButton.href = `{% url 'mscc:new_round_redirect' %}?registry={{ registry }}&new_round_confirmation=confirmed&registrationType=${selectedType}`;
+        };
+
+        const submitNewRound = (event) => {
+            if (isSubmitting) {
+                event.preventDefault();
+                return;
+            }
+
+            isSubmitting = true;
+            confirmButton.classList.add("disabled");
+            confirmButton.setAttribute("aria-disabled", "true");
+            confirmButton.style.pointerEvents = "none";
         };
 
         // Update the href when the page loads (in case a default is selected)
@@ -179,6 +192,7 @@
         radioButtons.forEach((radio) => {
             radio.addEventListener("change", updateHref);
         });
+        confirmButton.addEventListener("click", submitNewRound);
     });
 </script>
 
