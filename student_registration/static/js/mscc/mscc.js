@@ -186,9 +186,9 @@ $(document).ready(function() {
           $('#search_loader').removeClass('hidden');
 
           outreach_child_search();
-          if ( mother_fullname && sex && nationality) {
           $('#nfe_search_loader').removeClass('hidden');
             old_child_search();
+          if ( mother_fullname && sex && nationality) {
             child_duplication_check();
         }
         }
@@ -391,8 +391,7 @@ function old_child_search() {
         var gender = $('#id_child_gender').val();
         var nationality = $('#id_child_nationality').val();
 
-        if (!birthday_year || !birthday_month || !birthday_day || !first_name || !father_name
-            || !last_name || !mother_fullname || !gender || !nationality) {
+        if (!birthday_year  || !first_name || !father_name || !last_name  ) {
             return;
         }
 
@@ -403,9 +402,6 @@ function old_child_search() {
             first_name: first_name,
             father_name: father_name,
             last_name: last_name,
-            mother_fullname: mother_fullname,
-            gender: gender,
-            nationality: nationality,
         };
 
         $.ajax({

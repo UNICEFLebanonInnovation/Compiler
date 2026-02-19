@@ -733,46 +733,27 @@ def old_child_search(request):
     first_name = request.GET.get('first_name')
     father_name = request.GET.get('father_name')
     last_name = request.GET.get('last_name')
-    mother_fullname = request.GET.get('mother_fullname')
-    gender = request.GET.get('gender')
-    nationality_id = request.GET.get('nationality')
 
-    if not all([
-        birthday_year,
-        birthday_month,
-        birthday_day,
-        first_name,
-        father_name,
-        last_name,
-        mother_fullname,
-        gender,
-        nationality_id,
-    ]):
+    if not birthday_year or not first_name or not father_name or not last_name:
         return JsonResponse({'result': []})
 
-    try:
-        nationality = Nationality.objects.get(id=nationality_id).name_en
-    except Nationality.DoesNotExist:
-        nationality = ''
-
-    birthdate = '{0}-{1}-{2}'.format(birthday_year, birthday_month, birthday_day)
-    unicef_id = generate_one_unique_id(
-        '0',
-        first_name,
-        father_name,
-        last_name,
-        mother_fullname,
-        birthdate,
-        nationality,
-        gender
-    )
-
-    if not unicef_id:
-        return JsonResponse({'result': []})
+    form_str = '{} {} {}'.format(first_name, father_name, last_name)
 
     filtered_results = Child.objects.filter(
-        unicef_id=unicef_id
-    ).values(
+        birthday_year=birthday_year
+    )
+
+    if birthday_month:
+        filtered_results = filtered_results.filter(
+            birthday_month=birthday_month
+        )
+
+    if birthday_day:
+        filtered_results = filtered_results.filter(
+            birthday_day=birthday_day
+        )
+
+    filtered_results = filtered_results.values(
         'id',
         'first_name',
         'father_name',
@@ -787,6 +768,12 @@ def old_child_search(request):
 
     result_match = []
     for result in filtered_results:
+        result_str = '{} {} {}'.format(result['first_name'], result['father_name'], result['last_name'])
+        fuzzy_match = fuzz.ratio(form_str, result_str)
+        if fuzzy_match <= 80:
+            continue
+
+        result['score'] = fuzzy_match
         education_services = get_education_service_history(result['id'])
         education_service_history = []
         if education_services:
@@ -803,7 +790,6 @@ def old_child_search(request):
                 )
             )
 
-# gkgkglkg
         latest_registration_id = (
             Registration.objects.filter(child_id=result['id'], deleted=False)
             .order_by('-registration_date', '-id')
