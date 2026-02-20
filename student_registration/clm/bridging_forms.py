@@ -431,12 +431,6 @@ class BridgingForm(CommonForm):
         ('level_one', _('Level one')),
         ('level_two', _('Level two')),
         ('level_three', _('Level three')),
-        ('level_one_pm', _('Level one PM shift')),
-        ('level_two_pm', _('Level two PM shift')),
-        ('level_three_pm', _('Level three PM shift')),
-        ('level_four_pm', _('Level four PM shift')),
-        ('level_five_pm', _('Level five PM shift')),
-        ('level_six_pm', _('Level six PM shift')),
         ('grade_one', _('Grade one')),
         ('grade_two', _('Grade two')),
         ('grade_three', _('Grade three')),
@@ -922,15 +916,6 @@ class BridgingForm(CommonForm):
             choices.append(('level_one', _('Level one')))
             choices.append(('level_two', _('Level two')))
             choices.append(('level_three', _('Level three')))
-            choices.append(('level_four', _('Level four')))
-            choices.append(('level_five', _('Level five')))
-            choices.append(('level_six', _('Level six')))
-            choices.append(('level_one_pm', _('Level one PM shift')))
-            choices.append(('level_two_pm', _('Level two PM shift')))
-            choices.append(('level_three_pm', _('Level three PM shift')))
-            choices.append(('level_four_pm', _('Level four PM shift')))
-            choices.append(('level_five_pm', _('Level five PM shift')))
-            choices.append(('level_six_pm', _('Level six PM shift')))
         else:
             choices.append(('grade_one', _('Grade one')))
             choices.append(('grade_two', _('Grade two')))
@@ -2197,9 +2182,6 @@ class BridgingAssessmentForm(forms.ModelForm):
         ('level_one', _('Level one')),
         ('level_two', _('Level two')),
         ('level_three', _('Level three')),
-        ('level_four', _('Level four')),
-        ('level_five', _('Level five')),
-        ('level_six', _('Level six'))
     )
     participation = forms.ChoiceField(
         label=_('How was the level of child participation in the program?'),
@@ -2734,9 +2716,6 @@ class BridgingMidAssessmentForm(forms.ModelForm):
         ('level_one', _('Level one')),
         ('level_two', _('Level two')),
         ('level_three', _('Level three')),
-        ('level_four', _('Level four')),
-        ('level_five', _('Level five')),
-        ('level_six', _('Level six'))
     )
     mid_test_done = forms.ChoiceField(
         label=_("Mid test has been done"),
