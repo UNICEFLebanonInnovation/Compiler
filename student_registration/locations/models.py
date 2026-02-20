@@ -444,6 +444,13 @@ class ProgramStaff(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Facilitator Attendance to training ?')
     )
+    is_active_current_round = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('The staff still active in current round?')
+    )
     training_topics = ArrayField(
         models.CharField(
             choices=TOPICS,

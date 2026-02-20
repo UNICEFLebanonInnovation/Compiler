@@ -37,6 +37,7 @@
                     <th>Weekly Hours Taught</th>
                     <th>Attendance Training</th>
                     <th>Training Topics</th>
+                    <th>Still Active in Current Round?</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -69,6 +70,7 @@
                               {{ topic }}<br>
                           {% endfor %}
                         </td>
+                        <td> {{ program_staff.is_active_current_round }} </td>
                     </tr>
                 {% endfor %}
                 </tbody>

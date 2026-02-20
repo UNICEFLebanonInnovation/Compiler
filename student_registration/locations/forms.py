@@ -458,6 +458,11 @@ class ProgramStaffForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
         choices=ProgramStaff.TOPICS
     )
+    is_active_current_round = forms.ChoiceField(
+        label=_("The staff still active in current round?"),
+        widget=forms.Select, required=False,
+        choices=Center.YES_NO,
+    )
     attach_cv = forms.FileField(
         label=_("CV"),
         required=False,
@@ -512,6 +517,8 @@ class ProgramStaffForm(forms.ModelForm):
                     Div('attendance_training', css_class='col-md-3'),
                     HTML('<span class="badge-form-2 badge-pill">14</span>'),
                     Div('training_topics', css_class='col-md-3  multiple-choice'),
+                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                    Div('is_active_current_round', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
@@ -556,6 +563,7 @@ class ProgramStaffForm(forms.ModelForm):
         instance.weekly_hours_taught = int(weekly_hours_str) if weekly_hours_str else 0
         instance.attendance_training = validated_data.get('attendance_training')
         instance.training_topics = validated_data.getlist('training_topics')
+        instance.is_active_current_round = validated_data.get('is_active_current_round')
         attach_cv = request.FILES.get('attach_cv', False)
         if attach_cv:
             instance.attach_cv = attach_cv
@@ -581,6 +589,7 @@ class ProgramStaffForm(forms.ModelForm):
             'weekly_hours_taught',
             'attendance_training',
             'training_topics',
+            'is_active_current_round',
             'attach_cv',
             'attach_diploma'
         )

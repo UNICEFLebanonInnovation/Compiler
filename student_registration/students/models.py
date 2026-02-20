@@ -779,6 +779,13 @@ class Teacher(Person):
         choices=YES_NO,
         verbose_name=_('Extra coaching')
     )
+    is_active_current_round = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('The staff still active in current round?')
+    )
     extra_coaching_specify = models.TextField(
         blank=True, null=True,
         verbose_name=_('Please specify')

@@ -62,6 +62,7 @@ class ProgramStaffSerializer(serializers.ModelSerializer):
             'weekly_hours_taught',
             'attendance_training',
             'training_topics',
+            'is_active_current_round',
             'attach_cv',
             'attach_diploma'
         )

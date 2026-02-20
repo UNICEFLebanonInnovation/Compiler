@@ -2,7 +2,7 @@ from django import forms
 from django.utils.translation import gettext as _
 
 import django_filters
-from django_filters import FilterSet, ModelChoiceFilter,CharFilter
+from django_filters import FilterSet, ModelChoiceFilter, CharFilter, ChoiceFilter
 from django.db.models import Value, CharField, Func
 from django.db.models.functions import Concat,Cast
 from collections import OrderedDict
@@ -51,6 +51,11 @@ class PlaceholderFilterSet(FilterSet):
 class TeacherFilter(PlaceholderFilterSet):
     round = ModelChoiceFilter(queryset=CLMRound.objects.filter(current_year=True).all(), empty_label=_('Round'))
     school = ModelChoiceFilter(queryset=School.objects.filter(is_closed=False), empty_label=_('School'))
+    is_active_current_round = ChoiceFilter(
+        choices=Teacher.YES_NO,
+        empty_label=_('The staff still active in current round?')
+    )
+
     class Meta:
         model = Teacher
         fields = OrderedDict((
@@ -60,6 +65,6 @@ class TeacherFilter(PlaceholderFilterSet):
                 ('unicef_id', ['contains']),
                 ('school', ['exact']),
                 ('round', ['exact']),
+                ('is_active_current_round', ['exact']),
         ))
-
 

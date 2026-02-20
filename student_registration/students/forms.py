@@ -195,6 +195,12 @@ class TeacherForm(forms.ModelForm):
         label=_('Please specify'),
         widget=forms.TextInput, required=False
     )
+    is_active_current_round = forms.ChoiceField(
+        label=_('The staff still active in current round?'),
+        widget=forms.Select,
+        required=False,
+        choices=Teacher.YES_NO,
+    )
     attach_short_description_1 = forms.CharField(
         label=_("Description"),
         widget=forms.TextInput, required=False
@@ -393,6 +399,8 @@ class TeacherForm(forms.ModelForm):
                     Div('extra_coaching', css_class='col-md-3'),
                     HTML('<span class="badge-form-2 badge-pill" id="span_extra_coaching_specify">16</span>'),
                     Div('extra_coaching_specify', css_class='col-md-3'),
+                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                    Div('is_active_current_round', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 css_id='step-1'
@@ -612,6 +620,7 @@ class TeacherForm(forms.ModelForm):
             'training_sessions_attended',
             'extra_coaching',
             'extra_coaching_specify',
+            'is_active_current_round',
             'attach_short_description_1',
             'attach_file_1',
             'attach_type_1',

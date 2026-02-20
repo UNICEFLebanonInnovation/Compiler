@@ -47,6 +47,7 @@ class TeacherTable(CommonTable):
             'school',
             'round',
             'email',
+            'is_active_current_round',
             'owner',
             'modified_by',
             'created',
