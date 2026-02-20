@@ -32,6 +32,8 @@ class TeacherTable(CommonTable):
                                         attrs={'url_edit': '/students/teacher-edit/',
                                                'url_delete': '/students/teacher-delete/',
                                                'programme': 'Bridging'})
+    is_active_current_round = tables.Column(verbose_name=_('Is active?'), accessor='center.governorate')
+
 
     class Meta:
         model = Teacher
