@@ -166,30 +166,18 @@ function reorganizeForm_post_assessment()
     //    id_language
     if (language == 'english_arabic')
     {
-        $('#div_id_english_alphabet_knowledge').removeClass('d-none');
-        $('#div_id_english_familiar_words').removeClass('d-none');
-        $('#div_id_english_reading_comprehension').removeClass('d-none');
         $('#span_english').removeClass('d-none');
     }
     else
     {
-        $('#div_id_english_alphabet_knowledge').addClass('d-none');
-        $('#div_id_english_familiar_words').addClass('d-none');
-        $('#div_id_english_reading_comprehension').addClass('d-none');
         $('#span_english').addClass('d-none');
     }
     if (language == 'french_arabic')
     {
-        $('#div_id_french_alphabet_knowledge').removeClass('d-none');
-        $('#div_id_french_familiar_words').removeClass('d-none');
-        $('#div_id_french_reading_comprehension').removeClass('d-none');
         $('#span_french').removeClass('d-none');
     }
     else
     {
-        $('#div_id_french_alphabet_knowledge').addClass('d-none');
-        $('#div_id_french_familiar_words').addClass('d-none');
-        $('#div_id_french_reading_comprehension').addClass('d-none');
         $('#span_french').addClass('d-none');
     }
     }
@@ -199,16 +187,20 @@ function reorganizeForm_post_assessment()
 
         // grades
 
-        $('#id_arabic_alphabet_knowledge').val('');
-        $('#id_arabic_familiar_words').val('');
-        $('#id_arabic_reading_comprehension').val('');
-        $('#id_english_alphabet_knowledge').val('');
-        $('#id_english_familiar_words').val('');
-        $('#id_english_reading_comprehension').val('');
-        $('#id_french_alphabet_knowledge').val('');
-        $('#id_french_familiar_words').val('');
-        $('#id_french_reading_comprehension').val('');
-        $('#id_math').val('');
+
+        [
+            'ef_letter_sound', 'ef_familiar_words', 'ef_picture_word_matching', 'ef_reading_comprehension_text_1',
+            'ef_reading_comprehension_text_2', 'ef_letter_dictation', 'ef_word_dictation', 'ef_sentence_dictation',
+            'ef_picture_naming', 'ef_picture_description', 'ef_total_score', 'ar_letter_sound',
+            'ar_alphabet_vowel_marks', 'ar_alphabet_long_vowels', 'ar_familiar_words', 'ar_picture_word_matching',
+            'ar_reading_comprehension_text_1', 'ar_reading_comprehension_text_2', 'ar_letter_dictation',
+            'ar_word_dictation', 'ar_sentence_dictation', 'ar_picture_naming', 'ar_picture_description',
+            'ar_total_score', 'm_natural_numbers', 'm_addition', 'm_location', 'm_plane_figures',
+            'm_subtraction', 'm_length', 'm_solid_figures', 'm_multiplication', 'm_division', 'm_fractions',
+            'm_total_score'
+        ].forEach(function (fieldName) {
+            $('#id_' + fieldName).val('');
+        });
 
         $('div.grades').addClass('d-none');
         $('#grades').addClass('hide');
