@@ -63,6 +63,7 @@ from student_registration.schools.models import (
 )
 from student_registration.backends.models import ExportHistory
 from .bridging_forms import (
+    BridgingPreAssessmentForm,
     BridgingAssessmentForm,
     BridgingMidAssessmentForm,
     BridgingFollowupForm,
@@ -573,8 +574,8 @@ class BridgingAttendanceReport(LoginRequiredMixin,
 
 
 class BridgingPostAssessmentView(LoginRequiredMixin,
-                            GroupRequiredMixin,
-                            FormView):
+                             GroupRequiredMixin,
+                             FormView):
     template_name = 'clm/bridging_post_assessment.html'
     form_class = BridgingAssessmentForm
     success_url = '/clm/bridging-list/'
@@ -639,6 +640,69 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
         instance = Bridging.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(BridgingPostAssessmentView, self).form_valid(form)
+
+
+class BridgingPreAssessmentView(LoginRequiredMixin,
+                             GroupRequiredMixin,
+                             FormView):
+    template_name = 'clm/bridging_pre_assessment.html'
+    form_class = BridgingPreAssessmentForm
+    success_url = '/clm/bridging-list/'
+    group_required = [u"CLM_Bridging"]
+
+    def get_context_data(self, **kwargs):
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(BridgingPreAssessmentView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = Bridging.objects.get(id=self.kwargs['pk'])
+
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance, request=self.request)
+        else:
+            data = BridgingSerializer(instance).data
+            if 'pre_test' in data:
+                p_test = data['pre_test']
+                if p_test:
+                    if "Bridging_ASSESSMENT/arabic_alphabet_knowledge" in p_test:
+                        data['arabic_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/arabic_alphabet_knowledge"]
+                    if "Bridging_ASSESSMENT/arabic_familiar_words" in p_test:
+                        data['arabic_familiar_words'] = p_test["Bridging_ASSESSMENT/arabic_familiar_words"]
+                    if "Bridging_ASSESSMENT/arabic_reading_comprehension" in p_test:
+                        data['arabic_reading_comprehension'] = p_test[
+                            "Bridging_ASSESSMENT/arabic_reading_comprehension"]
+
+                    if "Bridging_ASSESSMENT/english_alphabet_knowledge" in p_test:
+                        data['english_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/english_alphabet_knowledge"]
+                    if "Bridging_ASSESSMENT/english_familiar_words" in p_test:
+                        data['english_familiar_words'] = p_test["Bridging_ASSESSMENT/english_familiar_words"]
+                    if "Bridging_ASSESSMENT/english_reading_comprehension" in p_test:
+                        data['english_reading_comprehension'] = p_test[
+                            "Bridging_ASSESSMENT/english_reading_comprehension"]
+
+                    if "Bridging_ASSESSMENT/french_alphabet_knowledge" in p_test:
+                        data['french_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/french_alphabet_knowledge"]
+                    if "Bridging_ASSESSMENT/french_familiar_words" in p_test:
+                        data['french_familiar_words'] = p_test["Bridging_ASSESSMENT/french_familiar_words"]
+                    if "Bridging_ASSESSMENT/french_reading_comprehension" in p_test:
+                        data['french_reading_comprehension'] = p_test[
+                            "Bridging_ASSESSMENT/french_reading_comprehension"]
+
+                    if "Bridging_ASSESSMENT/math" in p_test:
+                        data['math'] = p_test["Bridging_ASSESSMENT/math"]
+
+                    if "Bridging_ASSESSMENT/exam1" in p_test:
+                        data['exam1'] = p_test["Bridging_ASSESSMENT/exam1"]
+
+            return form_class(data, instance=instance, request=self.request)
+
+    def form_valid(self, form):
+        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        form.save(request=self.request, instance=instance)
+        return super(BridgingPreAssessmentView, self).form_valid(form)
 
 
 class BridgingMidAssessmentView(LoginRequiredMixin,
@@ -1055,5 +1119,4 @@ def bridging_export_all(request, **kwargs):
     except Exception as e:
         logging.error("Export failed: %s", traceback.format_exc())
         return HttpResponse("An error occurred: " + str(e), status=500)
-
 

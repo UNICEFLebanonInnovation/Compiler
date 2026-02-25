@@ -500,6 +500,7 @@ class BridgingTable(CommonTable):
                                         template_name='django_tables2/clm_action_column.html',
                                         attrs={'url_edit': '/clm/bridging-edit/',
                                                'url_delete': '/clm/bridging-delete/',
+                                               'url_pre_assessment': '/clm/bridging-pre-assessment/',
                                                'url_post_assessment': '/clm/bridging-post-assessment/',
                                                'url_mid_assessment1': '/clm/bridging-mid-assessment/',
                                                'url_mid_assessment2': '/clm/bridging-mid-assessment/',
@@ -540,4 +541,3 @@ class BridgingTable(CommonTable):
             'created',
             'modified',
         )
-
