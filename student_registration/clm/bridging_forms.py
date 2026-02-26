@@ -2155,7 +2155,7 @@ class BridgingPreAssessmentForm(forms.ModelForm):
         }
         for field_name, max_grade in pre_level_max_labels.get(level, {}).items():
             if field_name in self.fields:
-                self.fields[field_name].label = '{} (Max: {})'.format(self.fields[field_name].label, max_grade)
+                self.fields[field_name].label = '{}/{}'.format(self.fields[field_name].label, max_grade)
 
         if not is_Kayany:
             self.helper.layout = Layout(
@@ -2644,7 +2644,7 @@ class BridgingAssessmentForm(forms.ModelForm):
         }
         for field_name, max_grade in post_level_max_labels.get(level, {}).items():
             if field_name in self.fields:
-                self.fields[field_name].label = '{} (Max: {})'.format(self.fields[field_name].label, max_grade)
+                self.fields[field_name].label = '{}/{}'.format(self.fields[field_name].label, max_grade)
 
         if not is_Kayany:
 
