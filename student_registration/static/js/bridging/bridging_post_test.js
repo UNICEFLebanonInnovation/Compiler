@@ -22,6 +22,7 @@ $(document).ready(function () {
     ].join(',');
 
     $(document).on('change', selectors, reorganizeForm_post_assessment);
+    $(document).on('change', '#id_registration_level', reorganizeForm_post_assessment);
 
     $(document).on('click', '.delete-button', function () {
         if (confirm($(this).attr('translation'))) {
@@ -37,6 +38,64 @@ $(document).ready(function () {
         }
     });
 });
+
+function getRequiredGradeFields(registrationLevel, isPostAssessment) {
+    const efByLevel = {
+        level_one: ['ef_letter_sound', 'ef_familiar_words', 'ef_picture_word_matching', 'ef_reading_comprehension_text_1', 'ef_reading_comprehension_text_2', 'ef_letter_dictation', 'ef_word_dictation', 'ef_total_score'],
+        level_two: ['ef_letter_sound', 'ef_familiar_words', 'ef_picture_word_matching', 'ef_reading_comprehension_text_1', 'ef_reading_comprehension_text_2', 'ef_sentence_dictation', 'ef_picture_naming', 'ef_total_score'],
+        level_three: ['ef_letter_sound', 'ef_familiar_words', 'ef_picture_word_matching', 'ef_reading_comprehension_text_1', 'ef_reading_comprehension_text_2', 'ef_word_dictation', 'ef_picture_description', 'ef_total_score']
+    };
+
+    const arByLevel = {
+        level_one: ['ar_letter_sound', 'ar_alphabet_vowel_marks', 'ar_alphabet_long_vowels', 'ar_familiar_words', 'ar_picture_word_matching', 'ar_reading_comprehension_text_1', 'ar_reading_comprehension_text_2', 'ar_letter_dictation', 'ar_word_dictation', 'ar_total_score'],
+        level_two: ['ar_letter_sound', 'ar_alphabet_vowel_marks', 'ar_alphabet_long_vowels', 'ar_familiar_words', 'ar_picture_word_matching', 'ar_reading_comprehension_text_1', 'ar_reading_comprehension_text_2', 'ar_word_dictation', 'ar_picture_naming', 'ar_total_score'],
+        level_three: ['ar_letter_sound', 'ar_alphabet_vowel_marks', 'ar_alphabet_long_vowels', 'ar_familiar_words', 'ar_picture_word_matching', 'ar_reading_comprehension_text_1', 'ar_reading_comprehension_text_2', 'ar_sentence_dictation', 'ar_picture_description', 'ar_total_score']
+    };
+
+    const preMathByLevel = {
+        level_one: ['m_natural_numbers', 'm_addition', 'm_location', 'm_plane_figures', 'm_total_score'],
+        level_two: ['m_natural_numbers', 'm_addition', 'm_location', 'm_plane_figures', 'm_subtraction', 'm_total_score'],
+        level_three: ['m_natural_numbers', 'm_addition', 'm_plane_figures', 'm_subtraction', 'm_multiplication', 'm_total_score']
+    };
+
+    const postMathByLevel = {
+        level_one: ['m_natural_numbers', 'm_addition', 'm_subtraction', 'm_length', 'm_solid_figures', 'm_plane_figures', 'm_total_score'],
+        level_two: ['m_natural_numbers', 'm_addition', 'm_subtraction', 'm_length', 'm_solid_figures', 'm_plane_figures', 'm_multiplication', 'm_total_score'],
+        level_three: ['m_natural_numbers', 'm_addition', 'm_length', 'm_multiplication', 'm_location', 'm_division', 'm_fractions', 'm_total_score']
+    };
+
+    const mathByLevel = isPostAssessment ? postMathByLevel : preMathByLevel;
+    return [
+        ...(efByLevel[registrationLevel] || []),
+        ...(arByLevel[registrationLevel] || []),
+        ...(mathByLevel[registrationLevel] || [])
+    ];
+}
+
+function applyRegistrationLevelGradeVisibility() {
+    const registrationLevel = $('select#id_registration_level').val();
+    const hasPostTestToggle = $('#id_test_done').length > 0;
+
+    const allGradeFields = [
+        'ef_letter_sound', 'ef_familiar_words', 'ef_picture_word_matching', 'ef_reading_comprehension_text_1',
+        'ef_reading_comprehension_text_2', 'ef_letter_dictation', 'ef_word_dictation', 'ef_sentence_dictation',
+        'ef_picture_naming', 'ef_picture_description', 'ef_total_score', 'ar_letter_sound',
+        'ar_alphabet_vowel_marks', 'ar_alphabet_long_vowels', 'ar_familiar_words', 'ar_picture_word_matching',
+        'ar_reading_comprehension_text_1', 'ar_reading_comprehension_text_2', 'ar_letter_dictation',
+        'ar_word_dictation', 'ar_sentence_dictation', 'ar_picture_naming', 'ar_picture_description',
+        'ar_total_score', 'm_natural_numbers', 'm_addition', 'm_location', 'm_plane_figures',
+        'm_subtraction', 'm_length', 'm_solid_figures', 'm_multiplication', 'm_division', 'm_fractions',
+        'm_total_score'
+    ];
+
+    allGradeFields.forEach(function (fieldName) {
+        $('#div_id_' + fieldName).addClass('d-none');
+    });
+
+    getRequiredGradeFields(registrationLevel, hasPostTestToggle).forEach(function (fieldName) {
+        $('#div_id_' + fieldName).removeClass('d-none');
+    });
+}
 
 
 
@@ -157,11 +216,12 @@ function reorganizeForm_post_assessment()
     $('div#div_id_round_complete').addClass('d-none');
     $('#span_round_complete').addClass('d-none');
 
-    if(test_done == 'yes'){
+    if(test_done == 'yes' || $('#id_test_done').length === 0){
     $('#div_id_round_complete').removeClass('d-none');
     $('#span_round_complete').removeClass('d-none');
     $('#grades').removeClass('hide');
     $('div.grades').removeClass('d-none');
+    applyRegistrationLevelGradeVisibility();
 
     //    id_language
     if (language == 'english_arabic')

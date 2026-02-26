@@ -22,6 +22,9 @@ $(document).ready(function(){
      $(document).on('change', 'select#id_mid_test_done ', function(){
            reorganizeForm();
         });
+    $(document).on('change', 'select#id_registration_level', function(){
+           reorganizeForm();
+        });
 
     $(document).on('click', '.delete-button', function(){
         var item = $(this);
@@ -45,6 +48,29 @@ $(document).ready(function(){
 
 });
 
+function getRequiredMidFields(registrationLevel)
+{
+    var byLevel = {
+        level_one: ['ef_letter_sound', 'ef_familiar_words', 'ef_reading_comprehension_text_1', 'ar_letter_sound', 'ar_familiar_words', 'ar_reading_comprehension_text_1', 'm_total_score'],
+        level_two: ['ef_letter_sound', 'ef_familiar_words', 'ef_reading_comprehension_text_1', 'ar_letter_sound', 'ar_familiar_words', 'ar_reading_comprehension_text_1', 'm_total_score'],
+        level_three: ['ef_letter_sound', 'ef_familiar_words', 'ef_reading_comprehension_text_1', 'ar_letter_sound', 'ar_familiar_words', 'ar_reading_comprehension_text_1', 'm_total_score']
+    };
+    return byLevel[registrationLevel] || [];
+}
+
+function applyMidRegistrationLevelGradeVisibility()
+{
+    var registrationLevel = $('select#id_registration_level').val();
+    var allFields = ['ef_letter_sound', 'ef_familiar_words', 'ef_reading_comprehension_text_1', 'ar_letter_sound', 'ar_familiar_words', 'ar_reading_comprehension_text_1', 'm_total_score'];
+    allFields.forEach(function(fieldName){
+        $('#div_id_' + fieldName).addClass('d-none');
+    });
+
+    getRequiredMidFields(registrationLevel).forEach(function(fieldName){
+        $('#div_id_' + fieldName).removeClass('d-none');
+    });
+}
+
 
 function reorganizeForm()
 {
@@ -52,52 +78,14 @@ function reorganizeForm()
     $('div.grades').addClass('d-none');
     if(mid_test_done == 'no')
     {
-        $('#id_arabic_alphabet_knowledge').val('');
-        $('#id_arabic_familiar_words').val('');
-        $('#id_arabic_alphabet_knowledge').val('');
-
-        $('#id_english_alphabet_knowledge').val('');
-        $('#id_english_familiar_words').val('');
-        $('#id_english_reading_comprehension').val('');
-
-        $('#id_french_alphabet_knowledge').val('');
-        $('#id_french_familiar_words').val('');
-        $('#id_french_reading_comprehension').val('');
-
-        $('#id_math').val('');
+        ['ef_letter_sound', 'ef_familiar_words', 'ef_reading_comprehension_text_1', 'ar_letter_sound', 'ar_familiar_words', 'ar_reading_comprehension_text_1', 'm_total_score'].forEach(function(fieldName){
+            $('#id_' + fieldName).val('');
+        });
     }
     else
     {
         $('div.grades').removeClass('d-none');
-        var language  = $('select#id_language').val();
-        if (language == 'english_arabic')
-        {
-            $('#div_id_english_alphabet_knowledge').removeClass('d-none');
-            $('#div_id_english_familiar_words').removeClass('d-none');
-            $('#div_id_english_reading_comprehension').removeClass('d-none');
-            $('#span_english').removeClass('d-none');
-        }
-        else
-        {
-            $('#div_id_english_alphabet_knowledge').addClass('d-none');
-            $('#div_id_english_familiar_words').addClass('d-none');
-            $('#div_id_english_reading_comprehension').addClass('d-none');
-            $('#span_english').addClass('d-none');
-        }
-        if (language == 'french_arabic')
-        {
-            $('#div_id_french_alphabet_knowledge').removeClass('d-none');
-            $('#div_id_french_familiar_words').removeClass('d-none');
-            $('#div_id_french_reading_comprehension').removeClass('d-none');
-            $('#span_french').removeClass('d-none');
-        }
-        else
-        {
-            $('#div_id_french_alphabet_knowledge').addClass('d-none');
-            $('#div_id_french_familiar_words').addClass('d-none');
-            $('#div_id_french_reading_comprehension').addClass('d-none');
-            $('#span_french').addClass('d-none');
-        }
+        applyMidRegistrationLevelGradeVisibility();
     }
 
 }
