@@ -2161,67 +2161,67 @@ class BridgingPreAssessmentForm(forms.ModelForm):
 
     # English/French domain
     ef_letter_sound = forms.FloatField(
-        label=_("Letter Sound (one domain)"),
+        label=_("Letter Sound (one domain)/10"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ef_familiar_words = forms.FloatField(
-        label=_("Familiar Words (one domain)"),
+        label=_("Familiar Words (one domain)/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ef_picture_word_matching = forms.FloatField(
-        label=_("Picture word matching"),
+        label=_("Picture word matching/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ef_reading_comprehension_text_1 = forms.FloatField(
-        label=_("Reading comprehension text 1"),
+        label=_("Reading comprehension text 1/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ef_reading_comprehension_text_2 = forms.FloatField(
-        label=_("Reading comprehension text 2"),
+        label=_("Reading comprehension text 2/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ef_letter_dictation = forms.FloatField(
-        label=_("Letter Dictation"),
+        label=_("Letter Dictation/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ef_word_dictation = forms.FloatField(
-        label=_("Word Dictation"),
+        label=_("Word Dictation/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ef_sentence_dictation = forms.FloatField(
-        label=_("Sentence Dictation"),
+        label=_("Sentence Dictation/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ef_picture_naming = forms.FloatField(
-        label=_("Picture Naming"),
+        label=_("Picture Naming/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ef_picture_description = forms.FloatField(
-        label=_("Picture Description"),
+        label=_("Picture Description/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ef_total_score = forms.FloatField(
-        label=_("Total scores (out of 40)"),
+        label=_("Total scores/40"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
@@ -2229,79 +2229,79 @@ class BridgingPreAssessmentForm(forms.ModelForm):
 
     # Arabic domain
     ar_letter_sound = forms.FloatField(
-        label=_("Letter Sound"),
+        label=_("Letter Sound/10"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_alphabet_vowel_marks = forms.FloatField(
-        label=_("Alphabet letters with vowel marks"),
+        label=_("Alphabet letters with vowel marks/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_alphabet_long_vowels = forms.FloatField(
-        label=_("Alphabet letters with long vowel letters"),
+        label=_("Alphabet letters with long vowel letters/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_familiar_words = forms.FloatField(
-        label=_("Familiar Words"),
+        label=_("Familiar Words/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_picture_word_matching = forms.FloatField(
-        label=_("Picture word matching"),
+        label=_("Picture word matching/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_reading_comprehension_text_1 = forms.FloatField(
-        label=_("Reading comprehension text 1"),
+        label=_("Reading comprehension text 1/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_reading_comprehension_text_2 = forms.FloatField(
-        label=_("Reading comprehension text 2"),
+        label=_("Reading comprehension text 2/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_letter_dictation = forms.FloatField(
-        label=_("Letter Dictation"),
+        label=_("Letter Dictation/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_word_dictation = forms.FloatField(
-        label=_("Word Dictation"),
+        label=_("Word Dictation/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_sentence_dictation = forms.FloatField(
-        label=_("Sentence dictation"),
+        label=_("Sentence dictation/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_picture_naming = forms.FloatField(
-        label=_("Picture Naming"),
+        label=_("Picture Naming/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_picture_description = forms.FloatField(
-        label=_("Picture Description"),
+        label=_("Picture Description/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_total_score = forms.FloatField(
-        label=_("Total scores (out of 50)"),
+        label=_("Total scores/50"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
@@ -2309,67 +2309,67 @@ class BridgingPreAssessmentForm(forms.ModelForm):
 
     # Math domain
     m_natural_numbers = forms.FloatField(
-        label=_("Natural Numbers"),
+        label=_("Natural Numbers/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     m_addition = forms.FloatField(
-        label=_("Addition"),
+        label=_("Addition/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     m_location = forms.FloatField(
-        label=_("Location"),
+        label=_("Location/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     m_plane_figures = forms.FloatField(
-        label=_("Plane Figures"),
+        label=_("Plane Figures/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     m_subtraction = forms.FloatField(
-        label=_("Subtraction"),
+        label=_("Subtraction/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     m_length = forms.FloatField(
-        label=_("Length"),
+        label=_("Length/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     m_solid_figures = forms.FloatField(
-        label=_("Solid Figures"),
+        label=_("Solid Figures/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     m_multiplication = forms.FloatField(
-        label=_("Multiplication"),
+        label=_("Multiplication/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     m_division = forms.FloatField(
-        label=_("Division"),
+        label=_("Division/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     m_fractions = forms.FloatField(
-        label=_("Fractions"),
+        label=_("Fractions/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     m_total_score = forms.FloatField(
-        label=_("Total scores"),
+        label=_("Total scores/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
@@ -2820,211 +2820,211 @@ class BridgingAssessmentForm(forms.ModelForm):
     )
 
     ef_letter_sound = forms.FloatField(
-        label=_("Letter Sound (one domain)"),
+        label=_("Letter Sound (one domain)/10"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ef_familiar_words = forms.FloatField(
-        label=_("Familiar Words (one domain)"),
+        label=_("Familiar Words (one domain)/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ef_picture_word_matching = forms.FloatField(
-        label=_("Picture word matching"),
+        label=_("Picture word matching/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ef_reading_comprehension_text_1 = forms.FloatField(
-        label=_("Reading comprehension text 1"),
+        label=_("Reading comprehension text 1/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ef_reading_comprehension_text_2 = forms.FloatField(
-        label=_("Reading comprehension text 2"),
+        label=_("Reading comprehension text 2/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ef_letter_dictation = forms.FloatField(
-        label=_("Letter Dictation"),
+        label=_("Letter Dictation/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ef_word_dictation = forms.FloatField(
-        label=_("Word Dictation"),
+        label=_("Word Dictation/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ef_sentence_dictation = forms.FloatField(
-        label=_("Sentence Dictation"),
+        label=_("Sentence Dictation/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ef_picture_naming = forms.FloatField(
-        label=_("Picture Naming"),
+        label=_("Picture Naming/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ef_picture_description = forms.FloatField(
-        label=_("Picture Description"),
+        label=_("Picture Description/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ef_total_score = forms.FloatField(
-        label=_("Total scores (out of 40)"),
+        label=_("Total scores/40"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_letter_sound = forms.FloatField(
-        label=_("Letter Sound"),
+        label=_("Letter Sound/10"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_alphabet_vowel_marks = forms.FloatField(
-        label=_("Alphabet letters with vowel marks"),
+        label=_("Alphabet letters with vowel marks/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_alphabet_long_vowels = forms.FloatField(
-        label=_("Alphabet letters with long vowel letters"),
+        label=_("Alphabet letters with long vowel letters/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_familiar_words = forms.FloatField(
-        label=_("Familiar Words"),
+        label=_("Familiar Words/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_picture_word_matching = forms.FloatField(
-        label=_("Picture word matching"),
+        label=_("Picture word matching/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_reading_comprehension_text_1 = forms.FloatField(
-        label=_("Reading comprehension text 1"),
+        label=_("Reading comprehension text 1/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_reading_comprehension_text_2 = forms.FloatField(
-        label=_("Reading comprehension text 2"),
+        label=_("Reading comprehension text 2/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_letter_dictation = forms.FloatField(
-        label=_("Letter Dictation"),
+        label=_("Letter Dictation/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_word_dictation = forms.FloatField(
-        label=_("Word Dictation"),
+        label=_("Word Dictation/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_sentence_dictation = forms.FloatField(
-        label=_("Sentence dictation"),
+        label=_("Sentence dictation/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_picture_naming = forms.FloatField(
-        label=_("Picture Naming"),
+        label=_("Picture Naming/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_picture_description = forms.FloatField(
-        label=_("Picture Description"),
+        label=_("Picture Description/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_total_score = forms.FloatField(
-        label=_("Total scores (out of 50)"),
+        label=_("Total scores/50"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     m_natural_numbers = forms.FloatField(
-        label=_("Natural Numbers"),
+        label=_("Natural Numbers/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     m_addition = forms.FloatField(
-        label=_("Addition"),
+        label=_("Addition/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     m_location = forms.FloatField(
-        label=_("Location"),
+        label=_("Location/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     m_plane_figures = forms.FloatField(
-        label=_("Plane Figures"),
+        label=_("Plane Figures/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     m_subtraction = forms.FloatField(
-        label=_("Subtraction"),
+        label=_("Subtraction/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     m_length = forms.FloatField(
-        label=_("Length"),
+        label=_("Length/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     m_solid_figures = forms.FloatField(
-        label=_("Solid Figures"),
+        label=_("Solid Figures/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     m_multiplication = forms.FloatField(
-        label=_("Multiplication"),
+        label=_("Multiplication/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     m_division = forms.FloatField(
-        label=_("Division"),
+        label=_("Division/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     m_fractions = forms.FloatField(
-        label=_("Fractions"),
+        label=_("Fractions/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     m_total_score = forms.FloatField(
-        label=_("Total scores"),
+        label=_("Total scores/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
@@ -3530,43 +3530,43 @@ class BridgingMidAssessmentForm(forms.ModelForm):
         choices=Bridging.YES_NO,
     )
     ef_letter_sound = forms.FloatField(
-        label=_("Letter Sound (one domain)"),
+        label=_("Letter Sound (one domain)/10"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ef_familiar_words = forms.FloatField(
-        label=_("Familiar Words (one domain)"),
+        label=_("Familiar Words (one domain)/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ef_reading_comprehension_text_1 = forms.FloatField(
-        label=_("Reading comprehension text 1"),
+        label=_("Reading comprehension text 1/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_letter_sound = forms.FloatField(
-        label=_("Letter Sound"),
+        label=_("Letter Sound/10"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_familiar_words = forms.FloatField(
-        label=_("Familiar Words"),
+        label=_("Familiar Words/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     ar_reading_comprehension_text_1 = forms.FloatField(
-        label=_("Reading comprehension text 1"),
+        label=_("Reading comprehension text 1/5"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
     )
     m_total_score = forms.FloatField(
-        label=_("Total scores"),
+        label=_("Total scores/max by level"),
         widget=forms.NumberInput(attrs=({"maxlength": 4})),
         min_value=0,
         required=False,
