@@ -39,37 +39,60 @@ $(document).ready(function () {
     });
 });
 
-function getRequiredGradeFields(registrationLevel, isPostAssessment) {
+function getRequiredGradeFieldsWithMax(registrationLevel, isPostAssessment) {
     const efByLevel = {
-        level_one: ['ef_letter_sound', 'ef_familiar_words', 'ef_picture_word_matching', 'ef_reading_comprehension_text_1', 'ef_reading_comprehension_text_2', 'ef_letter_dictation', 'ef_word_dictation', 'ef_total_score'],
-        level_two: ['ef_letter_sound', 'ef_familiar_words', 'ef_picture_word_matching', 'ef_reading_comprehension_text_1', 'ef_reading_comprehension_text_2', 'ef_sentence_dictation', 'ef_picture_naming', 'ef_total_score'],
-        level_three: ['ef_letter_sound', 'ef_familiar_words', 'ef_picture_word_matching', 'ef_reading_comprehension_text_1', 'ef_reading_comprehension_text_2', 'ef_word_dictation', 'ef_picture_description', 'ef_total_score']
+        level_one: {
+            ef_letter_sound: 10, ef_familiar_words: 5, ef_picture_word_matching: 5,
+            ef_reading_comprehension_text_1: 5, ef_reading_comprehension_text_2: 5,
+            ef_letter_dictation: 5, ef_word_dictation: 5, ef_total_score: 40
+        },
+        level_two: {
+            ef_letter_sound: 10, ef_familiar_words: 5, ef_picture_word_matching: 5,
+            ef_reading_comprehension_text_1: 5, ef_reading_comprehension_text_2: 5,
+            ef_sentence_dictation: 5, ef_picture_naming: 5, ef_total_score: 40
+        },
+        level_three: {
+            ef_letter_sound: 10, ef_familiar_words: 5, ef_picture_word_matching: 5,
+            ef_reading_comprehension_text_1: 5, ef_reading_comprehension_text_2: 5,
+            ef_word_dictation: 5, ef_picture_description: 5, ef_total_score: 40
+        }
     };
 
     const arByLevel = {
-        level_one: ['ar_letter_sound', 'ar_alphabet_vowel_marks', 'ar_alphabet_long_vowels', 'ar_familiar_words', 'ar_picture_word_matching', 'ar_reading_comprehension_text_1', 'ar_reading_comprehension_text_2', 'ar_letter_dictation', 'ar_word_dictation', 'ar_total_score'],
-        level_two: ['ar_letter_sound', 'ar_alphabet_vowel_marks', 'ar_alphabet_long_vowels', 'ar_familiar_words', 'ar_picture_word_matching', 'ar_reading_comprehension_text_1', 'ar_reading_comprehension_text_2', 'ar_word_dictation', 'ar_picture_naming', 'ar_total_score'],
-        level_three: ['ar_letter_sound', 'ar_alphabet_vowel_marks', 'ar_alphabet_long_vowels', 'ar_familiar_words', 'ar_picture_word_matching', 'ar_reading_comprehension_text_1', 'ar_reading_comprehension_text_2', 'ar_sentence_dictation', 'ar_picture_description', 'ar_total_score']
+        level_one: {
+            ar_letter_sound: 10, ar_alphabet_vowel_marks: 5, ar_alphabet_long_vowels: 5,
+            ar_familiar_words: 5, ar_picture_word_matching: 5, ar_reading_comprehension_text_1: 5,
+            ar_reading_comprehension_text_2: 5, ar_letter_dictation: 5, ar_word_dictation: 5,
+            ar_total_score: 50
+        },
+        level_two: {
+            ar_letter_sound: 10, ar_alphabet_vowel_marks: 5, ar_alphabet_long_vowels: 5,
+            ar_familiar_words: 5, ar_picture_word_matching: 5, ar_reading_comprehension_text_1: 5,
+            ar_reading_comprehension_text_2: 5, ar_word_dictation: 5, ar_picture_naming: 5,
+            ar_total_score: 50
+        },
+        level_three: {
+            ar_letter_sound: 10, ar_alphabet_vowel_marks: 5, ar_alphabet_long_vowels: 5,
+            ar_familiar_words: 5, ar_picture_word_matching: 5, ar_reading_comprehension_text_1: 5,
+            ar_reading_comprehension_text_2: 5, ar_sentence_dictation: 5, ar_picture_description: 5,
+            ar_total_score: 50
+        }
     };
 
     const preMathByLevel = {
-        level_one: ['m_natural_numbers', 'm_addition', 'm_location', 'm_plane_figures', 'm_total_score'],
-        level_two: ['m_natural_numbers', 'm_addition', 'm_location', 'm_plane_figures', 'm_subtraction', 'm_total_score'],
-        level_three: ['m_natural_numbers', 'm_addition', 'm_plane_figures', 'm_subtraction', 'm_multiplication', 'm_total_score']
+        level_one: {m_natural_numbers: 10, m_addition: 5, m_location: 5, m_plane_figures: 5, m_total_score: 25},
+        level_two: {m_natural_numbers: 10, m_addition: 10, m_location: 4, m_plane_figures: 3, m_subtraction: 8, m_total_score: 35},
+        level_three: {m_natural_numbers: 12, m_addition: 12, m_plane_figures: 4, m_subtraction: 12, m_multiplication: 5, m_total_score: 45}
     };
 
     const postMathByLevel = {
-        level_one: ['m_natural_numbers', 'm_addition', 'm_subtraction', 'm_length', 'm_solid_figures', 'm_plane_figures', 'm_total_score'],
-        level_two: ['m_natural_numbers', 'm_addition', 'm_subtraction', 'm_length', 'm_solid_figures', 'm_plane_figures', 'm_multiplication', 'm_total_score'],
-        level_three: ['m_natural_numbers', 'm_addition', 'm_length', 'm_multiplication', 'm_location', 'm_division', 'm_fractions', 'm_total_score']
+        level_one: {m_natural_numbers: 10, m_addition: 6, m_subtraction: 5, m_length: 2, m_solid_figures: 2, m_plane_figures: 5, m_total_score: 25},
+        level_two: {m_natural_numbers: 7, m_addition: 8, m_subtraction: 5, m_length: 3, m_solid_figures: 3, m_plane_figures: 4, m_multiplication: 5, m_total_score: 35},
+        level_three: {m_natural_numbers: 9, m_addition: 6, m_length: 5, m_multiplication: 7, m_location: 3, m_division: 6, m_fractions: 3, m_total_score: 45}
     };
 
     const mathByLevel = isPostAssessment ? postMathByLevel : preMathByLevel;
-    return [
-        ...(efByLevel[registrationLevel] || []),
-        ...(arByLevel[registrationLevel] || []),
-        ...(mathByLevel[registrationLevel] || [])
-    ];
+    return Object.assign({}, efByLevel[registrationLevel] || {}, arByLevel[registrationLevel] || {}, mathByLevel[registrationLevel] || {});
 }
 
 function applyRegistrationLevelGradeVisibility() {
@@ -88,37 +111,25 @@ function applyRegistrationLevelGradeVisibility() {
         'm_total_score'
     ];
 
+    const requiredWithMax = getRequiredGradeFieldsWithMax(registrationLevel, hasPostTestToggle);
     allGradeFields.forEach(function (fieldName) {
         $('#div_id_' + fieldName).addClass('d-none');
+        const label = $('label[for="id_' + fieldName + '"]');
+        if (!label.data('baseText')) {
+            label.data('baseText', label.text().replace(/\s*\/\s*\d+$/, '').replace(/\s*\/max by level$/, ''));
+        }
     });
 
-    getRequiredGradeFields(registrationLevel, hasPostTestToggle).forEach(function (fieldName) {
+    Object.keys(requiredWithMax).forEach(function (fieldName) {
         $('#div_id_' + fieldName).removeClass('d-none');
+        const label = $('label[for="id_' + fieldName + '"]');
+        if (label.length) {
+            const baseText = label.data('baseText') || label.text();
+            label.text(baseText + '/' + requiredWithMax[fieldName]);
+        }
     });
 }
 
-
-
-function learning_result_next_level() {
-    var registration_level = $('select#id_registration_level').val();
-    var clm_type = $('#id_clmtype').val();
-    if(clm_type=='ABLN' && registration_level=='level_two')
-    {
-        $("#id_learning_result option[value=" + 'graduated_to_abln_next_round_higher_level' + "]").hide();
-    }
-    else if(clm_type=='BLN' && registration_level=='level_three')
-    {
-        $("#id_learning_result option[value=" + 'graduated_to_bln_next_round_higher_level' + "]").hide();
-    }
-    else if(clm_type=='CBECE' && registration_level=='level_three')
-    {
-        $("#id_learning_result option[value=" + 'graduated_to_cbece_next_round_higher_level' + "]").hide();
-    }
-    else if(clm_type=='RS' && registration_level=='level_three')
-    {
-        $("#id_learning_result option[value=" + 'graduated_to_rs_next_round_higher_level' + "]").hide();
-    }
-}
 function reorganizeForm_post_assessment()
 {
    var learning_result =  $('select#id_learning_result').val();

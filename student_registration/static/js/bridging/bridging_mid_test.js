@@ -48,26 +48,36 @@ $(document).ready(function(){
 
 });
 
-function getRequiredMidFields(registrationLevel)
+function getRequiredMidFieldsWithMax(registrationLevel)
 {
     var byLevel = {
-        level_one: ['ef_letter_sound', 'ef_familiar_words', 'ef_reading_comprehension_text_1', 'ar_letter_sound', 'ar_familiar_words', 'ar_reading_comprehension_text_1', 'm_total_score'],
-        level_two: ['ef_letter_sound', 'ef_familiar_words', 'ef_reading_comprehension_text_1', 'ar_letter_sound', 'ar_familiar_words', 'ar_reading_comprehension_text_1', 'm_total_score'],
-        level_three: ['ef_letter_sound', 'ef_familiar_words', 'ef_reading_comprehension_text_1', 'ar_letter_sound', 'ar_familiar_words', 'ar_reading_comprehension_text_1', 'm_total_score']
+        level_one: {ef_letter_sound: 10, ef_familiar_words: 20, ef_reading_comprehension_text_1: 10, ar_letter_sound: 10, ar_familiar_words: 20, ar_reading_comprehension_text_1: 10, m_total_score: 50},
+        level_two: {ef_letter_sound: 10, ef_familiar_words: 20, ef_reading_comprehension_text_1: 10, ar_letter_sound: 10, ar_familiar_words: 20, ar_reading_comprehension_text_1: 10, m_total_score: 88},
+        level_three: {ef_letter_sound: 10, ef_familiar_words: 20, ef_reading_comprehension_text_1: 10, ar_letter_sound: 10, ar_familiar_words: 20, ar_reading_comprehension_text_1: 10, m_total_score: 103}
     };
-    return byLevel[registrationLevel] || [];
+    return byLevel[registrationLevel] || {};
 }
 
 function applyMidRegistrationLevelGradeVisibility()
 {
     var registrationLevel = $('select#id_registration_level').val();
     var allFields = ['ef_letter_sound', 'ef_familiar_words', 'ef_reading_comprehension_text_1', 'ar_letter_sound', 'ar_familiar_words', 'ar_reading_comprehension_text_1', 'm_total_score'];
+    var requiredWithMax = getRequiredMidFieldsWithMax(registrationLevel);
     allFields.forEach(function(fieldName){
         $('#div_id_' + fieldName).addClass('d-none');
+        var label = $('label[for="id_' + fieldName + '"]');
+        if (!label.data('baseText')) {
+            label.data('baseText', label.text().replace(/\s*\/\s*\d+$/, '').replace(/\s*\/max by level$/, ''));
+        }
     });
 
-    getRequiredMidFields(registrationLevel).forEach(function(fieldName){
+    Object.keys(requiredWithMax).forEach(function(fieldName){
         $('#div_id_' + fieldName).removeClass('d-none');
+        var label = $('label[for="id_' + fieldName + '"]');
+        if (label.length) {
+            var baseText = label.data('baseText') || label.text();
+            label.text(baseText + '/' + requiredWithMax[fieldName]);
+        }
     });
 }
 
@@ -78,7 +88,7 @@ function reorganizeForm()
     $('div.grades').addClass('d-none');
     if(mid_test_done == 'no')
     {
-        ['ef_letter_sound', 'ef_familiar_words', 'ef_reading_comprehension_text_1', 'ar_letter_sound', 'ar_familiar_words', 'ar_reading_comprehension_text_1', 'm_total_score'].forEach(function(fieldName){
+        Object.keys(getRequiredMidFieldsWithMax($('select#id_registration_level').val())).forEach(function(fieldName){
             $('#id_' + fieldName).val('');
         });
     }
