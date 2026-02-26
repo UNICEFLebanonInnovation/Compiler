@@ -2059,6 +2059,17 @@ class BridgingPreAssessmentForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
 
+        selected_registration_level = ''
+        if self.data:
+            selected_registration_level = self.data.get('registration_level', '')
+        if not selected_registration_level:
+            selected_registration_level = self.initial.get('registration_level', '') if hasattr(self, 'initial') else ''
+        if not selected_registration_level and instance:
+            selected_registration_level = getattr(instance, 'registration_level', '')
+        is_level_one = selected_registration_level == 'level_one'
+        optional_field_class = 'col-md-3 d-none' if is_level_one else 'col-md-3'
+        hide_optional_math_row = 'display:none;' if is_level_one else ''
+
         if not is_Kayany:
             self.helper.layout = Layout(
                 Div(
@@ -2066,15 +2077,15 @@ class BridgingPreAssessmentForm(forms.ModelForm):
                     Div(Div('registration_level', css_class='col-md-3 d-none'), Div('language', css_class='col-md-3 d-none'), css_class='row card-body'),
                     Div(HTML('<h5>English/French</h5>'), css_class='row card-body'),
                     Div(Div('english_french_letter_sound', css_class='col-md-3'), Div('english_french_familiar_words', css_class='col-md-3'), Div('english_french_picture_word_matching', css_class='col-md-3'), Div('english_french_reading_comprehension_text_1', css_class='col-md-3'), css_class='row card-body'),
-                    Div(Div('english_french_reading_comprehension_text_2', css_class='col-md-3'), Div('english_french_letter_dictation', css_class='col-md-3'), Div('english_french_word_dictation', css_class='col-md-3'), Div('english_french_sentence_dictation', css_class='col-md-3'), css_class='row card-body'),
-                    Div(Div('english_french_picture_naming', css_class='col-md-3'), Div('english_french_picture_description', css_class='col-md-3'), css_class='row card-body'),
+                    Div(Div('english_french_reading_comprehension_text_2', css_class='col-md-3'), Div('english_french_letter_dictation', css_class='col-md-3'), Div('english_french_word_dictation', css_class='col-md-3'), Div('english_french_sentence_dictation', css_class=optional_field_class), css_class='row card-body'),
+                    Div(Div('english_french_picture_naming', css_class=optional_field_class), Div('english_french_picture_description', css_class=optional_field_class), css_class='row card-body'),
                     Div(HTML('<h5>Arabic</h5>'), css_class='row card-body'),
                     Div(Div('arabic_letter_sound', css_class='col-md-3'), Div('arabic_alphabet_letters_with_vowel_marks', css_class='col-md-3'), Div('arabic_alphabet_letters_with_long_vowel_letters', css_class='col-md-3'), Div('arabic_familiar_words', css_class='col-md-3'), css_class='row card-body'),
                     Div(Div('arabic_picture_word_matching', css_class='col-md-3'), Div('arabic_reading_comprehension_text_1', css_class='col-md-3'), Div('arabic_reading_comprehension_text_2', css_class='col-md-3'), Div('arabic_letter_dictation', css_class='col-md-3'), css_class='row card-body'),
-                    Div(Div('arabic_word_dictation', css_class='col-md-3'), Div('arabic_sentence_dictation', css_class='col-md-3'), Div('arabic_picture_naming', css_class='col-md-3'), Div('arabic_picture_description', css_class='col-md-3'), css_class='row card-body'),
+                    Div(Div('arabic_word_dictation', css_class='col-md-3'), Div('arabic_sentence_dictation', css_class=optional_field_class), Div('arabic_picture_naming', css_class=optional_field_class), Div('arabic_picture_description', css_class=optional_field_class), css_class='row card-body'),
                     Div(HTML('<h5>Math</h5>'), css_class='row card-body'),
                     Div(Div('math_natural_numbers', css_class='col-md-3'), Div('math_addition', css_class='col-md-3'), Div('math_location', css_class='col-md-3'), Div('math_plane_figures', css_class='col-md-3'), css_class='row card-body'),
-                    Div(Div('math_subtraction', css_class='col-md-3'), Div('math_multiplication', css_class='col-md-3'), css_class='row card-body'),
+                    Div(Div('math_subtraction', css_class='col-md-3'), Div('math_multiplication', css_class='col-md-3'), css_class='row card-body', style=hide_optional_math_row),
                     FormActions(Submit('save', 'Save', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'), Reset('reset', 'Reset', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'))
                 )
             )
@@ -2091,20 +2102,59 @@ class BridgingPreAssessmentForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(BridgingPreAssessmentForm, self).clean()
         if self.request.user.partner and not self.request.user.partner.is_Kayany:
-            required_fields = [
-                'english_french_letter_sound', 'english_french_familiar_words', 'english_french_picture_word_matching',
-                'english_french_reading_comprehension_text_1', 'english_french_reading_comprehension_text_2',
-                'english_french_letter_dictation', 'english_french_word_dictation', 'english_french_sentence_dictation',
-                'english_french_picture_naming', 'english_french_picture_description',
-                'arabic_letter_sound', 'arabic_alphabet_letters_with_vowel_marks', 'arabic_alphabet_letters_with_long_vowel_letters',
-                'arabic_familiar_words', 'arabic_picture_word_matching', 'arabic_reading_comprehension_text_1',
-                'arabic_reading_comprehension_text_2', 'arabic_letter_dictation', 'arabic_word_dictation',
-                'arabic_sentence_dictation', 'arabic_picture_naming', 'arabic_picture_description',
-                'math_natural_numbers', 'math_addition', 'math_location', 'math_plane_figures', 'math_subtraction', 'math_multiplication',
-            ]
+            registration_level = cleaned_data.get('registration_level')
+            if registration_level == 'level_one':
+                required_fields = [
+                    'english_french_letter_sound', 'english_french_familiar_words', 'english_french_picture_word_matching',
+                    'english_french_reading_comprehension_text_1', 'english_french_reading_comprehension_text_2',
+                    'english_french_letter_dictation', 'english_french_word_dictation',
+                    'arabic_letter_sound', 'arabic_alphabet_letters_with_vowel_marks', 'arabic_alphabet_letters_with_long_vowel_letters',
+                    'arabic_familiar_words', 'arabic_picture_word_matching', 'arabic_reading_comprehension_text_1',
+                    'arabic_reading_comprehension_text_2', 'arabic_letter_dictation', 'arabic_word_dictation',
+                    'math_natural_numbers', 'math_addition', 'math_location', 'math_plane_figures',
+                ]
+                max_grades = {
+                    'english_french_letter_sound': 10,
+                    'english_french_familiar_words': 5,
+                    'english_french_picture_word_matching': 5,
+                    'english_french_reading_comprehension_text_1': 5,
+                    'english_french_reading_comprehension_text_2': 5,
+                    'english_french_letter_dictation': 5,
+                    'english_french_word_dictation': 5,
+                    'arabic_letter_sound': 10,
+                    'arabic_alphabet_letters_with_vowel_marks': 5,
+                    'arabic_alphabet_letters_with_long_vowel_letters': 5,
+                    'arabic_familiar_words': 5,
+                    'arabic_picture_word_matching': 5,
+                    'arabic_reading_comprehension_text_1': 5,
+                    'arabic_reading_comprehension_text_2': 5,
+                    'arabic_letter_dictation': 5,
+                    'arabic_word_dictation': 5,
+                    'math_natural_numbers': 10,
+                    'math_addition': 5,
+                    'math_location': 5,
+                    'math_plane_figures': 5,
+                }
+            else:
+                required_fields = [
+                    'english_french_letter_sound', 'english_french_familiar_words', 'english_french_picture_word_matching',
+                    'english_french_reading_comprehension_text_1', 'english_french_reading_comprehension_text_2',
+                    'english_french_letter_dictation', 'english_french_word_dictation', 'english_french_sentence_dictation',
+                    'english_french_picture_naming', 'english_french_picture_description',
+                    'arabic_letter_sound', 'arabic_alphabet_letters_with_vowel_marks', 'arabic_alphabet_letters_with_long_vowel_letters',
+                    'arabic_familiar_words', 'arabic_picture_word_matching', 'arabic_reading_comprehension_text_1',
+                    'arabic_reading_comprehension_text_2', 'arabic_letter_dictation', 'arabic_word_dictation',
+                    'arabic_sentence_dictation', 'arabic_picture_naming', 'arabic_picture_description',
+                    'math_natural_numbers', 'math_addition', 'math_location', 'math_plane_figures', 'math_subtraction', 'math_multiplication',
+                ]
+                max_grades = {}
             for field in required_fields:
                 if cleaned_data.get(field) is None:
                     self.add_error(field, 'This field is required')
+            for field, max_grade in max_grades.items():
+                value = cleaned_data.get(field)
+                if value is not None and value > max_grade:
+                    self.add_error(field, 'This value is greater that {}'.format(max_grade))
         else:
             exam1 = cleaned_data.get("exam1")
             if exam1 is None:
@@ -2335,6 +2385,18 @@ class BridgingAssessmentForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
+
+        selected_registration_level = ''
+        if self.data:
+            selected_registration_level = self.data.get('registration_level', '')
+        if not selected_registration_level:
+            selected_registration_level = self.initial.get('registration_level', '') if hasattr(self, 'initial') else ''
+        if not selected_registration_level and instance:
+            selected_registration_level = getattr(instance, 'registration_level', '')
+        is_level_one = selected_registration_level == 'level_one'
+        optional_field_class = 'col-md-3 d-none' if is_level_one else 'col-md-3'
+        hide_optional_math_rows = 'display:none;' if is_level_one else ''
+
         if not is_Kayany:
 
             self.helper.layout = Layout(
@@ -2390,16 +2452,16 @@ class BridgingAssessmentForm(forms.ModelForm):
                     ),
                     Div(HTML('<h5>English/French</h5>'), css_class='row card-body'),
                     Div(Div('english_french_letter_sound', css_class='col-md-3'), Div('english_french_familiar_words', css_class='col-md-3'), Div('english_french_picture_word_matching', css_class='col-md-3'), Div('english_french_reading_comprehension_text_1', css_class='col-md-3'), css_class='row grades card-body'),
-                    Div(Div('english_french_reading_comprehension_text_2', css_class='col-md-3'), Div('english_french_letter_dictation', css_class='col-md-3'), Div('english_french_word_dictation', css_class='col-md-3'), Div('english_french_sentence_dictation', css_class='col-md-3'), css_class='row grades card-body'),
-                    Div(Div('english_french_picture_naming', css_class='col-md-3'), Div('english_french_picture_description', css_class='col-md-3'), css_class='row grades card-body'),
+                    Div(Div('english_french_reading_comprehension_text_2', css_class='col-md-3'), Div('english_french_letter_dictation', css_class='col-md-3'), Div('english_french_word_dictation', css_class='col-md-3'), Div('english_french_sentence_dictation', css_class=optional_field_class), css_class='row grades card-body'),
+                    Div(Div('english_french_picture_naming', css_class=optional_field_class), Div('english_french_picture_description', css_class=optional_field_class), css_class='row grades card-body'),
                     Div(HTML('<h5>Arabic</h5>'), css_class='row card-body'),
                     Div(Div('arabic_letter_sound', css_class='col-md-3'), Div('arabic_alphabet_letters_with_vowel_marks', css_class='col-md-3'), Div('arabic_alphabet_letters_with_long_vowel_letters', css_class='col-md-3'), Div('arabic_familiar_words', css_class='col-md-3'), css_class='row grades card-body'),
                     Div(Div('arabic_picture_word_matching', css_class='col-md-3'), Div('arabic_reading_comprehension_text_1', css_class='col-md-3'), Div('arabic_reading_comprehension_text_2', css_class='col-md-3'), Div('arabic_letter_dictation', css_class='col-md-3'), css_class='row grades card-body'),
-                    Div(Div('arabic_word_dictation', css_class='col-md-3'), Div('arabic_sentence_dictation', css_class='col-md-3'), Div('arabic_picture_naming', css_class='col-md-3'), Div('arabic_picture_description', css_class='col-md-3'), css_class='row grades card-body'),
+                    Div(Div('arabic_word_dictation', css_class='col-md-3'), Div('arabic_sentence_dictation', css_class=optional_field_class), Div('arabic_picture_naming', css_class=optional_field_class), Div('arabic_picture_description', css_class=optional_field_class), css_class='row grades card-body'),
                     Div(HTML('<h5>Math</h5>'), css_class='row card-body'),
                     Div(Div('math_natural_numbers', css_class='col-md-3'), Div('math_addition', css_class='col-md-3'), Div('math_subtraction', css_class='col-md-3'), Div('math_length', css_class='col-md-3'), css_class='row grades card-body'),
-                    Div(Div('math_solid_figures', css_class='col-md-3'), Div('math_plane_figurs', css_class='col-md-3'), Div('math_multiplication', css_class='col-md-3'), Div('math_location', css_class='col-md-3'), css_class='row grades card-body'),
-                    Div(Div('math_division', css_class='col-md-3'), Div('math_fractions', css_class='col-md-3'), css_class='row grades card-body'),
+                    Div(Div('math_solid_figures', css_class='col-md-3'), Div('math_plane_figurs', css_class='col-md-3'), Div('math_multiplication', css_class='col-md-3'), Div('math_location', css_class='col-md-3'), css_class='row grades card-body', style=hide_optional_math_rows),
+                    Div(Div('math_division', css_class='col-md-3'), Div('math_fractions', css_class='col-md-3'), css_class='row grades card-body', style=hide_optional_math_rows),
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
@@ -2504,21 +2566,61 @@ class BridgingAssessmentForm(forms.ModelForm):
                     self.add_error('community_liaison_specify', 'This field is required')
 
         if test_done == 'yes':
-            required_fields = [
-                'english_french_letter_sound', 'english_french_familiar_words', 'english_french_picture_word_matching',
-                'english_french_reading_comprehension_text_1', 'english_french_reading_comprehension_text_2',
-                'english_french_letter_dictation', 'english_french_word_dictation', 'english_french_sentence_dictation',
-                'english_french_picture_naming', 'english_french_picture_description',
-                'arabic_letter_sound', 'arabic_alphabet_letters_with_vowel_marks', 'arabic_alphabet_letters_with_long_vowel_letters',
-                'arabic_familiar_words', 'arabic_picture_word_matching', 'arabic_reading_comprehension_text_1',
-                'arabic_reading_comprehension_text_2', 'arabic_letter_dictation', 'arabic_word_dictation',
-                'arabic_sentence_dictation', 'arabic_picture_naming', 'arabic_picture_description',
-                'math_natural_numbers', 'math_addition', 'math_subtraction', 'math_length', 'math_solid_figures',
-                'math_plane_figurs', 'math_multiplication', 'math_location', 'math_division', 'math_fractions',
-            ]
+            registration_level = cleaned_data.get('registration_level')
+            if registration_level == 'level_one':
+                required_fields = [
+                    'english_french_letter_sound', 'english_french_familiar_words', 'english_french_picture_word_matching',
+                    'english_french_reading_comprehension_text_1', 'english_french_reading_comprehension_text_2',
+                    'english_french_letter_dictation', 'english_french_word_dictation',
+                    'arabic_letter_sound', 'arabic_alphabet_letters_with_vowel_marks', 'arabic_alphabet_letters_with_long_vowel_letters',
+                    'arabic_familiar_words', 'arabic_picture_word_matching', 'arabic_reading_comprehension_text_1',
+                    'arabic_reading_comprehension_text_2', 'arabic_letter_dictation', 'arabic_word_dictation',
+                    'math_natural_numbers', 'math_addition', 'math_subtraction', 'math_length', 'math_solid_figures',
+                ]
+                max_grades = {
+                    'english_french_letter_sound': 10,
+                    'english_french_familiar_words': 5,
+                    'english_french_picture_word_matching': 5,
+                    'english_french_reading_comprehension_text_1': 5,
+                    'english_french_reading_comprehension_text_2': 5,
+                    'english_french_letter_dictation': 5,
+                    'english_french_word_dictation': 5,
+                    'arabic_letter_sound': 10,
+                    'arabic_alphabet_letters_with_vowel_marks': 5,
+                    'arabic_alphabet_letters_with_long_vowel_letters': 5,
+                    'arabic_familiar_words': 5,
+                    'arabic_picture_word_matching': 5,
+                    'arabic_reading_comprehension_text_1': 5,
+                    'arabic_reading_comprehension_text_2': 5,
+                    'arabic_letter_dictation': 5,
+                    'arabic_word_dictation': 5,
+                    'math_natural_numbers': 10,
+                    'math_addition': 6,
+                    'math_subtraction': 5,
+                    'math_length': 2,
+                    'math_solid_figures': 2,
+                }
+            else:
+                required_fields = [
+                    'english_french_letter_sound', 'english_french_familiar_words', 'english_french_picture_word_matching',
+                    'english_french_reading_comprehension_text_1', 'english_french_reading_comprehension_text_2',
+                    'english_french_letter_dictation', 'english_french_word_dictation', 'english_french_sentence_dictation',
+                    'english_french_picture_naming', 'english_french_picture_description',
+                    'arabic_letter_sound', 'arabic_alphabet_letters_with_vowel_marks', 'arabic_alphabet_letters_with_long_vowel_letters',
+                    'arabic_familiar_words', 'arabic_picture_word_matching', 'arabic_reading_comprehension_text_1',
+                    'arabic_reading_comprehension_text_2', 'arabic_letter_dictation', 'arabic_word_dictation',
+                    'arabic_sentence_dictation', 'arabic_picture_naming', 'arabic_picture_description',
+                    'math_natural_numbers', 'math_addition', 'math_subtraction', 'math_length', 'math_solid_figures',
+                    'math_plane_figurs', 'math_multiplication', 'math_location', 'math_division', 'math_fractions',
+                ]
+                max_grades = {}
             for field in required_fields:
                 if cleaned_data.get(field) is None:
                     self.add_error(field, 'This field is required')
+            for field, max_grade in max_grades.items():
+                value = cleaned_data.get(field)
+                if value is not None and value > max_grade:
+                    self.add_error(field, 'This value is greater that {}'.format(max_grade))
         else:
             exam3 = cleaned_data.get("exam3")
             if exam3 is None:
