@@ -784,36 +784,6 @@ class BridgingForm(CommonForm):
         label=_('RIMS Case Number')
     )
 
-    arabic_alphabet_knowledge = forms.FloatField(
-        label=_('Arabic Alphabet Knowledge'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    arabic_familiar_words = forms.FloatField(
-        label=_('Arabic Familiar words'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    arabic_reading_comprehension = forms.FloatField(
-        label=_('Arabic Reading Comprehension'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    english_alphabet_knowledge = forms.FloatField(
-        label=_('English Alphabet Knowledge'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    english_familiar_words = forms.FloatField(
-        label=_('English Familiar words'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    english_reading_comprehension = forms.FloatField(
-        label=_('English Reading Comprehension'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
     french_alphabet_knowledge = forms.FloatField(
         label=_('French Alphabet Knowledge'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
@@ -826,16 +796,6 @@ class BridgingForm(CommonForm):
     )
     french_reading_comprehension = forms.FloatField(
         label=_('French Reading Comprehension'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    math = forms.FloatField(
-        label=_('Math'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    exam1 = forms.FloatField(
-        label=_('Exam 1'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
@@ -2043,72 +2003,44 @@ class BridgingPreAssessmentForm(forms.ModelForm):
         ('level_two', _('Level two')),
         ('level_three', _('Level three')),
     )
-    arabic_alphabet_knowledge = forms.FloatField(
-        label=_('Arabic Alphabet Knowledge'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    arabic_familiar_words = forms.FloatField(
-        label=_('Arabic Familiar words'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    arabic_reading_comprehension = forms.FloatField(
-        label=_('Arabic Reading Comprehension'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    english_alphabet_knowledge = forms.FloatField(
-        label=_('English Alphabet Knowledge'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    english_familiar_words = forms.FloatField(
-        label=_('English Familiar words'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    english_reading_comprehension = forms.FloatField(
-        label=_('English Reading Comprehension'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    french_alphabet_knowledge = forms.FloatField(
-        label=_('French Alphabet Knowledge'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    french_familiar_words = forms.FloatField(
-        label=_('French Familiar words'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    french_reading_comprehension = forms.FloatField(
-        label=_('French Reading Comprehension'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    math = forms.FloatField(
-        label=_('Math'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    exam1 = forms.FloatField(
-        label=_('Exam 1'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    registration_level = forms.ChoiceField(
-        label=_("Registration level"),
-        widget=forms.Select, required=False,
-        choices=REGISTRATION_LEVEL
-    )
-    language = forms.ChoiceField(
-        label=_('The language supported in the program'),
-        widget=forms.Select,
-        choices=CLM.LANGUAGES, required=False,
-        initial='english_arabic'
-    )
+
+    # English/French
+    english_french_letter_sound = forms.FloatField(label=_('Letter Sound'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    english_french_familiar_words = forms.FloatField(label=_('Familiar Words'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    english_french_picture_word_matching = forms.FloatField(label=_('Picture word matching'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    english_french_reading_comprehension_text_1 = forms.FloatField(label=_('Reading comprehension text 1'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    english_french_reading_comprehension_text_2 = forms.FloatField(label=_('Reading comprehension text 2'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    english_french_letter_dictation = forms.FloatField(label=_('Letter Dictation'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    english_french_word_dictation = forms.FloatField(label=_('Word Dictation'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    english_french_sentence_dictation = forms.FloatField(label=_('Sentence dictation'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    english_french_picture_naming = forms.FloatField(label=_('Picture Naming'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    english_french_picture_description = forms.FloatField(label=_('Picture Description'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+
+    # Arabic
+    arabic_letter_sound = forms.FloatField(label=_('Letter Sound'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_alphabet_letters_with_vowel_marks = forms.FloatField(label=_('Alphabet letters with vowel marks'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_alphabet_letters_with_long_vowel_letters = forms.FloatField(label=_('Alphabet letters with long vowel letters'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_familiar_words = forms.FloatField(label=_('Familiar Words'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_picture_word_matching = forms.FloatField(label=_('Picture word matching'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_reading_comprehension_text_1 = forms.FloatField(label=_('Reading comprehension text 1'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_reading_comprehension_text_2 = forms.FloatField(label=_('Reading comprehension text 2'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_letter_dictation = forms.FloatField(label=_('Letter Dictation'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_word_dictation = forms.FloatField(label=_('Word Dictation'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_sentence_dictation = forms.FloatField(label=_('Sentence dictation'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_picture_naming = forms.FloatField(label=_('Picture Naming'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_picture_description = forms.FloatField(label=_('Picture Description'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+
+    # Math
+    math_natural_numbers = forms.FloatField(label=_('Natural Numbers'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_addition = forms.FloatField(label=_('Addition'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_location = forms.FloatField(label=_('Location'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_plane_figures = forms.FloatField(label=_('Plane Figures'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_subtraction = forms.FloatField(label=_('Subtraction'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_multiplication = forms.FloatField(label=_('Multiplication'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+
+    exam1 = forms.FloatField(label=_('Exam 1'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    registration_level = forms.ChoiceField(label=_("Registration level"), widget=forms.Select, required=False, choices=REGISTRATION_LEVEL)
+    language = forms.ChoiceField(label=_('The language supported in the program'), widget=forms.Select, choices=CLM.LANGUAGES, required=False, initial='english_arabic')
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
@@ -2130,150 +2062,49 @@ class BridgingPreAssessmentForm(forms.ModelForm):
         if not is_Kayany:
             self.helper.layout = Layout(
                 Div(
-                    Div(
-                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('Pre-Assessment') + '</h4>'),
-                        css_class='row card-body',
-                    ),
-                    Div(
-                        Div('registration_level', css_class='col-md-3 d-none'),
-                        Div('language', css_class='col-md-3 d-none'),
-                        css_class='row card-body',
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill" id="span_arabic">1</span>'),
-                        Div('arabic_alphabet_knowledge', css_class='col-md-3'),
-                        Div('arabic_familiar_words', css_class='col-md-3'),
-                        Div('arabic_reading_comprehension', css_class='col-md-3'),
-                        css_class='row card-body',
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill" id="span_english">2</span>'),
-                        Div('english_alphabet_knowledge', css_class='col-md-3'),
-                        Div('english_familiar_words', css_class='col-md-3'),
-                        Div('english_reading_comprehension', css_class='col-md-3'),
-                        css_class='row card-body',
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill" id="span_french">3</span>'),
-                        Div('french_alphabet_knowledge', css_class='col-md-3'),
-                        Div('french_familiar_words', css_class='col-md-3'),
-                        Div('french_reading_comprehension', css_class='col-md-3'),
-                        css_class='row card-body',
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill" id="span_math">4</span>'),
-                        Div('math', css_class='col-md-3'),
-                        css_class='row card-body',
-                    ),
-                    FormActions(
-                        Submit('save', 'Save',
-                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                        Reset('reset', 'Reset',
-                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-                    )
+                    Div(HTML('<h4 id="alternatives-to-hidden-labels">' + _('Pre-Assessment') + '</h4>'), css_class='row card-body'),
+                    Div(Div('registration_level', css_class='col-md-3 d-none'), Div('language', css_class='col-md-3 d-none'), css_class='row card-body'),
+                    Div(HTML('<h5>English/French</h5>'), css_class='row card-body'),
+                    Div(Div('english_french_letter_sound', css_class='col-md-3'), Div('english_french_familiar_words', css_class='col-md-3'), Div('english_french_picture_word_matching', css_class='col-md-3'), Div('english_french_reading_comprehension_text_1', css_class='col-md-3'), css_class='row card-body'),
+                    Div(Div('english_french_reading_comprehension_text_2', css_class='col-md-3'), Div('english_french_letter_dictation', css_class='col-md-3'), Div('english_french_word_dictation', css_class='col-md-3'), Div('english_french_sentence_dictation', css_class='col-md-3'), css_class='row card-body'),
+                    Div(Div('english_french_picture_naming', css_class='col-md-3'), Div('english_french_picture_description', css_class='col-md-3'), css_class='row card-body'),
+                    Div(HTML('<h5>Arabic</h5>'), css_class='row card-body'),
+                    Div(Div('arabic_letter_sound', css_class='col-md-3'), Div('arabic_alphabet_letters_with_vowel_marks', css_class='col-md-3'), Div('arabic_alphabet_letters_with_long_vowel_letters', css_class='col-md-3'), Div('arabic_familiar_words', css_class='col-md-3'), css_class='row card-body'),
+                    Div(Div('arabic_picture_word_matching', css_class='col-md-3'), Div('arabic_reading_comprehension_text_1', css_class='col-md-3'), Div('arabic_reading_comprehension_text_2', css_class='col-md-3'), Div('arabic_letter_dictation', css_class='col-md-3'), css_class='row card-body'),
+                    Div(Div('arabic_word_dictation', css_class='col-md-3'), Div('arabic_sentence_dictation', css_class='col-md-3'), Div('arabic_picture_naming', css_class='col-md-3'), Div('arabic_picture_description', css_class='col-md-3'), css_class='row card-body'),
+                    Div(HTML('<h5>Math</h5>'), css_class='row card-body'),
+                    Div(Div('math_natural_numbers', css_class='col-md-3'), Div('math_addition', css_class='col-md-3'), Div('math_location', css_class='col-md-3'), Div('math_plane_figures', css_class='col-md-3'), css_class='row card-body'),
+                    Div(Div('math_subtraction', css_class='col-md-3'), Div('math_multiplication', css_class='col-md-3'), css_class='row card-body'),
+                    FormActions(Submit('save', 'Save', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'), Reset('reset', 'Reset', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'))
                 )
             )
         else:
             self.helper.layout = Layout(
                 Div(
-                    Div(
-                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('Pre-Assessment') + '</h4>'),
-                        css_class='row card-body',
-                    ),
-                    Div(
-                        Div('registration_level', css_class='col-md-3 d-none'),
-                        Div('language', css_class='col-md-3 d-none'),
-                        css_class='row card-body',
-                    ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill" id="span_exam1">1</span>'),
-                        Div('exam1', css_class='col-md-3'),
-                        css_class='row card-body',
-                    ),
-                    FormActions(
-                        Submit('save', 'Save',
-                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                        Reset('reset', 'Reset',
-                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-                    )
+                    Div(HTML('<h4 id="alternatives-to-hidden-labels">' + _('Pre-Assessment') + '</h4>'), css_class='row card-body'),
+                    Div(Div('registration_level', css_class='col-md-3 d-none'), Div('language', css_class='col-md-3 d-none'), css_class='row card-body'),
+                    Div(HTML('<span class="badge-form-2 badge-pill" id="span_exam1">1</span>'), Div('exam1', css_class='col-md-3'), css_class='row card-body'),
+                    FormActions(Submit('save', 'Save', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'), Reset('reset', 'Reset', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'))
                 )
             )
 
     def clean(self):
         cleaned_data = super(BridgingPreAssessmentForm, self).clean()
-        registration_level = cleaned_data.get("registration_level")
-        language = cleaned_data.get("language")
-
         if self.request.user.partner and not self.request.user.partner.is_Kayany:
-            arabic_alphabet_knowledge = cleaned_data.get("arabic_alphabet_knowledge")
-            arabic_familiar_words = cleaned_data.get("arabic_familiar_words")
-            arabic_reading_comprehension = cleaned_data.get("arabic_reading_comprehension")
-
-            english_alphabet_knowledge = cleaned_data.get("english_alphabet_knowledge")
-            english_familiar_words = cleaned_data.get("english_familiar_words")
-            english_reading_comprehension = cleaned_data.get("english_reading_comprehension")
-
-            french_alphabet_knowledge = cleaned_data.get("french_alphabet_knowledge")
-            french_familiar_words = cleaned_data.get("french_familiar_words")
-            french_reading_comprehension = cleaned_data.get("french_reading_comprehension")
-
-            math = cleaned_data.get("math")
-
-            if arabic_alphabet_knowledge is None:
-                self.add_error('arabic_alphabet_knowledge', 'This field is required')
-            elif arabic_alphabet_knowledge > 48:
-                self.add_error('arabic_alphabet_knowledge', 'This value is greater that 48')
-
-            if arabic_familiar_words is None:
-                self.add_error('arabic_familiar_words', 'This field is required')
-            elif arabic_familiar_words > 20:
-                self.add_error('arabic_familiar_words', 'This value is greater that 20')
-
-            if arabic_reading_comprehension is None:
-                self.add_error('arabic_reading_comprehension', 'This field is required')
-            elif arabic_reading_comprehension > 10:
-                self.add_error('arabic_reading_comprehension', 'This value is greater that 10')
-
-            if language == 'english_arabic':
-                if english_alphabet_knowledge is None:
-                    self.add_error('english_alphabet_knowledge', 'This field is required')
-                elif english_alphabet_knowledge > 48:
-                    self.add_error('english_alphabet_knowledge', 'This value is greater that 48')
-
-                if english_familiar_words is None:
-                    self.add_error('english_familiar_words', 'This field is required')
-                elif english_familiar_words > 20:
-                    self.add_error('english_familiar_words', 'This value is greater that 20')
-
-                if english_reading_comprehension is None:
-                    self.add_error('english_reading_comprehension', 'This field is required')
-                elif english_reading_comprehension > 10:
-                    self.add_error('english_reading_comprehension', 'This value is greater that 10')
-
-            elif language == 'french_arabic':
-                if french_alphabet_knowledge is None:
-                    self.add_error('french_alphabet_knowledge', 'This field is required')
-                elif french_alphabet_knowledge > 48:
-                    self.add_error('french_alphabet_knowledge', 'This value is greater that 48')
-
-                if french_familiar_words is None:
-                    self.add_error('french_familiar_words', 'This field is required')
-                elif french_familiar_words > 20:
-                    self.add_error('french_familiar_words', 'This value is greater that 20')
-
-                if french_reading_comprehension is None:
-                    self.add_error('french_reading_comprehension', 'This field is required')
-                elif french_reading_comprehension > 10:
-                    self.add_error('french_reading_comprehension', 'This value is greater that 10')
-
-            if math is None:
-                self.add_error('math', 'This field is required')
-            elif registration_level == 'level_one' and math > 50:
-                self.add_error('math', 'This value is greater that 50')
-            elif registration_level == 'level_two' and math > 88:
-                self.add_error('math', 'This value is greater that 88')
-            elif math > 103:
-                self.add_error('math', 'This value is greater that 103')
+            required_fields = [
+                'english_french_letter_sound', 'english_french_familiar_words', 'english_french_picture_word_matching',
+                'english_french_reading_comprehension_text_1', 'english_french_reading_comprehension_text_2',
+                'english_french_letter_dictation', 'english_french_word_dictation', 'english_french_sentence_dictation',
+                'english_french_picture_naming', 'english_french_picture_description',
+                'arabic_letter_sound', 'arabic_alphabet_letters_with_vowel_marks', 'arabic_alphabet_letters_with_long_vowel_letters',
+                'arabic_familiar_words', 'arabic_picture_word_matching', 'arabic_reading_comprehension_text_1',
+                'arabic_reading_comprehension_text_2', 'arabic_letter_dictation', 'arabic_word_dictation',
+                'arabic_sentence_dictation', 'arabic_picture_naming', 'arabic_picture_description',
+                'math_natural_numbers', 'math_addition', 'math_location', 'math_plane_figures', 'math_subtraction', 'math_multiplication',
+            ]
+            for field in required_fields:
+                if cleaned_data.get(field) is None:
+                    self.add_error(field, 'This field is required')
         else:
             exam1 = cleaned_data.get("exam1")
             if exam1 is None:
@@ -2285,16 +2116,34 @@ class BridgingPreAssessmentForm(forms.ModelForm):
         instance = super(BridgingPreAssessmentForm, self).save()
         instance.modified_by = request.user
         instance.pre_test = {
-            "Bridging_ASSESSMENT/arabic_alphabet_knowledge": request.POST.get('arabic_alphabet_knowledge'),
+            "Bridging_ASSESSMENT/english_french_letter_sound": request.POST.get('english_french_letter_sound'),
+            "Bridging_ASSESSMENT/english_french_familiar_words": request.POST.get('english_french_familiar_words'),
+            "Bridging_ASSESSMENT/english_french_picture_word_matching": request.POST.get('english_french_picture_word_matching'),
+            "Bridging_ASSESSMENT/english_french_reading_comprehension_text_1": request.POST.get('english_french_reading_comprehension_text_1'),
+            "Bridging_ASSESSMENT/english_french_reading_comprehension_text_2": request.POST.get('english_french_reading_comprehension_text_2'),
+            "Bridging_ASSESSMENT/english_french_letter_dictation": request.POST.get('english_french_letter_dictation'),
+            "Bridging_ASSESSMENT/english_french_word_dictation": request.POST.get('english_french_word_dictation'),
+            "Bridging_ASSESSMENT/english_french_sentence_dictation": request.POST.get('english_french_sentence_dictation'),
+            "Bridging_ASSESSMENT/english_french_picture_naming": request.POST.get('english_french_picture_naming'),
+            "Bridging_ASSESSMENT/english_french_picture_description": request.POST.get('english_french_picture_description'),
+            "Bridging_ASSESSMENT/arabic_letter_sound": request.POST.get('arabic_letter_sound'),
+            "Bridging_ASSESSMENT/arabic_alphabet_letters_with_vowel_marks": request.POST.get('arabic_alphabet_letters_with_vowel_marks'),
+            "Bridging_ASSESSMENT/arabic_alphabet_letters_with_long_vowel_letters": request.POST.get('arabic_alphabet_letters_with_long_vowel_letters'),
             "Bridging_ASSESSMENT/arabic_familiar_words": request.POST.get('arabic_familiar_words'),
-            "Bridging_ASSESSMENT/arabic_reading_comprehension": request.POST.get('arabic_reading_comprehension'),
-            "Bridging_ASSESSMENT/english_alphabet_knowledge": request.POST.get('english_alphabet_knowledge'),
-            "Bridging_ASSESSMENT/english_familiar_words": request.POST.get('english_familiar_words'),
-            "Bridging_ASSESSMENT/english_reading_comprehension": request.POST.get('english_reading_comprehension'),
-            "Bridging_ASSESSMENT/french_alphabet_knowledge": request.POST.get('french_alphabet_knowledge'),
-            "Bridging_ASSESSMENT/french_familiar_words": request.POST.get('french_familiar_words'),
-            "Bridging_ASSESSMENT/french_reading_comprehension": request.POST.get('french_reading_comprehension'),
-            "Bridging_ASSESSMENT/math": request.POST.get('math'),
+            "Bridging_ASSESSMENT/arabic_picture_word_matching": request.POST.get('arabic_picture_word_matching'),
+            "Bridging_ASSESSMENT/arabic_reading_comprehension_text_1": request.POST.get('arabic_reading_comprehension_text_1'),
+            "Bridging_ASSESSMENT/arabic_reading_comprehension_text_2": request.POST.get('arabic_reading_comprehension_text_2'),
+            "Bridging_ASSESSMENT/arabic_letter_dictation": request.POST.get('arabic_letter_dictation'),
+            "Bridging_ASSESSMENT/arabic_word_dictation": request.POST.get('arabic_word_dictation'),
+            "Bridging_ASSESSMENT/arabic_sentence_dictation": request.POST.get('arabic_sentence_dictation'),
+            "Bridging_ASSESSMENT/arabic_picture_naming": request.POST.get('arabic_picture_naming'),
+            "Bridging_ASSESSMENT/arabic_picture_description": request.POST.get('arabic_picture_description'),
+            "Bridging_ASSESSMENT/math_natural_numbers": request.POST.get('math_natural_numbers'),
+            "Bridging_ASSESSMENT/math_addition": request.POST.get('math_addition'),
+            "Bridging_ASSESSMENT/math_location": request.POST.get('math_location'),
+            "Bridging_ASSESSMENT/math_plane_figures": request.POST.get('math_plane_figures'),
+            "Bridging_ASSESSMENT/math_subtraction": request.POST.get('math_subtraction'),
+            "Bridging_ASSESSMENT/math_multiplication": request.POST.get('math_multiplication'),
             "Bridging_ASSESSMENT/exam1": request.POST.get('exam1')
         }
         instance.save()
@@ -2304,8 +2153,6 @@ class BridgingPreAssessmentForm(forms.ModelForm):
         model = Bridging
         fields = (
         )
-
-
 class BridgingAssessmentForm(forms.ModelForm):
     REGISTRATION_LEVEL = (
         ('', '----------'),
@@ -2379,56 +2226,38 @@ class BridgingAssessmentForm(forms.ModelForm):
         widget=forms.Select, required=False,
         choices=CLM.YES_NO
     )
-    arabic_alphabet_knowledge = forms.FloatField(
-        label=_('Arabic Alphabet Knowledge'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    arabic_familiar_words = forms.FloatField(
-        label=_('Arabic Familiar words'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    arabic_reading_comprehension = forms.FloatField(
-        label=_('Arabic Reading Comprehension'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    english_alphabet_knowledge = forms.FloatField(
-        label=_('English Alphabet Knowledge'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    english_familiar_words = forms.FloatField(
-        label=_('English Familiar words'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    english_reading_comprehension = forms.FloatField(
-        label=_('English Reading Comprehension'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    french_alphabet_knowledge = forms.FloatField(
-        label=_('French Alphabet Knowledge'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    french_familiar_words = forms.FloatField(
-        label=_('French Familiar words'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    french_reading_comprehension = forms.FloatField(
-        label=_('French Reading Comprehension'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    math = forms.FloatField(
-        label=_('Math'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
+    english_french_letter_sound = forms.FloatField(label=_('Letter Sound'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    english_french_familiar_words = forms.FloatField(label=_('Familiar Words'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    english_french_picture_word_matching = forms.FloatField(label=_('Picture word matching'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    english_french_reading_comprehension_text_1 = forms.FloatField(label=_('Reading comprehension text 1'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    english_french_reading_comprehension_text_2 = forms.FloatField(label=_('Reading comprehension text 2'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    english_french_letter_dictation = forms.FloatField(label=_('Letter Dictation'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    english_french_word_dictation = forms.FloatField(label=_('Word Dictation'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    english_french_sentence_dictation = forms.FloatField(label=_('Sentence dictation'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    english_french_picture_naming = forms.FloatField(label=_('Picture Naming'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    english_french_picture_description = forms.FloatField(label=_('Picture Description'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_letter_sound = forms.FloatField(label=_('Letter Sound'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_alphabet_letters_with_vowel_marks = forms.FloatField(label=_('Alphabet letters with vowel marks'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_alphabet_letters_with_long_vowel_letters = forms.FloatField(label=_('Alphabet letters with long vowel letters'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_familiar_words = forms.FloatField(label=_('Familiar Words'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_picture_word_matching = forms.FloatField(label=_('Picture word matching'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_reading_comprehension_text_1 = forms.FloatField(label=_('Reading comprehension text 1'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_reading_comprehension_text_2 = forms.FloatField(label=_('Reading comprehension text 2'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_letter_dictation = forms.FloatField(label=_('Letter Dictation'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_word_dictation = forms.FloatField(label=_('Word Dictation'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_sentence_dictation = forms.FloatField(label=_('Sentence dictation'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_picture_naming = forms.FloatField(label=_('Picture Naming'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    arabic_picture_description = forms.FloatField(label=_('Picture Description'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_natural_numbers = forms.FloatField(label=_('Natural Numbers'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_addition = forms.FloatField(label=_('Addition'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_subtraction = forms.FloatField(label=_('Subtraction'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_length = forms.FloatField(label=_('Length'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_solid_figures = forms.FloatField(label=_('Solid Figures'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_plane_figurs = forms.FloatField(label=_('Plane Figurs'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_multiplication = forms.FloatField(label=_('Multiplication'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_location = forms.FloatField(label=_('Location'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_division = forms.FloatField(label=_('Division'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_fractions = forms.FloatField(label=_('Fractions'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
     exam3 = forms.FloatField(
         label=_('Exam 3'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
@@ -2559,32 +2388,18 @@ class BridgingAssessmentForm(forms.ModelForm):
                         Div('referral_school_type', css_class='col-md-4'),
                         css_class='row card-body',
                     ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill" id="span_arabic">14</span>'),
-                        Div('arabic_alphabet_knowledge', css_class='col-md-3'),
-                        Div('arabic_familiar_words', css_class='col-md-3'),
-                        Div('arabic_reading_comprehension', css_class='col-md-3'),
-                        css_class='row grades card-body',
-                    ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill" id="span_english">15</span>'),
-                        Div('english_alphabet_knowledge', css_class='col-md-3'),
-                        Div('english_familiar_words', css_class='col-md-3'),
-                        Div('english_reading_comprehension', css_class='col-md-3'),
-                        css_class='row grades card-body',
-                    ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill" id="span_french">16</span>'),
-                        Div('french_alphabet_knowledge', css_class='col-md-3'),
-                        Div('french_familiar_words', css_class='col-md-3'),
-                        Div('french_reading_comprehension', css_class='col-md-3'),
-                        css_class='row grades card-body',
-                    ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill" id="span_math">17</span>'),
-                        Div('math', css_class='col-md-3'),
-                        css_class='row grades card-body',
-                    ),
+                    Div(HTML('<h5>English/French</h5>'), css_class='row card-body'),
+                    Div(Div('english_french_letter_sound', css_class='col-md-3'), Div('english_french_familiar_words', css_class='col-md-3'), Div('english_french_picture_word_matching', css_class='col-md-3'), Div('english_french_reading_comprehension_text_1', css_class='col-md-3'), css_class='row grades card-body'),
+                    Div(Div('english_french_reading_comprehension_text_2', css_class='col-md-3'), Div('english_french_letter_dictation', css_class='col-md-3'), Div('english_french_word_dictation', css_class='col-md-3'), Div('english_french_sentence_dictation', css_class='col-md-3'), css_class='row grades card-body'),
+                    Div(Div('english_french_picture_naming', css_class='col-md-3'), Div('english_french_picture_description', css_class='col-md-3'), css_class='row grades card-body'),
+                    Div(HTML('<h5>Arabic</h5>'), css_class='row card-body'),
+                    Div(Div('arabic_letter_sound', css_class='col-md-3'), Div('arabic_alphabet_letters_with_vowel_marks', css_class='col-md-3'), Div('arabic_alphabet_letters_with_long_vowel_letters', css_class='col-md-3'), Div('arabic_familiar_words', css_class='col-md-3'), css_class='row grades card-body'),
+                    Div(Div('arabic_picture_word_matching', css_class='col-md-3'), Div('arabic_reading_comprehension_text_1', css_class='col-md-3'), Div('arabic_reading_comprehension_text_2', css_class='col-md-3'), Div('arabic_letter_dictation', css_class='col-md-3'), css_class='row grades card-body'),
+                    Div(Div('arabic_word_dictation', css_class='col-md-3'), Div('arabic_sentence_dictation', css_class='col-md-3'), Div('arabic_picture_naming', css_class='col-md-3'), Div('arabic_picture_description', css_class='col-md-3'), css_class='row grades card-body'),
+                    Div(HTML('<h5>Math</h5>'), css_class='row card-body'),
+                    Div(Div('math_natural_numbers', css_class='col-md-3'), Div('math_addition', css_class='col-md-3'), Div('math_subtraction', css_class='col-md-3'), Div('math_length', css_class='col-md-3'), css_class='row grades card-body'),
+                    Div(Div('math_solid_figures', css_class='col-md-3'), Div('math_plane_figurs', css_class='col-md-3'), Div('math_multiplication', css_class='col-md-3'), Div('math_location', css_class='col-md-3'), css_class='row grades card-body'),
+                    Div(Div('math_division', css_class='col-md-3'), Div('math_fractions', css_class='col-md-3'), css_class='row grades card-body'),
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
@@ -2689,109 +2504,27 @@ class BridgingAssessmentForm(forms.ModelForm):
                     self.add_error('community_liaison_specify', 'This field is required')
 
         if test_done == 'yes':
-            if not round_complete:
-                self.add_error('round_complete', 'This field is required')
-
-        if learning_result == 'other' and not learning_result_other:
-            self.add_error('learning_result_other', 'This field is required')
-
-        if learning_result == 'dropout' and not dropout_date:
-            self.add_error('dropout_date', 'This field is required')
-        if learning_result == 'dropout' and not dropout_reason:
-            self.add_error('dropout_reason', 'This field is required')
-
-        if learning_result == 'referred_public_school' and not referral_school:
-            self.add_error('referral_school', 'This field is required')
-        if learning_result == 'referred_public_school' and not referral_school_type:
-            self.add_error('referral_school_type', 'This field is required')
-
-        if barriers_single == 'other':
-            if not barriers_other:
-                self.add_error('barriers_other', 'This field is required')
-
-        # grades Max Value validation
-        registration_level = cleaned_data.get("registration_level")
-        language = cleaned_data.get("language")
-
-        arabic_alphabet_knowledge = cleaned_data.get("arabic_alphabet_knowledge")
-        arabic_familiar_words = cleaned_data.get("arabic_familiar_words")
-        arabic_reading_comprehension = cleaned_data.get("arabic_reading_comprehension")
-
-        english_alphabet_knowledge = cleaned_data.get("english_alphabet_knowledge")
-        english_familiar_words = cleaned_data.get("english_familiar_words")
-        english_reading_comprehension = cleaned_data.get("english_reading_comprehension")
-
-        french_alphabet_knowledge = cleaned_data.get("french_alphabet_knowledge")
-        french_familiar_words = cleaned_data.get("french_familiar_words")
-        french_reading_comprehension = cleaned_data.get("french_reading_comprehension")
-
-        math = cleaned_data.get("math")
-        # social_emotional = cleaned_data.get("social_emotional")
-        # artistic = cleaned_data.get("artistic")
-
-        if test_done == 'yes':
-            if self.request.user.partner and not self.request.user.partner.is_Kayany:
-                if arabic_alphabet_knowledge is None:
-                    self.add_error('arabic_alphabet_knowledge', 'This field is required')
-                elif arabic_alphabet_knowledge > 48:
-                    self.add_error('arabic_alphabet_knowledge', 'This value is greater that 48')
-
-                if arabic_familiar_words is None:
-                    self.add_error('arabic_familiar_words', 'This field is required')
-                elif arabic_familiar_words > 20:
-                    self.add_error('arabic_familiar_words', 'This value is greater that 20')
-
-                if arabic_reading_comprehension is None:
-                    self.add_error('arabic_reading_comprehension', 'This field is required')
-                elif arabic_reading_comprehension > 10:
-                    self.add_error('arabic_reading_comprehension', 'This value is greater that 10')
-
-                if language == 'english_arabic':
-                    if english_alphabet_knowledge is None:
-                        self.add_error('english_alphabet_knowledge', 'This field is required')
-                    elif english_alphabet_knowledge > 48:
-                        self.add_error('english_alphabet_knowledge', 'This value is greater that 48')
-
-                    if english_familiar_words is None:
-                        self.add_error('english_familiar_words', 'This field is required')
-                    elif english_familiar_words > 20:
-                        self.add_error('english_familiar_words', 'This value is greater that 20')
-
-                    if english_reading_comprehension is None:
-                        self.add_error('english_reading_comprehension', 'This field is required')
-                    elif english_reading_comprehension > 10:
-                        self.add_error('english_reading_comprehension', 'This value is greater that 10')
-
-                elif language == 'french_arabic':
-                    if french_alphabet_knowledge is None:
-                        self.add_error('french_alphabet_knowledge', 'This field is required')
-                    elif french_alphabet_knowledge > 48:
-                        self.add_error('french_alphabet_knowledge', 'This value is greater that 48')
-
-                    if french_familiar_words is None:
-                        self.add_error('french_familiar_words', 'This field is required')
-                    elif french_familiar_words > 20:
-                        self.add_error('french_familiar_words', 'This value is greater that 20')
-
-                    if french_reading_comprehension is None:
-                        self.add_error('french_reading_comprehension', 'This field is required')
-                    elif french_reading_comprehension > 10:
-                        self.add_error('french_reading_comprehension', 'This value is greater that 10')
-
-                if math is None:
-                    self.add_error('math', 'This field is required')
-                elif registration_level == 'level_one' and math > 50:
-                    self.add_error('math', 'This value is greater that 50')
-                elif registration_level == 'level_two' and math > 88:
-                    self.add_error('math', 'This value is greater that 88')
-                elif math > 103:
-                    self.add_error('math', 'This value is greater that 103')
-            else:
-                exam3 = cleaned_data.get("exam3")
-                if exam3 is None:
-                    self.add_error('exam3', 'This field is required')
-                elif exam3 > 20:
-                    self.add_error('exam3', 'This value is greater that 20')
+            required_fields = [
+                'english_french_letter_sound', 'english_french_familiar_words', 'english_french_picture_word_matching',
+                'english_french_reading_comprehension_text_1', 'english_french_reading_comprehension_text_2',
+                'english_french_letter_dictation', 'english_french_word_dictation', 'english_french_sentence_dictation',
+                'english_french_picture_naming', 'english_french_picture_description',
+                'arabic_letter_sound', 'arabic_alphabet_letters_with_vowel_marks', 'arabic_alphabet_letters_with_long_vowel_letters',
+                'arabic_familiar_words', 'arabic_picture_word_matching', 'arabic_reading_comprehension_text_1',
+                'arabic_reading_comprehension_text_2', 'arabic_letter_dictation', 'arabic_word_dictation',
+                'arabic_sentence_dictation', 'arabic_picture_naming', 'arabic_picture_description',
+                'math_natural_numbers', 'math_addition', 'math_subtraction', 'math_length', 'math_solid_figures',
+                'math_plane_figurs', 'math_multiplication', 'math_location', 'math_division', 'math_fractions',
+            ]
+            for field in required_fields:
+                if cleaned_data.get(field) is None:
+                    self.add_error(field, 'This field is required')
+        else:
+            exam3 = cleaned_data.get("exam3")
+            if exam3 is None:
+                self.add_error('exam3', 'This field is required')
+            elif exam3 > 20:
+                self.add_error('exam3', 'This value is greater that 20')
 
 
     def save(self, instance=None, request=None):
@@ -2801,21 +2534,39 @@ class BridgingAssessmentForm(forms.ModelForm):
         instance.modified_by = request.user
 
         instance.post_test = {
-            "Bridging_ASSESSMENT/arabic_alphabet_knowledge": request.POST.get('arabic_alphabet_knowledge'),
+            "Bridging_ASSESSMENT/english_french_letter_sound": request.POST.get('english_french_letter_sound'),
+            "Bridging_ASSESSMENT/english_french_familiar_words": request.POST.get('english_french_familiar_words'),
+            "Bridging_ASSESSMENT/english_french_picture_word_matching": request.POST.get('english_french_picture_word_matching'),
+            "Bridging_ASSESSMENT/english_french_reading_comprehension_text_1": request.POST.get('english_french_reading_comprehension_text_1'),
+            "Bridging_ASSESSMENT/english_french_reading_comprehension_text_2": request.POST.get('english_french_reading_comprehension_text_2'),
+            "Bridging_ASSESSMENT/english_french_letter_dictation": request.POST.get('english_french_letter_dictation'),
+            "Bridging_ASSESSMENT/english_french_word_dictation": request.POST.get('english_french_word_dictation'),
+            "Bridging_ASSESSMENT/english_french_sentence_dictation": request.POST.get('english_french_sentence_dictation'),
+            "Bridging_ASSESSMENT/english_french_picture_naming": request.POST.get('english_french_picture_naming'),
+            "Bridging_ASSESSMENT/english_french_picture_description": request.POST.get('english_french_picture_description'),
+            "Bridging_ASSESSMENT/arabic_letter_sound": request.POST.get('arabic_letter_sound'),
+            "Bridging_ASSESSMENT/arabic_alphabet_letters_with_vowel_marks": request.POST.get('arabic_alphabet_letters_with_vowel_marks'),
+            "Bridging_ASSESSMENT/arabic_alphabet_letters_with_long_vowel_letters": request.POST.get('arabic_alphabet_letters_with_long_vowel_letters'),
             "Bridging_ASSESSMENT/arabic_familiar_words": request.POST.get('arabic_familiar_words'),
-            "Bridging_ASSESSMENT/arabic_reading_comprehension": request.POST.get('arabic_reading_comprehension'),
-
-            "Bridging_ASSESSMENT/english_alphabet_knowledge": request.POST.get('english_alphabet_knowledge'),
-            "Bridging_ASSESSMENT/english_familiar_words": request.POST.get('english_familiar_words'),
-            "Bridging_ASSESSMENT/english_reading_comprehension": request.POST.get('english_reading_comprehension'),
-
-            "Bridging_ASSESSMENT/french_alphabet_knowledge": request.POST.get('french_alphabet_knowledge'),
-            "Bridging_ASSESSMENT/french_familiar_words": request.POST.get('french_familiar_words'),
-            "Bridging_ASSESSMENT/french_reading_comprehension": request.POST.get('french_reading_comprehension'),
-            "Bridging_ASSESSMENT/math": request.POST.get('math'),
+            "Bridging_ASSESSMENT/arabic_picture_word_matching": request.POST.get('arabic_picture_word_matching'),
+            "Bridging_ASSESSMENT/arabic_reading_comprehension_text_1": request.POST.get('arabic_reading_comprehension_text_1'),
+            "Bridging_ASSESSMENT/arabic_reading_comprehension_text_2": request.POST.get('arabic_reading_comprehension_text_2'),
+            "Bridging_ASSESSMENT/arabic_letter_dictation": request.POST.get('arabic_letter_dictation'),
+            "Bridging_ASSESSMENT/arabic_word_dictation": request.POST.get('arabic_word_dictation'),
+            "Bridging_ASSESSMENT/arabic_sentence_dictation": request.POST.get('arabic_sentence_dictation'),
+            "Bridging_ASSESSMENT/arabic_picture_naming": request.POST.get('arabic_picture_naming'),
+            "Bridging_ASSESSMENT/arabic_picture_description": request.POST.get('arabic_picture_description'),
+            "Bridging_ASSESSMENT/math_natural_numbers": request.POST.get('math_natural_numbers'),
+            "Bridging_ASSESSMENT/math_addition": request.POST.get('math_addition'),
+            "Bridging_ASSESSMENT/math_subtraction": request.POST.get('math_subtraction'),
+            "Bridging_ASSESSMENT/math_length": request.POST.get('math_length'),
+            "Bridging_ASSESSMENT/math_solid_figures": request.POST.get('math_solid_figures'),
+            "Bridging_ASSESSMENT/math_plane_figurs": request.POST.get('math_plane_figurs'),
+            "Bridging_ASSESSMENT/math_multiplication": request.POST.get('math_multiplication'),
+            "Bridging_ASSESSMENT/math_location": request.POST.get('math_location'),
+            "Bridging_ASSESSMENT/math_division": request.POST.get('math_division'),
+            "Bridging_ASSESSMENT/math_fractions": request.POST.get('math_fractions'),
             "Bridging_ASSESSMENT/exam3": request.POST.get('exam3')
-                # "Bridging_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
-                # "Bridging_ASSESSMENT/artistic": request.POST.get('artistic'),
             }
 
         instance.save()

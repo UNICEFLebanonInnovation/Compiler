@@ -599,35 +599,22 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
             if 'post_test' in data:
                 p_test = data['post_test']
                 if p_test:
-                    if "Bridging_ASSESSMENT/arabic_alphabet_knowledge" in p_test:
-                        data['arabic_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/arabic_alphabet_knowledge"]
-                    if "Bridging_ASSESSMENT/arabic_familiar_words" in p_test:
-                        data['arabic_familiar_words'] = p_test["Bridging_ASSESSMENT/arabic_familiar_words"]
-                    if "Bridging_ASSESSMENT/arabic_reading_comprehension" in p_test:
-                        data['arabic_reading_comprehension'] = p_test[
-                            "Bridging_ASSESSMENT/arabic_reading_comprehension"]
-
-                    if "Bridging_ASSESSMENT/english_alphabet_knowledge" in p_test:
-                        data['english_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/english_alphabet_knowledge"]
-                    if "Bridging_ASSESSMENT/english_familiar_words" in p_test:
-                        data['english_familiar_words'] = p_test["Bridging_ASSESSMENT/english_familiar_words"]
-                    if "Bridging_ASSESSMENT/english_reading_comprehension" in p_test:
-                        data['english_reading_comprehension'] = p_test[
-                            "Bridging_ASSESSMENT/english_reading_comprehension"]
-
-                    if "Bridging_ASSESSMENT/french_alphabet_knowledge" in p_test:
-                        data['french_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/french_alphabet_knowledge"]
-                    if "Bridging_ASSESSMENT/french_familiar_words" in p_test:
-                        data['french_familiar_words'] = p_test["Bridging_ASSESSMENT/french_familiar_words"]
-                    if "Bridging_ASSESSMENT/french_reading_comprehension" in p_test:
-                        data['french_reading_comprehension'] = p_test[
-                            "Bridging_ASSESSMENT/french_reading_comprehension"]
-
-                    if "Bridging_ASSESSMENT/math" in p_test:
-                        data['math'] = p_test["Bridging_ASSESSMENT/math"]
-
-                    if "Bridging_ASSESSMENT/exam3" in p_test:
-                        data['exam3'] = p_test["Bridging_ASSESSMENT/exam3"]
+                    fields = [
+                        'english_french_letter_sound', 'english_french_familiar_words', 'english_french_picture_word_matching',
+                        'english_french_reading_comprehension_text_1', 'english_french_reading_comprehension_text_2',
+                        'english_french_letter_dictation', 'english_french_word_dictation', 'english_french_sentence_dictation',
+                        'english_french_picture_naming', 'english_french_picture_description',
+                        'arabic_letter_sound', 'arabic_alphabet_letters_with_vowel_marks', 'arabic_alphabet_letters_with_long_vowel_letters',
+                        'arabic_familiar_words', 'arabic_picture_word_matching', 'arabic_reading_comprehension_text_1',
+                        'arabic_reading_comprehension_text_2', 'arabic_letter_dictation', 'arabic_word_dictation',
+                        'arabic_sentence_dictation', 'arabic_picture_naming', 'arabic_picture_description',
+                        'math_natural_numbers', 'math_addition', 'math_subtraction', 'math_length', 'math_solid_figures',
+                        'math_plane_figurs', 'math_multiplication', 'math_location', 'math_division', 'math_fractions', 'exam3',
+                    ]
+                    for field in fields:
+                        key = 'Bridging_ASSESSMENT/{}'.format(field)
+                        if key in p_test:
+                            data[field] = p_test[key]
 
                     # if "Bridging_ASSESSMENT/artistic" in p_test:
                     #     data['artistic'] = p_test["Bridging_ASSESSMENT/artistic"]
@@ -667,35 +654,22 @@ class BridgingPreAssessmentView(LoginRequiredMixin,
             if 'pre_test' in data:
                 p_test = data['pre_test']
                 if p_test:
-                    if "Bridging_ASSESSMENT/arabic_alphabet_knowledge" in p_test:
-                        data['arabic_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/arabic_alphabet_knowledge"]
-                    if "Bridging_ASSESSMENT/arabic_familiar_words" in p_test:
-                        data['arabic_familiar_words'] = p_test["Bridging_ASSESSMENT/arabic_familiar_words"]
-                    if "Bridging_ASSESSMENT/arabic_reading_comprehension" in p_test:
-                        data['arabic_reading_comprehension'] = p_test[
-                            "Bridging_ASSESSMENT/arabic_reading_comprehension"]
-
-                    if "Bridging_ASSESSMENT/english_alphabet_knowledge" in p_test:
-                        data['english_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/english_alphabet_knowledge"]
-                    if "Bridging_ASSESSMENT/english_familiar_words" in p_test:
-                        data['english_familiar_words'] = p_test["Bridging_ASSESSMENT/english_familiar_words"]
-                    if "Bridging_ASSESSMENT/english_reading_comprehension" in p_test:
-                        data['english_reading_comprehension'] = p_test[
-                            "Bridging_ASSESSMENT/english_reading_comprehension"]
-
-                    if "Bridging_ASSESSMENT/french_alphabet_knowledge" in p_test:
-                        data['french_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/french_alphabet_knowledge"]
-                    if "Bridging_ASSESSMENT/french_familiar_words" in p_test:
-                        data['french_familiar_words'] = p_test["Bridging_ASSESSMENT/french_familiar_words"]
-                    if "Bridging_ASSESSMENT/french_reading_comprehension" in p_test:
-                        data['french_reading_comprehension'] = p_test[
-                            "Bridging_ASSESSMENT/french_reading_comprehension"]
-
-                    if "Bridging_ASSESSMENT/math" in p_test:
-                        data['math'] = p_test["Bridging_ASSESSMENT/math"]
-
-                    if "Bridging_ASSESSMENT/exam1" in p_test:
-                        data['exam1'] = p_test["Bridging_ASSESSMENT/exam1"]
+                    fields = [
+                        'english_french_letter_sound', 'english_french_familiar_words', 'english_french_picture_word_matching',
+                        'english_french_reading_comprehension_text_1', 'english_french_reading_comprehension_text_2',
+                        'english_french_letter_dictation', 'english_french_word_dictation', 'english_french_sentence_dictation',
+                        'english_french_picture_naming', 'english_french_picture_description',
+                        'arabic_letter_sound', 'arabic_alphabet_letters_with_vowel_marks', 'arabic_alphabet_letters_with_long_vowel_letters',
+                        'arabic_familiar_words', 'arabic_picture_word_matching', 'arabic_reading_comprehension_text_1',
+                        'arabic_reading_comprehension_text_2', 'arabic_letter_dictation', 'arabic_word_dictation',
+                        'arabic_sentence_dictation', 'arabic_picture_naming', 'arabic_picture_description',
+                        'math_natural_numbers', 'math_addition', 'math_location', 'math_plane_figures', 'math_subtraction',
+                        'math_multiplication', 'exam1',
+                    ]
+                    for field in fields:
+                        key = 'Bridging_ASSESSMENT/{}'.format(field)
+                        if key in p_test:
+                            data[field] = p_test[key]
 
             return form_class(data, instance=instance, request=self.request)
 
@@ -1119,4 +1093,3 @@ def bridging_export_all(request, **kwargs):
     except Exception as e:
         logging.error("Export failed: %s", traceback.format_exc())
         return HttpResponse("An error occurred: " + str(e), status=500)
-
