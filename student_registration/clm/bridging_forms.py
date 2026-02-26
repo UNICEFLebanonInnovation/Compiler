@@ -2083,6 +2083,80 @@ class BridgingPreAssessmentForm(forms.ModelForm):
         math_subtraction_class = 'col-md-3 d-none' if level == 'level_one' else 'col-md-3'
         math_multiplication_class = 'col-md-3 d-none' if level in ['level_one', 'level_two'] else 'col-md-3'
 
+        pre_level_max_labels = {
+            'level_one': {
+                'english_french_letter_sound': 10,
+                'english_french_familiar_words': 5,
+                'english_french_picture_word_matching': 5,
+                'english_french_reading_comprehension_text_1': 5,
+                'english_french_reading_comprehension_text_2': 5,
+                'english_french_letter_dictation': 5,
+                'english_french_word_dictation': 5,
+                'arabic_letter_sound': 10,
+                'arabic_alphabet_letters_with_vowel_marks': 5,
+                'arabic_alphabet_letters_with_long_vowel_letters': 5,
+                'arabic_familiar_words': 5,
+                'arabic_picture_word_matching': 5,
+                'arabic_reading_comprehension_text_1': 5,
+                'arabic_reading_comprehension_text_2': 5,
+                'arabic_letter_dictation': 5,
+                'arabic_word_dictation': 5,
+                'math_natural_numbers': 10,
+                'math_addition': 5,
+                'math_location': 5,
+                'math_plane_figures': 5,
+            },
+            'level_two': {
+                'english_french_letter_sound': 10,
+                'english_french_familiar_words': 5,
+                'english_french_picture_word_matching': 5,
+                'english_french_reading_comprehension_text_1': 5,
+                'english_french_reading_comprehension_text_2': 5,
+                'english_french_word_dictation': 5,
+                'english_french_picture_naming': 5,
+                'arabic_letter_sound': 10,
+                'arabic_alphabet_letters_with_vowel_marks': 5,
+                'arabic_alphabet_letters_with_long_vowel_letters': 5,
+                'arabic_familiar_words': 5,
+                'arabic_picture_word_matching': 5,
+                'arabic_reading_comprehension_text_1': 5,
+                'arabic_reading_comprehension_text_2': 5,
+                'arabic_word_dictation': 5,
+                'arabic_picture_naming': 5,
+                'math_natural_numbers': 10,
+                'math_addition': 10,
+                'math_location': 4,
+                'math_plane_figures': 3,
+                'math_subtraction': 8,
+            },
+            'level_three': {
+                'english_french_letter_sound': 10,
+                'english_french_familiar_words': 5,
+                'english_french_picture_word_matching': 5,
+                'english_french_reading_comprehension_text_1': 5,
+                'english_french_reading_comprehension_text_2': 5,
+                'english_french_sentence_dictation': 5,
+                'english_french_picture_description': 5,
+                'arabic_letter_sound': 10,
+                'arabic_alphabet_letters_with_vowel_marks': 5,
+                'arabic_alphabet_letters_with_long_vowel_letters': 5,
+                'arabic_familiar_words': 5,
+                'arabic_picture_word_matching': 5,
+                'arabic_reading_comprehension_text_1': 5,
+                'arabic_reading_comprehension_text_2': 5,
+                'arabic_sentence_dictation': 5,
+                'arabic_picture_description': 5,
+                'math_natural_numbers': 12,
+                'math_addition': 12,
+                'math_plane_figures': 4,
+                'math_subtraction': 12,
+                'math_multiplication': 5,
+            },
+        }
+        for field_name, max_grade in pre_level_max_labels.get(level, {}).items():
+            if field_name in self.fields:
+                self.fields[field_name].label = '{} (Max: {})'.format(self.fields[field_name].label, max_grade)
+
         if not is_Kayany:
             self.helper.layout = Layout(
                 Div(
@@ -2492,16 +2566,85 @@ class BridgingAssessmentForm(forms.ModelForm):
         math_division_class = 'col-md-3 d-none' if level in ['level_one', 'level_two'] else 'col-md-3'
         math_fractions_class = 'col-md-3 d-none' if level in ['level_one', 'level_two'] else 'col-md-3'
 
-        selected_registration_level = ''
-        if self.data:
-            selected_registration_level = self.data.get('registration_level', '')
-        if not selected_registration_level:
-            selected_registration_level = self.initial.get('registration_level', '') if hasattr(self, 'initial') else ''
-        if not selected_registration_level and instance:
-            selected_registration_level = getattr(instance, 'registration_level', '')
-        is_level_one = selected_registration_level == 'level_one'
-        optional_field_class = 'col-md-3 d-none' if is_level_one else 'col-md-3'
-        hide_optional_math_rows = 'display:none;' if is_level_one else ''
+        post_level_max_labels = {
+            'level_one': {
+                'english_french_letter_sound': 10,
+                'english_french_familiar_words': 5,
+                'english_french_picture_word_matching': 5,
+                'english_french_reading_comprehension_text_1': 5,
+                'english_french_reading_comprehension_text_2': 5,
+                'english_french_letter_dictation': 5,
+                'english_french_word_dictation': 5,
+                'arabic_letter_sound': 10,
+                'arabic_alphabet_letters_with_vowel_marks': 5,
+                'arabic_alphabet_letters_with_long_vowel_letters': 5,
+                'arabic_familiar_words': 5,
+                'arabic_picture_word_matching': 5,
+                'arabic_reading_comprehension_text_1': 5,
+                'arabic_reading_comprehension_text_2': 5,
+                'arabic_letter_dictation': 5,
+                'arabic_word_dictation': 5,
+                'math_natural_numbers': 10,
+                'math_addition': 6,
+                'math_subtraction': 5,
+                'math_length': 2,
+                'math_solid_figures': 2,
+            },
+            'level_two': {
+                'english_french_letter_sound': 10,
+                'english_french_familiar_words': 5,
+                'english_french_picture_word_matching': 5,
+                'english_french_reading_comprehension_text_1': 5,
+                'english_french_reading_comprehension_text_2': 5,
+                'english_french_word_dictation': 5,
+                'english_french_picture_naming': 5,
+                'arabic_letter_sound': 10,
+                'arabic_alphabet_letters_with_vowel_marks': 5,
+                'arabic_alphabet_letters_with_long_vowel_letters': 5,
+                'arabic_familiar_words': 5,
+                'arabic_picture_word_matching': 5,
+                'arabic_reading_comprehension_text_1': 5,
+                'arabic_reading_comprehension_text_2': 5,
+                'arabic_word_dictation': 5,
+                'arabic_picture_naming': 5,
+                'math_natural_numbers': 7,
+                'math_addition': 8,
+                'math_subtraction': 5,
+                'math_length': 3,
+                'math_solid_figures': 3,
+                'math_plane_figurs': 4,
+                'math_multiplication': 5,
+            },
+            'level_three': {
+                'english_french_letter_sound': 10,
+                'english_french_familiar_words': 5,
+                'english_french_picture_word_matching': 5,
+                'english_french_reading_comprehension_text_1': 5,
+                'english_french_reading_comprehension_text_2': 5,
+                'english_french_sentence_dictation': 5,
+                'english_french_picture_description': 5,
+                'arabic_letter_sound': 10,
+                'arabic_alphabet_letters_with_vowel_marks': 5,
+                'arabic_alphabet_letters_with_long_vowel_letters': 5,
+                'arabic_familiar_words': 5,
+                'arabic_picture_word_matching': 5,
+                'arabic_reading_comprehension_text_1': 5,
+                'arabic_reading_comprehension_text_2': 5,
+                'arabic_sentence_dictation': 5,
+                'arabic_picture_description': 5,
+                'math_natural_numbers': 9,
+                'math_addition': 6,
+                'math_subtraction': 6,
+                'math_length': 5,
+                'math_multiplication': 7,
+                'math_location': 3,
+                'math_division': 6,
+                'math_fractions': 3,
+            },
+        }
+        for field_name, max_grade in post_level_max_labels.get(level, {}).items():
+            if field_name in self.fields:
+                self.fields[field_name].label = '{} (Max: {})'.format(self.fields[field_name].label, max_grade)
 
         if not is_Kayany:
 
