@@ -1,5 +1,4 @@
 from __future__ import unicode_literals, absolute_import, division
-import json
 
 from django.utils.translation import gettext as _
 from django import forms
@@ -2047,6 +2046,10 @@ class BridgingPreAssessmentForm(forms.ModelForm):
     language = forms.ChoiceField(label=_('The language supported in the program'), widget=forms.Select, choices=CLM.LANGUAGES, required=False, initial='english_arabic')
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
+    @staticmethod
+    def _category_total(source_data, fields):
+        return sum(source_data.get(field) or 0 for field in fields)
+
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(BridgingPreAssessmentForm, self).__init__(*args, **kwargs)
@@ -2137,41 +2140,9 @@ class BridgingPreAssessmentForm(forms.ModelForm):
             },
         }
         layout_fields = level_fields.get(level, level_fields['default'])
-        pre_sum_script = HTML("""
-            <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                function bindCategorySum(fields, targetId) {
-                    var target = document.getElementById(targetId);
-                    if (!target) return;
-                    function recalc() {
-                        var total = 0;
-                        fields.forEach(function (field) {
-                            var input = document.getElementById('id_' + field);
-                            if (!input) return;
-                            var value = parseFloat(input.value);
-                            if (!isNaN(value)) total += value;
-                        });
-                        target.value = total;
-                    }
-                    fields.forEach(function (field) {
-                        var input = document.getElementById('id_' + field);
-                        if (!input) return;
-                        input.addEventListener('input', recalc);
-                        input.addEventListener('change', recalc);
-                    });
-                    recalc();
-                }
-
-                bindCategorySum(%s, 'id_english_french_sum');
-                bindCategorySum(%s, 'id_arabic_sum');
-                bindCategorySum(%s, 'id_math_sum');
-            });
-            </script>
-        """ % (
-            json.dumps(layout_fields['english_french']),
-            json.dumps(layout_fields['arabic']),
-            json.dumps(layout_fields['math']),
-        ))
+        self.initial['english_french_sum'] = self._category_total(self.initial, layout_fields['english_french'])
+        self.initial['arabic_sum'] = self._category_total(self.initial, layout_fields['arabic'])
+        self.initial['math_sum'] = self._category_total(self.initial, layout_fields['math'])
         math_total_by_level = {
             'level_one': 25,
             'level_two': 35,
@@ -2267,7 +2238,6 @@ class BridgingPreAssessmentForm(forms.ModelForm):
                     Div(HTML('<h5>Math</h5>'), css_class='row card-body'),
                     *build_rows(layout_fields['math']),
                     Div(HTML('<strong>Total scores (Math) / {}</strong>'.format(math_total)), Div('math_sum', css_class='col-md-3'), css_class='row card-body'),
-                    pre_sum_script,
                     FormActions(Submit('save', 'Save', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'), Reset('reset', 'Reset', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'))
                 )
             )
@@ -2403,12 +2373,23 @@ class BridgingPreAssessmentForm(forms.ModelForm):
                 value = cleaned_data.get(field)
                 if value is not None and value > max_grade:
                     self.add_error(field, 'This value is greater that {}'.format(max_grade))
+
+            cleaned_data['english_french_sum'] = self._category_total(cleaned_data, [field for field in required_fields if field.startswith('english_french_')])
+            cleaned_data['arabic_sum'] = self._category_total(cleaned_data, [field for field in required_fields if field.startswith('arabic_')])
+            cleaned_data['math_sum'] = self._category_total(cleaned_data, [field for field in required_fields if field.startswith('math_')])
         else:
             exam1 = cleaned_data.get("exam1")
             if exam1 is None:
                 self.add_error('exam1', 'This field is required')
             elif exam1 > 20:
                 self.add_error('exam1', 'This value is greater that 20')
+
+        if hasattr(self, 'data'):
+            self.data = self.data.copy()
+            self.data['english_french_sum'] = cleaned_data.get('english_french_sum', 0)
+            self.data['arabic_sum'] = cleaned_data.get('arabic_sum', 0)
+            self.data['math_sum'] = cleaned_data.get('math_sum', 0)
+        return cleaned_data
 
     def save(self, instance=None, request=None):
         instance = super(BridgingPreAssessmentForm, self).save()
@@ -2608,6 +2589,10 @@ class BridgingAssessmentForm(forms.ModelForm):
 
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
+    @staticmethod
+    def _category_total(source_data, fields):
+        return sum(source_data.get(field) or 0 for field in fields)
+
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(BridgingAssessmentForm, self).__init__(*args, **kwargs)
@@ -2711,41 +2696,9 @@ class BridgingAssessmentForm(forms.ModelForm):
             },
         }
         layout_fields = level_fields.get(level, level_fields['default'])
-        post_sum_script = HTML("""
-            <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                function bindCategorySum(fields, targetId) {
-                    var target = document.getElementById(targetId);
-                    if (!target) return;
-                    function recalc() {
-                        var total = 0;
-                        fields.forEach(function (field) {
-                            var input = document.getElementById('id_' + field);
-                            if (!input) return;
-                            var value = parseFloat(input.value);
-                            if (!isNaN(value)) total += value;
-                        });
-                        target.value = total;
-                    }
-                    fields.forEach(function (field) {
-                        var input = document.getElementById('id_' + field);
-                        if (!input) return;
-                        input.addEventListener('input', recalc);
-                        input.addEventListener('change', recalc);
-                    });
-                    recalc();
-                }
-
-                bindCategorySum(%s, 'id_english_french_sum');
-                bindCategorySum(%s, 'id_arabic_sum');
-                bindCategorySum(%s, 'id_math_sum');
-            });
-            </script>
-        """ % (
-            json.dumps(layout_fields['english_french']),
-            json.dumps(layout_fields['arabic']),
-            json.dumps(layout_fields['math']),
-        ))
+        self.initial['english_french_sum'] = self._category_total(self.initial, layout_fields['english_french'])
+        self.initial['arabic_sum'] = self._category_total(self.initial, layout_fields['arabic'])
+        self.initial['math_sum'] = self._category_total(self.initial, layout_fields['math'])
         math_total_by_level = {
             'level_one': 25,
             'level_two': 35,
@@ -2895,7 +2848,6 @@ class BridgingAssessmentForm(forms.ModelForm):
                     Div(HTML('<h5>Math</h5>'), css_class='row card-body'),
                     *build_rows(layout_fields['math']),
                     Div(HTML('<strong>Total scores (Math) / {}</strong>'.format(math_total)), Div('math_sum', css_class='col-md-3'), css_class='row card-body'),
-                    post_sum_script,
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
@@ -3128,12 +3080,23 @@ class BridgingAssessmentForm(forms.ModelForm):
                 value = cleaned_data.get(field)
                 if value is not None and value > max_grade:
                     self.add_error(field, 'This value is greater that {}'.format(max_grade))
+
+            cleaned_data['english_french_sum'] = self._category_total(cleaned_data, [field for field in required_fields if field.startswith('english_french_')])
+            cleaned_data['arabic_sum'] = self._category_total(cleaned_data, [field for field in required_fields if field.startswith('arabic_')])
+            cleaned_data['math_sum'] = self._category_total(cleaned_data, [field for field in required_fields if field.startswith('math_')])
         else:
             exam3 = cleaned_data.get("exam3")
             if exam3 is None:
                 self.add_error('exam3', 'This field is required')
             elif exam3 > 20:
                 self.add_error('exam3', 'This value is greater that 20')
+
+        if hasattr(self, 'data'):
+            self.data = self.data.copy()
+            self.data['english_french_sum'] = cleaned_data.get('english_french_sum', 0)
+            self.data['arabic_sum'] = cleaned_data.get('arabic_sum', 0)
+            self.data['math_sum'] = cleaned_data.get('math_sum', 0)
+        return cleaned_data
 
 
     def save(self, instance=None, request=None):
