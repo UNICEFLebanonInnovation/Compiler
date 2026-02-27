@@ -2067,21 +2067,72 @@ class BridgingPreAssessmentForm(forms.ModelForm):
         if not selected_registration_level and instance:
             selected_registration_level = getattr(instance, 'registration_level', '')
         level = selected_registration_level
-        english_french_letter_dictation_class = 'col-md-3 d-none' if level in ['level_two', 'level_three'] else 'col-md-3'
-        english_french_word_dictation_class = 'col-md-3 d-none' if level == 'level_three' else 'col-md-3'
-        english_french_sentence_dictation_class = 'col-md-3 d-none' if level in ['level_one', 'level_two'] else 'col-md-3'
-        english_french_picture_naming_class = 'col-md-3 d-none' if level in ['level_one', 'level_three'] else 'col-md-3'
-        english_french_picture_description_class = 'col-md-3 d-none' if level in ['level_one', 'level_two'] else 'col-md-3'
 
-        arabic_letter_dictation_class = 'col-md-3 d-none' if level in ['level_two', 'level_three'] else 'col-md-3'
-        arabic_word_dictation_class = 'col-md-3 d-none' if level == 'level_three' else 'col-md-3'
-        arabic_sentence_dictation_class = 'col-md-3 d-none' if level in ['level_one', 'level_two'] else 'col-md-3'
-        arabic_picture_naming_class = 'col-md-3 d-none' if level in ['level_one', 'level_three'] else 'col-md-3'
-        arabic_picture_description_class = 'col-md-3 d-none' if level in ['level_one', 'level_two'] else 'col-md-3'
+        def build_rows(fields, row_class='row card-body'):
+            rows = []
+            for index in range(0, len(fields), 4):
+                rows.append(
+                    Div(*[Div(field, css_class='col-md-3') for field in fields[index:index + 4]], css_class=row_class)
+                )
+            return rows
 
-        math_location_class = 'col-md-3 d-none' if level == 'level_three' else 'col-md-3'
-        math_subtraction_class = 'col-md-3 d-none' if level == 'level_one' else 'col-md-3'
-        math_multiplication_class = 'col-md-3 d-none' if level in ['level_one', 'level_two'] else 'col-md-3'
+        level_fields = {
+            'level_one': {
+                'english_french': [
+                    'english_french_letter_sound', 'english_french_familiar_words', 'english_french_picture_word_matching',
+                    'english_french_reading_comprehension_text_1', 'english_french_reading_comprehension_text_2',
+                    'english_french_letter_dictation', 'english_french_word_dictation',
+                ],
+                'arabic': [
+                    'arabic_letter_sound', 'arabic_alphabet_letters_with_vowel_marks', 'arabic_alphabet_letters_with_long_vowel_letters',
+                    'arabic_familiar_words', 'arabic_picture_word_matching', 'arabic_reading_comprehension_text_1',
+                    'arabic_reading_comprehension_text_2', 'arabic_letter_dictation', 'arabic_word_dictation',
+                ],
+                'math': ['math_natural_numbers', 'math_addition', 'math_location', 'math_plane_figures'],
+            },
+            'level_two': {
+                'english_french': [
+                    'english_french_letter_sound', 'english_french_familiar_words', 'english_french_picture_word_matching',
+                    'english_french_reading_comprehension_text_1', 'english_french_reading_comprehension_text_2',
+                    'english_french_word_dictation', 'english_french_picture_naming',
+                ],
+                'arabic': [
+                    'arabic_letter_sound', 'arabic_alphabet_letters_with_vowel_marks', 'arabic_alphabet_letters_with_long_vowel_letters',
+                    'arabic_familiar_words', 'arabic_picture_word_matching', 'arabic_reading_comprehension_text_1',
+                    'arabic_reading_comprehension_text_2', 'arabic_word_dictation', 'arabic_picture_naming',
+                ],
+                'math': ['math_natural_numbers', 'math_addition', 'math_location', 'math_plane_figures', 'math_subtraction'],
+            },
+            'level_three': {
+                'english_french': [
+                    'english_french_letter_sound', 'english_french_familiar_words', 'english_french_picture_word_matching',
+                    'english_french_reading_comprehension_text_1', 'english_french_reading_comprehension_text_2',
+                    'english_french_sentence_dictation', 'english_french_picture_description',
+                ],
+                'arabic': [
+                    'arabic_letter_sound', 'arabic_alphabet_letters_with_vowel_marks', 'arabic_alphabet_letters_with_long_vowel_letters',
+                    'arabic_familiar_words', 'arabic_picture_word_matching', 'arabic_reading_comprehension_text_1',
+                    'arabic_reading_comprehension_text_2', 'arabic_sentence_dictation', 'arabic_picture_description',
+                ],
+                'math': ['math_natural_numbers', 'math_addition', 'math_plane_figures', 'math_subtraction', 'math_multiplication'],
+            },
+            'default': {
+                'english_french': [
+                    'english_french_letter_sound', 'english_french_familiar_words', 'english_french_picture_word_matching',
+                    'english_french_reading_comprehension_text_1', 'english_french_reading_comprehension_text_2',
+                    'english_french_letter_dictation', 'english_french_word_dictation', 'english_french_sentence_dictation',
+                    'english_french_picture_naming', 'english_french_picture_description',
+                ],
+                'arabic': [
+                    'arabic_letter_sound', 'arabic_alphabet_letters_with_vowel_marks', 'arabic_alphabet_letters_with_long_vowel_letters',
+                    'arabic_familiar_words', 'arabic_picture_word_matching', 'arabic_reading_comprehension_text_1',
+                    'arabic_reading_comprehension_text_2', 'arabic_letter_dictation', 'arabic_word_dictation',
+                    'arabic_sentence_dictation', 'arabic_picture_naming', 'arabic_picture_description',
+                ],
+                'math': ['math_natural_numbers', 'math_addition', 'math_location', 'math_plane_figures', 'math_subtraction', 'math_multiplication'],
+            },
+        }
+        layout_fields = level_fields.get(level, level_fields['default'])
 
         pre_level_max_labels = {
             'level_one': {
@@ -2163,16 +2214,11 @@ class BridgingPreAssessmentForm(forms.ModelForm):
                     Div(HTML('<h4 id="alternatives-to-hidden-labels">' + _('Pre-Assessment') + '</h4>'), css_class='row card-body'),
                     Div(Div('registration_level', css_class='col-md-3 d-none'), Div('language', css_class='col-md-3 d-none'), css_class='row card-body'),
                     Div(HTML('<h5>English/French</h5>'), css_class='row card-body'),
-                    Div(Div('english_french_letter_sound', css_class='col-md-3'), Div('english_french_familiar_words', css_class='col-md-3'), Div('english_french_picture_word_matching', css_class='col-md-3'), Div('english_french_reading_comprehension_text_1', css_class='col-md-3'), css_class='row card-body'),
-                    Div(Div('english_french_reading_comprehension_text_2', css_class='col-md-3'), Div('english_french_letter_dictation', css_class=english_french_letter_dictation_class), Div('english_french_word_dictation', css_class=english_french_word_dictation_class), Div('english_french_sentence_dictation', css_class=english_french_sentence_dictation_class), css_class='row card-body'),
-                    Div(Div('english_french_picture_naming', css_class=english_french_picture_naming_class), Div('english_french_picture_description', css_class=english_french_picture_description_class), css_class='row card-body'),
+                    *build_rows(layout_fields['english_french']),
                     Div(HTML('<h5>Arabic</h5>'), css_class='row card-body'),
-                    Div(Div('arabic_letter_sound', css_class='col-md-3'), Div('arabic_alphabet_letters_with_vowel_marks', css_class='col-md-3'), Div('arabic_alphabet_letters_with_long_vowel_letters', css_class='col-md-3'), Div('arabic_familiar_words', css_class='col-md-3'), css_class='row card-body'),
-                    Div(Div('arabic_picture_word_matching', css_class='col-md-3'), Div('arabic_reading_comprehension_text_1', css_class='col-md-3'), Div('arabic_reading_comprehension_text_2', css_class='col-md-3'), Div('arabic_letter_dictation', css_class=arabic_letter_dictation_class), css_class='row card-body'),
-                    Div(Div('arabic_word_dictation', css_class=arabic_word_dictation_class), Div('arabic_sentence_dictation', css_class=arabic_sentence_dictation_class), Div('arabic_picture_naming', css_class=arabic_picture_naming_class), Div('arabic_picture_description', css_class=arabic_picture_description_class), css_class='row card-body'),
+                    *build_rows(layout_fields['arabic']),
                     Div(HTML('<h5>Math</h5>'), css_class='row card-body'),
-                    Div(Div('math_natural_numbers', css_class='col-md-3'), Div('math_addition', css_class='col-md-3'), Div('math_location', css_class=math_location_class), Div('math_plane_figures', css_class='col-md-3'), css_class='row card-body'),
-                    Div(Div('math_subtraction', css_class=math_subtraction_class), Div('math_multiplication', css_class=math_multiplication_class), css_class='row card-body'),
+                    *build_rows(layout_fields['math']),
                     FormActions(Submit('save', 'Save', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'), Reset('reset', 'Reset', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'))
                 )
             )
@@ -2547,24 +2593,72 @@ class BridgingAssessmentForm(forms.ModelForm):
         if not selected_registration_level and instance:
             selected_registration_level = getattr(instance, 'registration_level', '')
         level = selected_registration_level
-        english_french_letter_dictation_class = 'col-md-3 d-none' if level in ['level_two', 'level_three'] else 'col-md-3'
-        english_french_word_dictation_class = 'col-md-3 d-none' if level == 'level_three' else 'col-md-3'
-        english_french_sentence_dictation_class = 'col-md-3 d-none' if level in ['level_one', 'level_two'] else 'col-md-3'
-        english_french_picture_naming_class = 'col-md-3 d-none' if level in ['level_one', 'level_three'] else 'col-md-3'
-        english_french_picture_description_class = 'col-md-3 d-none' if level in ['level_one', 'level_two'] else 'col-md-3'
 
-        arabic_letter_dictation_class = 'col-md-3 d-none' if level in ['level_two', 'level_three'] else 'col-md-3'
-        arabic_word_dictation_class = 'col-md-3 d-none' if level == 'level_three' else 'col-md-3'
-        arabic_sentence_dictation_class = 'col-md-3 d-none' if level in ['level_one', 'level_two'] else 'col-md-3'
-        arabic_picture_naming_class = 'col-md-3 d-none' if level in ['level_one', 'level_three'] else 'col-md-3'
-        arabic_picture_description_class = 'col-md-3 d-none' if level in ['level_one', 'level_two'] else 'col-md-3'
+        def build_rows(fields, row_class='row grades card-body'):
+            rows = []
+            for index in range(0, len(fields), 4):
+                rows.append(
+                    Div(*[Div(field, css_class='col-md-3') for field in fields[index:index + 4]], css_class=row_class)
+                )
+            return rows
 
-        math_solid_figures_class = 'col-md-3 d-none' if level == 'level_three' else 'col-md-3'
-        math_plane_figurs_class = 'col-md-3 d-none' if level in ['level_one', 'level_three'] else 'col-md-3'
-        math_multiplication_class = 'col-md-3 d-none' if level == 'level_one' else 'col-md-3'
-        math_location_class = 'col-md-3 d-none' if level in ['level_one', 'level_two'] else 'col-md-3'
-        math_division_class = 'col-md-3 d-none' if level in ['level_one', 'level_two'] else 'col-md-3'
-        math_fractions_class = 'col-md-3 d-none' if level in ['level_one', 'level_two'] else 'col-md-3'
+        level_fields = {
+            'level_one': {
+                'english_french': [
+                    'english_french_letter_sound', 'english_french_familiar_words', 'english_french_picture_word_matching',
+                    'english_french_reading_comprehension_text_1', 'english_french_reading_comprehension_text_2',
+                    'english_french_letter_dictation', 'english_french_word_dictation',
+                ],
+                'arabic': [
+                    'arabic_letter_sound', 'arabic_alphabet_letters_with_vowel_marks', 'arabic_alphabet_letters_with_long_vowel_letters',
+                    'arabic_familiar_words', 'arabic_picture_word_matching', 'arabic_reading_comprehension_text_1',
+                    'arabic_reading_comprehension_text_2', 'arabic_letter_dictation', 'arabic_word_dictation',
+                ],
+                'math': ['math_natural_numbers', 'math_addition', 'math_subtraction', 'math_length', 'math_solid_figures'],
+            },
+            'level_two': {
+                'english_french': [
+                    'english_french_letter_sound', 'english_french_familiar_words', 'english_french_picture_word_matching',
+                    'english_french_reading_comprehension_text_1', 'english_french_reading_comprehension_text_2',
+                    'english_french_word_dictation', 'english_french_picture_naming',
+                ],
+                'arabic': [
+                    'arabic_letter_sound', 'arabic_alphabet_letters_with_vowel_marks', 'arabic_alphabet_letters_with_long_vowel_letters',
+                    'arabic_familiar_words', 'arabic_picture_word_matching', 'arabic_reading_comprehension_text_1',
+                    'arabic_reading_comprehension_text_2', 'arabic_word_dictation', 'arabic_picture_naming',
+                ],
+                'math': ['math_natural_numbers', 'math_addition', 'math_subtraction', 'math_length', 'math_solid_figures', 'math_plane_figurs', 'math_multiplication'],
+            },
+            'level_three': {
+                'english_french': [
+                    'english_french_letter_sound', 'english_french_familiar_words', 'english_french_picture_word_matching',
+                    'english_french_reading_comprehension_text_1', 'english_french_reading_comprehension_text_2',
+                    'english_french_sentence_dictation', 'english_french_picture_description',
+                ],
+                'arabic': [
+                    'arabic_letter_sound', 'arabic_alphabet_letters_with_vowel_marks', 'arabic_alphabet_letters_with_long_vowel_letters',
+                    'arabic_familiar_words', 'arabic_picture_word_matching', 'arabic_reading_comprehension_text_1',
+                    'arabic_reading_comprehension_text_2', 'arabic_sentence_dictation', 'arabic_picture_description',
+                ],
+                'math': ['math_natural_numbers', 'math_addition', 'math_subtraction', 'math_length', 'math_multiplication', 'math_location', 'math_division', 'math_fractions'],
+            },
+            'default': {
+                'english_french': [
+                    'english_french_letter_sound', 'english_french_familiar_words', 'english_french_picture_word_matching',
+                    'english_french_reading_comprehension_text_1', 'english_french_reading_comprehension_text_2',
+                    'english_french_letter_dictation', 'english_french_word_dictation', 'english_french_sentence_dictation',
+                    'english_french_picture_naming', 'english_french_picture_description',
+                ],
+                'arabic': [
+                    'arabic_letter_sound', 'arabic_alphabet_letters_with_vowel_marks', 'arabic_alphabet_letters_with_long_vowel_letters',
+                    'arabic_familiar_words', 'arabic_picture_word_matching', 'arabic_reading_comprehension_text_1',
+                    'arabic_reading_comprehension_text_2', 'arabic_letter_dictation', 'arabic_word_dictation',
+                    'arabic_sentence_dictation', 'arabic_picture_naming', 'arabic_picture_description',
+                ],
+                'math': ['math_natural_numbers', 'math_addition', 'math_subtraction', 'math_length', 'math_solid_figures', 'math_plane_figurs', 'math_multiplication', 'math_location', 'math_division', 'math_fractions'],
+            },
+        }
+        layout_fields = level_fields.get(level, level_fields['default'])
 
         post_level_max_labels = {
             'level_one': {
@@ -2700,17 +2794,11 @@ class BridgingAssessmentForm(forms.ModelForm):
                         css_class='row card-body',
                     ),
                     Div(HTML('<h5>English/French</h5>'), css_class='row card-body'),
-                    Div(Div('english_french_letter_sound', css_class='col-md-3'), Div('english_french_familiar_words', css_class='col-md-3'), Div('english_french_picture_word_matching', css_class='col-md-3'), Div('english_french_reading_comprehension_text_1', css_class='col-md-3'), css_class='row grades card-body'),
-                    Div(Div('english_french_reading_comprehension_text_2', css_class='col-md-3'), Div('english_french_letter_dictation', css_class=english_french_letter_dictation_class), Div('english_french_word_dictation', css_class=english_french_word_dictation_class), Div('english_french_sentence_dictation', css_class=english_french_sentence_dictation_class), css_class='row grades card-body'),
-                    Div(Div('english_french_picture_naming', css_class=english_french_picture_naming_class), Div('english_french_picture_description', css_class=english_french_picture_description_class), css_class='row grades card-body'),
+                    *build_rows(layout_fields['english_french']),
                     Div(HTML('<h5>Arabic</h5>'), css_class='row card-body'),
-                    Div(Div('arabic_letter_sound', css_class='col-md-3'), Div('arabic_alphabet_letters_with_vowel_marks', css_class='col-md-3'), Div('arabic_alphabet_letters_with_long_vowel_letters', css_class='col-md-3'), Div('arabic_familiar_words', css_class='col-md-3'), css_class='row grades card-body'),
-                    Div(Div('arabic_picture_word_matching', css_class='col-md-3'), Div('arabic_reading_comprehension_text_1', css_class='col-md-3'), Div('arabic_reading_comprehension_text_2', css_class='col-md-3'), Div('arabic_letter_dictation', css_class=arabic_letter_dictation_class), css_class='row grades card-body'),
-                    Div(Div('arabic_word_dictation', css_class=arabic_word_dictation_class), Div('arabic_sentence_dictation', css_class=arabic_sentence_dictation_class), Div('arabic_picture_naming', css_class=arabic_picture_naming_class), Div('arabic_picture_description', css_class=arabic_picture_description_class), css_class='row grades card-body'),
+                    *build_rows(layout_fields['arabic']),
                     Div(HTML('<h5>Math</h5>'), css_class='row card-body'),
-                    Div(Div('math_natural_numbers', css_class='col-md-3'), Div('math_addition', css_class='col-md-3'), Div('math_subtraction', css_class='col-md-3'), Div('math_length', css_class='col-md-3'), css_class='row grades card-body'),
-                    Div(Div('math_solid_figures', css_class=math_solid_figures_class), Div('math_plane_figurs', css_class=math_plane_figurs_class), Div('math_multiplication', css_class=math_multiplication_class), Div('math_location', css_class=math_location_class), css_class='row grades card-body'),
-                    Div(Div('math_division', css_class=math_division_class), Div('math_fractions', css_class=math_fractions_class), css_class='row grades card-body'),
+                    *build_rows(layout_fields['math']),
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
