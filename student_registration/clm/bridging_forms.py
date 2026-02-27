@@ -2076,6 +2076,15 @@ class BridgingPreAssessmentForm(forms.ModelForm):
                 )
             return rows
 
+        def build_total_html(category_label, total, fields):
+            labels = []
+            for field in fields:
+                label = str(self.fields[field].label)
+                labels.append(label.split(' / ')[0])
+            if not labels:
+                return '<strong>Total scores ({}) / {}</strong>'.format(category_label, total)
+            return '<strong>Total scores ({}) / {} = {}</strong>'.format(category_label, total, ' + <br>'.join(labels))
+
         level_fields = {
             'level_one': {
                 'english_french': [
@@ -2221,13 +2230,13 @@ class BridgingPreAssessmentForm(forms.ModelForm):
                     Div(Div('registration_level', css_class='col-md-3 d-none'), Div('language', css_class='col-md-3 d-none'), css_class='row card-body'),
                     Div(HTML('<h5>English/French</h5>'), css_class='row card-body'),
                     *build_rows(layout_fields['english_french']),
-                    Div(HTML('<strong>Total scores (English/French) / 40</strong>'), css_class='row card-body'),
+                    Div(HTML(build_total_html('English/French', 40, layout_fields['english_french'])), css_class='row card-body'),
                     Div(HTML('<h5>Arabic</h5>'), css_class='row card-body'),
                     *build_rows(layout_fields['arabic']),
-                    Div(HTML('<strong>Total scores (Arabic) / 50</strong>'), css_class='row card-body'),
+                    Div(HTML(build_total_html('Arabic', 50, layout_fields['arabic'])), css_class='row card-body'),
                     Div(HTML('<h5>Math</h5>'), css_class='row card-body'),
                     *build_rows(layout_fields['math']),
-                    Div(HTML('<strong>Total scores (Math) / {}</strong>'.format(math_total)), css_class='row card-body'),
+                    Div(HTML(build_total_html('Math', math_total, layout_fields['math'])), css_class='row card-body'),
                     FormActions(Submit('save', 'Save', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'), Reset('reset', 'Reset', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'))
                 )
             )
@@ -2611,6 +2620,15 @@ class BridgingAssessmentForm(forms.ModelForm):
                 )
             return rows
 
+        def build_total_html(category_label, total, fields):
+            labels = []
+            for field in fields:
+                label = str(self.fields[field].label)
+                labels.append(label.split(' / ')[0])
+            if not labels:
+                return '<strong>Total scores ({}) / {}</strong>'.format(category_label, total)
+            return '<strong>Total scores ({}) / {} = {}</strong>'.format(category_label, total, ' + <br>'.join(labels))
+
         level_fields = {
             'level_one': {
                 'english_french': [
@@ -2810,13 +2828,13 @@ class BridgingAssessmentForm(forms.ModelForm):
                     ),
                     Div(HTML('<h5>English/French</h5>'), css_class='row card-body'),
                     *build_rows(layout_fields['english_french']),
-                    Div(HTML('<strong>Total scores (English/French) / 40</strong>'), css_class='row card-body'),
+                    Div(HTML(build_total_html('English/French', 40, layout_fields['english_french'])), css_class='row card-body'),
                     Div(HTML('<h5>Arabic</h5>'), css_class='row card-body'),
                     *build_rows(layout_fields['arabic']),
-                    Div(HTML('<strong>Total scores (Arabic) / 50</strong>'), css_class='row card-body'),
+                    Div(HTML(build_total_html('Arabic', 50, layout_fields['arabic'])), css_class='row card-body'),
                     Div(HTML('<h5>Math</h5>'), css_class='row card-body'),
                     *build_rows(layout_fields['math']),
-                    Div(HTML('<strong>Total scores (Math) / {}</strong>'.format(math_total)), css_class='row card-body'),
+                    Div(HTML(build_total_html('Math', math_total, layout_fields['math'])), css_class='row card-body'),
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
