@@ -2077,13 +2077,9 @@ class BridgingPreAssessmentForm(forms.ModelForm):
             return rows
 
         def build_total_html(category_label, total, fields):
-            labels = []
-            for field in fields:
-                label = str(self.fields[field].label)
-                labels.append(label.split(' / ')[0])
-            if not labels:
+            if not fields:
                 return '<strong>Total scores ({}) / {}</strong>'.format(category_label, total)
-            return '<strong>Total scores ({}) / {} = {}</strong>'.format(category_label, total, ' + <br>'.join(labels))
+            return '<strong>Total scores ({}) / {} = {}</strong>'.format(category_label, total, ' + <br>'.join(fields))
 
         level_fields = {
             'level_one': {
@@ -2621,13 +2617,9 @@ class BridgingAssessmentForm(forms.ModelForm):
             return rows
 
         def build_total_html(category_label, total, fields):
-            labels = []
-            for field in fields:
-                label = str(self.fields[field].label)
-                labels.append(label.split(' / ')[0])
-            if not labels:
+            if not fields:
                 return '<strong>Total scores ({}) / {}</strong>'.format(category_label, total)
-            return '<strong>Total scores ({}) / {} = {}</strong>'.format(category_label, total, ' + <br>'.join(labels))
+            return '<strong>Total scores ({}) / {} = {}</strong>'.format(category_label, total, ' + <br>'.join(fields))
 
         level_fields = {
             'level_one': {
