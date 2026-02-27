@@ -10,6 +10,11 @@ $(document).ready(function () {
     learning_result_next_level();
     reorganizeForm_post_assessment();
 
+    bindAssessmentCategoryTotals();
+    $(document).on('input change', "input[id^='id_english_french_'], input[id^='id_arabic_'], input[id^='id_math_']", function () {
+        bindAssessmentCategoryTotals();
+    });
+
     // Event listeners for form changes
     const selectors = [
         '#id_participation', '#id_community_Liaison_follow_up', '#id_attended_arabic',
@@ -39,6 +44,36 @@ $(document).ready(function () {
 });
 
 
+
+
+function bindAssessmentCategoryTotals() {
+    setCategoryTotal('english_french');
+    setCategoryTotal('arabic');
+    setCategoryTotal('math');
+}
+
+function setCategoryTotal(prefix) {
+    var total = 0;
+    $("input[id^='id_" + prefix + "_']").each(function () {
+        var fieldId = $(this).attr('id');
+        if (fieldId === 'id_' + prefix + '_sum') {
+            return;
+        }
+
+        var rawValue = $(this).val();
+        if (rawValue === '' || rawValue === null || rawValue === undefined) {
+            return;
+        }
+
+        var value = parseFloat(rawValue);
+        if (!isNaN(value)) {
+            total += value;
+        }
+    });
+
+    var displayTotal = total % 1 === 0 ? total.toString() : total.toFixed(2).replace(/\.00$/, '');
+    $('#id_' + prefix + '_sum').val(displayTotal);
+}
 
 function learning_result_next_level() {
     var registration_level = $('select#id_registration_level').val();
