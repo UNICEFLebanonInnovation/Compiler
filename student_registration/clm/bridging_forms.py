@@ -2133,6 +2133,12 @@ class BridgingPreAssessmentForm(forms.ModelForm):
             },
         }
         layout_fields = level_fields.get(level, level_fields['default'])
+        math_total_by_level = {
+            'level_one': 25,
+            'level_two': 35,
+            'level_three': 45,
+        }
+        math_total = math_total_by_level.get(level, 45)
 
         pre_level_max_labels = {
             'level_one': {
@@ -2215,10 +2221,13 @@ class BridgingPreAssessmentForm(forms.ModelForm):
                     Div(Div('registration_level', css_class='col-md-3 d-none'), Div('language', css_class='col-md-3 d-none'), css_class='row card-body'),
                     Div(HTML('<h5>English/French</h5>'), css_class='row card-body'),
                     *build_rows(layout_fields['english_french']),
+                    Div(HTML('<strong>Total scores (English/French) / 40</strong>'), css_class='row card-body'),
                     Div(HTML('<h5>Arabic</h5>'), css_class='row card-body'),
                     *build_rows(layout_fields['arabic']),
+                    Div(HTML('<strong>Total scores (Arabic) / 50</strong>'), css_class='row card-body'),
                     Div(HTML('<h5>Math</h5>'), css_class='row card-body'),
                     *build_rows(layout_fields['math']),
+                    Div(HTML('<strong>Total scores (Math) / {}</strong>'.format(math_total)), css_class='row card-body'),
                     FormActions(Submit('save', 'Save', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'), Reset('reset', 'Reset', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'))
                 )
             )
@@ -2659,6 +2668,12 @@ class BridgingAssessmentForm(forms.ModelForm):
             },
         }
         layout_fields = level_fields.get(level, level_fields['default'])
+        math_total_by_level = {
+            'level_one': 25,
+            'level_two': 35,
+            'level_three': 45,
+        }
+        math_total = math_total_by_level.get(level, 45)
 
         post_level_max_labels = {
             'level_one': {
@@ -2795,10 +2810,13 @@ class BridgingAssessmentForm(forms.ModelForm):
                     ),
                     Div(HTML('<h5>English/French</h5>'), css_class='row card-body'),
                     *build_rows(layout_fields['english_french']),
+                    Div(HTML('<strong>Total scores (English/French) / 40</strong>'), css_class='row card-body'),
                     Div(HTML('<h5>Arabic</h5>'), css_class='row card-body'),
                     *build_rows(layout_fields['arabic']),
+                    Div(HTML('<strong>Total scores (Arabic) / 50</strong>'), css_class='row card-body'),
                     Div(HTML('<h5>Math</h5>'), css_class='row card-body'),
                     *build_rows(layout_fields['math']),
+                    Div(HTML('<strong>Total scores (Math) / {}</strong>'.format(math_total)), css_class='row card-body'),
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
