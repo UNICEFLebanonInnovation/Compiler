@@ -38,7 +38,7 @@
           {% trans "Post-Assessment" %}</a>
 
 
-      {% if record.partner.is_Kayany %}
+      {% if request.user.partner and request.user.partner.is_Kayany %}
         <a type="button" href="{{ column.attrs.url_mid_assessment1 }}{{ record.id }}/1" tabindex="0" class="dropdown-item">
           <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-create btn-icon-wrapper"> </i></button>
           {% trans "Exam2" %}</a>
