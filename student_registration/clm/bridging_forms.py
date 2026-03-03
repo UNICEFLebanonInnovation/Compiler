@@ -2960,7 +2960,19 @@ class BridgingAssessmentForm(forms.ModelForm):
                 if not community_liaison_specify:
                     self.add_error('community_liaison_specify', 'This field is required')
 
-        if test_done == 'yes':
+        is_kayany = bool(self.request.user.partner and self.request.user.partner.is_Kayany)
+
+        if is_kayany:
+            if test_done == 'yes':
+                exam3 = cleaned_data.get("exam3")
+                if exam3 is None:
+                    self.add_error('exam3', 'This field is required')
+                elif exam3 > 20:
+                    self.add_error('exam3', 'This value is greater that 20')
+            cleaned_data['english_french_sum'] = 0
+            cleaned_data['arabic_sum'] = 0
+            cleaned_data['math_sum'] = 0
+        elif test_done == 'yes':
             registration_level = cleaned_data.get('registration_level')
             if registration_level == 'level_one':
                 required_fields = [
