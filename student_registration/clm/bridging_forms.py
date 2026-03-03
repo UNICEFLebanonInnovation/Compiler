@@ -2426,6 +2426,9 @@ class BridgingPreAssessmentForm(forms.ModelForm):
             "Bridging_ASSESSMENT/math_plane_figures": request.POST.get('math_plane_figures'),
             "Bridging_ASSESSMENT/math_subtraction": request.POST.get('math_subtraction'),
             "Bridging_ASSESSMENT/math_multiplication": request.POST.get('math_multiplication'),
+            "Bridging_ASSESSMENT/english_french_sum": self.cleaned_data.get('english_french_sum'),
+            "Bridging_ASSESSMENT/arabic_sum": self.cleaned_data.get('arabic_sum'),
+            "Bridging_ASSESSMENT/math_sum": self.cleaned_data.get('math_sum'),
             "Bridging_ASSESSMENT/exam1": request.POST.get('exam1')
         }
         instance.save()
@@ -3144,6 +3147,9 @@ class BridgingAssessmentForm(forms.ModelForm):
             "Bridging_ASSESSMENT/math_location": request.POST.get('math_location'),
             "Bridging_ASSESSMENT/math_division": request.POST.get('math_division'),
             "Bridging_ASSESSMENT/math_fractions": request.POST.get('math_fractions'),
+            "Bridging_ASSESSMENT/english_french_sum": self.cleaned_data.get('english_french_sum'),
+            "Bridging_ASSESSMENT/arabic_sum": self.cleaned_data.get('arabic_sum'),
+            "Bridging_ASSESSMENT/math_sum": self.cleaned_data.get('math_sum'),
             "Bridging_ASSESSMENT/exam3": request.POST.get('exam3')
             }
 
