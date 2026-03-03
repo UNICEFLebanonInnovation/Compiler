@@ -7,13 +7,15 @@ $(document).ready(function () {
         $('#id_dropout_date').datepicker({ dateFormat: "yy-mm-dd" });
     }
 
-    learning_result_next_level();
-    reorganizeForm_post_assessment();
-
     bindAssessmentCategoryTotals();
     $(document).on('input change', "input[id^='id_english_french_'], input[id^='id_arabic_'], input[id^='id_math_']", function () {
         bindAssessmentCategoryTotals();
     });
+
+    if ($('#id_test_done').length) {
+        learning_result_next_level();
+        reorganizeForm_post_assessment();
+    }
 
     // Event listeners for form changes
     const selectors = [
@@ -26,7 +28,9 @@ $(document).ready(function () {
         '#id_followup_session_attended', '#id_referal_other', '#id_parent_attended_visits'
     ].join(',');
 
-    $(document).on('change', selectors, reorganizeForm_post_assessment);
+    if ($('#id_test_done').length) {
+        $(document).on('change', selectors, reorganizeForm_post_assessment);
+    }
 
     $(document).on('click', '.delete-button', function () {
         if (confirm($(this).attr('translation'))) {
@@ -97,6 +101,9 @@ function learning_result_next_level() {
 }
 function reorganizeForm_post_assessment()
 {
+    if (!$('#id_test_done').length) {
+        return;
+    }
    var learning_result =  $('select#id_learning_result').val();
 
     $('#span_learning_result_other').addClass('d-none');
