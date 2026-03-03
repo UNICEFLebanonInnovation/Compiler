@@ -238,20 +238,6 @@ function reorganizeForm_post_assessment()
     else
     {
         $('select#id_round_complete').val("");
-
-        // grades
-
-        $('#id_arabic_alphabet_knowledge').val('');
-        $('#id_arabic_familiar_words').val('');
-        $('#id_arabic_reading_comprehension').val('');
-        $('#id_english_alphabet_knowledge').val('');
-        $('#id_english_familiar_words').val('');
-        $('#id_english_reading_comprehension').val('');
-        $('#id_french_alphabet_knowledge').val('');
-        $('#id_french_familiar_words').val('');
-        $('#id_french_reading_comprehension').val('');
-        $('#id_math').val('');
-
         $('div.grades').addClass('d-none');
         $('#grades').addClass('hide');
     }
