@@ -687,6 +687,9 @@ class BridgingMidAssessmentView(LoginRequiredMixin,
     success_url = '/clm/bridging-list/'
     group_required = [u"CLM_Bridging"]
 
+    def dispatch(self, request, *args, **kwargs):
+        return HttpResponseForbidden('Bridging mid-assessment is hidden')
+
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
