@@ -198,12 +198,14 @@ function reorganizeForm_post_assessment()
 
     $('div#div_id_round_complete').addClass('d-none');
     $('#span_round_complete').addClass('d-none');
+    $('#assessment_scores_section').addClass('d-none');
 
     if(test_done == 'yes'){
     $('#div_id_round_complete').removeClass('d-none');
     $('#span_round_complete').removeClass('d-none');
     $('#grades').removeClass('hide');
     $('div.grades').removeClass('d-none');
+    $('#assessment_scores_section').removeClass('d-none');
 
     //    id_language
     if (language == 'english_arabic')
