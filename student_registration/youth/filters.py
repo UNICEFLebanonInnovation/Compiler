@@ -128,6 +128,11 @@ class FullFilter(PlaceholderFilterSet):
         empty_label='Donor',
         method='filter_by_donor'
     )
+    project_code = CharFilter(
+        field_name='enrolled_programs__program_document__project_code',
+        lookup_expr='icontains',
+        label='Project Code'
+    )
     program_document = ChoiceFilter(
         field_name='enrolled_programs__program_document',
         choices=ProgramDocument.objects.values_list('id', 'project_name'),
@@ -231,13 +236,17 @@ class PartnerFilter(PlaceholderFilterSet):
         empty_label='Donor',
         method='filter_by_donor'
     )
+    project_code = CharFilter(
+        field_name='enrolled_programs__program_document__project_code',
+        lookup_expr='icontains',
+        label='Project Code'
+    )
     program_document = ChoiceFilter(
         field_name='enrolled_programs__program_document',
         choices=ProgramDocument.objects.values_list('id', 'project_name'),
         empty_label='Program Document',
         method='filter_by_program_document'
     )
-
     start_date = DateFilter(
         field_name='enrolled_programs__completion_date',
         lookup_expr='gte', label='Start Date'
