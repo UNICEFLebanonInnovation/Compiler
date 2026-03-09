@@ -961,11 +961,18 @@ def clm_child_list(model, term, terms, search_model):
 def search_kobo_outreach_child(request):
     from django.db.models.functions import Concat
     from django.db.models import Value
+    from django.db import connection
 
     term = request.GET.get('term', 0)
     terms = request.GET.get('term', 0)
-    qs = {}
+    qs = OutreachChild.objects.none()
     if terms:
+        # This endpoint is called from an autocomplete UI. Keep the query small and
+        # disable PostgreSQL parallel workers for this transaction to avoid
+        # shared-memory allocation failures on constrained environments.
+        with connection.cursor() as cursor:
+            cursor.execute('SET LOCAL max_parallel_workers_per_gather = 0')
+
         if len(terms.split()) > 1:
 
             qs = OutreachChild.objects.annotate(fullname=Concat('first_name', Value(' '),
@@ -977,20 +984,20 @@ def search_kobo_outreach_child(request):
                         'outreach_caregiver__caregiver_first_name','outreach_caregiver__caregiver_father_name',
                         'outreach_caregiver__caregiver_last_name',
                         'outreach_caregiver__caregiver_mother_name', 'outreach_caregiver__caregiver_dob',
-                        'gender', 'birthday_day', 'birthday_month','birthday_year').distinct()
+                        'gender', 'birthday_day', 'birthday_month','birthday_year').distinct()[:50]
 
         else:
             qs = OutreachChild.objects \
                 .filter(
-                Q(first_name=term) |
-                Q(outreach_caregiver__father_name=term) |
-                Q(outreach_caregiver__last_name=term)
+                Q(first_name__icontains=term) |
+                Q(outreach_caregiver__father_name__icontains=term) |
+                Q(outreach_caregiver__last_name__icontains=term)
             ).values('id', 'first_name', 'outreach_caregiver__father_name',
                         'outreach_caregiver__last_name', 'outreach_caregiver__mother_full_name',
                         'outreach_caregiver__caregiver_first_name','outreach_caregiver__caregiver_father_name',
                         'outreach_caregiver__caregiver_last_name',
                         'outreach_caregiver__caregiver_mother_name', 'outreach_caregiver__caregiver_dob',
-                        'gender', 'birthday_day', 'birthday_month','birthday_year').distinct()
+                        'gender', 'birthday_day', 'birthday_month','birthday_year').distinct()[:50]
 
     return JsonResponse({'result': json.dumps(list(qs))})
 
