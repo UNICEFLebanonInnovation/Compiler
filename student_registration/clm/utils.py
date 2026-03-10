@@ -3423,7 +3423,10 @@ def load_child_attendance(round_id, attendance_date, school_id, registration_lev
             ).last()
 
         if attendance:
-            attendances = CLMAttendanceStudent.objects.filter(attendance_day=attendance, registration__deleted=False).select_related('student')
+            attendances = (CLMAttendanceStudent.objects
+                .filter(attendance_day=attendance, registration__deleted=False)
+                .select_related('student')
+                .order_by('student__first_name', 'student__father_name', 'student__last_name'))
             for att in attendances:
                 registration = att.registration if att.registration else None
                 student = att.student if att.student else None
@@ -3440,15 +3443,20 @@ def load_child_attendance(round_id, attendance_date, school_id, registration_lev
                     'absence_reason_other': att.absence_reason_other
                 })
         else:
-            registrations = Bridging.objects.filter(
-                round=round_id,
-                school=school_id,
-                registration_level=registration_level,
-                registration_date__lte=attendance_date,
-                deleted=False
-            ).exclude(
-                learning_result='dropout', dropout_date__lte=attendance_date
-            ).select_related('student')
+            registrations = (
+                Bridging.objects.filter(
+                    round=round_id,
+                    school=school_id,
+                    registration_level=registration_level,
+                    registration_date__lte=attendance_date,
+                    deleted=False
+                )
+                .exclude(
+                    learning_result='dropout', dropout_date__lte=attendance_date
+                )
+                .select_related('student')
+                .order_by('student__first_name', 'student__father_name', 'student__last_name')
+            )
 
             for reg in registrations:
                 result.append({

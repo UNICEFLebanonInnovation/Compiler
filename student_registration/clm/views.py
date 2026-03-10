@@ -3514,7 +3514,7 @@ class BridgingListView(LoginRequiredMixin,
             "school",
             "owner",
             "modified_by",
-        ).order_by('student__last_name', 'student__first_name')
+        ).order_by('student__first_name', 'student__father_name', 'student__last_name')
 
 
 @login_required(login_url='/users/login')

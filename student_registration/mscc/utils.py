@@ -551,7 +551,10 @@ def load_child_attendance(center_id, round_id, attendance_date, education_progra
 
     try:
         if attendance:
-            attendances = MSCCAttendanceChild.objects.filter(attendance_day=attendance)
+            attendances = (MSCCAttendanceChild.objects
+                .filter(attendance_day=attendance)
+                .select_related('child', 'registration')
+                .order_by('child__first_name', 'child__father_name', 'child__last_name'))
 
             existing_ids = []
             for attendance in attendances:
@@ -598,6 +601,8 @@ def load_child_attendance(center_id, round_id, attendance_date, education_progra
                     )
                 )
                 .exclude(id__in=existing_ids)
+                .select_related('child', 'child__nationality')
+                .order_by('child__first_name', 'child__father_name', 'child__last_name')
             )
 
             for registration_child in registrations:
@@ -641,6 +646,8 @@ def load_child_attendance(center_id, round_id, attendance_date, education_progra
                         ).values('registration_id')
                     )
                 )
+                .select_related('child', 'child__nationality')
+                .order_by('child__first_name', 'child__father_name', 'child__last_name')
             )
 
             for registration_child in registrations:
@@ -855,5 +862,4 @@ def validate_date(date_str):
             continue
 
     raise ValidationError("Date is not valid. Please use the format YYYY-MM-DD.")
-
 

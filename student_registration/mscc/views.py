@@ -548,13 +548,13 @@ class MainListView(LoginRequiredMixin,
         round_filter = Q(round__isnull=True) | Q(round__current_year=True)
 
         if has_group(user, 'MSCC_UNICEF'):
-            return qs.filter(round_filter).order_by('-id')
+            return qs.filter(round_filter).order_by('child__first_name', 'child__father_name', 'child__last_name')
 
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
-            return qs.filter(round_filter, partner=partner_id).order_by('-id')
+            return qs.filter(round_filter, partner=partner_id).order_by('child__first_name', 'child__father_name', 'child__last_name')
 
         elif has_group(user, 'MSCC_CENTER') and center_id:
-            return qs.filter(round_filter, center=center_id).order_by('-id')
+            return qs.filter(round_filter, center=center_id).order_by('child__first_name', 'child__father_name', 'child__last_name')
 
         return Registration.objects.none()
 
