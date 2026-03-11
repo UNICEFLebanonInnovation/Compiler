@@ -255,6 +255,40 @@ $(document).ready(function() {
         }
     });
 
+    // Sidebar toggle logic
+    $('#sidebarCollapse').on('click', function () {
+        $('#sidebar').toggleClass('collapsed');
+        $('#content').toggleClass('expanded');
+    });
+
+    // Wizard navigation with validation
+    var currentStep = 1;
+    function showStep(step) {
+        $('.form-step').addClass('d-none');
+        $('#step-' + step).removeClass('d-none');
+
+        $('.wizard-step').removeClass('active completed');
+        for (var i = 1; i < step; i++) {
+            $('.wizard-step[data-step="' + i + '"]').addClass('completed');
+        }
+        $('.wizard-step[data-step="' + step + '"]').addClass('active');
+
+        $('#prev-btn').toggleClass('d-none', step === 1);
+        $('#next-btn').toggleClass('d-none', step === 3);
+        $('#submit-btn').toggleClass('d-none', step !== 3);
+    }
+
+    $(document).on('click', '#next-btn', function() {
+        if (validateMainForm(true, currentStep)) {
+            currentStep++;
+            showStep(currentStep);
+        }
+    });
+
+    $(document).on('click', '#prev-btn', function() {
+        currentStep--;
+        showStep(currentStep);
+    });
 
 });
 
@@ -863,6 +897,12 @@ function validateField(field) {
 function validateMainForm(showModal, step) {
     if (showModal === undefined) showModal = true;
     var valid = true;
+
+    // Standardized format guidance
+    var formatMessages = {
+        '#id_first_phone_number': 'e.g. 70-123456',
+        '#id_case_number': 'e.g. 245-12C-12345'
+    };
 
     var requiredFields = [
         '#id_child_first_name',
