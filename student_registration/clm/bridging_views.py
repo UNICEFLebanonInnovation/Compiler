@@ -184,9 +184,20 @@ class BridgingListView(LoginRequiredMixin,
             and not self.request.user.is_staff
         ):
             if self.request.user.partner:
-                qs = qs.filter(partner_id=self.request.user.partner_id)
+                qs = qs.filter(partner_id=self.request.user.partner_id)\
+                    .order_by(
+                    "student__first_name",
+                    "student__father_name",
+                    "student__last_name",
+                )
+
                 if self.request.user.school:
-                    qs = qs.filter(school_id=self.request.user.school_id)
+                    qs = qs.filter(school_id=self.request.user.school_id)\
+                    .order_by(
+                    "student__first_name",
+                    "student__father_name",
+                    "student__last_name",
+                )
             else:
                 qs = qs.none()
 

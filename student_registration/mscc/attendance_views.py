@@ -198,7 +198,7 @@ class LoadAttendanceChild(LoginRequiredMixin,
 
         instances = MSCCAttendanceChild.objects.filter(child_id=child_id,
                                                        attendance_day__attendance_date__month=month)\
-            .order_by('attendance_day__attendance_date')
+            .order_by('child__first_name', 'child__father_name', 'child__last_name')
 
         return {
             'instances': instances,

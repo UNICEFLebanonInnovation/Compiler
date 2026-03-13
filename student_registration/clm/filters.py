@@ -208,6 +208,10 @@ class BridgingFullFilter(PlaceholderFilterSet):
     student__nationality = ModelChoiceFilter(queryset=Nationality.objects.exclude(id=9), empty_label=_('Nationality'))
     disability = ModelChoiceFilter(queryset=Disability.objects.filter(active=True), empty_label=_('Disability'))
     learning_result = ChoiceFilter(choices=Bridging.LEARNING_RESULT, empty_label='Learning Result')
+    school = ModelChoiceFilter(
+        queryset=School.objects.filter(is_closed=False,partner_schools__is_dirasa=True,).distinct(),
+        empty_label=_('School')
+    )
 
     student__first_name = CharFilter(lookup_expr='icontains')
     student__father_name = CharFilter(lookup_expr='icontains')
@@ -228,6 +232,7 @@ class BridgingFullFilter(PlaceholderFilterSet):
             'governorate',
             'district',
             'partner',
+            'school',
             'student__first_name',
             'student__father_name',
             'student__last_name',
@@ -253,6 +258,10 @@ class BridgingPartnerFilter(PlaceholderFilterSet):
     student__nationality = ModelChoiceFilter(queryset=Nationality.objects.exclude(id=9), empty_label=_('Nationality'))
     disability = ModelChoiceFilter(queryset=Disability.objects.filter(active=True), empty_label=_('Disability'))
     learning_result = ChoiceFilter(choices=Bridging.LEARNING_RESULT, empty_label='Learning Result')
+    school = ModelChoiceFilter(
+        queryset=School.objects.filter(is_closed=False,partner_schools__is_dirasa=True,).distinct(),
+        empty_label=_('School')
+    )
 
     student__first_name = CharFilter(lookup_expr='icontains')
     student__father_name = CharFilter(lookup_expr='icontains')
@@ -272,6 +281,7 @@ class BridgingPartnerFilter(PlaceholderFilterSet):
             'round',
             'governorate',
             'district',
+            'school',
             'student__first_name',
             'student__father_name',
             'student__last_name',
