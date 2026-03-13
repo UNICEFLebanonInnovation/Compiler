@@ -1167,7 +1167,14 @@ class EducationService(TimeStampedModel):
         ('Was Registered in Formal Education but not attending',
          _('Was Registered in Formal Education but not attending')),
         ('Currently registered in Formal Education school', _('Currently registered in Formal Education school')),
-        ('Currently registered in Formal Education school but not attending', _('Currently registered in Formal Education school but not attending')),
+        ('Currently registered in Formal Education school but not attending',
+         _('Currently registered in Formal Education school but not attending')),
+        ('Internally Displaced, was enrolled in FE before the conflict',
+         _('Internally Displaced, was enrolled in FE before the conflict')),
+        ('Internally Displaced, was enrolled in NFE before the conflict',
+         _('Internally Displaced, was enrolled in NFE before the conflict')),
+        ('Internally Displaced, out of school (never been engaged in any type of learning)',
+         _('Internally Displaced, out of school (never been engaged in any type of learning)')),
         ('No', _('No')),
     )
     DROPOUT_PROGRAM = Choices(
