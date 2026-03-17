@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block project_title %}{% trans "Centers Geo Map" %}{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<style>
+    #map { height: 600px; width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .map-card { margin-bottom: 20px; }
+    .leaflet-popup-content-wrapper { border-radius: 8px; }
+    .center-info-title { font-weight: bold; color: #003366; margin-bottom: 5px; }
+    .center-info-item { font-size: 0.9rem; margin-bottom: 3px; }
+    .center-info-count { font-weight: bold; color: #00ADEF; font-size: 1.1rem; margin-top: 5px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="app-page-title">
+    <div class="page-title-wrapper">
+        <div class="page-title-heading">
+            <div class="page-title-icon"><i class="pe-7s-map-marker icon-gradient bg-plum-plate"></i></div>
+            <div>
+                {% trans "Centers Geographic Overview" %}
+                <div class="page-title-subheading">{% trans "Visualizing center locations and registration density across Lebanon." %}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card map-card">
+            <div class="card-body">
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        var map = L.map('map').setView([33.8547, 35.8623], 9); // Centered on Lebanon
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        fetch("{% url 'dashboard:center_map_data' %}")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (!Array.isArray(data)) {
+                    throw new Error('Data is not an array');
+                }
+                data.forEach(center => {
+                    var popupContent = `
+                        <div class="center-info">
+                            <div class="center-info-title">${center.name}</div>
+                            <div class="center-info-item"><b>Partner:</b> ${center.partner}</div>
+                            <div class="center-info-item"><b>Governorate:</b> ${center.governorate}</div>
+                            <div class="center-info-item"><b>Caza:</b> ${center.caza}</div>
+                            <div class="center-info-count">Children Registered: ${center.total_children}</div>
+                        </div>
+                    `;
+                    L.marker([center.latitude, center.longitude])
+                        .addTo(map)
+                        .bindPopup(popupContent);
+                });
+            })
+            .catch(error => console.error('Error loading map data:', error));
+    });
+</script>
+{% endblock %}

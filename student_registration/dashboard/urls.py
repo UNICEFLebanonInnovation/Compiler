@@ -22,4 +22,14 @@ urlpatterns = [
         view=views.pivot_data,
         name='pivot_data'
     ),
+    re_path(
+        r'^centers-map/$',
+        view=views.CenterMapView.as_view(),
+        name='centers_map'
+    ),
+    re_path(
+        r'^center-map-data/$',
+        view=views.center_map_data,
+        name='center_map_data'
+    ),
 ]

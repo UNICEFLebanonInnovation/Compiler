@@ -183,3 +183,46 @@ def wellbeing_data(request):
         })
 
     return JsonResponse(data, safe=False)
+
+
+class CenterMapView(LoginRequiredMixin, TemplateView):
+    """Display the centers geo map."""
+
+    template_name = 'dashboard/centers_map.html'
+
+
+def center_map_data(request):
+    """Return center location data and registration counts for the map."""
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Unauthorized"}, status=403)
+
+    from django.db.models.functions import Coalesce
+
+    registration_count = Registration.objects.filter(
+        center=OuterRef('pk'),
+        deleted=False
+    ).values('center').annotate(
+        count=models.Count('id')
+    ).values('count')
+
+    centers = Center.objects.filter(latitude__isnull=False, longitude__isnull=False).select_related(
+        'partner', 'governorate', 'caza'
+    ).annotate(
+        children_count=Coalesce(Subquery(registration_count, output_field=models.IntegerField()), 0)
+    )
+
+    data = [
+        {
+            "id": center.id,
+            "name": center.name,
+            "latitude": center.latitude,
+            "longitude": center.longitude,
+            "partner": center.partner.name if center.partner else "",
+            "governorate": center.governorate.name if center.governorate else "",
+            "caza": center.caza.name if center.caza else "",
+            "total_children": center.children_count,
+        }
+        for center in centers
+    ]
+
+    return JsonResponse(data, safe=False)
