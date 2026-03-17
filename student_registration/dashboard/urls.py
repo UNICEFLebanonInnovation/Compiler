@@ -32,4 +32,14 @@ urlpatterns = [
         view=views.center_map_data,
         name='center_map_data'
     ),
+    re_path(
+        r'^wellbeing-dashboard/$',
+        view=views.WellbeingDashboardView.as_view(),
+        name='wellbeing_dashboard'
+    ),
+    re_path(
+        r'^wellbeing-data/$',
+        view=views.wellbeing_data,
+        name='wellbeing_data'
+    ),
 ]

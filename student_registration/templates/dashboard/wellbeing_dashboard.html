@@ -27,6 +27,33 @@
 <div class="row">
     <div class="col-md-6 col-xl-4">
         <div class="card dashboard-card">
+            <div class="card-header">{% trans "PSS & Distress Indicators" %}</div>
+            <div class="card-body">
+                <div id="distress-chart" class="chart-container"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <div class="card dashboard-card">
+            <div class="card-header">{% trans "Educational Status at Entry" %}</div>
+            <div class="card-body">
+                <div id="edu-status-chart" class="chart-container"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <div class="card dashboard-card">
+            <div class="card-header">{% trans "Barriers to Participation" %}</div>
+            <div class="card-body">
+                <div id="barriers-chart" class="chart-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 col-xl-4">
+        <div class="card dashboard-card">
             <div class="card-header">{% trans "Child Labor Overview" %}</div>
             <div class="card-body">
                 <div id="labor-chart" class="chart-container"></div>
@@ -35,9 +62,9 @@
     </div>
     <div class="col-md-6 col-xl-4">
         <div class="card dashboard-card">
-            <div class="card-header">{% trans "Attendance vs Education Improvement" %}</div>
+            <div class="card-header">{% trans "Subject Improvement" %}</div>
             <div class="card-body">
-                <div id="attendance-edu-chart" class="chart-container"></div>
+                <div id="subject-improvement-chart" class="chart-container"></div>
             </div>
         </div>
     </div>
@@ -54,9 +81,9 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card dashboard-card">
-            <div class="card-header">{% trans "Socio-Economic Impact Analysis" %}</div>
+            <div class="card-header">{% trans "Impact & Correlation Analysis" %}</div>
             <div class="card-body">
-                <div id="impact-correlation-chart" style="height: 400px; width: 100%;"></div>
+                <div id="impact-correlation-chart" style="height: 450px; width: 100%;"></div>
             </div>
         </div>
     </div>
