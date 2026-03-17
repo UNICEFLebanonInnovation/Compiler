@@ -969,7 +969,7 @@ class EducationGradingForm(forms.ModelForm):
 
         center = getattr(getattr(self.request, 'user', None), 'center', None)
         provide_french_language = getattr(center, 'provide_french_language', None) == "Yes"
-        self.provide_french_language = provide_french_language
+        self.provide_french_language = provide_french_language 
 
         form_action = reverse('mscc:service_education_grading_add',
                               kwargs={'registry': registry, 'programme_type': programme_type})
@@ -1061,6 +1061,9 @@ class EducationGradingForm(forms.ModelForm):
             self.fields['chemistry_grade'].hidden_widget()
             self.fields['physics_grade'].hidden_widget()
             self.fields['psychomotor_grade'].hidden_widget()
+            self.fields['english_grade'].hidden_widget()
+            self.fields['french_grade'].hidden_widget()
+
 
         if programme_type == "ABLN Level 2":
             field_init(self.fields['arabic_grade'], 'Arabic Language Development ', 56)
@@ -1073,6 +1076,8 @@ class EducationGradingForm(forms.ModelForm):
             self.fields['chemistry_grade'].hidden_widget()
             self.fields['physics_grade'].hidden_widget()
             self.fields['psychomotor_grade'].hidden_widget()
+            self.fields['english_grade'].hidden_widget()
+            self.fields['french_grade'].hidden_widget()
 
         if programme_type == "CBECE Level 1":
             field_init(self.fields['language_grade'], 'Language Development', 48)
@@ -1085,6 +1090,8 @@ class EducationGradingForm(forms.ModelForm):
             self.fields['biology_grade'].hidden_widget()
             self.fields['chemistry_grade'].hidden_widget()
             self.fields['physics_grade'].hidden_widget()
+            self.fields['english_grade'].hidden_widget()
+            self.fields['french_grade'].hidden_widget()
 
         if programme_type == "CBECE Level 2":
             field_init(self.fields['arabic_grade'], 'Arabic Language Development', 66)
@@ -1097,6 +1104,8 @@ class EducationGradingForm(forms.ModelForm):
             self.fields['biology_grade'].hidden_widget()
             self.fields['chemistry_grade'].hidden_widget()
             self.fields['physics_grade'].hidden_widget()
+            self.fields['english_grade'].hidden_widget()
+            self.fields['french_grade'].hidden_widget()
 
         if programme_type == "CBECE Level 3":
             field_init(self.fields['arabic_grade'], 'Arabic Language Development', 74)
@@ -1109,6 +1118,8 @@ class EducationGradingForm(forms.ModelForm):
             self.fields['biology_grade'].hidden_widget()
             self.fields['chemistry_grade'].hidden_widget()
             self.fields['physics_grade'].hidden_widget()
+            self.fields['english_grade'].hidden_widget()
+            self.fields['french_grade'].hidden_widget()
 
         if programme_type in ["RS Grade 7", "RS Grade 8", "RS Grade 9", "YFS Level 1 - RS Grade 9", "YFS Level 2 - RS Grade 9"]:
             field_init(self.fields['arabic_grade'], 'Arabic Language', 20)
@@ -1121,6 +1132,8 @@ class EducationGradingForm(forms.ModelForm):
             self.fields['social_emotional_grade'].hidden_widget()
             self.fields['psychomotor_grade'].hidden_widget()
             self.fields['artistic_grade'].hidden_widget()
+            self.fields['english_grade'].hidden_widget()
+            self.fields['french_grade'].hidden_widget()
 
         if programme_type in ["RS Grade 1", "RS Grade 2", "RS Grade 3", "RS Grade 4", "RS Grade 5", "RS Grade 6"]:
             field_init(self.fields['arabic_grade'], 'Arabic Language', 20)
@@ -1134,6 +1147,8 @@ class EducationGradingForm(forms.ModelForm):
             self.fields['social_emotional_grade'].hidden_widget()
             self.fields['psychomotor_grade'].hidden_widget()
             self.fields['artistic_grade'].hidden_widget()
+            self.fields['english_grade'].hidden_widget()
+            self.fields['french_grade'].hidden_widget()
 
         display_post_fields_css = 'd-none'
         display_pre_fields_css = ''
