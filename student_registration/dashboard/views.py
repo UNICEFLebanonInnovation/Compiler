@@ -16,6 +16,7 @@ from student_registration.mscc.models import (
     PACKAGE_TYPES,
     Round,
     EducationService,
+    EducationAssessment,
     Registration,
     EducationProgrammeAssessment,
     InclusionService,
@@ -127,11 +128,19 @@ def wellbeing_data(request):
     latest_assessments = EducationProgrammeAssessment.objects.filter(registration_id__in=reg_ids).order_by('registration_id', '-id').distinct('registration_id')
     assessments_dict = {a.registration_id: a for a in latest_assessments}
 
+    # Education Service (status at entry)
+    edu_services = EducationService.objects.filter(registration_id__in=reg_ids).order_by('registration_id', '-id').distinct('registration_id')
+    edu_services_dict = {e.registration_id: e for e in edu_services}
+
+    # Education Assessment (barriers and subject grades)
+    edu_assessments = EducationAssessment.objects.filter(registration_id__in=reg_ids).order_by('registration_id', '-id').distinct('registration_id')
+    edu_assessments_dict = {e.registration_id: e for e in edu_assessments}
+
     # Inclusion (dropout)
     inclusions = InclusionService.objects.filter(registration_id__in=reg_ids).order_by('registration_id', '-id').distinct('registration_id')
     inclusions_dict = {i.registration_id: i for i in inclusions}
 
-    # PSS (living arrangement)
+    # PSS (living arrangement, distress)
     pss_services = PSSService.objects.filter(registration_id__in=reg_ids).order_by('registration_id', '-id').distinct('registration_id')
     pss_dict = {p.registration_id: p for p in pss_services}
 
@@ -149,6 +158,8 @@ def wellbeing_data(request):
     data = []
     for reg in registrations:
         assessment = assessments_dict.get(reg.id)
+        edu_service = edu_services_dict.get(reg.id)
+        edu_assessment = edu_assessments_dict.get(reg.id)
         inclusion = inclusions_dict.get(reg.id)
         pss = pss_dict.get(reg.id)
         health = health_dict.get(reg.id)
@@ -169,14 +180,33 @@ def wellbeing_data(request):
             except Exception:
                 pass
 
+        # Subject specific improvement
+        arabic_imp = 0
+        math_imp = 0
+        lang_imp = 0
+        if edu_assessment:
+            if edu_assessment.pre_arabic_grade and edu_assessment.post_arabic_grade and edu_assessment.pre_arabic_grade > 0:
+                arabic_imp = ((edu_assessment.post_arabic_grade - edu_assessment.pre_arabic_grade) / edu_assessment.pre_arabic_grade) * 100
+            if edu_assessment.pre_math_grade and edu_assessment.post_math_grade and edu_assessment.pre_math_grade > 0:
+                math_imp = ((edu_assessment.post_math_grade - edu_assessment.pre_math_grade) / edu_assessment.pre_math_grade) * 100
+            if edu_assessment.pre_language_grade and edu_assessment.post_language_grade and edu_assessment.pre_language_grade > 0:
+                lang_imp = ((edu_assessment.post_language_grade - edu_assessment.pre_language_grade) / edu_assessment.pre_language_grade) * 100
+
         data.append({
             "id": reg.id,
             "gender": reg.child.gender if reg.child else "",
             "have_labour": reg.have_labour or "No",
             "attendance_rate": attendance_rate,
             "edu_improvement": edu_improvement,
+            "arabic_improvement": arabic_imp,
+            "math_improvement": math_imp,
+            "language_improvement": lang_imp,
             "living_arrangement": pss.child_living_arrangement if pss else "",
-            " muac": health.muac_malnutrition_screening if health else "",
+            "caregivers_distress": pss.caregivers_distress if pss else "",
+            "child_distress": pss.child_distress if pss else "",
+            "education_status": edu_service.education_status if edu_service else "",
+            "barriers": edu_assessment.barriers if edu_assessment else "",
+            "muac": health.muac_malnutrition_screening if health else "",
             "meals": health.eating_minimum_meals if health else "",
             "vaccinated": health.child_vaccinated if health else "",
             "dropout": inclusion.dropout if inclusion else "No",
