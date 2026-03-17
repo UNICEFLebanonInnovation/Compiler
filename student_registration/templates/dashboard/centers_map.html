@@ -8,6 +8,8 @@
 <style>
     #map { height: 600px; width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .map-card { margin-bottom: 20px; }
+    .filter-card { margin-bottom: 20px; }
+    #children-list-container { display: none; margin-top: 20px; }
     .leaflet-popup-content-wrapper { border-radius: 8px; }
     .center-info-title { font-weight: bold; color: #003366; margin-bottom: 5px; }
     .center-info-item { font-size: 0.9rem; margin-bottom: 3px; }
@@ -30,9 +32,55 @@
 
 <div class="row">
     <div class="col-md-12">
+        <div class="card filter-card">
+            <div class="card-body">
+                <div class="form-row align-items-center">
+                    <div class="col-auto">
+                        <label class="mr-sm-2" for="partnerFilter">{% trans "Filter by Partner:" %}</label>
+                        <select class="custom-select mr-sm-2" id="partnerFilter">
+                            <option value="">{% trans "All Partners" %}</option>
+                            {% for partner in partners %}
+                            <option value="{{ partner.id }}">{{ partner.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
         <div class="card map-card">
             <div class="card-body">
                 <div id="map"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="children-list-container">
+    <div class="col-md-12">
+        <div class="card main-card mb-3">
+            <div class="card-header" id="center-list-title">
+                {% trans "Children registered in center" %}
+            </div>
+            <div class="table-responsive">
+                <table class="align-middle mb-0 table table-borderless table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th class="text-center">#</th>
+                        <th>{% trans "Full Name" %}</th>
+                        <th class="text-center">{% trans "Gender" %}</th>
+                        <th class="text-center">{% trans "Age" %}</th>
+                        <th class="text-center">{% trans "Nationality" %}</th>
+                        <th class="text-center">{% trans "Registration Date" %}</th>
+                    </tr>
+                    </thead>
+                    <tbody id="children-table-body">
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -44,38 +92,110 @@
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function() {
         var map = L.map('map').setView([33.8547, 35.8623], 9); // Centered on Lebanon
+        var markerGroup = L.layerGroup().addTo(map);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        fetch("{% url 'dashboard:center_map_data' %}")
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (!Array.isArray(data)) {
-                    throw new Error('Data is not an array');
-                }
-                data.forEach(center => {
-                    var popupContent = `
-                        <div class="center-info">
-                            <div class="center-info-title">${center.name}</div>
-                            <div class="center-info-item"><b>Partner:</b> ${center.partner}</div>
-                            <div class="center-info-item"><b>Governorate:</b> ${center.governorate}</div>
-                            <div class="center-info-item"><b>Caza:</b> ${center.caza}</div>
-                            <div class="center-info-count">Children Registered: ${center.total_children}</div>
-                        </div>
-                    `;
-                    L.marker([center.latitude, center.longitude])
-                        .addTo(map)
-                        .bindPopup(popupContent);
-                });
-            })
-            .catch(error => console.error('Error loading map data:', error));
+        function loadMapData(partnerId = '') {
+            markerGroup.clearLayers();
+            var url = "{% url 'dashboard:center_map_data' %}";
+            if (partnerId) {
+                url += "?partner_id=" + partnerId;
+            }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(center => {
+                        var popupContent = `
+                            <div class="center-info">
+                                <div class="center-info-title">${center.name}</div>
+                                <div class="center-info-item"><b>Partner:</b> ${center.partner}</div>
+                                <div class="center-info-item"><b>Governorate:</b> ${center.governorate}</div>
+                                <div class="center-info-item"><b>Caza:</b> ${center.caza}</div>
+                                <div class="center-info-count">Children Registered: ${center.total_children}</div>
+                                <button class="btn btn-primary btn-sm mt-2 view-children-btn" data-center-id="${center.id}" data-center-name="${center.name}">
+                                    {% trans "View Children" %}
+                                </button>
+                            </div>
+                        `;
+                        var marker = L.marker([center.latitude, center.longitude])
+                            .addTo(markerGroup)
+                            .bindPopup(popupContent);
+
+                        marker.on('popupopen', function(e) {
+                            var btn = e.popup._container.querySelector('.view-children-btn');
+                            if (btn) {
+                                btn.onclick = function() {
+                                    var centerId = this.getAttribute('data-center-id');
+                                    var centerName = this.getAttribute('data-center-name');
+                                    fetchChildrenList(centerId, centerName);
+                                };
+                            }
+                        });
+                    });
+                })
+                .catch(error => console.error('Error loading map data:', error));
+        }
+
+        function fetchChildrenList(centerId, centerName) {
+            fetch("{% url 'dashboard:center_children_data' %}?center_id=" + centerId)
+                .then(response => response.json())
+                .then(data => {
+                    var titleElement = document.getElementById('center-list-title');
+                    titleElement.innerText = "{% trans 'Children registered in center' %}: " + centerName;
+
+                    var tableBody = document.getElementById('children-table-body');
+                    tableBody.innerHTML = '';
+
+                    if (data.length === 0) {
+                        tableBody.innerHTML = '<tr><td colspan="6" class="text-center">No children registered in this center.</td></tr>';
+                    } else {
+                        data.forEach((reg, index) => {
+                            var row = `
+                                <tr>
+                                    <td class="text-center text-muted">${index + 1}</td>
+                                    <td>
+                                        <div class="widget-content p-0">
+                                            <div class="widget-content-wrapper">
+                                                <div class="widget-content-left mr-3">
+                                                    <div class="widget-content-left">
+                                                        <img width="40" class="rounded-circle" src="{% static 'images/avatars/user.png' %}" alt="">
+                                                    </div>
+                                                </div>
+                                                <div class="widget-content-left flex2">
+                                                    <div class="widget-heading">${reg.full_name}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">${reg.gender}</td>
+                                    <td class="text-center">${reg.age}</td>
+                                    <td class="text-center">${reg.nationality}</td>
+                                    <td class="text-center">${reg.registration_date}</td>
+                                </tr>
+                            `;
+                            tableBody.insertAdjacentHTML('beforeend', row);
+                        });
+                    }
+
+                    document.getElementById('children-list-container').style.display = 'block';
+                    window.scrollTo({
+                        top: document.getElementById('children-list-container').offsetTop,
+                        behavior: 'smooth'
+                    });
+                })
+                .catch(error => console.error('Error loading children data:', error));
+        }
+
+        document.getElementById('partnerFilter').addEventListener('change', function() {
+            loadMapData(this.value);
+            document.getElementById('children-list-container').style.display = 'none';
+        });
+
+        loadMapData();
     });
 </script>
 {% endblock %}

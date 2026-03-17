@@ -190,6 +190,11 @@ class CenterMapView(LoginRequiredMixin, TemplateView):
 
     template_name = 'dashboard/centers_map.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['partners'] = PartnerOrganization.objects.all().order_by('name')
+        return context
+
 
 def center_map_data(request):
     """Return center location data and registration counts for the map."""
@@ -197,6 +202,8 @@ def center_map_data(request):
         return JsonResponse({"error": "Unauthorized"}, status=403)
 
     from django.db.models.functions import Coalesce
+
+    partner_id = request.GET.get('partner_id')
 
     registration_count = Registration.objects.filter(
         center=OuterRef('pk'),
@@ -211,6 +218,9 @@ def center_map_data(request):
         children_count=Coalesce(Subquery(registration_count, output_field=models.IntegerField()), 0)
     )
 
+    if partner_id:
+        centers = centers.filter(partner_id=partner_id)
+
     data = [
         {
             "id": center.id,
@@ -223,6 +233,35 @@ def center_map_data(request):
             "total_children": center.children_count,
         }
         for center in centers
+    ]
+
+    return JsonResponse(data, safe=False)
+
+
+def center_children_data(request):
+    """Return children registered in a specific center."""
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Unauthorized"}, status=403)
+
+    center_id = request.GET.get('center_id')
+    if not center_id:
+        return JsonResponse({"error": "Center ID is required"}, status=400)
+
+    registrations = Registration.objects.filter(
+        center_id=center_id,
+        deleted=False
+    ).select_related('child', 'child__nationality').order_by('child__first_name', 'child__last_name')
+
+    data = [
+        {
+            "id": reg.id,
+            "full_name": reg.child.full_name if reg.child else "N/A",
+            "gender": reg.child.gender if reg.child else "N/A",
+            "age": reg.child.age if reg.child else "N/A",
+            "nationality": reg.child.nationality.name if reg.child and reg.child.nationality else "N/A",
+            "registration_date": reg.registration_date.strftime('%Y-%m-%d') if reg.registration_date else "N/A",
+        }
+        for reg in registrations
     ]
 
     return JsonResponse(data, safe=False)
