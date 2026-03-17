@@ -11,13 +11,18 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+from django.db import models
 from student_registration.mscc.models import (
     PACKAGE_TYPES,
     Round,
     EducationService,
     Registration,
     EducationProgrammeAssessment,
+    InclusionService,
+    PSSService,
+    HealthNutritionService,
 )
+from student_registration.attendances.models import MSCCAttendanceChild
 from student_registration.schools.models import PartnerOrganization
 from student_registration.locations.models import Center, Location
 
@@ -99,3 +104,82 @@ def pivot_data(request):
 
     return JsonResponse(data, safe=False)
 
+
+class WellbeingDashboardView(LoginRequiredMixin, TemplateView):
+    """Display the advanced wellbeing dashboard."""
+
+    template_name = 'dashboard/wellbeing_dashboard.html'
+
+
+def wellbeing_data(request):
+    """Return aggregated wellbeing and correlation data for the dashboard."""
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Unauthorized"}, status=403)
+
+    # Get MSCC Registrations - Limit to last 5000 for performance
+    registrations = Registration.objects.filter(deleted=False).select_related(
+        'child', 'center', 'round', 'child__nationality'
+    ).order_by('-id')[:5000]
+
+    reg_ids = [r.id for r in registrations]
+
+    # Latest education assessments
+    latest_assessments = EducationProgrammeAssessment.objects.filter(registration_id__in=reg_ids).order_by('registration_id', '-id').distinct('registration_id')
+    assessments_dict = {a.registration_id: a for a in latest_assessments}
+
+    # Inclusion (dropout)
+    inclusions = InclusionService.objects.filter(registration_id__in=reg_ids).order_by('registration_id', '-id').distinct('registration_id')
+    inclusions_dict = {i.registration_id: i for i in inclusions}
+
+    # PSS (living arrangement)
+    pss_services = PSSService.objects.filter(registration_id__in=reg_ids).order_by('registration_id', '-id').distinct('registration_id')
+    pss_dict = {p.registration_id: p for p in pss_services}
+
+    # Health and Nutrition
+    health_services = HealthNutritionService.objects.filter(registration_id__in=reg_ids).order_by('registration_id', '-id').distinct('registration_id')
+    health_dict = {h.registration_id: h for h in health_services}
+
+    # Attendance aggregation
+    attendance_qs = MSCCAttendanceChild.objects.filter(registration_id__in=reg_ids).values('registration').annotate(
+        total_days=models.Count('id'),
+        attended_days=models.Count('id', filter=models.Q(attended='Yes'))
+    )
+    attendance_dict = {a['registration']: a for a in attendance_qs}
+
+    data = []
+    for reg in registrations:
+        assessment = assessments_dict.get(reg.id)
+        inclusion = inclusions_dict.get(reg.id)
+        pss = pss_dict.get(reg.id)
+        health = health_dict.get(reg.id)
+        att = attendance_dict.get(reg.id, {'total_days': 0, 'attended_days': 0})
+
+        attendance_rate = (att['attended_days'] / att['total_days'] * 100) if att['total_days'] > 0 else None
+
+        edu_improvement = 0
+        if assessment and assessment.pre_test and assessment.post_test:
+            try:
+                pre_scores = [float(v) for k, v in assessment.pre_test.items() if isinstance(v, (int, float, str)) and str(v).replace('.','',1).isdigit()]
+                post_scores = [float(v) for k, v in assessment.post_test.items() if isinstance(v, (int, float, str)) and str(v).replace('.','',1).isdigit()]
+                if pre_scores and post_scores and len(pre_scores) == len(post_scores):
+                    pre_avg = sum(pre_scores) / len(pre_scores)
+                    post_avg = sum(post_scores) / len(post_scores)
+                    if pre_avg > 0:
+                        edu_improvement = ((post_avg - pre_avg) / pre_avg) * 100
+            except Exception:
+                pass
+
+        data.append({
+            "id": reg.id,
+            "gender": reg.child.gender if reg.child else "",
+            "have_labour": reg.have_labour or "No",
+            "attendance_rate": attendance_rate,
+            "edu_improvement": edu_improvement,
+            "living_arrangement": pss.child_living_arrangement if pss else "",
+            " muac": health.muac_malnutrition_screening if health else "",
+            "meals": health.eating_minimum_meals if health else "",
+            "vaccinated": health.child_vaccinated if health else "",
+            "dropout": inclusion.dropout if inclusion else "No",
+        })
+
+    return JsonResponse(data, safe=False)

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block project_title %}{% trans "Wellbeing Dashboard" %}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .dashboard-card { margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 8px; background: #fff; }
+    .chart-container { height: 300px; width: 100%; }
+    .correlation-label { font-style: italic; font-size: 0.9rem; margin-top: 10px; color: #00ADEF; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="app-page-title">
+    <div class="page-title-wrapper">
+        <div class="page-title-heading">
+            <div class="page-title-icon"><i class="pe-7s-graph2 icon-gradient bg-plum-plate"></i></div>
+            <div>
+                {% trans "Child Wellbeing Advanced Dashboard" %}
+                <div class="page-title-subheading">{% trans "Multi-dimensional analysis of child welfare, education, and socio-economic factors." %}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 col-xl-4">
+        <div class="card dashboard-card">
+            <div class="card-header">{% trans "Child Labor Overview" %}</div>
+            <div class="card-body">
+                <div id="labor-chart" class="chart-container"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <div class="card dashboard-card">
+            <div class="card-header">{% trans "Attendance vs Education Improvement" %}</div>
+            <div class="card-body">
+                <div id="attendance-edu-chart" class="chart-container"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <div class="card dashboard-card">
+            <div class="card-header">{% trans "Family Situation" %}</div>
+            <div class="card-body">
+                <div id="family-chart" class="chart-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card dashboard-card">
+            <div class="card-header">{% trans "Socio-Economic Impact Analysis" %}</div>
+            <div class="card-body">
+                <div id="impact-correlation-chart" style="height: 400px; width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/10.3.3/highcharts.js"></script>
+<script type="text/javascript">
+    const DATA_URL = "{% url 'dashboard:wellbeing_data' %}";
+</script>
+<script src="{% static 'js/wellbeing_dashboard.js' %}"></script>
+{% endblock %}
