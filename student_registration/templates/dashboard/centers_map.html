@@ -10,6 +10,7 @@
     .map-card { margin-bottom: 20px; }
     .filter-card { margin-bottom: 20px; }
     #children-list-container { display: none; margin-top: 20px; }
+    .table-scroll { max-height: 400px; overflow-y: auto; }
     .leaflet-popup-content-wrapper { border-radius: 8px; }
     .center-info-title { font-weight: bold; color: #003366; margin-bottom: 5px; }
     .center-info-item { font-size: 0.9rem; margin-bottom: 3px; }
@@ -66,7 +67,7 @@
             <div class="card-header" id="center-list-title">
                 {% trans "Children registered in center" %}
             </div>
-            <div class="table-responsive">
+            <div class="table-responsive table-scroll">
                 <table class="align-middle mb-0 table table-borderless table-striped table-hover">
                     <thead>
                     <tr>
@@ -75,7 +76,10 @@
                         <th class="text-center">{% trans "Gender" %}</th>
                         <th class="text-center">{% trans "Age" %}</th>
                         <th class="text-center">{% trans "Nationality" %}</th>
-                        <th class="text-center">{% trans "Registration Date" %}</th>
+                        <th class="text-center">{% trans "Programme Type" %}</th>
+                        <th class="text-center">{% trans "Round" %}</th>
+                        <th class="text-center">{% trans "Partner" %}</th>
+                        <th class="text-center">{% trans "Center" %}</th>
                     </tr>
                     </thead>
                     <tbody id="children-table-body">
@@ -151,7 +155,7 @@
                     tableBody.innerHTML = '';
 
                     if (data.length === 0) {
-                        tableBody.innerHTML = '<tr><td colspan="6" class="text-center">No children registered in this center.</td></tr>';
+                        tableBody.innerHTML = '<tr><td colspan="9" class="text-center">No children registered in this center.</td></tr>';
                     } else {
                         data.forEach((reg, index) => {
                             var row = `
@@ -174,7 +178,10 @@
                                     <td class="text-center">${reg.gender}</td>
                                     <td class="text-center">${reg.age}</td>
                                     <td class="text-center">${reg.nationality}</td>
-                                    <td class="text-center">${reg.registration_date}</td>
+                                    <td class="text-center">${reg.programme_type}</td>
+                                    <td class="text-center">${reg.round}</td>
+                                    <td class="text-center">${reg.partner}</td>
+                                    <td class="text-center">${reg.center}</td>
                                 </tr>
                             `;
                             tableBody.insertAdjacentHTML('beforeend', row);

@@ -277,9 +277,22 @@ def center_children_data(request):
     if not center_id:
         return JsonResponse({"error": "Center ID is required"}, status=400)
 
+    latest_prog_type = (
+        EducationProgrammeAssessment.objects.filter(
+            registration=OuterRef("pk")
+        )
+        .order_by("-id")
+        .values_list("programme_type", flat=True)[:1]
+    )
+
     registrations = Registration.objects.filter(
         center_id=center_id,
         deleted=False
+    ).annotate(
+        programme_type=Subquery(latest_prog_type),
+        center_name=F("center__name"),
+        partner_name=F("center__partner__name"),
+        round_name=F("round__name"),
     ).select_related('child', 'child__nationality').order_by('child__first_name', 'child__last_name')
 
     data = [
@@ -289,7 +302,10 @@ def center_children_data(request):
             "gender": reg.child.gender if reg.child else "N/A",
             "age": reg.child.age if reg.child else "N/A",
             "nationality": reg.child.nationality.name if reg.child and reg.child.nationality else "N/A",
-            "registration_date": reg.registration_date.strftime('%Y-%m-%d') if reg.registration_date else "N/A",
+            "programme_type": reg.programme_type or "N/A",
+            "round": reg.round_name or "N/A",
+            "partner": reg.partner_name or "N/A",
+            "center": reg.center_name or "N/A",
         }
         for reg in registrations
     ]
