@@ -1884,7 +1884,7 @@ class WLBLNAssessmentForm(forms.ModelForm):
 
         self._set_initial_totals()
 
-        score_section_css = 'grade-field'
+        score_section_css = 'wl-bln-score-field'
 
         layout_items = []
 
