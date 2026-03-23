@@ -1904,8 +1904,14 @@ class WLBLNAssessmentForm(forms.ModelForm):
         for index, (total_field, subject_config) in enumerate(self.programme_config.items(), start=1):
             layout_items.append(
                 HTML(
-                    '<div class="card-body {}"><h5 class="mb-3">{} / {}</h5></div>'.format(
+                    '<div class="card-body {0}">'
+                    '<h5 class="mb-3 d-flex align-items-center">'
+                    '<span class="badge-form badge-pill mr-2">{1}</span>'
+                    '{2} / {3}'
+                    '</h5>'
+                    '</div>'.format(
                         score_section_css,
+                        index,
                         subject_config['label'],
                         subject_config['total'],
                     )
