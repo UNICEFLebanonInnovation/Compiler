@@ -1872,9 +1872,16 @@ class WLBLNAssessmentForm(forms.ModelForm):
 
         for total_field, subject_config in self.programme_config.items():
             active_fields.add(total_field)
+            self.fields[total_field].widget.attrs.update({
+                'data-wl-bln-total-field': total_field,
+            })
             for component_name, _label, max_score in subject_config['components']:
                 active_fields.add(component_name)
-                self.fields[component_name].widget.attrs.update({'max': max_score})
+                self.fields[component_name].widget.attrs.update({
+                    'max': max_score,
+                    'data-wl-bln-component': '1',
+                    'data-wl-bln-total-target': total_field,
+                })
             self.fields[total_field].widget.attrs.update({'max': subject_config['total']})
 
         for field_name, field in self.fields.items():
