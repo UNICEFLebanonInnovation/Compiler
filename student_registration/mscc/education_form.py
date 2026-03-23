@@ -1879,11 +1879,9 @@ class WLBLNAssessmentForm(forms.ModelForm):
                 active_fields.add(component_name)
                 self.fields[component_name].label = '{0} / {1}'.format(self.fields[component_name].label, max_score)
                 self.fields[component_name].widget.attrs.update({
-                    'max': max_score,
                     'data-wl-bln-component': '1',
                     'data-wl-bln-total-target': total_field,
                 })
-            self.fields[total_field].widget.attrs.update({'max': subject_config['total']})
 
         for field_name, field in self.fields.items():
             if field_name not in active_fields:
@@ -1977,7 +1975,7 @@ class WLBLNAssessmentForm(forms.ModelForm):
                     value = 0
                 if value is not None and value not in ('',):
                     if value > max_score:
-                        self.add_error(component_name, _("This value is greater than %(max_score)s.") % {'max_score': max_score})
+                        self.add_error(component_name, 'Max value is {0}'.format(max_score))
                     total += value or 0
                 cleaned_data[component_name] = value or 0
             cleaned_data[total_field] = total
