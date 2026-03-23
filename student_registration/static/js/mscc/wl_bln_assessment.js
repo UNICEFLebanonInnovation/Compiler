@@ -17,7 +17,9 @@ $(document).ready(function () {
 
         $('[data-wl-bln-total-field]').each(function () {
             var totalField = $(this).data('wl-bln-total-field');
-            $(this).val(totals[totalField] || 0);
+            var totalValue = totals[totalField] || 0;
+            $(this).val(totalValue);
+            $('[data-wl-bln-total-display="' + totalField + '"]').text(totalValue);
         });
     }
 

@@ -1872,6 +1872,7 @@ class WLBLNAssessmentForm(forms.ModelForm):
 
         for total_field, subject_config in self.programme_config.items():
             active_fields.add(total_field)
+            self.fields[total_field].widget = forms.HiddenInput()
             self.fields[total_field].widget.attrs.update({
                 'data-wl-bln-total-field': total_field,
             })
@@ -1924,7 +1925,18 @@ class WLBLNAssessmentForm(forms.ModelForm):
             layout_items.append(
                 Div(
                     HTML('<span class="badge-form badge-pill">{}</span>'.format(index)),
-                    Div(total_field, css_class='col-md-4'),
+                    Div(
+                        HTML(
+                            '<label class="form-label">{0}</label>'
+                            '<p class="form-control-plaintext mb-0" data-wl-bln-total-display="{1}">{2}</p>'.format(
+                                self.fields[total_field].label,
+                                total_field,
+                                self.fields[total_field].initial or 0,
+                            )
+                        ),
+                        css_class='col-md-4'
+                    ),
+                    Div(Field(total_field), css_class='d-none'),
                     css_class='row card-body {}'.format(score_section_css)
                 )
             )
