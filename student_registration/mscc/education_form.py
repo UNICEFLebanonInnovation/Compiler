@@ -1940,8 +1940,10 @@ class WLBLNAssessmentForm(forms.ModelForm):
                 Div(
                     Div(
                         HTML(
-                            '<label class="form-label font-weight-bold">{0}</label>'
-                            '<p class="form-control-plaintext mb-0 font-weight-bold" data-wl-bln-total-display="{1}">{2}</p>'.format(
+                            '<div class="d-flex align-items-center">'
+                            '<span class="form-label font-weight-bold mb-0 mr-2">{0}</span>'
+                            '<span class="form-control-plaintext mb-0 font-weight-bold" data-wl-bln-total-display="{1}">{2}</span>'
+                            '</div>'.format(
                                 self.fields[total_field].label,
                                 total_field,
                                 self.fields[total_field].initial or 0,
