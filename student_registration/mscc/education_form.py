@@ -1923,14 +1923,12 @@ class WLBLNAssessmentForm(forms.ModelForm):
                     )
                 layout_items.append(
                     Div(
-                        HTML('<span class="badge-form badge-pill">{}</span>'.format(index)),
                         *row_fields,
                         css_class='row card-body {}'.format(score_section_css)
                     )
                 )
             layout_items.append(
                 Div(
-                    HTML('<span class="badge-form badge-pill">{}</span>'.format(index)),
                     Div(
                         HTML(
                             '<label class="form-label">{0}</label>'
