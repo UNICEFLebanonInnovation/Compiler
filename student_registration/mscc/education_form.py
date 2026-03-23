@@ -1870,15 +1870,15 @@ class WLBLNAssessmentForm(forms.ModelForm):
             self.fields['programme_type'].initial = programme_type
 
         active_fields = {'programme_type'}
+        total_labels = {}
 
         for total_field, subject_config in self.programme_config.items():
             active_fields.add(total_field)
-            self.fields[total_field].label = mark_safe(
-                '<strong>{0}</strong>'.format(self.fields[total_field].label)
-            )
-            self.fields[total_field].widget = forms.HiddenInput()
+            total_labels[total_field] = self.fields[total_field].label
+            self.fields[total_field].label = ''
             self.fields[total_field].widget.attrs.update({
                 'data-wl-bln-total-field': total_field,
+                'readonly': 'readonly',
             })
             for component_name, _label, max_score in subject_config['components']:
                 active_fields.add(component_name)
@@ -1936,23 +1936,28 @@ class WLBLNAssessmentForm(forms.ModelForm):
                         css_class='row card-body {}'.format(score_section_css)
                     )
                 )
+            total_value = self.data.get(total_field) if self.is_bound else self.fields[total_field].initial or 0
             layout_items.append(
                 Div(
                     Div(
                         HTML(
-                            '<div class="d-flex align-items-center">'
-                            '<span class="form-label font-weight-bold mb-0 mr-2">{0}</span>'
-                            '<span class="form-control-plaintext mb-0 font-weight-bold" data-wl-bln-total-display="{1}">{2}</span>'
-                            '</div>'.format(
-                                self.fields[total_field].label,
-                                total_field,
-                                self.fields[total_field].initial or 0,
+                            '<label class="form-label font-weight-bold mb-0">{0}</label>'.format(
+                                total_labels[total_field],
                             )
                         ),
-                        css_class='col-md-4'
+                        css_class='col-md-3 d-flex align-items-center'
                     ),
-                    Div(Field(total_field), css_class='d-none'),
-                    css_class='row card-body {}'.format(score_section_css)
+                    Div(
+                        HTML(
+                            '<input type="number" name="{0}" value="{1}" class="numberinput form-control" '
+                            'id="id_{0}" readonly="readonly" data-wl-bln-total-field="{0}">'.format(
+                                total_field,
+                                total_value,
+                            )
+                        ),
+                        css_class='col-md-2'
+                    ),
+                    css_class='row card-body {} align-items-center'.format(score_section_css)
                 )
             )
 
