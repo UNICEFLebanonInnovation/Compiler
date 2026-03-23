@@ -109,3 +109,34 @@ def test_wl_bln_validates_component_maximums():
 
     assert not form.is_valid()
     assert 'english_paragraph' in form.errors
+
+
+def test_wl_bln_rejects_zero_for_visible_fields():
+    form = WLBLNAssessmentForm(
+        data={
+            'programme_type': 'BLN Level 1',
+            'english_letter_sound': 0,
+            'english_familiar_words': 10,
+            'english_sentence': 10,
+            'english_dictation': 10,
+            'french_letter_sound': 13,
+            'french_familiar_words': 10,
+            'french_sentence': 10,
+            'french_dictation': 10,
+            'arabic_letter_sound': 28,
+            'arabic_alphabet_vowel': 5,
+            'arabic_alphabet_long_vowel': 5,
+            'arabic_familiar_words': 10,
+            'arabic_sentence': 10,
+            'arabic_dictation': 10,
+            'math_natural_numbers': 10,
+            'math_addition_words': 8,
+            'math_subtraction': 4,
+        },
+        registry='1',
+        programme_type='BLN Level 1',
+        pre_post='pre',
+    )
+
+    assert not form.is_valid()
+    assert 'english_letter_sound' in form.errors
