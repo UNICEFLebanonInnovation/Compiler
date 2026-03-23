@@ -1,6 +1,7 @@
 from __future__ import unicode_literals, absolute_import, division
 
 from django.utils.translation import gettext as _
+from django.utils.safestring import mark_safe
 from django import forms
 from django.urls import reverse
 from django.contrib import messages
@@ -1878,7 +1879,12 @@ class WLBLNAssessmentForm(forms.ModelForm):
             })
             for component_name, _label, max_score in subject_config['components']:
                 active_fields.add(component_name)
-                self.fields[component_name].label = '{0} / {1}'.format(self.fields[component_name].label, max_score)
+                self.fields[component_name].label = mark_safe(
+                    '{0} / <strong class="text-primary">{1}</strong>'.format(
+                        self.fields[component_name].label,
+                        max_score,
+                    )
+                )
                 self.fields[component_name].widget.attrs.update({
                     'data-wl-bln-component': '1',
                     'data-wl-bln-total-target': total_field,
