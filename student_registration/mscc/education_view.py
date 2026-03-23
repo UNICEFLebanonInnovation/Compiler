@@ -243,6 +243,77 @@ class EducationGradingFormView(LoginRequiredMixin,
         return super(EducationGradingFormView, self).form_valid(form)
 
 
+class WLBLNAssessmentFormView(LoginRequiredMixin,
+                             GroupRequiredMixin,
+                             FormView):
+    template_name = 'mscc/wl_bln_assessment_form.html'
+    form_class = WLBLNAssessmentForm
+    success_url = ''
+    group_required = [u"MSCC", u"MSCC_CENTER"]
+
+    def dispatch(self, request, *args, **kwargs):
+        programme_type = self.kwargs.get('programme_type')
+        if programme_type not in ["BLN Level 1", "BLN Level 2", "BLN Level 3"]:
+            raise Http404("WL BLN assessment is only available for BLN levels.")
+        return super(WLBLNAssessmentFormView, self).dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('mscc:child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
+
+    def get_context_data(self, **kwargs):
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        kwargs['registry'] = self.kwargs['registry']
+        kwargs['programme_type'] = self.kwargs['programme_type']
+        kwargs['pre_post'] = self.kwargs.get('pre_post', 'pre')
+        return super(WLBLNAssessmentFormView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        registry = self.kwargs['registry']
+        programme_type = self.kwargs['programme_type']
+        pre_post = self.kwargs.get('pre_post', 'pre')
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+
+        if self.request.method == "POST":
+            return WLBLNAssessmentForm(
+                self.request.POST,
+                instance=instance,
+                registry=registry,
+                programme_type=programme_type,
+                pre_post=pre_post,
+                request=self.request
+            )
+
+        if instance:
+            assessment = EducationProgrammeAssessment.objects.get(id=instance)
+            data = assessment.pre_test if pre_post == 'pre' else assessment.post_test
+            return WLBLNAssessmentForm(
+                data,
+                registry=registry,
+                programme_type=programme_type,
+                pre_post=pre_post,
+                instance=instance,
+                request=self.request
+            )
+
+        return WLBLNAssessmentForm(
+            registry=registry,
+            programme_type=programme_type,
+            pre_post=pre_post,
+            instance=instance,
+            request=self.request
+        )
+
+    def form_valid(self, form):
+        registry = self.kwargs['registry']
+        programme_type = self.kwargs['programme_type']
+        pre_post = self.kwargs.get('pre_post', 'pre')
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        form.save(request=self.request, registry=registry, programme_type=programme_type,
+                  pre_post=pre_post, instance=instance)
+        return super(WLBLNAssessmentFormView, self).form_valid(form)
+
+
 class TarlGradingFormView(LoginRequiredMixin,
                           GroupRequiredMixin,
                           FormView):

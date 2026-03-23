@@ -37,6 +37,148 @@ from student_registration.schools.models import (
 from .utils import update_child_attendance
 
 
+WL_BLN_PROGRAMME_CONFIG = {
+    "BLN Level 1": {
+        "english_grade": {
+            "label": _("English"),
+            "total": 43,
+            "components": (
+                ("english_letter_sound", _("Letter Sound"), 13),
+                ("english_familiar_words", _("Familiar Words"), 10),
+                ("english_sentence", _("Sentence"), 10),
+                ("english_dictation", _("Dictation"), 10),
+            ),
+        },
+        "french_grade": {
+            "label": _("French"),
+            "total": 43,
+            "components": (
+                ("french_letter_sound", _("Letter Sound"), 13),
+                ("french_familiar_words", _("Familiar Words"), 10),
+                ("french_sentence", _("Sentence"), 10),
+                ("french_dictation", _("Dictation"), 10),
+            ),
+        },
+        "arabic_grade": {
+            "label": _("Arabic"),
+            "total": 68,
+            "components": (
+                ("arabic_letter_sound", _("Letter Sound"), 28),
+                ("arabic_alphabet_vowel", _("Alphabet letters with vowel"), 5),
+                ("arabic_alphabet_long_vowel", _("Alphabet letters with long vowel"), 5),
+                ("arabic_familiar_words", _("Familiar Words"), 10),
+                ("arabic_sentence", _("Sentence"), 10),
+                ("arabic_dictation", _("Dictation"), 10),
+            ),
+        },
+        "math_grade": {
+            "label": _("Math"),
+            "total": 22,
+            "components": (
+                ("math_natural_numbers", _("Natural Numbers"), 10),
+                ("math_addition_words", _("Addition"), 8),
+                ("math_subtraction", _("Subtraction"), 4),
+            ),
+        },
+    },
+    "BLN Level 2": {
+        "english_grade": {
+            "label": _("English"),
+            "total": 65,
+            "components": (
+                ("english_letter_sound", _("Letter Sound"), 10),
+                ("english_familiar_words", _("Familiar Words"), 10),
+                ("english_paragraph", _("Paragraph"), 25),
+                ("english_dictation", _("Dictation"), 10),
+                ("english_reading_comprehension", _("Reading Comprehension"), 10),
+            ),
+        },
+        "french_grade": {
+            "label": _("French"),
+            "total": 65,
+            "components": (
+                ("french_letter_sound", _("Letter Sound"), 10),
+                ("french_familiar_words", _("Familiar Words"), 10),
+                ("french_paragraph", _("Paragraph"), 25),
+                ("french_dictation", _("Dictation"), 10),
+                ("french_reading_comprehension", _("Reading Comprehension"), 10),
+            ),
+        },
+        "arabic_grade": {
+            "label": _("Arabic"),
+            "total": 70,
+            "components": (
+                ("arabic_letter_sound", _("Letter Sound"), 10),
+                ("arabic_alphabet_vowel", _("Alphabet letters with vowel"), 5),
+                ("arabic_alphabet_long_vowel", _("Alphabet letters with long vowel"), 5),
+                ("arabic_familiar_words", _("Familiar Words"), 10),
+                ("arabic_paragraph", _("Paragraph"), 20),
+                ("arabic_reading_comprehension", _("Reading Comprehension"), 10),
+                ("arabic_dictation", _("Dictation"), 10),
+            ),
+        },
+        "math_grade": {
+            "label": _("Math"),
+            "total": 32,
+            "components": (
+                ("math_natural_numbers", _("Natural Numbers"), 10),
+                ("math_addition_words", _("Addition"), 10),
+                ("math_subtraction", _("Subtraction"), 7),
+                ("math_multiplication", _("Multiplication"), 5),
+            ),
+        },
+    },
+    "BLN Level 3": {
+        "english_grade": {
+            "label": _("English"),
+            "total": 64,
+            "components": (
+                ("english_letter_sound", _("Letter Sound"), 10),
+                ("english_familiar_words", _("Familiar Words"), 10),
+                ("english_paragraph", _("Paragraph"), 20),
+                ("english_dictation", _("Dictation"), 10),
+                ("english_reading_comprehension", _("Reading Comprehension"), 14),
+            ),
+        },
+        "french_grade": {
+            "label": _("French"),
+            "total": 59,
+            "components": (
+                ("french_letter_sound", _("Letter Sound"), 10),
+                ("french_familiar_words", _("Familiar Words"), 10),
+                ("french_paragraph", _("Paragraph"), 15),
+                ("french_dictation", _("Dictation"), 10),
+                ("french_reading_comprehension", _("Reading Comprehension"), 14),
+            ),
+        },
+        "arabic_grade": {
+            "label": _("Arabic"),
+            "total": 69,
+            "components": (
+                ("arabic_letter_sound", _("Letter Sound"), 10),
+                ("arabic_alphabet_vowel", _("Alphabet letters with vowel"), 5),
+                ("arabic_alphabet_long_vowel", _("Alphabet letters with long vowel"), 5),
+                ("arabic_familiar_words", _("Familiar Words"), 10),
+                ("arabic_paragraph", _("Paragraph"), 15),
+                ("arabic_reading_comprehension", _("Reading Comprehension"), 14),
+                ("arabic_dictation", _("Dictation"), 10),
+            ),
+        },
+        "math_grade": {
+            "label": _("Math"),
+            "total": 32,
+            "components": (
+                ("math_natural_numbers", _("Natural Numbers"), 8),
+                ("math_addition_words", _("Addition"), 8),
+                ("math_subtraction", _("Subtraction"), 6),
+                ("math_multiplication", _("Multiplication"), 6),
+                ("math_division", _("Division"), 4),
+            ),
+        },
+    },
+}
+
+
 class DiagnosticAssessmentForm(forms.ModelForm):
     # Pre Test
     pre_attended_arabic = forms.ChoiceField(
@@ -1645,6 +1787,217 @@ class EducationGradingForm(forms.ModelForm):
         fields = (
             'programme_type',
         )
+
+
+class WLBLNAssessmentForm(forms.ModelForm):
+    programme_type = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    english_letter_sound = forms.IntegerField(label=_('English - Letter Sound'), required=False, min_value=0, initial=0)
+    english_familiar_words = forms.IntegerField(label=_('English - Familiar Words'), required=False, min_value=0, initial=0)
+    english_sentence = forms.IntegerField(label=_('English - Sentence'), required=False, min_value=0, initial=0)
+    english_paragraph = forms.IntegerField(label=_('English - Paragraph'), required=False, min_value=0, initial=0)
+    english_dictation = forms.IntegerField(label=_('English - Dictation'), required=False, min_value=0, initial=0)
+    english_reading_comprehension = forms.IntegerField(label=_('English - Reading Comprehension'), required=False, min_value=0, initial=0)
+    english_grade = forms.IntegerField(
+        label=_('English Total'),
+        required=False,
+        initial=0,
+        widget=forms.NumberInput(attrs={'readonly': 'readonly'})
+    )
+
+    french_letter_sound = forms.IntegerField(label=_('French - Letter Sound'), required=False, min_value=0, initial=0)
+    french_familiar_words = forms.IntegerField(label=_('French - Familiar Words'), required=False, min_value=0, initial=0)
+    french_sentence = forms.IntegerField(label=_('French - Sentence'), required=False, min_value=0, initial=0)
+    french_paragraph = forms.IntegerField(label=_('French - Paragraph'), required=False, min_value=0, initial=0)
+    french_dictation = forms.IntegerField(label=_('French - Dictation'), required=False, min_value=0, initial=0)
+    french_reading_comprehension = forms.IntegerField(label=_('French - Reading Comprehension'), required=False, min_value=0, initial=0)
+    french_grade = forms.IntegerField(
+        label=_('French Total'),
+        required=False,
+        initial=0,
+        widget=forms.NumberInput(attrs={'readonly': 'readonly'})
+    )
+
+    arabic_letter_sound = forms.IntegerField(label=_('Arabic - Letter Sound'), required=False, min_value=0, initial=0)
+    arabic_alphabet_vowel = forms.IntegerField(label=_('Arabic - Alphabet letters with vowel'), required=False, min_value=0, initial=0)
+    arabic_alphabet_long_vowel = forms.IntegerField(label=_('Arabic - Alphabet letters with long vowel'), required=False, min_value=0, initial=0)
+    arabic_familiar_words = forms.IntegerField(label=_('Arabic - Familiar Words'), required=False, min_value=0, initial=0)
+    arabic_sentence = forms.IntegerField(label=_('Arabic - Sentence'), required=False, min_value=0, initial=0)
+    arabic_paragraph = forms.IntegerField(label=_('Arabic - Paragraph'), required=False, min_value=0, initial=0)
+    arabic_reading_comprehension = forms.IntegerField(label=_('Arabic - Reading Comprehension'), required=False, min_value=0, initial=0)
+    arabic_dictation = forms.IntegerField(label=_('Arabic - Dictation'), required=False, min_value=0, initial=0)
+    arabic_grade = forms.IntegerField(
+        label=_('Arabic Total'),
+        required=False,
+        initial=0,
+        widget=forms.NumberInput(attrs={'readonly': 'readonly'})
+    )
+
+    math_natural_numbers = forms.IntegerField(label=_('Math - Natural Numbers'), required=False, min_value=0, initial=0)
+    math_addition_words = forms.IntegerField(label=_('Math - Addition'), required=False, min_value=0, initial=0)
+    math_subtraction = forms.IntegerField(label=_('Math - Subtraction'), required=False, min_value=0, initial=0)
+    math_multiplication = forms.IntegerField(label=_('Math - Multiplication'), required=False, min_value=0, initial=0)
+    math_division = forms.IntegerField(label=_('Math - Division'), required=False, min_value=0, initial=0)
+    math_grade = forms.IntegerField(
+        label=_('Math Total'),
+        required=False,
+        initial=0,
+        widget=forms.NumberInput(attrs={'readonly': 'readonly'})
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        registry = kwargs.pop('registry', None)
+        programme_type = kwargs.pop('programme_type', None)
+        pre_post = kwargs.pop('pre_post', None) or 'pre'
+        instance = kwargs.pop('instance', None)
+
+        super(WLBLNAssessmentForm, self).__init__(*args, **kwargs)
+
+        self.pre_post = pre_post
+        self.programme_type = programme_type
+        self.programme_config = WL_BLN_PROGRAMME_CONFIG.get(programme_type, {})
+
+        form_action = reverse('mscc:wl_bln_assessment_add',
+                              kwargs={'registry': registry, 'programme_type': programme_type})
+        if instance:
+            form_action = reverse('mscc:wl_bln_assessment_edit',
+                                  kwargs={'registry': registry, 'programme_type': programme_type,
+                                          'pre_post': pre_post, 'pk': instance})
+
+        if programme_type:
+            self.fields['programme_type'].initial = programme_type
+
+        active_fields = {'programme_type'}
+
+        for total_field, subject_config in self.programme_config.items():
+            active_fields.add(total_field)
+            for component_name, _label, max_score in subject_config['components']:
+                active_fields.add(component_name)
+                self.fields[component_name].widget.attrs.update({'max': max_score})
+            self.fields[total_field].widget.attrs.update({'max': subject_config['total']})
+
+        for field_name, field in self.fields.items():
+            if field_name not in active_fields:
+                field.widget = forms.HiddenInput()
+                field.required = False
+
+        self._set_initial_totals()
+
+        score_section_css = 'grade-field'
+
+        layout_items = []
+
+        for index, (total_field, subject_config) in enumerate(self.programme_config.items(), start=1):
+            layout_items.append(
+                HTML(
+                    '<div class="card-body {}"><h5 class="mb-3">{} / {}</h5></div>'.format(
+                        score_section_css,
+                        subject_config['label'],
+                        subject_config['total'],
+                    )
+                )
+            )
+            components = list(subject_config['components'])
+            for start in range(0, len(components), 2):
+                row_fields = []
+                for component_name, _component_label, max_score in components[start:start + 2]:
+                    row_fields.append(
+                        Div(
+                            Field(component_name, placeholder='0'),
+                            HTML('<small class="form-text text-muted">Max: {}</small>'.format(max_score)),
+                            css_class='col-md-5'
+                        )
+                    )
+                layout_items.append(
+                    Div(
+                        HTML('<span class="badge-form badge-pill">{}</span>'.format(index)),
+                        *row_fields,
+                        css_class='row card-body {}'.format(score_section_css)
+                    )
+                )
+            layout_items.append(
+                Div(
+                    HTML('<span class="badge-form badge-pill">{}</span>'.format(index)),
+                    Div(total_field, css_class='col-md-4'),
+                    css_class='row card-body {}'.format(score_section_css)
+                )
+            )
+
+        layout_items.append(
+            FormActions(
+                Submit('save', 'Save',
+                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                Reset('reset', 'Reset',
+                      css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+            )
+        )
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(Div(*layout_items, css_id='step-1'))
+
+    def _score_source(self):
+        if self.is_bound:
+            return self.data
+        if self.initial:
+            return self.initial
+        return {}
+
+    def _set_initial_totals(self):
+        source = self._score_source()
+        for total_field, subject_config in self.programme_config.items():
+            total = 0
+            for component_name, _label, _max_score in subject_config['components']:
+                try:
+                    total += int(source.get(component_name) or 0)
+                except (TypeError, ValueError):
+                    total += 0
+            self.fields[total_field].initial = total
+
+    def clean(self):
+        cleaned_data = super(WLBLNAssessmentForm, self).clean()
+        programme_type = cleaned_data.get('programme_type') or self.programme_type
+        programme_config = WL_BLN_PROGRAMME_CONFIG.get(programme_type, {})
+
+        for total_field, subject_config in programme_config.items():
+            total = 0
+            for component_name, _component_label, max_score in subject_config['components']:
+                value = cleaned_data.get(component_name)
+                if value in (None, ''):
+                    self.add_error(component_name, _("This field is required."))
+                    value = 0
+                if value is not None and value not in ('',):
+                    if value > max_score:
+                        self.add_error(component_name, _("This value is greater than %(max_score)s.") % {'max_score': max_score})
+                    total += value or 0
+                cleaned_data[component_name] = value or 0
+            cleaned_data[total_field] = total
+
+        return cleaned_data
+
+    def save(self, request=None, instance=None, registry=None, programme_type=None, pre_post=None):
+        cleaned_data = self.cleaned_data.copy()
+        if not instance:
+            instance = EducationProgrammeAssessment.objects.create(registration_id=registry)
+        else:
+            instance = EducationProgrammeAssessment.objects.get(id=instance)
+
+        if pre_post == 'post':
+            instance.post_test = cleaned_data
+        else:
+            instance.pre_test = cleaned_data
+
+        instance.programme_type = programme_type
+        instance.save()
+
+        messages.success(request, _('Your data has been sent successfully to the server'))
+        return instance
+
+    class Meta:
+        model = EducationProgrammeAssessment
+        fields = ('programme_type',)
 
 
 class TarlGradingForm(forms.ModelForm):
