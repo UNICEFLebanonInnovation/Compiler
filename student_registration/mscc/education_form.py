@@ -1877,6 +1877,7 @@ class WLBLNAssessmentForm(forms.ModelForm):
             })
             for component_name, _label, max_score in subject_config['components']:
                 active_fields.add(component_name)
+                self.fields[component_name].label = '{0} / {1}'.format(self.fields[component_name].label, max_score)
                 self.fields[component_name].widget.attrs.update({
                     'max': max_score,
                     'data-wl-bln-component': '1',
@@ -1912,7 +1913,6 @@ class WLBLNAssessmentForm(forms.ModelForm):
                     row_fields.append(
                         Div(
                             Field(component_name, placeholder='0'),
-                            HTML('<small class="form-text text-muted">Max: {}</small>'.format(max_score)),
                             css_class='col-md-5'
                         )
                     )
