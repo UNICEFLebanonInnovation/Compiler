@@ -1873,6 +1873,9 @@ class WLBLNAssessmentForm(forms.ModelForm):
 
         for total_field, subject_config in self.programme_config.items():
             active_fields.add(total_field)
+            self.fields[total_field].label = mark_safe(
+                '<strong>{0}</strong>'.format(self.fields[total_field].label)
+            )
             self.fields[total_field].widget = forms.HiddenInput()
             self.fields[total_field].widget.attrs.update({
                 'data-wl-bln-total-field': total_field,
@@ -1937,8 +1940,8 @@ class WLBLNAssessmentForm(forms.ModelForm):
                 Div(
                     Div(
                         HTML(
-                            '<label class="form-label">{0}</label>'
-                            '<p class="form-control-plaintext mb-0" data-wl-bln-total-display="{1}">{2}</p>'.format(
+                            '<label class="form-label font-weight-bold">{0}</label>'
+                            '<p class="form-control-plaintext mb-0 font-weight-bold" data-wl-bln-total-display="{1}">{2}</p>'.format(
                                 self.fields[total_field].label,
                                 total_field,
                                 self.fields[total_field].initial or 0,
