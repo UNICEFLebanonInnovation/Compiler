@@ -1973,7 +1973,7 @@ class WLBLNAssessmentForm(forms.ModelForm):
             for component_name, _component_label, max_score in subject_config['components']:
                 value = cleaned_data.get(component_name)
                 if value in (None, '', 0):
-                    self.add_error(component_name, _("This field is required."))
+                    self.add_error(component_name, 'This field is required')
                     value = 0
                 if value is not None and value not in ('',):
                     if value > max_score:
