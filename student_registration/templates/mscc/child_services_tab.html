@@ -1665,7 +1665,15 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {% if request.user.center.provide_french_language == 'Yes' %}
+                                        {% if result1.education_program == 'BLN Level 1' %}
+                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Language Development  / 43</h4>
+                                                   <p> {{ wl_result.pre_test.english_grade|default:0 }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% elif request.user.center.provide_french_language == 'Yes' %}
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">French Language Development</h4>
@@ -1713,7 +1721,15 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {% if request.user.center.provide_french_language == 'Yes' %}
+                                        {% if result1.education_program == 'BLN Level 1' %}
+                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Language Development  / 43</h4>
+                                                   <p> {{ wl_result.post_test.english_grade|default:0 }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% elif request.user.center.provide_french_language == 'Yes' %}
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">French Language Development</h4>
@@ -1754,7 +1770,15 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {% if request.user.center.provide_french_language == 'Yes' %}
+                                        {% if result1.education_program == 'BLN Level 1' %}
+                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Language Development  / 43</h4>
+                                                   <p>{% grading_improvement wl_result 'english_grade' as grade %}{{ grade }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% elif request.user.center.provide_french_language == 'Yes' %}
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">French Language Development</h4>
