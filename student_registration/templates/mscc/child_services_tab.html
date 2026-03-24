@@ -1661,18 +1661,18 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Language Development</h4>
-                                                   <p>{{ wl_result.pre_test.arabic_letter_sound|default:0 }}</p>
-                                                   <p>{{ wl_result.pre_test.arabic_alphabet_vowel|default:0 }}</p>
-                                                   <p>{{ wl_result.pre_test.arabic_alphabet_long_vowel|default:0 }}</p>
-                                                   <p>{{ wl_result.pre_test.arabic_familiar_words|default:0 }}</p>
+                                                   <p>Arabic Letter Sound: {{ wl_result.pre_test.arabic_letter_sound|default:0 }}</p>
+                                                   <p>Arabic Alphabet Vowel: {{ wl_result.pre_test.arabic_alphabet_vowel|default:0 }}</p>
+                                                   <p>Arabic Alphabet Long Vowel: {{ wl_result.pre_test.arabic_alphabet_long_vowel|default:0 }}</p>
+                                                   <p>Arabic Familiar Words: {{ wl_result.pre_test.arabic_familiar_words|default:0 }}</p>
                                                    {% if result1.education_program == 'BLN Level 1' %}
-                                                   <p>{{ wl_result.pre_test.arabic_sentence|default:0 }}</p>
+                                                   <p>Arabic Sentence: {{ wl_result.pre_test.arabic_sentence|default:0 }}</p>
                                                    {% else %}
-                                                   <p>{{ wl_result.pre_test.arabic_paragraph|default:0 }}</p>
-                                                   <p>{{ wl_result.pre_test.arabic_reading_comprehension|default:0 }}</p>
+                                                   <p>Arabic Paragraph: {{ wl_result.pre_test.arabic_paragraph|default:0 }}</p>
+                                                   <p>Arabic Reading Comprehension: {{ wl_result.pre_test.arabic_reading_comprehension|default:0 }}</p>
                                                    {% endif %}
-                                                   <p>{{ wl_result.pre_test.arabic_dictation|default:0 }}</p>
-                                                   <p><strong>{{ wl_result.pre_test.arabic_grade|default:0 }}</strong></p>
+                                                   <p>Arabic Dictation: {{ wl_result.pre_test.arabic_dictation|default:0 }}</p>
+                                                   <p><strong>Arabic Total: {{ wl_result.pre_test.arabic_grade|default:0 }}</strong></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -1680,11 +1680,11 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Language Development  / 43</h4>
-                                                   <p>{{ wl_result.pre_test.english_letter_sound|default:0 }}</p>
-                                                   <p>{{ wl_result.pre_test.english_familiar_words|default:0 }}</p>
-                                                   <p>{{ wl_result.pre_test.english_sentence|default:0 }}</p>
-                                                   <p>{{ wl_result.pre_test.english_dictation|default:0 }}</p>
-                                                   <p><strong>{{ wl_result.pre_test.english_grade|default:0 }}</strong></p>
+                                                   <p>English Letter Sound: {{ wl_result.pre_test.english_letter_sound|default:0 }}</p>
+                                                   <p>English Familiar Words: {{ wl_result.pre_test.english_familiar_words|default:0 }}</p>
+                                                   <p>English Sentence: {{ wl_result.pre_test.english_sentence|default:0 }}</p>
+                                                   <p>English Dictation: {{ wl_result.pre_test.english_dictation|default:0 }}</p>
+                                                   <p><strong>English Total: {{ wl_result.pre_test.english_grade|default:0 }}</strong></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -1692,12 +1692,12 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">French Language Development</h4>
-                                                   <p>{{ wl_result.pre_test.french_letter_sound|default:0 }}</p>
-                                                   <p>{{ wl_result.pre_test.french_familiar_words|default:0 }}</p>
-                                                   <p>{{ wl_result.pre_test.french_paragraph|default:0 }}</p>
-                                                   <p>{{ wl_result.pre_test.french_dictation|default:0 }}</p>
-                                                   <p>{{ wl_result.pre_test.french_reading_comprehension|default:0 }}</p>
-                                                   <p><strong>{{ wl_result.pre_test.french_grade|default:0 }}</strong></p>
+                                                   <p>French Letter Sound: {{ wl_result.pre_test.french_letter_sound|default:0 }}</p>
+                                                   <p>French Familiar Words: {{ wl_result.pre_test.french_familiar_words|default:0 }}</p>
+                                                   <p>French Paragraph: {{ wl_result.pre_test.french_paragraph|default:0 }}</p>
+                                                   <p>French Dictation: {{ wl_result.pre_test.french_dictation|default:0 }}</p>
+                                                   <p>French Reading Comprehension: {{ wl_result.pre_test.french_reading_comprehension|default:0 }}</p>
+                                                   <p><strong>French Total: {{ wl_result.pre_test.french_grade|default:0 }}</strong></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -1705,12 +1705,12 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Language Development</h4>
-                                                   <p>{{ wl_result.pre_test.english_letter_sound|default:0 }}</p>
-                                                   <p>{{ wl_result.pre_test.english_familiar_words|default:0 }}</p>
-                                                   <p>{{ wl_result.pre_test.english_paragraph|default:0 }}</p>
-                                                   <p>{{ wl_result.pre_test.english_dictation|default:0 }}</p>
-                                                   <p>{{ wl_result.pre_test.english_reading_comprehension|default:0 }}</p>
-                                                   <p><strong>{{ wl_result.pre_test.english_grade|default:0 }}</strong></p>
+                                                   <p>English Letter Sound: {{ wl_result.pre_test.english_letter_sound|default:0 }}</p>
+                                                   <p>English Familiar Words: {{ wl_result.pre_test.english_familiar_words|default:0 }}</p>
+                                                   <p>English Paragraph: {{ wl_result.pre_test.english_paragraph|default:0 }}</p>
+                                                   <p>English Dictation: {{ wl_result.pre_test.english_dictation|default:0 }}</p>
+                                                   <p>English Reading Comprehension: {{ wl_result.pre_test.english_reading_comprehension|default:0 }}</p>
+                                                   <p><strong>English Total: {{ wl_result.pre_test.english_grade|default:0 }}</strong></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -1718,16 +1718,16 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mathematics</h4>
-                                                   <p>{{ wl_result.pre_test.math_natural_numbers|default:0 }}</p>
-                                                   <p>{{ wl_result.pre_test.math_addition_words|default:0 }}</p>
-                                                   <p>{{ wl_result.pre_test.math_subtraction|default:0 }}</p>
+                                                   <p>Math Natural Numbers: {{ wl_result.pre_test.math_natural_numbers|default:0 }}</p>
+                                                   <p>Math Addition: {{ wl_result.pre_test.math_addition_words|default:0 }}</p>
+                                                   <p>Math Subtraction: {{ wl_result.pre_test.math_subtraction|default:0 }}</p>
                                                    {% if result1.education_program != 'BLN Level 1' %}
-                                                   <p>{{ wl_result.pre_test.math_multiplication|default:0 }}</p>
+                                                   <p>Math Multiplication: {{ wl_result.pre_test.math_multiplication|default:0 }}</p>
                                                    {% endif %}
                                                    {% if result1.education_program == 'BLN Level 3' %}
-                                                   <p>{{ wl_result.pre_test.math_division|default:0 }}</p>
+                                                   <p>Math Division: {{ wl_result.pre_test.math_division|default:0 }}</p>
                                                    {% endif %}
-                                                   <p><strong>{{ wl_result.pre_test.math_grade|default:0 }}</strong></p>
+                                                   <p><strong>Math Total: {{ wl_result.pre_test.math_grade|default:0 }}</strong></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -1751,18 +1751,18 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Language Development</h4>
-                                                   <p>{{ wl_result.post_test.arabic_letter_sound|default:0 }}</p>
-                                                   <p>{{ wl_result.post_test.arabic_alphabet_vowel|default:0 }}</p>
-                                                   <p>{{ wl_result.post_test.arabic_alphabet_long_vowel|default:0 }}</p>
-                                                   <p>{{ wl_result.post_test.arabic_familiar_words|default:0 }}</p>
+                                                   <p>Arabic Letter Sound: {{ wl_result.post_test.arabic_letter_sound|default:0 }}</p>
+                                                   <p>Arabic Alphabet Vowel: {{ wl_result.post_test.arabic_alphabet_vowel|default:0 }}</p>
+                                                   <p>Arabic Alphabet Long Vowel: {{ wl_result.post_test.arabic_alphabet_long_vowel|default:0 }}</p>
+                                                   <p>Arabic Familiar Words: {{ wl_result.post_test.arabic_familiar_words|default:0 }}</p>
                                                    {% if result1.education_program == 'BLN Level 1' %}
-                                                   <p>{{ wl_result.post_test.arabic_sentence|default:0 }}</p>
+                                                   <p>Arabic Sentence: {{ wl_result.post_test.arabic_sentence|default:0 }}</p>
                                                    {% else %}
-                                                   <p>{{ wl_result.post_test.arabic_paragraph|default:0 }}</p>
-                                                   <p>{{ wl_result.post_test.arabic_reading_comprehension|default:0 }}</p>
+                                                   <p>Arabic Paragraph: {{ wl_result.post_test.arabic_paragraph|default:0 }}</p>
+                                                   <p>Arabic Reading Comprehension: {{ wl_result.post_test.arabic_reading_comprehension|default:0 }}</p>
                                                    {% endif %}
-                                                   <p>{{ wl_result.post_test.arabic_dictation|default:0 }}</p>
-                                                   <p><strong>{{ wl_result.post_test.arabic_grade|default:0 }}</strong></p>
+                                                   <p>Arabic Dictation: {{ wl_result.post_test.arabic_dictation|default:0 }}</p>
+                                                   <p><strong>Arabic Total: {{ wl_result.post_test.arabic_grade|default:0 }}</strong></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -1770,11 +1770,11 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Language Development  / 43</h4>
-                                                   <p>{{ wl_result.post_test.english_letter_sound|default:0 }}</p>
-                                                   <p>{{ wl_result.post_test.english_familiar_words|default:0 }}</p>
-                                                   <p>{{ wl_result.post_test.english_sentence|default:0 }}</p>
-                                                   <p>{{ wl_result.post_test.english_dictation|default:0 }}</p>
-                                                   <p><strong>{{ wl_result.post_test.english_grade|default:0 }}</strong></p>
+                                                   <p>English Letter Sound: {{ wl_result.post_test.english_letter_sound|default:0 }}</p>
+                                                   <p>English Familiar Words: {{ wl_result.post_test.english_familiar_words|default:0 }}</p>
+                                                   <p>English Sentence: {{ wl_result.post_test.english_sentence|default:0 }}</p>
+                                                   <p>English Dictation: {{ wl_result.post_test.english_dictation|default:0 }}</p>
+                                                   <p><strong>English Total: {{ wl_result.post_test.english_grade|default:0 }}</strong></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -1782,12 +1782,12 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">French Language Development</h4>
-                                                   <p>{{ wl_result.post_test.french_letter_sound|default:0 }}</p>
-                                                   <p>{{ wl_result.post_test.french_familiar_words|default:0 }}</p>
-                                                   <p>{{ wl_result.post_test.french_paragraph|default:0 }}</p>
-                                                   <p>{{ wl_result.post_test.french_dictation|default:0 }}</p>
-                                                   <p>{{ wl_result.post_test.french_reading_comprehension|default:0 }}</p>
-                                                   <p><strong>{{ wl_result.post_test.french_grade|default:0 }}</strong></p>
+                                                   <p>French Letter Sound: {{ wl_result.post_test.french_letter_sound|default:0 }}</p>
+                                                   <p>French Familiar Words: {{ wl_result.post_test.french_familiar_words|default:0 }}</p>
+                                                   <p>French Paragraph: {{ wl_result.post_test.french_paragraph|default:0 }}</p>
+                                                   <p>French Dictation: {{ wl_result.post_test.french_dictation|default:0 }}</p>
+                                                   <p>French Reading Comprehension: {{ wl_result.post_test.french_reading_comprehension|default:0 }}</p>
+                                                   <p><strong>French Total: {{ wl_result.post_test.french_grade|default:0 }}</strong></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -1795,12 +1795,12 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Language Development</h4>
-                                                   <p>{{ wl_result.post_test.english_letter_sound|default:0 }}</p>
-                                                   <p>{{ wl_result.post_test.english_familiar_words|default:0 }}</p>
-                                                   <p>{{ wl_result.post_test.english_paragraph|default:0 }}</p>
-                                                   <p>{{ wl_result.post_test.english_dictation|default:0 }}</p>
-                                                   <p>{{ wl_result.post_test.english_reading_comprehension|default:0 }}</p>
-                                                   <p><strong>{{ wl_result.post_test.english_grade|default:0 }}</strong></p>
+                                                   <p>English Letter Sound: {{ wl_result.post_test.english_letter_sound|default:0 }}</p>
+                                                   <p>English Familiar Words: {{ wl_result.post_test.english_familiar_words|default:0 }}</p>
+                                                   <p>English Paragraph: {{ wl_result.post_test.english_paragraph|default:0 }}</p>
+                                                   <p>English Dictation: {{ wl_result.post_test.english_dictation|default:0 }}</p>
+                                                   <p>English Reading Comprehension: {{ wl_result.post_test.english_reading_comprehension|default:0 }}</p>
+                                                   <p><strong>English Total: {{ wl_result.post_test.english_grade|default:0 }}</strong></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -1808,16 +1808,16 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mathematics</h4>
-                                                   <p>{{ wl_result.post_test.math_natural_numbers|default:0 }}</p>
-                                                   <p>{{ wl_result.post_test.math_addition_words|default:0 }}</p>
-                                                   <p>{{ wl_result.post_test.math_subtraction|default:0 }}</p>
+                                                   <p>Math Natural Numbers: {{ wl_result.post_test.math_natural_numbers|default:0 }}</p>
+                                                   <p>Math Addition: {{ wl_result.post_test.math_addition_words|default:0 }}</p>
+                                                   <p>Math Subtraction: {{ wl_result.post_test.math_subtraction|default:0 }}</p>
                                                    {% if result1.education_program != 'BLN Level 1' %}
-                                                   <p>{{ wl_result.post_test.math_multiplication|default:0 }}</p>
+                                                   <p>Math Multiplication: {{ wl_result.post_test.math_multiplication|default:0 }}</p>
                                                    {% endif %}
                                                    {% if result1.education_program == 'BLN Level 3' %}
-                                                   <p>{{ wl_result.post_test.math_division|default:0 }}</p>
+                                                   <p>Math Division: {{ wl_result.post_test.math_division|default:0 }}</p>
                                                    {% endif %}
-                                                   <p><strong>{{ wl_result.post_test.math_grade|default:0 }}</strong></p>
+                                                   <p><strong>Math Total: {{ wl_result.post_test.math_grade|default:0 }}</strong></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -1834,18 +1834,18 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Language Development</h4>
-                                                   <p>{% grading_improvement wl_result 'arabic_letter_sound' as grade %}{{ grade }}</p>
-                                                   <p>{% grading_improvement wl_result 'arabic_alphabet_vowel' as grade %}{{ grade }}</p>
-                                                   <p>{% grading_improvement wl_result 'arabic_alphabet_long_vowel' as grade %}{{ grade }}</p>
-                                                   <p>{% grading_improvement wl_result 'arabic_familiar_words' as grade %}{{ grade }}</p>
+                                                   <p>Arabic Letter Sound: {% grading_improvement wl_result 'arabic_letter_sound' as grade %}{{ grade }}</p>
+                                                   <p>Arabic Alphabet Vowel: {% grading_improvement wl_result 'arabic_alphabet_vowel' as grade %}{{ grade }}</p>
+                                                   <p>Arabic Alphabet Long Vowel: {% grading_improvement wl_result 'arabic_alphabet_long_vowel' as grade %}{{ grade }}</p>
+                                                   <p>Arabic Familiar Words: {% grading_improvement wl_result 'arabic_familiar_words' as grade %}{{ grade }}</p>
                                                    {% if result1.education_program == 'BLN Level 1' %}
-                                                   <p>{% grading_improvement wl_result 'arabic_sentence' as grade %}{{ grade }}</p>
+                                                   <p>Arabic Sentence: {% grading_improvement wl_result 'arabic_sentence' as grade %}{{ grade }}</p>
                                                    {% else %}
-                                                   <p>{% grading_improvement wl_result 'arabic_paragraph' as grade %}{{ grade }}</p>
-                                                   <p>{% grading_improvement wl_result 'arabic_reading_comprehension' as grade %}{{ grade }}</p>
+                                                   <p>Arabic Paragraph: {% grading_improvement wl_result 'arabic_paragraph' as grade %}{{ grade }}</p>
+                                                   <p>Arabic Reading Comprehension: {% grading_improvement wl_result 'arabic_reading_comprehension' as grade %}{{ grade }}</p>
                                                    {% endif %}
-                                                   <p>{% grading_improvement wl_result 'arabic_dictation' as grade %}{{ grade }}</p>
-                                                   <p><strong>{% grading_improvement wl_result 'arabic_grade' as grade %}{{ grade }}</strong></p>
+                                                   <p>Arabic Dictation: {% grading_improvement wl_result 'arabic_dictation' as grade %}{{ grade }}</p>
+                                                   <p><strong>Arabic Total: {% grading_improvement wl_result 'arabic_grade' as grade %}{{ grade }}</strong></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -1853,11 +1853,11 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Language Development  / 43</h4>
-                                                   <p>{% grading_improvement wl_result 'english_letter_sound' as grade %}{{ grade }}</p>
-                                                   <p>{% grading_improvement wl_result 'english_familiar_words' as grade %}{{ grade }}</p>
-                                                   <p>{% grading_improvement wl_result 'english_sentence' as grade %}{{ grade }}</p>
-                                                   <p>{% grading_improvement wl_result 'english_dictation' as grade %}{{ grade }}</p>
-                                                   <p><strong>{% grading_improvement wl_result 'english_grade' as grade %}{{ grade }}</strong></p>
+                                                   <p>English Letter Sound: {% grading_improvement wl_result 'english_letter_sound' as grade %}{{ grade }}</p>
+                                                   <p>English Familiar Words: {% grading_improvement wl_result 'english_familiar_words' as grade %}{{ grade }}</p>
+                                                   <p>English Sentence: {% grading_improvement wl_result 'english_sentence' as grade %}{{ grade }}</p>
+                                                   <p>English Dictation: {% grading_improvement wl_result 'english_dictation' as grade %}{{ grade }}</p>
+                                                   <p><strong>English Total: {% grading_improvement wl_result 'english_grade' as grade %}{{ grade }}</strong></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -1865,12 +1865,12 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">French Language Development</h4>
-                                                   <p>{% grading_improvement wl_result 'french_letter_sound' as grade %}{{ grade }}</p>
-                                                   <p>{% grading_improvement wl_result 'french_familiar_words' as grade %}{{ grade }}</p>
-                                                   <p>{% grading_improvement wl_result 'french_paragraph' as grade %}{{ grade }}</p>
-                                                   <p>{% grading_improvement wl_result 'french_dictation' as grade %}{{ grade }}</p>
-                                                   <p>{% grading_improvement wl_result 'french_reading_comprehension' as grade %}{{ grade }}</p>
-                                                   <p><strong>{% grading_improvement wl_result 'french_grade' as grade %}{{ grade }}</strong></p>
+                                                   <p>French Letter Sound: {% grading_improvement wl_result 'french_letter_sound' as grade %}{{ grade }}</p>
+                                                   <p>French Familiar Words: {% grading_improvement wl_result 'french_familiar_words' as grade %}{{ grade }}</p>
+                                                   <p>French Paragraph: {% grading_improvement wl_result 'french_paragraph' as grade %}{{ grade }}</p>
+                                                   <p>French Dictation: {% grading_improvement wl_result 'french_dictation' as grade %}{{ grade }}</p>
+                                                   <p>French Reading Comprehension: {% grading_improvement wl_result 'french_reading_comprehension' as grade %}{{ grade }}</p>
+                                                   <p><strong>French Total: {% grading_improvement wl_result 'french_grade' as grade %}{{ grade }}</strong></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -1878,12 +1878,12 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Language Development</h4>
-                                                   <p>{% grading_improvement wl_result 'english_letter_sound' as grade %}{{ grade }}</p>
-                                                   <p>{% grading_improvement wl_result 'english_familiar_words' as grade %}{{ grade }}</p>
-                                                   <p>{% grading_improvement wl_result 'english_paragraph' as grade %}{{ grade }}</p>
-                                                   <p>{% grading_improvement wl_result 'english_dictation' as grade %}{{ grade }}</p>
-                                                   <p>{% grading_improvement wl_result 'english_reading_comprehension' as grade %}{{ grade }}</p>
-                                                   <p><strong>{% grading_improvement wl_result 'english_grade' as grade %}{{ grade }}</strong></p>
+                                                   <p>English Letter Sound: {% grading_improvement wl_result 'english_letter_sound' as grade %}{{ grade }}</p>
+                                                   <p>English Familiar Words: {% grading_improvement wl_result 'english_familiar_words' as grade %}{{ grade }}</p>
+                                                   <p>English Paragraph: {% grading_improvement wl_result 'english_paragraph' as grade %}{{ grade }}</p>
+                                                   <p>English Dictation: {% grading_improvement wl_result 'english_dictation' as grade %}{{ grade }}</p>
+                                                   <p>English Reading Comprehension: {% grading_improvement wl_result 'english_reading_comprehension' as grade %}{{ grade }}</p>
+                                                   <p><strong>English Total: {% grading_improvement wl_result 'english_grade' as grade %}{{ grade }}</strong></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -1891,16 +1891,16 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mathematics</h4>
-                                                   <p>{% grading_improvement wl_result 'math_natural_numbers' as grade %}{{ grade }}</p>
-                                                   <p>{% grading_improvement wl_result 'math_addition_words' as grade %}{{ grade }}</p>
-                                                   <p>{% grading_improvement wl_result 'math_subtraction' as grade %}{{ grade }}</p>
+                                                   <p>Math Natural Numbers: {% grading_improvement wl_result 'math_natural_numbers' as grade %}{{ grade }}</p>
+                                                   <p>Math Addition: {% grading_improvement wl_result 'math_addition_words' as grade %}{{ grade }}</p>
+                                                   <p>Math Subtraction: {% grading_improvement wl_result 'math_subtraction' as grade %}{{ grade }}</p>
                                                    {% if result1.education_program != 'BLN Level 1' %}
-                                                   <p>{% grading_improvement wl_result 'math_multiplication' as grade %}{{ grade }}</p>
+                                                   <p>Math Multiplication: {% grading_improvement wl_result 'math_multiplication' as grade %}{{ grade }}</p>
                                                    {% endif %}
                                                    {% if result1.education_program == 'BLN Level 3' %}
-                                                   <p>{% grading_improvement wl_result 'math_division' as grade %}{{ grade }}</p>
+                                                   <p>Math Division: {% grading_improvement wl_result 'math_division' as grade %}{{ grade }}</p>
                                                    {% endif %}
-                                                   <p><strong>{% grading_improvement wl_result 'math_grade' as grade %}{{ grade }}</strong></p>
+                                                   <p><strong>Math Total: {% grading_improvement wl_result 'math_grade' as grade %}{{ grade }}</strong></p>
                                                 </div>
                                             </div>
                                         </div>
