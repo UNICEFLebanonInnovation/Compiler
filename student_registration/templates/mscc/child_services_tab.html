@@ -1676,27 +1676,19 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {% if result1.education_program == 'BLN Level 1' %}
-                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Language Development  / 43</h4>
-                                                   <p>English Letter Sound: {{ wl_result.pre_test.english_letter_sound|default:0 }}</p>
-                                                   <p>English Familiar Words: {{ wl_result.pre_test.english_familiar_words|default:0 }}</p>
-                                                   <p>English Sentence: {{ wl_result.pre_test.english_sentence|default:0 }}</p>
-                                                   <p>English Dictation: {{ wl_result.pre_test.english_dictation|default:0 }}</p>
-                                                   <p><strong>English Total: {{ wl_result.pre_test.english_grade|default:0 }}</strong></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {% elif request.user.center.provide_french_language == 'Yes' %}
+                                        {% if request.user.center.provide_french_language == 'Yes' %}
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">French Language Development</h4>
                                                    <p>French Letter Sound: {{ wl_result.pre_test.french_letter_sound|default:0 }}</p>
                                                    <p>French Familiar Words: {{ wl_result.pre_test.french_familiar_words|default:0 }}</p>
+                                                   {% if result1.education_program == 'BLN Level 1' %}
+                                                   <p>French Sentence: {{ wl_result.pre_test.french_sentence|default:0 }}</p>
+                                                   {% else %}
                                                    <p>French Paragraph: {{ wl_result.pre_test.french_paragraph|default:0 }}</p>
-                                                   <p>French Dictation: {{ wl_result.pre_test.french_dictation|default:0 }}</p>
                                                    <p>French Reading Comprehension: {{ wl_result.pre_test.french_reading_comprehension|default:0 }}</p>
+                                                   {% endif %}
+                                                   <p>French Dictation: {{ wl_result.pre_test.french_dictation|default:0 }}</p>
                                                    <p><strong>French Total: {{ wl_result.pre_test.french_grade|default:0 }}</strong></p>
                                                 </div>
                                             </div>
@@ -1766,27 +1758,19 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {% if result1.education_program == 'BLN Level 1' %}
-                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Language Development  / 43</h4>
-                                                   <p>English Letter Sound: {{ wl_result.post_test.english_letter_sound|default:0 }}</p>
-                                                   <p>English Familiar Words: {{ wl_result.post_test.english_familiar_words|default:0 }}</p>
-                                                   <p>English Sentence: {{ wl_result.post_test.english_sentence|default:0 }}</p>
-                                                   <p>English Dictation: {{ wl_result.post_test.english_dictation|default:0 }}</p>
-                                                   <p><strong>English Total: {{ wl_result.post_test.english_grade|default:0 }}</strong></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {% elif request.user.center.provide_french_language == 'Yes' %}
+                                        {% if request.user.center.provide_french_language == 'Yes' %}
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">French Language Development</h4>
                                                    <p>French Letter Sound: {{ wl_result.post_test.french_letter_sound|default:0 }}</p>
                                                    <p>French Familiar Words: {{ wl_result.post_test.french_familiar_words|default:0 }}</p>
+                                                   {% if result1.education_program == 'BLN Level 1' %}
+                                                   <p>French Sentence: {{ wl_result.post_test.french_sentence|default:0 }}</p>
+                                                   {% else %}
                                                    <p>French Paragraph: {{ wl_result.post_test.french_paragraph|default:0 }}</p>
-                                                   <p>French Dictation: {{ wl_result.post_test.french_dictation|default:0 }}</p>
                                                    <p>French Reading Comprehension: {{ wl_result.post_test.french_reading_comprehension|default:0 }}</p>
+                                                   {% endif %}
+                                                   <p>French Dictation: {{ wl_result.post_test.french_dictation|default:0 }}</p>
                                                    <p><strong>French Total: {{ wl_result.post_test.french_grade|default:0 }}</strong></p>
                                                 </div>
                                             </div>
@@ -1849,27 +1833,19 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {% if result1.education_program == 'BLN Level 1' %}
-                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Language Development  / 43</h4>
-                                                   <p>English Letter Sound: {% grading_improvement wl_result 'english_letter_sound' as grade %}{{ grade }}</p>
-                                                   <p>English Familiar Words: {% grading_improvement wl_result 'english_familiar_words' as grade %}{{ grade }}</p>
-                                                   <p>English Sentence: {% grading_improvement wl_result 'english_sentence' as grade %}{{ grade }}</p>
-                                                   <p>English Dictation: {% grading_improvement wl_result 'english_dictation' as grade %}{{ grade }}</p>
-                                                   <p><strong>English Total: {% grading_improvement wl_result 'english_grade' as grade %}{{ grade }}</strong></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {% elif request.user.center.provide_french_language == 'Yes' %}
+                                        {% if request.user.center.provide_french_language == 'Yes' %}
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">French Language Development</h4>
                                                    <p>French Letter Sound: {% grading_improvement wl_result 'french_letter_sound' as grade %}{{ grade }}</p>
                                                    <p>French Familiar Words: {% grading_improvement wl_result 'french_familiar_words' as grade %}{{ grade }}</p>
+                                                   {% if result1.education_program == 'BLN Level 1' %}
+                                                   <p>French Sentence: {% grading_improvement wl_result 'french_sentence' as grade %}{{ grade }}</p>
+                                                   {% else %}
                                                    <p>French Paragraph: {% grading_improvement wl_result 'french_paragraph' as grade %}{{ grade }}</p>
-                                                   <p>French Dictation: {% grading_improvement wl_result 'french_dictation' as grade %}{{ grade }}</p>
                                                    <p>French Reading Comprehension: {% grading_improvement wl_result 'french_reading_comprehension' as grade %}{{ grade }}</p>
+                                                   {% endif %}
+                                                   <p>French Dictation: {% grading_improvement wl_result 'french_dictation' as grade %}{{ grade }}</p>
                                                    <p><strong>French Total: {% grading_improvement wl_result 'french_grade' as grade %}{{ grade }}</strong></p>
                                                 </div>
                                             </div>
