@@ -1859,6 +1859,21 @@ class WLBLNAssessmentForm(forms.ModelForm):
         self.programme_type = programme_type
         self.programme_config = WL_BLN_PROGRAMME_CONFIG.get(programme_type, {})
 
+        center = getattr(getattr(self.request, 'user', None), 'center', None)
+        provide_french_language = getattr(center, 'provide_french_language', None) == "Yes"
+        if provide_french_language:
+            self.programme_config = {
+                field_name: config
+                for field_name, config in self.programme_config.items()
+                if not field_name.startswith('english_')
+            }
+        else:
+            self.programme_config = {
+                field_name: config
+                for field_name, config in self.programme_config.items()
+                if not field_name.startswith('french_')
+            }
+
         form_action = reverse('mscc:wl_bln_assessment_add',
                               kwargs={'registry': registry, 'programme_type': programme_type})
         if instance:

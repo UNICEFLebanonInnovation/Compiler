@@ -1,4 +1,5 @@
 import pytest
+from types import SimpleNamespace
 
 from student_registration.mscc.education_form import WLBLNAssessmentForm
 
@@ -140,3 +141,28 @@ def test_wl_bln_rejects_zero_for_visible_fields():
 
     assert not form.is_valid()
     assert 'english_letter_sound' in form.errors
+
+
+@pytest.mark.parametrize(
+    "provide_french_language, visible_total, hidden_total",
+    [
+        ("Yes", "french_grade", "english_grade"),
+        ("No", "english_grade", "french_grade"),
+    ],
+)
+def test_wl_bln_shows_only_center_language_fields(provide_french_language, visible_total, hidden_total):
+    request = SimpleNamespace(
+        user=SimpleNamespace(
+            center=SimpleNamespace(provide_french_language=provide_french_language)
+        )
+    )
+
+    form = WLBLNAssessmentForm(
+        registry='1',
+        programme_type='BLN Level 1',
+        pre_post='pre',
+        request=request,
+    )
+
+    assert visible_total in form.programme_config
+    assert hidden_total not in form.programme_config
