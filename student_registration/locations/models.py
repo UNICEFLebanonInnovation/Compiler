@@ -8,6 +8,8 @@ from mptt.models import MPTTModel, TreeForeignKey
 from django.contrib.postgres.fields import ArrayField
 
 from django.utils.translation import gettext as _
+from django.db.models import Q
+
 
 
 class LocationType(models.Model):
@@ -284,45 +286,64 @@ class Center(TimeStampedModel):
         verbose_name=_('Nearby PHCC name')
     )
 
+    def current_or_no_round_registrations(self):
+        from student_registration.mscc.models import Registration
+        return Registration.objects.filter(
+            center=self.id,
+            deleted=False
+        ).filter(
+            Q(round__isnull=True) | Q(round__current_year=True)
+        )
+
     @property
     def total_children(self):
-        from student_registration.mscc.models import Registration
-        return Registration.objects.filter(center=self.id).count()
+        return self.current_or_no_round_registrations().count()
 
     @property
     def total_male(self):
-        from student_registration.mscc.models import Registration
-        return Registration.objects.filter(center=self.id, child__gender='Male').count()
+        return self.current_or_no_round_registrations().filter(
+            child__gender='Male'
+        ).count()
 
     @property
     def total_female(self):
-        from student_registration.mscc.models import Registration
-        return Registration.objects.filter(center=self.id, child__gender='Female').count()
+        return self.current_or_no_round_registrations().filter(
+            child__gender='Female'
+        ).count()
 
     @property
     def total_disability(self):
-        from student_registration.mscc.models import Registration
-        return Registration.objects.filter(center=self.id).exclude(child__disability__name_en='No').count()
+        return self.current_or_no_round_registrations().exclude(
+            child__disability__name_en='No'
+        ).count()
 
     @property
     def total_disability_male(self):
-        from student_registration.mscc.models import Registration
-        return Registration.objects.filter(center=self.id, child__gender='Male').exclude(child__disability__name_en='No').count()
+        return self.current_or_no_round_registrations().filter(
+            child__gender='Male'
+        ).exclude(
+            child__disability__name_en='No'
+        ).count()
 
     @property
     def total_disability_female(self):
-        from student_registration.mscc.models import Registration
-        return Registration.objects.filter(center=self.id, child__gender='Female').exclude(child__disability__name_en='No').count()
+        return self.current_or_no_round_registrations().filter(
+            child__gender='Female'
+        ).exclude(
+            child__disability__name_en='No'
+        ).count()
 
     @property
     def total_lebanese(self):
-        from student_registration.mscc.models import Registration
-        return Registration.objects.filter(center=self.id,child__nationality__code='LEB').count()
+        return self.current_or_no_round_registrations().filter(
+            child__nationality__code='LEB'
+        ).count()
 
     @property
     def total_non_lebanese(self):
-        from student_registration.mscc.models import Registration
-        return Registration.objects.filter(center=self.id).exclude(child__nationality__code='LEB').count()
+        return self.current_or_no_round_registrations().exclude(
+            child__nationality__code='LEB'
+        ).count()
 
     @property
     def total_admin_staff(self):
