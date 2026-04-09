@@ -1112,7 +1112,7 @@ class EducationGradingForm(forms.ModelForm):
 
         center = getattr(getattr(self.request, 'user', None), 'center', None)
         provide_french_language = getattr(center, 'provide_french_language', None) == "Yes"
-        self.provide_french_language = provide_french_language 
+        self.provide_french_language = provide_french_language
 
         form_action = reverse('mscc:service_education_grading_add',
                               kwargs={'registry': registry, 'programme_type': programme_type})
@@ -1867,7 +1867,7 @@ class WLBLNAssessmentForm(forms.ModelForm):
                 for field_name, config in self.programme_config.items()
                 if not field_name.startswith('english_')
             }
-        elif provide_french_language == "No":
+        else:
             self.programme_config = {
                 field_name: config
                 for field_name, config in self.programme_config.items()
