@@ -27,6 +27,7 @@ from .models import (
     Packages,
     EducationRSService,
     EducationProgrammeAssessment,
+    EducationProgrammeWLAssessment,
     TarlAssessment,
     YES_NO,
     Round
@@ -2032,9 +2033,9 @@ class WLBLNAssessmentForm(forms.ModelForm):
     def save(self, request=None, instance=None, registry=None, programme_type=None, pre_post=None):
         cleaned_data = self.cleaned_data.copy()
         if not instance:
-            instance = EducationProgrammeAssessment.objects.create(registration_id=registry)
+            instance = EducationProgrammeWLAssessment.objects.create(registration_id=registry)
         else:
-            instance = EducationProgrammeAssessment.objects.get(id=instance)
+            instance = EducationProgrammeWLAssessment.objects.get(id=instance)
 
         if pre_post == 'post':
             instance.post_test = cleaned_data
@@ -2048,7 +2049,7 @@ class WLBLNAssessmentForm(forms.ModelForm):
         return instance
 
     class Meta:
-        model = EducationProgrammeAssessment
+        model = EducationProgrammeWLAssessment
         fields = ('programme_type',)
 
 
