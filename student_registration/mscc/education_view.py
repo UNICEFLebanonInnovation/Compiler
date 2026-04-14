@@ -284,8 +284,10 @@ class WLBLNAssessmentFormView(LoginRequiredMixin,
                 request=self.request
             )
 
+
+
         if instance:
-            assessment = EducationProgrammeAssessment.objects.get(id=instance)
+            assessment = EducationProgrammeWLAssessment.objects.get(id=instance)
             data = assessment.pre_test if pre_post == 'pre' else assessment.post_test
             return WLBLNAssessmentForm(
                 data,

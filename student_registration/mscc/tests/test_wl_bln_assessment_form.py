@@ -166,3 +166,36 @@ def test_wl_bln_shows_only_center_language_fields(provide_french_language, visib
 
     assert visible_total in form.programme_config
     assert hidden_total not in form.programme_config
+
+
+def test_wl_bln_validates_only_visible_language_fields():
+    request = SimpleNamespace(
+        user=SimpleNamespace(
+            center=SimpleNamespace(provide_french_language="Yes")
+        )
+    )
+
+    form = WLBLNAssessmentForm(
+        data={
+            'programme_type': 'BLN Level 1',
+            'french_letter_sound': 13,
+            'french_familiar_words': 10,
+            'french_sentence': 10,
+            'french_dictation': 10,
+            'arabic_letter_sound': 28,
+            'arabic_alphabet_vowel': 5,
+            'arabic_alphabet_long_vowel': 5,
+            'arabic_familiar_words': 10,
+            'arabic_sentence': 10,
+            'arabic_dictation': 10,
+            'math_natural_numbers': 10,
+            'math_addition_words': 8,
+            'math_subtraction': 4,
+        },
+        registry='1',
+        programme_type='BLN Level 1',
+        pre_post='pre',
+        request=request,
+    )
+
+    assert form.is_valid(), form.errors

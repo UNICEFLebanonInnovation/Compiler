@@ -2012,7 +2012,8 @@ class WLBLNAssessmentForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(WLBLNAssessmentForm, self).clean()
         programme_type = cleaned_data.get('programme_type') or self.programme_type
-        programme_config = WL_BLN_PROGRAMME_CONFIG.get(programme_type, {})
+        programme_config = self.programme_config or WL_BLN_PROGRAMME_CONFIG.get(programme_type, {})
+
 
         for total_field, subject_config in programme_config.items():
             total = 0
