@@ -7,7 +7,7 @@ from datetime import datetime
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden, Http404
 import io
 import csv
 import logging
@@ -27,7 +27,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
 from django.db.models import Q, Sum, Avg, F, Func, When
 from django.urls import reverse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
@@ -600,7 +600,7 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = self.get_instance()
 
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance, request=self.request)
@@ -639,6 +639,15 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
         form.save(request=self.request, instance=instance)
         return super(BridgingPostAssessmentView, self).form_valid(form)
 
+    def get_instance(self):
+        pk = self.kwargs.get('pk')
+        try:
+            bridging_id = int(pk)
+        except (TypeError, ValueError):
+            raise Http404("Invalid Disrasa id")
+
+        return get_object_or_404(Bridging, id=bridging_id)
+
 
 class BridgingPreAssessmentView(LoginRequiredMixin,
                              GroupRequiredMixin,
@@ -648,6 +657,15 @@ class BridgingPreAssessmentView(LoginRequiredMixin,
     success_url = '/clm/bridging-list/'
     group_required = [u"CLM_Bridging"]
 
+    def get_instance(self):
+        pk = self.kwargs.get('pk')
+        try:
+            bridging_id = int(pk)
+        except (TypeError, ValueError):
+            raise Http404("Invalid Disrasa id")
+
+        return get_object_or_404(Bridging, id=bridging_id)
+
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
@@ -656,7 +674,7 @@ class BridgingPreAssessmentView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = self.get_instance()
 
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance, request=self.request)
@@ -685,9 +703,10 @@ class BridgingPreAssessmentView(LoginRequiredMixin,
             return form_class(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = self.get_instance()
         form.save(request=self.request, instance=instance)
         return super(BridgingPreAssessmentView, self).form_valid(form)
+
 
 
 class BridgingMidAssessmentView(LoginRequiredMixin,
@@ -820,10 +839,18 @@ class BridgingServiceView(LoginRequiredMixin,
             return form_class(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = self.get_instance()
         form.save(request=self.request, instance=instance)
         return super(BridgingServiceView, self).form_valid(form)
 
+    def get_instance(self):
+        pk = self.kwargs.get('pk')
+        try:
+            bridging_id = int(pk)
+        except (TypeError, ValueError):
+            raise Http404("Invalid Disrasa id")
+
+        return get_object_or_404(Bridging, id=bridging_id)
 
 ####################### API VIEWS #############################
 
