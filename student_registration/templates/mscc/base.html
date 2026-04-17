@@ -1,3 +1,104 @@
 {% extends "base.html" %}
 
 {% block module_name %}Makani{% endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    {% if request.user.partner and request.user.partner.is_world_learning %}
+    <script type="text/javascript">
+        (function () {
+            function hasSaveIntent(element) {
+                if (!element) {
+                    return false;
+                }
+
+                var name = (element.getAttribute('name') || '').toLowerCase();
+                var id = (element.getAttribute('id') || '').toLowerCase();
+                var value = (element.value || '').toLowerCase();
+                var text = ((element.textContent || '').trim() || '').toLowerCase();
+
+                return (
+                    name.indexOf('save') !== -1 ||
+                    id.indexOf('save') !== -1 ||
+                    value.indexOf('save') !== -1 ||
+                    text === 'save'
+                );
+            }
+
+            function isResetOrCancel(element) {
+                if (!element) {
+                    return false;
+                }
+
+                var type = (element.getAttribute('type') || '').toLowerCase();
+                var name = (element.getAttribute('name') || '').toLowerCase();
+                var id = (element.getAttribute('id') || '').toLowerCase();
+
+                return type === 'reset' || name.indexOf('cancel') !== -1 || id.indexOf('cancel') !== -1;
+            }
+
+            function lockForm(form) {
+                var controls = form.querySelectorAll('input, select, textarea, button');
+
+                controls.forEach(function (control) {
+                    if (control.type === 'hidden') {
+                        return;
+                    }
+
+                    if (control.tagName === 'BUTTON' && isResetOrCancel(control)) {
+                        return;
+                    }
+
+                    if (control.tagName === 'INPUT' && isResetOrCancel(control)) {
+                        return;
+                    }
+
+                    if (control.tagName === 'BUTTON' || control.type === 'submit') {
+                        if (!hasSaveIntent(control)) {
+                            return;
+                        }
+                    }
+
+                    control.disabled = true;
+                    control.classList.add('disabled');
+                    control.setAttribute('aria-disabled', 'true');
+                    control.setAttribute('title', 'Editing is disabled for World Learning partners.');
+                });
+            }
+
+            function applyWorldLearningLock() {
+                var forms = document.querySelectorAll('form');
+
+                forms.forEach(function (form) {
+                    var saveControls = Array.prototype.slice.call(
+                        form.querySelectorAll('input[type="submit"], button[type="submit"], button:not([type])')
+                    ).filter(hasSaveIntent);
+
+                    if (!saveControls.length) {
+                        return;
+                    }
+
+                    lockForm(form);
+
+                    if (!form.querySelector('.wl-edit-disabled-alert')) {
+                        var alert = document.createElement('div');
+                        alert.className = 'alert alert-warning wl-edit-disabled-alert';
+                        alert.textContent = 'Editing is disabled for World Learning partners.';
+                        form.insertBefore(alert, form.firstChild);
+                    }
+
+                    form.addEventListener('submit', function (event) {
+                        event.preventDefault();
+                    });
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', applyWorldLearningLock);
+            } else {
+                applyWorldLearningLock();
+            }
+        })();
+    </script>
+    {% endif %}
+{% endblock %}
