@@ -37,7 +37,7 @@
                                 </div>
                             </div>
 
-      {% if request.user|has_group:"MSCC_FULL" %}
+      {% if request.user|has_group:"MSCC_FULL" and request.user.partner and not request.user.partner.is_world_learning %}
                         <div class="page-title-actions">
                                 <a href="#" data-toggle="modal" data-target="#newRoundModal" class="mr-3 btn-icon btn btn-success"><i class="fa fa-plus btn-icon-wrapper"> </i>Register in a new Round</a>
 
@@ -185,5 +185,28 @@
             confirmButton.addEventListener("click", submitNewRound);
         });
     </script>
+
+    {% if request.user.is_authenticated and request.user.partner and request.user.partner.is_world_learning %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const actionWordRegex = /\b(add|edit)\b/i;
+            const controls = document.querySelectorAll('a, button, input[type="button"], input[type="submit"]');
+
+            controls.forEach(function (control) {
+                const textValue = (control.textContent || control.value || '').trim();
+                const tooltip = (control.getAttribute('data-original-title') || '').trim();
+
+                if (actionWordRegex.test(textValue) || actionWordRegex.test(tooltip)) {
+                    control.classList.add('d-none');
+                    control.setAttribute('aria-hidden', 'true');
+                    control.setAttribute('tabindex', '-1');
+                    if (typeof control.disabled !== 'undefined') {
+                        control.disabled = true;
+                    }
+                }
+            });
+        });
+    </script>
+    {% endif %}
 
 {% endblock %}
