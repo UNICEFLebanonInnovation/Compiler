@@ -657,6 +657,43 @@
   });
 </script>
 
+{% if request.user.is_authenticated and request.user.partner and request.user.partner.is_world_learning and request.path|slice:":6" == '/mscc/' %}
+<script type="text/javascript">
+  (function () {
+    function lockMsccForms() {
+      var forms = document.querySelectorAll('form');
+
+      forms.forEach(function (form) {
+        var submitButtons = form.querySelectorAll('input[type="submit"], button[type="submit"], button:not([type])');
+        if (!submitButtons.length) {
+          return;
+        }
+
+        var controls = form.querySelectorAll('input, select, textarea, button');
+        controls.forEach(function (control) {
+          if (control.type === 'hidden') {
+            return;
+          }
+
+          control.disabled = true;
+          control.setAttribute('aria-disabled', 'true');
+        });
+
+        form.addEventListener('submit', function (event) {
+          event.preventDefault();
+        });
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', lockMsccForms);
+    } else {
+      lockMsccForms();
+    }
+  })();
+</script>
+{% endif %}
+
 {% block extra_js %}{% endblock %}
 
 {% block modal %}{% endblock %}
