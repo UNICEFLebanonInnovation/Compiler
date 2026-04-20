@@ -73,13 +73,7 @@ def _bridging_form_actions(request):
         request.user.partner.is_world_learning
     )
     if is_world_learning_partner:
-        return FormActions(
-            Reset(
-                'reset',
-                'Reset',
-                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'
-            )
-        )
+        return HTML('')
 
     return FormActions(
         Submit(
