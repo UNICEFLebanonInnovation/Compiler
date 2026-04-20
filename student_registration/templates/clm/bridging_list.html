@@ -97,8 +97,6 @@
 
 {% block extra_js %}
 
-    {{ block.super }}
-
 {% get_user_token request.user.id as user_token %}
 
     <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
