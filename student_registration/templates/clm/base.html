@@ -65,7 +65,6 @@ Dirasa
                     control.disabled = true;
                     control.classList.add('disabled');
                     control.setAttribute('aria-disabled', 'true');
-                    control.setAttribute('title', 'Editing is disabled for World Learning partners.');
                 });
             }
 
@@ -82,13 +81,6 @@ Dirasa
                     }
 
                     lockForm(form);
-
-                    if (!form.querySelector('.wl-edit-disabled-alert')) {
-                        var alert = document.createElement('div');
-                        alert.className = 'alert alert-warning wl-edit-disabled-alert';
-                        alert.textContent = 'Editing is disabled for World Learning partners.';
-                        form.insertBefore(alert, form.firstChild);
-                    }
 
                     form.addEventListener('submit', function (event) {
                         event.preventDefault();
