@@ -23,6 +23,9 @@
         {% endif %}
       {% endif %}
 
+
+{% if not user.partner or not user.partner.is_world_learning %}
+
 <div tabindex="-1" class="dropdown-divider"></div>
 
         {% get_services record as services %}
@@ -195,6 +198,9 @@
         <!--<a type="button" tabindex="0" class="dropdown-item">Actions</a>-->
         <!--<div tabindex="-1" class="dropdown-divider"></div>-->
         <!--<a type="button" tabindex="0" class="dropdown-item">Dividers</a>-->
+
+      {% endif %}
+      
     </div>
 </div>
 
