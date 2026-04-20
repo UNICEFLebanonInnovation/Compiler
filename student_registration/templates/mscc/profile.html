@@ -195,8 +195,10 @@
             controls.forEach(function (control) {
                 const textValue = (control.textContent || control.value || '').trim();
                 const tooltip = (control.getAttribute('data-original-title') || '').trim();
+                const href = (control.getAttribute('href') || '').trim();
+                const hasRestrictedHref = /\/mscc\/services\/.*\b(add|edit)\b/i.test(href);
 
-                if (actionWordRegex.test(textValue) || actionWordRegex.test(tooltip)) {
+                if (actionWordRegex.test(textValue) || actionWordRegex.test(tooltip) || hasRestrictedHref) {
                     control.classList.add('d-none');
                     control.setAttribute('aria-hidden', 'true');
                     control.setAttribute('tabindex', '-1');
