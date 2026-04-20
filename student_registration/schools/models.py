@@ -891,6 +891,7 @@ class PartnerOrganization(models.Model):
     is_youth = models.BooleanField(blank=True, default=False)
     is_dirasa = models.BooleanField(blank=True, default=False)
     is_makani = models.BooleanField(blank=True, default=False)
+    is_world_learning = models.BooleanField(blank=True, default=False)
 
     bln_round = models.ForeignKey(
         'CLMRound',
