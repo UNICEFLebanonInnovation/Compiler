@@ -4,7 +4,7 @@ $(document).ready(function () {
 
         $('[data-wl-bln-component="1"]').each(function () {
             var totalField = $(this).data('wl-bln-total-target');
-            var value = parseInt($(this).val(), 10);
+            var value = parseFloat($(this).val());
 
             if (!totals[totalField]) {
                 totals[totalField] = 0;
@@ -18,8 +18,9 @@ $(document).ready(function () {
         $('[data-wl-bln-total-field]').each(function () {
             var totalField = $(this).data('wl-bln-total-field');
             var totalValue = totals[totalField] || 0;
-            $(this).val(totalValue);
-            $('[data-wl-bln-total-display="' + totalField + '"]').text(totalValue);
+            var formattedTotal = totalValue.toFixed(2);
+            $(this).val(formattedTotal);
+            $('[data-wl-bln-total-display="' + totalField + '"]').text(formattedTotal);
         });
     }
 

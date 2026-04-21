@@ -1,5 +1,7 @@
 from __future__ import unicode_literals, absolute_import, division
 
+from decimal import Decimal
+
 from django.utils.translation import gettext as _
 from django.utils.safestring import mark_safe
 from django import forms
@@ -179,6 +181,21 @@ WL_BLN_PROGRAMME_CONFIG = {
         },
     },
 }
+
+
+def wl_bln_numeric_field(label, readonly=False):
+    attrs = {'step': '0.01', 'min': '0'}
+    if readonly:
+        attrs['readonly'] = 'readonly'
+    return forms.DecimalField(
+        label=label,
+        required=False,
+        min_value=0,
+        initial=0,
+        max_digits=8,
+        decimal_places=2,
+        widget=forms.NumberInput(attrs=attrs)
+    )
 
 
 class DiagnosticAssessmentForm(forms.ModelForm):
@@ -1794,58 +1811,38 @@ class EducationGradingForm(forms.ModelForm):
 class WLBLNAssessmentForm(forms.ModelForm):
     programme_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
-    english_letter_sound = forms.IntegerField(label=_('English - Letter Sound'), required=False, min_value=0, initial=0)
-    english_familiar_words = forms.IntegerField(label=_('English - Familiar Words'), required=False, min_value=0, initial=0)
-    english_sentence = forms.IntegerField(label=_('English - Sentence'), required=False, min_value=0, initial=0)
-    english_paragraph = forms.IntegerField(label=_('English - Paragraph'), required=False, min_value=0, initial=0)
-    english_dictation = forms.IntegerField(label=_('English - Dictation'), required=False, min_value=0, initial=0)
-    english_reading_comprehension = forms.IntegerField(label=_('English - Reading Comprehension'), required=False, min_value=0, initial=0)
-    english_grade = forms.IntegerField(
-        label=_('English Total'),
-        required=False,
-        initial=0,
-        widget=forms.NumberInput(attrs={'readonly': 'readonly'})
-    )
+    english_letter_sound = wl_bln_numeric_field(_('English - Letter Sound'))
+    english_familiar_words = wl_bln_numeric_field(_('English - Familiar Words'))
+    english_sentence = wl_bln_numeric_field(_('English - Sentence'))
+    english_paragraph = wl_bln_numeric_field(_('English - Paragraph'))
+    english_dictation = wl_bln_numeric_field(_('English - Dictation'))
+    english_reading_comprehension = wl_bln_numeric_field(_('English - Reading Comprehension'))
+    english_grade = wl_bln_numeric_field(_('English Total'), readonly=True)
 
-    french_letter_sound = forms.IntegerField(label=_('French - Letter Sound'), required=False, min_value=0, initial=0)
-    french_familiar_words = forms.IntegerField(label=_('French - Familiar Words'), required=False, min_value=0, initial=0)
-    french_sentence = forms.IntegerField(label=_('French - Sentence'), required=False, min_value=0, initial=0)
-    french_paragraph = forms.IntegerField(label=_('French - Paragraph'), required=False, min_value=0, initial=0)
-    french_dictation = forms.IntegerField(label=_('French - Dictation'), required=False, min_value=0, initial=0)
-    french_reading_comprehension = forms.IntegerField(label=_('French - Reading Comprehension'), required=False, min_value=0, initial=0)
-    french_grade = forms.IntegerField(
-        label=_('French Total'),
-        required=False,
-        initial=0,
-        widget=forms.NumberInput(attrs={'readonly': 'readonly'})
-    )
+    french_letter_sound = wl_bln_numeric_field(_('French - Letter Sound'))
+    french_familiar_words = wl_bln_numeric_field(_('French - Familiar Words'))
+    french_sentence = wl_bln_numeric_field(_('French - Sentence'))
+    french_paragraph = wl_bln_numeric_field(_('French - Paragraph'))
+    french_dictation = wl_bln_numeric_field(_('French - Dictation'))
+    french_reading_comprehension = wl_bln_numeric_field(_('French - Reading Comprehension'))
+    french_grade = wl_bln_numeric_field(_('French Total'), readonly=True)
 
-    arabic_letter_sound = forms.IntegerField(label=_('Arabic - Letter Sound'), required=False, min_value=0, initial=0)
-    arabic_alphabet_vowel = forms.IntegerField(label=_('Arabic - Alphabet letters with vowel'), required=False, min_value=0, initial=0)
-    arabic_alphabet_long_vowel = forms.IntegerField(label=_('Arabic - Alphabet letters with long vowel'), required=False, min_value=0, initial=0)
-    arabic_familiar_words = forms.IntegerField(label=_('Arabic - Familiar Words'), required=False, min_value=0, initial=0)
-    arabic_sentence = forms.IntegerField(label=_('Arabic - Sentence'), required=False, min_value=0, initial=0)
-    arabic_paragraph = forms.IntegerField(label=_('Arabic - Paragraph'), required=False, min_value=0, initial=0)
-    arabic_reading_comprehension = forms.IntegerField(label=_('Arabic - Reading Comprehension'), required=False, min_value=0, initial=0)
-    arabic_dictation = forms.IntegerField(label=_('Arabic - Dictation'), required=False, min_value=0, initial=0)
-    arabic_grade = forms.IntegerField(
-        label=_('Arabic Total'),
-        required=False,
-        initial=0,
-        widget=forms.NumberInput(attrs={'readonly': 'readonly'})
-    )
+    arabic_letter_sound = wl_bln_numeric_field(_('Arabic - Letter Sound'))
+    arabic_alphabet_vowel = wl_bln_numeric_field(_('Arabic - Alphabet letters with vowel'))
+    arabic_alphabet_long_vowel = wl_bln_numeric_field(_('Arabic - Alphabet letters with long vowel'))
+    arabic_familiar_words = wl_bln_numeric_field(_('Arabic - Familiar Words'))
+    arabic_sentence = wl_bln_numeric_field(_('Arabic - Sentence'))
+    arabic_paragraph = wl_bln_numeric_field(_('Arabic - Paragraph'))
+    arabic_reading_comprehension = wl_bln_numeric_field(_('Arabic - Reading Comprehension'))
+    arabic_dictation = wl_bln_numeric_field(_('Arabic - Dictation'))
+    arabic_grade = wl_bln_numeric_field(_('Arabic Total'), readonly=True)
 
-    math_natural_numbers = forms.IntegerField(label=_('Math - Natural Numbers'), required=False, min_value=0, initial=0)
-    math_addition_words = forms.IntegerField(label=_('Math - Addition'), required=False, min_value=0, initial=0)
-    math_subtraction = forms.IntegerField(label=_('Math - Subtraction'), required=False, min_value=0, initial=0)
-    math_multiplication = forms.IntegerField(label=_('Math - Multiplication'), required=False, min_value=0, initial=0)
-    math_division = forms.IntegerField(label=_('Math - Division'), required=False, min_value=0, initial=0)
-    math_grade = forms.IntegerField(
-        label=_('Math Total'),
-        required=False,
-        initial=0,
-        widget=forms.NumberInput(attrs={'readonly': 'readonly'})
-    )
+    math_natural_numbers = wl_bln_numeric_field(_('Math - Natural Numbers'))
+    math_addition_words = wl_bln_numeric_field(_('Math - Addition'))
+    math_subtraction = wl_bln_numeric_field(_('Math - Subtraction'))
+    math_multiplication = wl_bln_numeric_field(_('Math - Multiplication'))
+    math_division = wl_bln_numeric_field(_('Math - Division'))
+    math_grade = wl_bln_numeric_field(_('Math Total'), readonly=True)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -1907,6 +1904,8 @@ class WLBLNAssessmentForm(forms.ModelForm):
                 self.fields[component_name].widget.attrs.update({
                     'data-wl-bln-component': '1',
                     'data-wl-bln-total-target': total_field,
+                    'step': '0.01',
+                    'min': '0',
                 })
 
         for field_name, field in self.fields.items():
@@ -1966,7 +1965,7 @@ class WLBLNAssessmentForm(forms.ModelForm):
                     Div(
                         HTML(
                             '<input type="number" name="{0}" value="{1}" class="numberinput form-control" '
-                            'id="id_{0}" readonly="readonly" data-wl-bln-total-field="{0}">'.format(
+                            'id="id_{0}" readonly="readonly" step="0.01" min="0" data-wl-bln-total-field="{0}">'.format(
                                 total_field,
                                 total_value,
                             )
@@ -2001,12 +2000,12 @@ class WLBLNAssessmentForm(forms.ModelForm):
     def _set_initial_totals(self):
         source = self._score_source()
         for total_field, subject_config in self.programme_config.items():
-            total = 0
+            total = Decimal('0')
             for component_name, _label, _max_score in subject_config['components']:
                 try:
-                    total += int(source.get(component_name) or 0)
+                    total += Decimal(str(source.get(component_name) or 0))
                 except (TypeError, ValueError):
-                    total += 0
+                    total += Decimal('0')
             self.fields[total_field].initial = total
 
     def clean(self):
@@ -2016,17 +2015,17 @@ class WLBLNAssessmentForm(forms.ModelForm):
 
 
         for total_field, subject_config in programme_config.items():
-            total = 0
+            total = Decimal('0')
             for component_name, _component_label, max_score in subject_config['components']:
                 value = cleaned_data.get(component_name)
-                if value in (None, '', 0):
+                if value in (None, ''):
                     self.add_error(component_name, 'This field is required')
-                    value = 0
+                    value = Decimal('0')
                 if value is not None and value not in ('',):
                     if value > max_score:
                         self.add_error(component_name, 'Max value is {0}'.format(max_score))
-                    total += value or 0
-                cleaned_data[component_name] = value or 0
+                    total += value or Decimal('0')
+                cleaned_data[component_name] = value or Decimal('0')
             cleaned_data[total_field] = total
 
         return cleaned_data

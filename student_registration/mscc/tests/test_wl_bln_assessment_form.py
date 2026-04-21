@@ -1,5 +1,6 @@
 import pytest
 from types import SimpleNamespace
+from decimal import Decimal
 
 from student_registration.mscc.education_form import WLBLNAssessmentForm
 
@@ -32,10 +33,10 @@ def test_wl_bln_pre_form_computes_totals():
     )
 
     assert form.is_valid(), form.errors
-    assert form.cleaned_data['english_grade'] == 43
-    assert form.cleaned_data['french_grade'] == 43
-    assert form.cleaned_data['arabic_grade'] == 68
-    assert form.cleaned_data['math_grade'] == 22
+    assert form.cleaned_data['english_grade'] == Decimal('43')
+    assert form.cleaned_data['french_grade'] == Decimal('43')
+    assert form.cleaned_data['arabic_grade'] == Decimal('68')
+    assert form.cleaned_data['math_grade'] == Decimal('22')
 
 
 def test_wl_bln_post_form_computes_totals():
@@ -70,10 +71,10 @@ def test_wl_bln_post_form_computes_totals():
     )
 
     assert form.is_valid(), form.errors
-    assert form.cleaned_data['english_grade'] == 65
-    assert form.cleaned_data['french_grade'] == 65
-    assert form.cleaned_data['arabic_grade'] == 70
-    assert form.cleaned_data['math_grade'] == 32
+    assert form.cleaned_data['english_grade'] == Decimal('65')
+    assert form.cleaned_data['french_grade'] == Decimal('65')
+    assert form.cleaned_data['arabic_grade'] == Decimal('70')
+    assert form.cleaned_data['math_grade'] == Decimal('32')
 
 
 def test_wl_bln_validates_component_maximums():
@@ -112,7 +113,7 @@ def test_wl_bln_validates_component_maximums():
     assert 'english_paragraph' in form.errors
 
 
-def test_wl_bln_rejects_zero_for_visible_fields():
+def test_wl_bln_allows_zero_for_visible_fields():
     form = WLBLNAssessmentForm(
         data={
             'programme_type': 'BLN Level 1',
@@ -139,8 +140,8 @@ def test_wl_bln_rejects_zero_for_visible_fields():
         pre_post='pre',
     )
 
-    assert not form.is_valid()
-    assert 'english_letter_sound' in form.errors
+    assert form.is_valid(), form.errors
+    assert form.cleaned_data['english_letter_sound'] == Decimal('0')
 
 
 @pytest.mark.parametrize(
