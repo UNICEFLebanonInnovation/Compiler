@@ -6,14 +6,15 @@
     <i class="fa fa-list"></i>
   </a>
 
-  <a href="{% url 'schools:club_add' record.id %}" class="btn btn-success col-icon">
-    <i class="fa fa-plus"></i>
-  </a>
+  {% if not request.user.partner or not request.user.partner.is_world_learning %}
+    <a href="{% url 'schools:club_add' record.id %}" class="btn btn-success col-icon">
+      <i class="fa fa-plus"></i>
+    </a>
+  {% endif %}
 
 </div>
 {% else %}
     {% trans "Not allowed" %}
 {% endif %}
-
 
 
