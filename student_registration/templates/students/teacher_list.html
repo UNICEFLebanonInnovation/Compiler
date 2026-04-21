@@ -45,8 +45,10 @@
                             </div>
                         <div class="page-title-actions">
      {% if 'Bridging'|is_allowed_create %}
+         {% if not request.user.partner or not request.user.partner.is_world_learning %}
 <a href="{% url 'students:teacher_add' %}" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add new Teacher</a>
-{% endif %}
+         {% endif %}
+     {% endif %}
 
                         </div>
                         </div>

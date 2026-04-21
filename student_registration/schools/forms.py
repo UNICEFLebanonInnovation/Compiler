@@ -15,6 +15,22 @@ from student_registration.locations.models import Location
 from .serializers import SchoolSerializer
 
 
+def _school_related_form_actions(request):
+    is_world_learning_partner = bool(
+        request
+        and getattr(request.user, 'partner', None)
+        and request.user.partner.is_world_learning
+    )
+    if is_world_learning_partner:
+        return HTML('')
+    return FormActions(
+        Submit('save', 'Save',
+               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+        Reset('reset', 'Reset',
+              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+    )
+
+
 class ProfileForm(forms.ModelForm):
 
     email = forms.EmailField(
@@ -3356,8 +3372,10 @@ class SchoolForm(forms.ModelForm):
         super(SchoolForm, self).__init__(*args, **kwargs)
 
         is_Kayany = False
+        is_world_learning_partner = False
         if self.request.user.partner:
             is_Kayany = self.request.user.partner.is_Kayany
+            is_world_learning_partner = self.request.user.partner.is_world_learning
         choices = list()
         if not is_Kayany:
             choices.append(('Level one', _('Level one')))
@@ -3385,6 +3403,14 @@ class SchoolForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
+        form_actions = HTML('')
+        if not is_world_learning_partner:
+            form_actions = FormActions(
+                Submit('save', 'Save',
+                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                Reset('reset', 'Reset',
+                      css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+            )
 
         self.helper.layout = Layout(
             Div(
@@ -3523,12 +3549,7 @@ class SchoolForm(forms.ModelForm):
                     Div('wfp_service_type', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
-                FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-                ),
+                form_actions,
                 css_id='step-4'
             )
         )
@@ -3681,12 +3702,7 @@ class ClubForm(forms.ModelForm):
                     Div('number_children', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
-                FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-                ),
+                _school_related_form_actions(self.request),
                 css_id='step-1'
             )
         )
@@ -3766,12 +3782,7 @@ class MeetingForm(forms.ModelForm):
                     Div('number_participants', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
-                FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-                ),
+                _school_related_form_actions(self.request),
                 css_id='step-1'
             )
         )
@@ -3841,12 +3852,7 @@ class CommunityInitiativeForm(forms.ModelForm):
                     Div('number_initiatives', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
-                FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-                ),
+                _school_related_form_actions(self.request),
                 css_id='step-1'
             )
         )
@@ -3939,12 +3945,7 @@ class HealthVisitForm(forms.ModelForm):
                     Div('summary', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
-                FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-                ),
+                _school_related_form_actions(self.request),
                 css_id='step-1'
             )
         )

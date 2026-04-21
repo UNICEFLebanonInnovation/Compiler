@@ -13,7 +13,7 @@
           {% trans "Edit" %}</a>
       {% endif %}
 
-      {% if column.attrs.url_delete %}
+      {% if column.attrs.url_delete and not request.user.partner.is_world_learning %}
         <a type="button"
            href="{{ column.attrs.url_delete }}{{ record.school_id }}/{{ record.id }}/"
            tabindex="0"
