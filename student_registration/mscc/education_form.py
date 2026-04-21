@@ -198,6 +198,16 @@ def wl_bln_numeric_field(label, readonly=False):
     )
 
 
+def wl_bln_json_safe(data):
+    if isinstance(data, Decimal):
+        return float(data)
+    if isinstance(data, dict):
+        return {key: wl_bln_json_safe(value) for key, value in data.items()}
+    if isinstance(data, (list, tuple)):
+        return [wl_bln_json_safe(value) for value in data]
+    return data
+
+
 class DiagnosticAssessmentForm(forms.ModelForm):
     # Pre Test
     pre_attended_arabic = forms.ChoiceField(
@@ -2031,7 +2041,7 @@ class WLBLNAssessmentForm(forms.ModelForm):
         return cleaned_data
 
     def save(self, request=None, instance=None, registry=None, programme_type=None, pre_post=None):
-        cleaned_data = self.cleaned_data.copy()
+        cleaned_data = wl_bln_json_safe(self.cleaned_data.copy())
         if not instance:
             instance = EducationProgrammeWLAssessment.objects.create(registration_id=registry)
         else:
