@@ -45,7 +45,9 @@
                                 </div>
                             </div>
                         <div class="page-title-actions">
+                          {% if not request.user.partner or not request.user.partner.is_world_learning %}
                           <a href="{% url 'schools:health_visit_add' school_id %}" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Health Visit</a>
+                          {% endif %}
                         </div>
                         </div>
 </div>

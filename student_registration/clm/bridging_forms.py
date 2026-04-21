@@ -65,6 +65,29 @@ from django.forms.widgets import ClearableFileInput
 
 YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 
+
+def _bridging_form_actions(request):
+    is_world_learning_partner = (
+        request and
+        getattr(request.user, 'partner', None) and
+        request.user.partner.is_world_learning
+    )
+    if is_world_learning_partner:
+        return HTML('')
+
+    return FormActions(
+        Submit(
+            'save',
+            'Save',
+            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'
+        ),
+        Reset(
+            'reset',
+            'Reset',
+            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'
+        ),
+    )
+
 import datetime
 YEARS = list(((str(x), x) for x in range(Person.CURRENT_YEAR-20, Person.CURRENT_YEAR-2)))
 YEARS.insert(0, ('', '---------'))
@@ -1274,12 +1297,7 @@ class BridgingForm(CommonForm):
                         Div('consent_parents', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
-                    FormActions(
-                        Submit('save', 'Save',
-                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                        Reset('reset', 'Reset',
-                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-                    ),
+                    _bridging_form_actions(self.request),
                     css_id='step-6',
                     style='display: none;'
                 )
@@ -1654,12 +1672,7 @@ class BridgingForm(CommonForm):
                         Div('consent_parents', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
-                    FormActions(
-                        Submit('save', 'Save',
-                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                        Reset('reset', 'Reset',
-                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-                    ),
+                    _bridging_form_actions(self.request),
                     css_id='step-6',
                     style='display: none;'
                 )
@@ -2247,7 +2260,7 @@ class BridgingPreAssessmentForm(forms.ModelForm):
                         Div(HTML('<strong>Total scores (Math) / {}</strong>'.format(math_total)), Div('math_sum', css_class='col-md-3'), css_class='row card-body'),
                         css_id='assessment_scores_section'
                     ),
-                    FormActions(Submit('save', 'Save', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'), Reset('reset', 'Reset', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'))
+                    _bridging_form_actions(self.request)
                 )
             )
         else:
@@ -2256,7 +2269,7 @@ class BridgingPreAssessmentForm(forms.ModelForm):
                     Div(HTML('<h4 id="alternatives-to-hidden-labels">' + _('Pre-Assessment') + '</h4>'), css_class='row card-body'),
                     Div(Div('registration_level', css_class='col-md-3 d-none'), Div('language', css_class='col-md-3 d-none'), css_class='row card-body'),
                     Div(HTML('<span class="badge-form-2 badge-pill" id="span_exam1">1</span>'), Div('exam1', css_class='col-md-3'), css_class='row card-body'),
-                    FormActions(Submit('save', 'Save', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'), Reset('reset', 'Reset', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'))
+                    _bridging_form_actions(self.request)
                 )
             )
 
@@ -2863,12 +2876,7 @@ class BridgingAssessmentForm(forms.ModelForm):
                         Div(HTML('<strong>Total scores (Math) / {}</strong>'.format(math_total)), Div('math_sum', css_class='col-md-3'), css_class='row card-body'),
                         css_id='assessment_scores_section'
                     ),
-                    FormActions(
-                        Submit('save', 'Save',
-                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                        Reset('reset', 'Reset',
-                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-                    )
+                    _bridging_form_actions(self.request)
                 )
             )
         else:
@@ -2928,12 +2936,7 @@ class BridgingAssessmentForm(forms.ModelForm):
                         Div('exam3', css_class='col-md-3'),
                         css_class='row grades card-body',
                     ),
-                    FormActions(
-                        Submit('save', 'Save',
-                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                        Reset('reset', 'Reset',
-                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-                    )
+                    _bridging_form_actions(self.request)
                 )
             )
 
@@ -3654,12 +3657,7 @@ class BridgingServiceForm(forms.ModelForm):
                     Div('child_received_internet', css_class='col-md-4'),
                     css_class='row d-none',
                 ),
-                FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-                )
+                _bridging_form_actions(self.request)
             )
         )
 
@@ -3971,12 +3969,7 @@ class BridgingFollowupForm(forms.ModelForm):
                 #     Div('child_health_concern', css_class='col-md-4'),
                 #     css_class='row card-body',
                 # ),
-                FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-                ),
+                _bridging_form_actions(self.request),
                 # css_id='visits step-2',
                 css_id='step-2',
             )
