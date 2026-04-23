@@ -506,6 +506,10 @@ class MainListView(LoginRequiredMixin,
 
     filterset_class = MainFilter
 
+    @staticmethod
+    def _is_world_learning_partner(partner):
+        return bool(partner and partner.is_world_learning)
+
     def get_queryset(self):
         user = self.request.user
         center_id = user.center_id
@@ -583,6 +587,27 @@ class MainListView(LoginRequiredMixin,
             return self.filterset_class
 
         return self.filterset_class
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        center = getattr(user, 'center', None)
+        user_partner = getattr(user, 'partner', None)
+        center_partner = getattr(center, 'partner', None)
+
+        is_world_learning_partner = (
+            self._is_world_learning_partner(user_partner)
+            or self._is_world_learning_partner(center_partner)
+        )
+
+        context['show_add_new_beneficiary'] = (
+            has_group(user, 'MSCC_FULL')
+            and has_group(user, 'MSCC_CENTER')
+            and user.center_id
+            and not is_world_learning_partner
+        )
+        context['show_child_registration_modal'] = not is_world_learning_partner
+        return context
 
 
 class MainViewSet(mixins.RetrieveModelMixin,

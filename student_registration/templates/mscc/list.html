@@ -57,13 +57,11 @@
                             </div>
 
                         <div class="page-title-actions">
-{% with partner=request.user.partner %}
-{% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id and partner and not partner.is_world_learning %}
+{% if show_add_new_beneficiary %}
 
 <a href="#" data-toggle="modal" data-target="#child-registration-modal" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Beneficiary</a>
 
 {% endif %}
-{% endwith %}
                         </div>
                         </div>
 </div>
@@ -117,8 +115,7 @@
 {% endblock %}
 
 {% block modal %}
-{% with partner=request.user.partner %}
-{% if not partner or not partner.is_world_learning %}
+{% if show_child_registration_modal %}
 <div class="modal fade" id="child-registration-modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -138,7 +135,6 @@
   </div>
 </div>
 {% endif %}
-{% endwith %}
 
 <div class="modal fade" id="exportOptionsModal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
