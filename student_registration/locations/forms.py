@@ -253,9 +253,23 @@ class CenterForm(forms.ModelForm):
         if pk:
             form_action = reverse('locations:center_edit', kwargs={'pk': pk})
 
+        is_world_learning_partner = bool(
+            self.request
+            and getattr(self.request.user, 'partner', None)
+            and self.request.user.partner.is_world_learning
+        )
+
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
+        form_actions = HTML('')
+        if not (pk and is_world_learning_partner):
+            form_actions = FormActions(
+                Submit('save', 'Save',
+                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                Reset('reset', 'Reset',
+                      css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+            )
         self.helper.layout = Layout(
             Div(
                 Div(
@@ -330,13 +344,7 @@ class CenterForm(forms.ModelForm):
                     Div('is_active', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
-                FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-
-                ),
+                form_actions,
                 css_id='step-1',
             ),
         )
