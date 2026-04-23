@@ -18,7 +18,9 @@
             <h5 class="card-title" style="display: inline-block; margin-right: 10px;">Program Staff List</h5>
               {% if request.user|has_group:"MSCC_CENTER" %}
                   <th>
+                    {% if not request.user.partner or not request.user.partner.is_world_learning %}
                     <a href="{% url 'locations:program_staff_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add Program Staff." style="display: inline-block;"><i class="pe-7s-plus"></i></a>
+                    {% endif %}
                   </th>
               {% endif %}
 
@@ -46,7 +48,9 @@
                         {% if request.user|has_group:"MSCC_CENTER" %}
                           <th>
                             <a href="{% url 'locations:program_staff_edit' program_staff.center.id program_staff.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Program Staff."><i class="pe-7s-pen"></i></a>
+                            {% if not request.user.partner or not request.user.partner.is_world_learning %}
                             <a href="" class="delete-program-staff" data-id="{{ program_staff.id }}" data-toggle="tooltip" data-placement="top" data-original-title="Delete Program Staff."><i class="pe-7s-trash" style="color: red;"></i></a>
+                            {% endif %}
                           </th>
                         {% endif %}
                         <td> {{ program_staff.facilitator_name }} </td>
@@ -80,7 +84,6 @@
 </div>
 
 </div>
-
 
 
 
