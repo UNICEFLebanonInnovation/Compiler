@@ -116,12 +116,14 @@
                                                             <span>Student Registration</span>
                                                         </a>
                                                     </li>
+                                                  {% if not request.user.partner or not request.user.partner.is_world_learning %}
                                                     <li class="nav-item">
                                                         <a href="{% url 'mscc:attendance' %}" class="nav-link">
                                                             <i class="nav-link-icon lnr-book"></i>
                                                             <span>Student Attendance</span>
                                                         </a>
                                                     </li>
+                                                  {% endif %}
                                                     <li class="nav-item">
                                                       {% if request.user|has_group:"MSCC_CENTER" and request.user.center_id %}
                                                         <a href="{% url 'locations:center_profile' request.user.center_id %}" class="nav-link">
@@ -154,12 +156,15 @@
                                                             <span>Student Registration</span>
                                                         </a>
                                                     </li>
+                                                  {% if not request.user.partner or not request.user.partner.is_world_learning %}
                                                     <li class="nav-item">
                                                         <a href="{% url 'clm:attendance' %}" class="nav-link">
                                                             <i class="nav-link-icon lnr-book"></i>
                                                             <span>Student Attendance</span>
                                                         </a>
                                                     </li>
+
+                                                  {% endif %}
                                                     <li>
                                                         <a href="{% url 'schools:school_list' %}" class="nav-link">
                                                             <i class="nav-link-icon lnr-picture"></i>

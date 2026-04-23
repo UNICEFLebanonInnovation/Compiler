@@ -40,6 +40,7 @@
                                                         <span class="pl-1"> </span></div>
                                                 </div>
                                             </div>
+                                            {% if not request.user.partner or not request.user.partner.is_world_learning %}
                                             <div class="col-sm-6">
                                                 <div class="widget-chart widget-chart-hover">
                                                     <div class="icon-wrapper rounded-circle">
@@ -53,6 +54,7 @@
                                                         <span class="pl-1"></span></div>
                                                 </div>
                                             </div>
+                                            {% endif %}
                                             <div class="col-sm-6">
                                                 <div class="widget-chart widget-chart-hover">
                                                     <div class="icon-wrapper rounded-circle">
