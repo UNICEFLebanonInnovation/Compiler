@@ -1186,6 +1186,7 @@ class EducationService(TimeStampedModel):
         ('Other', _('Other')),
     )
     EDUCATION_PROGRAM = Choices(
+        ('', '----------'),
         ('BLN Level 1', _('BLN Level 1')),
         ('BLN Level 2', _('BLN Level 2')),
         ('BLN Level 3', _('BLN Level 3')),

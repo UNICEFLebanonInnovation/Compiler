@@ -716,6 +716,8 @@ class EducationServiceForm(forms.ModelForm):
         display_edu_section = ''
         if package_type != 'Core-Package':
             display_edu_section = ' d-none'
+            self.fields['education_program'].choices = []
+            self.fields['education_program'].initial = ''
             self.fields['education_program'].required = False
             self.fields['class_section'].required = False
             self.fields['registration_date'].required = False
