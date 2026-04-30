@@ -233,7 +233,7 @@ $(document).ready(function() {
             if (hasBootstrapModal()) {
                 $('#formErrorModal').modal('show');
             } else if (isRsAddPage()) {
-                $('#formErrorModal').addClass('show').css('display', 'block').attr('aria-hidden', 'false');
+                showModalFallback('#formErrorModal');
             }
         }
     });
@@ -258,7 +258,7 @@ $(document).ready(function() {
             if (hasBootstrapModal()) {
                 $('#formErrorModal').modal('show');
             } else if (isRsAddPage()) {
-                $('#formErrorModal').addClass('show').css('display', 'block').attr('aria-hidden', 'false');
+                showModalFallback('#formErrorModal');
             }
         }
     });
@@ -619,6 +619,23 @@ function isRsAddPage()
 function hasBootstrapModal()
 {
     return typeof $.fn.modal === 'function';
+}
+
+
+function hideModalFallback(modalSelector)
+{
+    var modal = $(modalSelector);
+    if (document.activeElement && modal.has(document.activeElement).length) {
+        $(document.activeElement).trigger('blur');
+        $('body').trigger('focus');
+    }
+    modal.removeClass('show').css('display', 'none').attr('aria-hidden', 'true');
+}
+
+function showModalFallback(modalSelector)
+{
+    var modal = $(modalSelector);
+    modal.addClass('show').css('display', 'block').attr('aria-hidden', 'false');
 }
 
 function reorganizeForm()
@@ -1269,7 +1286,7 @@ function validateMainForm(showModal, step) {
         if (hasBootstrapModal()) {
             errorModal.modal('show');
         } else if (isRsAddPage()) {
-            errorModal.addClass('show').css('display', 'block').attr('aria-hidden', 'false');
+            showModalFallback('#formErrorModal');
         }
     }
 
@@ -1297,9 +1314,16 @@ $(document).ready(function() {
     if (hasBootstrapModal()) {
         $('#formErrorModal').on('hidden.bs.modal', resetErrorModalContent);
     } else if (isRsAddPage()) {
+        $('#formErrorModal .swal2-confirm').removeAttr('onclick');
+        $('#formSuccessModal .swal2-confirm').removeAttr('onclick');
+
         $('#formErrorModal').on('click', '.swal2-confirm', function() {
-            $('#formErrorModal').removeClass('show').css('display', 'none').attr('aria-hidden', 'true');
+            hideModalFallback('#formErrorModal');
             resetErrorModalContent();
+        });
+
+        $('#formSuccessModal').on('click', '.swal2-confirm', function() {
+            hideModalFallback('#formSuccessModal');
         });
     }
 });
