@@ -230,11 +230,7 @@ $(document).ready(function() {
             $('#next-btn22').trigger('click');
             $(this).removeClass('error-field');
          }else{
-            if (hasBootstrapModal()) {
-                $('#formErrorModal').modal('show');
-            } else if (isRsAddPage()) {
-                showModalFallback('#formErrorModal');
-            }
+            validateMainForm(true, 1);
         }
     });
 
@@ -255,11 +251,7 @@ $(document).ready(function() {
         }
         if(error_fields){
             e.preventDefault();
-            if (hasBootstrapModal()) {
-                $('#formErrorModal').modal('show');
-            } else if (isRsAddPage()) {
-                showModalFallback('#formErrorModal');
-            }
+            validateMainForm(true, 1);
         }
     });
 
