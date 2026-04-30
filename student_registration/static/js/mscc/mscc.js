@@ -230,7 +230,7 @@ $(document).ready(function() {
             $('#next-btn22').trigger('click');
             $(this).removeClass('error-field');
          }else{
-            if ($.fn.modal) {
+            if (hasBootstrapModal()) {
                 $('#formErrorModal').modal('show');
             } else if (isRsAddPage()) {
                 $('#formErrorModal').addClass('show').css('display', 'block').attr('aria-hidden', 'false');
@@ -255,7 +255,7 @@ $(document).ready(function() {
         }
         if(error_fields){
             e.preventDefault();
-            if ($.fn.modal) {
+            if (hasBootstrapModal()) {
                 $('#formErrorModal').modal('show');
             } else if (isRsAddPage()) {
                 $('#formErrorModal').addClass('show').css('display', 'block').attr('aria-hidden', 'false');
@@ -614,6 +614,11 @@ function isAddPage()
 function isRsAddPage()
 {
     return window.location.pathname.indexOf('/mscc/services/rs-add/') !== -1;
+}
+
+function hasBootstrapModal()
+{
+    return typeof $.fn.modal === 'function';
 }
 
 function reorganizeForm()
@@ -1261,7 +1266,7 @@ function validateMainForm(showModal, step) {
         });
         $('#formErrorModal #swal2-content').html(content);
         var errorModal = $('#formErrorModal');
-        if ($.fn.modal) {
+        if (hasBootstrapModal()) {
             errorModal.modal('show');
         } else if (isRsAddPage()) {
             errorModal.addClass('show').css('display', 'block').attr('aria-hidden', 'false');
@@ -1289,7 +1294,7 @@ $(document).ready(function() {
         $('#formErrorModal #swal2-content').text('Please check the form mandatory fields.');
     };
 
-    if ($.fn.modal) {
+    if (hasBootstrapModal()) {
         $('#formErrorModal').on('hidden.bs.modal', resetErrorModalContent);
     } else if (isRsAddPage()) {
         $('#formErrorModal').on('click', '.swal2-confirm', function() {
