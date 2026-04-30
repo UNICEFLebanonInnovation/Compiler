@@ -230,7 +230,11 @@ $(document).ready(function() {
             $('#next-btn22').trigger('click');
             $(this).removeClass('error-field');
          }else{
-            $('#formErrorModal').modal('show');
+            if ($.fn.modal) {
+                $('#formErrorModal').modal('show');
+            } else if (isRsAddPage()) {
+                $('#formErrorModal').addClass('show').css('display', 'block').attr('aria-hidden', 'false');
+            }
         }
     });
 
@@ -251,7 +255,11 @@ $(document).ready(function() {
         }
         if(error_fields){
             e.preventDefault();
-            $('#formErrorModal').modal('show');
+            if ($.fn.modal) {
+                $('#formErrorModal').modal('show');
+            } else if (isRsAddPage()) {
+                $('#formErrorModal').addClass('show').css('display', 'block').attr('aria-hidden', 'false');
+            }
         }
     });
 
@@ -600,6 +608,12 @@ function isAddPage()
         return true;
     }
     return false;
+}
+
+
+function isRsAddPage()
+{
+    return window.location.pathname.indexOf('/mscc/services/rs-add/') !== -1;
 }
 
 function reorganizeForm()
@@ -1246,7 +1260,12 @@ function validateMainForm(showModal, step) {
             content += '</ul>';
         });
         $('#formErrorModal #swal2-content').html(content);
-        $('#formErrorModal').modal('show');
+        var errorModal = $('#formErrorModal');
+        if ($.fn.modal) {
+            errorModal.modal('show');
+        } else if (isRsAddPage()) {
+            errorModal.addClass('show').css('display', 'block').attr('aria-hidden', 'false');
+        }
     }
 
     return valid;
@@ -1266,7 +1285,16 @@ $(document).ready(function() {
         validateMainForm(false, step);
     });
 
-    $('#formErrorModal').on('hidden.bs.modal', function(){
+    var resetErrorModalContent = function() {
         $('#formErrorModal #swal2-content').text('Please check the form mandatory fields.');
-    });
+    };
+
+    if ($.fn.modal) {
+        $('#formErrorModal').on('hidden.bs.modal', resetErrorModalContent);
+    } else if (isRsAddPage()) {
+        $('#formErrorModal').on('click', '.swal2-confirm', function() {
+            $('#formErrorModal').removeClass('show').css('display', 'none').attr('aria-hidden', 'true');
+            resetErrorModalContent();
+        });
+    }
 });
