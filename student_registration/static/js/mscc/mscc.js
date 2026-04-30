@@ -1265,6 +1265,24 @@ function validateMainForm(showModal, step) {
                 missingByStep[stepNum].push(label);
             }
         });
+        if (!Object.keys(missingByStep).length) {
+            $('input, select, textarea').filter('[required]:visible').each(function() {
+                var field = $(this);
+                if (field.val() === null || field.val() === '') {
+                    var label = $('label[for="' + field.attr('id') + '"]').clone().children().remove().end().text().trim();
+                    if (!label) {
+                        label = field.attr('name') || field.attr('id') || 'Required field';
+                    }
+                    if (!missingByStep['1']) {
+                        missingByStep['1'] = [];
+                    }
+                    if (missingByStep['1'].indexOf(label) === -1) {
+                        missingByStep['1'].push(label);
+                    }
+                }
+            });
+        }
+
         var content = '';
         Object.keys(missingByStep).sort().forEach(function(stepKey) {
             content += '<strong>Step ' + stepKey + ':</strong><ul>';
@@ -1273,6 +1291,9 @@ function validateMainForm(showModal, step) {
             });
             content += '</ul>';
         });
+        if (!content) {
+            content = '<p>Please complete all mandatory fields in this step.</p>';
+        }
         $('#formErrorModal #swal2-content').html(content);
         var errorModal = $('#formErrorModal');
         if (hasBootstrapModal()) {
