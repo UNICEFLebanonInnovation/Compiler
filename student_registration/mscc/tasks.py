@@ -136,18 +136,28 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
         cursor = connection.cursor()
         center_id = user.center_id
         partner_id = user.partner_id or 0
+        is_world_learning = user.partner.is_world_learning or False
 
         query_params = []
 
         if not round:
             vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE id = 0"
+
         elif round == "no_round":
-            vw_mscc_data_str = "SELECT * FROM vw_mscc_data_no_round WHERE id > 0"
+            if is_world_learning:
+                vw_mscc_data_str = "SELECT * FROM vw_mscc_wl_data_no_round WHERE id > 0"
+            else:
+                vw_mscc_data_str = "SELECT * FROM vw_mscc_data_no_round WHERE id > 0"
+
         else:
-            vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE round_id = %s"
+            if is_world_learning:
+                vw_mscc_data_str = "SELECT * FROM vw_mscc_wl_data WHERE round_id = %s"
+            else:
+                vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE round_id = %s"
+
             query_params.append(round)
 
-        if has_group(user, 'MSCC_UNICEF'):
+        if has_group(user, 'MSCC_UNICEF') or is_world_learning:
             vw_mscc_data_str += " AND id > 0"
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
             vw_mscc_data_str += " AND partner_id = %s"

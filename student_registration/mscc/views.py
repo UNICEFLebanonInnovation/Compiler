@@ -510,6 +510,8 @@ class MainListView(LoginRequiredMixin,
         user = self.request.user
         center_id = user.center_id
         partner_id = user.partner_id
+        is_world_learning = user.partner.is_world_learning or False
+
 
         qs = (Registration.objects
               .select_related(
@@ -547,7 +549,7 @@ class MainListView(LoginRequiredMixin,
 
         round_filter = Q(round__isnull=True) | Q(round__current_year=True)
 
-        if has_group(user, 'MSCC_UNICEF'):
+        if has_group(user, 'MSCC_UNICEF') or is_world_learning:
             return qs.filter(round_filter).order_by('child__first_name', 'child__father_name', 'child__last_name')
 
         elif has_group(user, 'MSCC_PARTNER') and partner_id:

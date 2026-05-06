@@ -160,6 +160,8 @@ class BridgingListView(LoginRequiredMixin,
     filterset_class = BridgingPartnerFilter
 
     def get_queryset(self):
+        is_world_learning = self.request.user.partner.is_world_learning or False
+
         qs = (
             Bridging.objects.filter(round__current_year=True, deleted=False)
             .select_related(
@@ -182,6 +184,7 @@ class BridgingListView(LoginRequiredMixin,
         if (
             not has_group(self.request.user, "CLM_BRIDGING_ALL")
             and not self.request.user.is_staff
+            and not is_world_learning
         ):
             if self.request.user.partner:
                 qs = qs.filter(partner_id=self.request.user.partner_id)\
@@ -190,7 +193,6 @@ class BridgingListView(LoginRequiredMixin,
                     "student__father_name",
                     "student__last_name",
                 )
-
                 if self.request.user.school:
                     qs = qs.filter(school_id=self.request.user.school_id)\
                     .order_by(
@@ -395,10 +397,15 @@ def bridging_export_data(request, **kwargs):
         cursor = connection.cursor()
         user = request.user
         partner_name = user.partner.name if user.partner else ''
+        is_world_learning = user.partner.is_world_learning or False
 
         round_id = request.GET.get('round', None)
 
-        vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
+        if not is_world_learning:
+            vw_bridging_data = 'SELECT * FROM  vw_bridging_data  WHERE id > 0'
+        else:
+            vw_bridging_data = 'SELECT * FROM vw_bridging_wl_data WHERE id > 0'
+
         query_params = []
 
         if round_id:
@@ -487,21 +494,26 @@ def bridging_school_export(request, **kwargs):
         cursor = connection.cursor()
         user = request.user
         partner_name = user.partner.name if user.partner else ''
+        is_world_learning = user.partner.is_world_learning or False
 
         school_id = int(kwargs.get('school_id'))
 
         clm_bridging_all = has_group(request.user, 'CLM_BRIDGING_ALL')
         is_staff = request.user.is_staff
 
-        vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
+        if not is_world_learning:
+            vw_bridging_data = 'SELECT * FROM  vw_bridging_data  WHERE id > 0'
+        else:
+            vw_bridging_data = 'SELECT * FROM vw_bridging_wl_data WHERE id > 0'
+
         query_params = []
 
-        if not clm_bridging_all and not is_staff and request.user.partner:
+        if not clm_bridging_all and not is_staff  and not is_world_learning and request.user.partner:
             partner_id = request.user.partner_id
             vw_bridging_data += " AND partner_id = %s"
             query_params.append(partner_id)
 
-        elif not clm_bridging_all and not is_staff and not request.user.partner:
+        elif not clm_bridging_all and not is_staff  and not is_world_learning and not request.user.partner:
             vw_bridging_data += " AND id = 0"
 
         if school_id > 0:
