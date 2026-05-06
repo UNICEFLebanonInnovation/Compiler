@@ -510,8 +510,7 @@ class MainListView(LoginRequiredMixin,
         user = self.request.user
         center_id = user.center_id
         partner_id = user.partner_id
-        is_world_learning = user.partner.is_world_learning or False
-
+        is_world_learning = bool(user.partner and user.partner.is_world_learning)
 
         qs = (Registration.objects
               .select_related(

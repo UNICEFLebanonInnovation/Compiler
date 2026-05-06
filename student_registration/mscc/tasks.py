@@ -136,7 +136,7 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
         cursor = connection.cursor()
         center_id = user.center_id
         partner_id = user.partner_id or 0
-        is_world_learning = user.partner.is_world_learning or False
+        is_world_learning = bool(user.partner and user.partner.is_world_learning)
 
         query_params = []
 

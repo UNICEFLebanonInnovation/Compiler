@@ -160,7 +160,7 @@ class BridgingListView(LoginRequiredMixin,
     filterset_class = BridgingPartnerFilter
 
     def get_queryset(self):
-        is_world_learning = self.request.user.partner.is_world_learning or False
+        is_world_learning = bool(self.request.user.partner and self.request.user.partner.is_world_learning)
 
         qs = (
             Bridging.objects.filter(round__current_year=True, deleted=False)
@@ -397,7 +397,7 @@ def bridging_export_data(request, **kwargs):
         cursor = connection.cursor()
         user = request.user
         partner_name = user.partner.name if user.partner else ''
-        is_world_learning = user.partner.is_world_learning or False
+        is_world_learning = bool(user.partner and user.partner.is_world_learning)
 
         round_id = request.GET.get('round', None)
 
@@ -494,7 +494,7 @@ def bridging_school_export(request, **kwargs):
         cursor = connection.cursor()
         user = request.user
         partner_name = user.partner.name if user.partner else ''
-        is_world_learning = user.partner.is_world_learning or False
+        is_world_learning = bool(user.partner and user.partner.is_world_learning)
 
         school_id = int(kwargs.get('school_id'))
 
