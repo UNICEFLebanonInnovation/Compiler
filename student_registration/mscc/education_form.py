@@ -2280,7 +2280,7 @@ class YouthScoringForm(forms.ModelForm):
 
         if programme_type == "YBLN Level 1":
             field_init(self.fields['arabic_grade'], 'Arabic Language Development', 12)
-            field_init(self.fields['language_grade'], 'Foreign Language Development', 0)
+            field_init(self.fields['language_grade'], 'Foreign Language Development', 20)
             field_init(self.fields['math_grade'], 'Mathematics', 15)
             field_init(self.fields['life_skills'], 'Life Skills Development', 12)
             self.fields['english_development'].hidden_widget()
@@ -2437,7 +2437,7 @@ class YouthScoringForm(forms.ModelForm):
         thresholds = {
             "YBLN Level 1": {
                 "arabic_grade": 12,
-                "language_grade": 0,
+                "language_grade": 20,
                 "math_grade": 15,
                 "life_skills": 12,
             },
