@@ -67,7 +67,7 @@ class MainFilter(PlaceholderFilterSet):
     child__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
                                 .order_by('name').distinct(), empty_label='Nationality')
     round = ChoiceFilter(
-        choices=[NO_ROUND_OPTION] + list(Round.objects.values_list('id', 'name').order_by('name').distinct()),
+        choices=[NO_ROUND_OPTION] + list(Round.objects.filter(current_year=True).values_list('id', 'name').order_by('name').distinct()),
         empty_label='Round',
         method='filter_round'
     )
@@ -107,7 +107,7 @@ class FullFilter(PlaceholderFilterSet):
                           .order_by('name').distinct(), empty_label='Partner')
 
     round = ChoiceFilter(
-        choices=[NO_ROUND_OPTION] + list(Round.objects.values_list('id', 'name').order_by('name').distinct()),
+        choices=[NO_ROUND_OPTION] + list(Round.objects.filter(current_year=True).values_list('id', 'name').order_by('name').distinct()),
         empty_label='Round',
         method='filter_round'
     )
