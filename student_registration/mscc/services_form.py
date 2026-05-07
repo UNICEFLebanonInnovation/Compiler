@@ -29,6 +29,7 @@ from .models import (
     YouthReferral,
     Recreational,
     LegoService,
+    EducationService,
     YES_NO,
     AGREE_DISAGREE
 )
@@ -286,6 +287,17 @@ class InclusionServiceForm(forms.ModelForm):
 
 
 class DigitalServiceForm(forms.ModelForm):
+    RS_GRADES = (
+        'RS Grade 1',
+        'RS Grade 2',
+        'RS Grade 3',
+        'RS Grade 4',
+        'RS Grade 5',
+        'RS Grade 6',
+        'RS Grade 7',
+        'RS Grade 8',
+        'RS Grade 9',
+    )
 
     using_akelius = forms.ChoiceField(
         label=_("Is the child using Akelius?"),
@@ -359,6 +371,11 @@ class DigitalServiceForm(forms.ModelForm):
         choices=DigitalService.NOTICING_CHANGE,
         label=_('As a teacher, are you noticing a change in attitude towards learning')
     )
+    madrasti = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=YES_NO,
+        label=_('Madrasti')
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -366,6 +383,10 @@ class DigitalServiceForm(forms.ModelForm):
         instance = kwargs.pop('instance', None)
 
         super(DigitalServiceForm, self).__init__(*args, **kwargs)
+        self.show_madrasti = EducationService.objects.filter(
+            registration_id=registry,
+            education_program__in=self.RS_GRADES
+        ).exists()
 
         form_action = reverse('mscc:service_digital_add', kwargs={'registry': registry})
         if instance:
@@ -407,6 +428,11 @@ class DigitalServiceForm(forms.ModelForm):
                     Div('using_lp', css_class='col-md-5'),
                     css_class='row card-body'
                 ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">3</span>'),
+                    Div('madrasti', css_class='col-md-5'),
+                    css_class='row card-body'
+                ) if self.show_madrasti else Div(),
                 Div(
                     HTML('<span class="badge-form-0 badge-pill"></span>'),
                     Div('lp_sessions_number', css_class='col-md-5'),
@@ -489,6 +515,11 @@ class DigitalServiceForm(forms.ModelForm):
             instance.lp_change_math = ''
             instance.lp_change_learning = ''
 
+        if self.show_madrasti:
+            instance.madrasti = validated_data.get('madrasti')
+        else:
+            instance.madrasti = ''
+
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
@@ -541,6 +572,8 @@ class DigitalServiceForm(forms.ModelForm):
                 self.add_error('lp_change_math', 'This field is required')
             if not lp_change_learning:
                 self.add_error('lp_change_learning', 'This field is required')
+        if self.show_madrasti and not cleaned_data.get("madrasti"):
+            self.add_error('madrasti', 'This field is required')
 
     class Meta:
         model = DigitalService
@@ -559,6 +592,7 @@ class DigitalServiceForm(forms.ModelForm):
             'lp_change_literacy',
             'lp_change_math',
             'lp_change_learning',
+            'madrasti',
         )
 
 
@@ -2729,4 +2763,3 @@ class LegoServiceForm(forms.ModelForm):
             'participating_education_sessions',
             'participating_lego_play_sessions',
         )
-

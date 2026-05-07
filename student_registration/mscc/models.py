@@ -639,6 +639,13 @@ class DigitalService(models.Model):
         choices=NOTICING_CHANGE,
         verbose_name=_("As a teacher, are you noticing a change in attitude towards learning")
     )
+    madrasti = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Madrasti')
+    )
 
     class Meta:
         ordering = ['id']
@@ -2362,4 +2369,3 @@ class LegoService(TimeStampedModel):
         ordering = ['id']
         verbose_name = "LEGO"
         verbose_name_plural = "LEGO"
-
