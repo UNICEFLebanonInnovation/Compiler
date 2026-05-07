@@ -258,6 +258,13 @@ class Center(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Does the center offer digital learning services?')
     )
+    active_during_emergency = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Active during emergency')
+    )
     have_digital_hub = models.CharField(
         max_length=50,
         blank=True,
