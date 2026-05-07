@@ -473,6 +473,12 @@ class BridgingForm(CommonForm):
         choices=Bridging.LANGUAGES,
         initial='yes'
     )
+    section = forms.ChoiceField(
+        label=_("Section"),
+        widget=forms.Select,
+        required=False,
+        choices=Bridging.SECTION_CHOICES
+    )
     first_attendance_date = forms.DateField(
         label=_("First attendance date"),
         required=False
@@ -982,11 +988,13 @@ class BridgingForm(CommonForm):
                         Div('residence_type', css_class='col-md-3'),
                         HTML('<span class="badge-form-2 badge-pill">11</span>'),
                         Div('registration_level', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill">12</span>'),
+                        Div('section', css_class='col-md-3'),
                         Div('first_attendance_date', css_class='col-md-3 d-none'),
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">12</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">13</span>'),
                         Div('enrolled_formal_education', css_class='col-md-4'),
                         css_class='row card-body',
                     ),
@@ -1355,11 +1363,13 @@ class BridgingForm(CommonForm):
                         Div('residence_type', css_class='col-md-3'),
                         HTML('<span class="badge-form-2 badge-pill">11</span>'),
                         Div('registration_level', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill">12</span>'),
+                        Div('section', css_class='col-md-3'),
                         Div('first_attendance_date', css_class='col-md-3 d-none'),
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">12</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">13</span>'),
                         Div('enrolled_formal_education', css_class='col-md-4'),
                         css_class='row card-body',
                     ),
@@ -1995,6 +2005,7 @@ class BridgingForm(CommonForm):
             'cadaster',
             'school',
             'registration_level',
+            'section',
             'main_caregiver',
             'main_caregiver_nationality',
             'other_caregiver_relationship',

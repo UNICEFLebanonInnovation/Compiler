@@ -1877,6 +1877,9 @@ class Bridging(CLM):
         ('english_arabic', _('English/Arabic')),
         ('french_arabic', _('French/Arabic'))
     )
+    SECTION_CHOICES = tuple(
+        [('', _('----------'))] + [(char, char.upper()) for char in 'abcdefghijklmnopqrstuvwxyz']
+    )
 
     child_outreach = models.IntegerField(blank=True, null=True)
     miss_school_date = models.DateField(
@@ -1890,6 +1893,13 @@ class Bridging(CLM):
         null=True,
         choices=LANGUAGES,
         verbose_name=_('The language supported in the program')
+    )
+    section = models.CharField(
+        max_length=1,
+        blank=True,
+        null=True,
+        choices=SECTION_CHOICES,
+        verbose_name=_('Section')
     )
     school = models.ForeignKey(
         School,
