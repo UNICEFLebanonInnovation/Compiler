@@ -3319,6 +3319,11 @@ class SchoolForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=School.YES_NO
     )
+    active_during_emergency = forms.ChoiceField(
+        label=_("Active during emergency"),
+        widget=forms.Select, required=True,
+        choices=School.YES_NO
+    )
     school_digital_capacity = forms.IntegerField(
         label=_('Number of devices'),
         widget=forms.TextInput, required=False
@@ -3511,15 +3516,20 @@ class SchoolForm(forms.ModelForm):
                     HTML('<span class="badge-form-2 badge-pill">16</span>'),
                     Div('internet_available', css_class='col-md-3'),
                     HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                    Div('active_during_emergency', css_class='col-md-3'),
+                    css_class='row card-body',
+                ),
+                Div(
+                    HTML('<span class="badge-form-2 badge-pill">18</span>'),
                     Div('digital_learning_programme', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill" id="span_school_digital_capacity">18</span>'),
+                    HTML('<span class="badge-form-2 badge-pill" id="span_school_digital_capacity">19</span>'),
                     Div('school_digital_capacity', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">19</span>'),
-                    Div('number_dirasa_children_disability', css_class='col-md-3'),
                     HTML('<span class="badge-form-2 badge-pill">20</span>'),
+                    Div('number_dirasa_children_disability', css_class='col-md-3'),
+                    HTML('<span class="badge-form-2 badge-pill">21</span>'),
                     Div('number_total_children_disability', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
@@ -3631,6 +3641,7 @@ class SchoolForm(forms.ModelForm):
             'number_children_non_lebanese_sbp',
             'CWD_accessible',
             'internet_available',
+            'active_during_emergency',
             'digital_learning_programme',
             'school_digital_capacity',
             'is_closed',

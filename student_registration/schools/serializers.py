@@ -38,6 +38,7 @@ class SchoolSerializer(serializers.ModelSerializer):
             'number_children_non_lebanese_sbp',
             'CWD_accessible',
             'internet_available',
+            'active_during_emergency',
             'school_digital_capacity',
             'digital_learning_programme',
             'is_closed',

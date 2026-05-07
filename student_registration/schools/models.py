@@ -222,6 +222,13 @@ class School(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Does the school have a digital learning programme?')
     )
+    active_during_emergency = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Active during emergency')
+    )
     school_digital_capacity = models.IntegerField(
         blank=True, null=True,
         verbose_name=_('Number of devices')
