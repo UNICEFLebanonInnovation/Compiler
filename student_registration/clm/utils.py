@@ -3167,7 +3167,6 @@ def get_outreach_child(outreach_id):
     initial['student_birthday_year'] = instance.birthday_year
     initial['student_birthday_month'] = instance.birthday_month
     initial['student_birthday_day'] = instance.birthday_day
-    print("----------------- instance.gender    ", instance.gender)
     initial['student_sex'] = (instance.gender or '').strip()
 
     nationality_raw = instance.nationality or ''

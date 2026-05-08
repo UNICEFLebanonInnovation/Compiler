@@ -179,7 +179,9 @@ MANAGERS = ADMINS
 DATABASES = {
     # 'default': env.db('DATABASE_URL', default='postgres:///mscc_10012023'),
     'default': env.db('DATABASE_URL',
-    default='postgresql://lebclmprod:clmp!0ck3din@leb-clm-prod-flex-14.postgres.database.azure.com:5432/bma_staging'),
+    # default='postgresql://lebclmprod:clmp!0ck3din@leb-clm-prod-flex-14.postgres.database.azure.com:5432/bma_production_03102025'),
+    default = 'postgresql://lebclmprod:clmp!0ck3din@leb-clm-tst-flex-14.postgres.database.azure.com:5432/mscc_staging'),
+
 }
 DJANGO_READ_DOT_ENV_FILE = True
 
@@ -445,11 +447,12 @@ JAZZMIN_SETTINGS = {
 # See: http://django-storages.readthedocs.io/en/latest/index.html
 INSTALLED_APPS += ['storages', ]
 
-AZURE_ACCOUNT_NAME = env('AZURE_ACCOUNT_NAME', default='NO_AZURE_ACCOUNT_NAME')
-AZURE_ACCOUNT_KEY = env('AZURE_ACCOUNT_KEY', default='NO_AZURE_ACCOUNT_KEY')
-AZURE_CONTAINER = env('AZURE_CONTAINER', default='NO_AZURE_CONTAINER')
+AZURE_ACCOUNT_NAME = env('AZURE_ACCOUNT_NAME', default='compiler')
+AZURE_ACCOUNT_KEY = env('AZURE_ACCOUNT_KEY', default='dfY79hBWV9JlsN6EGfaWi5UOsTbYiXkUHksb3E0VW7CowcdOiGErV8k8rcCEMmyizGDmsasO5I8djej2W+UY3Q==')
+AZURE_CONTAINER = env('AZURE_CONTAINER', default='exports')
 
-DEFAULT_FILE_STORAGE = 'storages.backends.azure_blob.AzureBlobStorage' # Updated for newer django-storages
+DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
+
 DEFAULT_FILE_FORMAT = 'xlsx'
 DEFAULT_FILE_CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 DEFAULT_FILE_CONTENT_LANGUAGE = 'ar'

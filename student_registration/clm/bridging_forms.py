@@ -970,11 +970,11 @@ class BridgingForm(CommonForm):
                         Div('governorate', css_class='col-md-3'),
                         HTML('<span class="badge-form badge-pill">5</span>'),
                         Div('district', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">6</span>'),
+                        Div('cadaster', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form badge-pill">6</span>'),
-                        Div('cadaster', css_class='col-md-3'),
                         HTML('<span class="badge-form badge-pill">7</span>'),
                         Div('school', css_class='col-md-3'),
                         HTML('<span class="badge-form badge-pill">8</span>'),
@@ -986,16 +986,19 @@ class BridgingForm(CommonForm):
                         Div('student_address', css_class='col-md-3'),
                         HTML('<span class="badge-form-2 badge-pill">10</span>'),
                         Div('residence_type', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
                         HTML('<span class="badge-form-2 badge-pill">11</span>'),
                         Div('registration_level', css_class='col-md-3'),
                         HTML('<span class="badge-form-2 badge-pill">12</span>'),
                         Div('section', css_class='col-md-3'),
-                        Div('first_attendance_date', css_class='col-md-3 d-none'),
+                        HTML('<span class="badge-form-2 badge-pill">13</span>'),
+                        Div('enrolled_formal_education', css_class='col-md-4'),
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">13</span>'),
-                        Div('enrolled_formal_education', css_class='col-md-4'),
+                        Div('first_attendance_date', css_class='col-md-3 d-none'),
                         css_class='row card-body',
                     ),
                     css_id='step-2',
@@ -1361,16 +1364,19 @@ class BridgingForm(CommonForm):
                         Div('student_address', css_class='col-md-3'),
                         HTML('<span class="badge-form-2 badge-pill">10</span>'),
                         Div('residence_type', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
                         HTML('<span class="badge-form-2 badge-pill">11</span>'),
                         Div('registration_level', css_class='col-md-3'),
                         HTML('<span class="badge-form-2 badge-pill">12</span>'),
                         Div('section', css_class='col-md-3'),
-                        Div('first_attendance_date', css_class='col-md-3 d-none'),
+                        HTML('<span class="badge-form-2 badge-pill">13</span>'),
+                        Div('enrolled_formal_education', css_class='col-md-4'),
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">13</span>'),
-                        Div('enrolled_formal_education', css_class='col-md-4'),
+                        Div('first_attendance_date', css_class='col-md-3 d-none'),
                         css_class='row card-body',
                     ),
                     css_id='step-2',
@@ -1717,7 +1723,7 @@ class BridgingForm(CommonForm):
         else:
                 queryset =queryset.none()
 
-        print(queryset.query)
+
 
         self.fields['school'] = forms.ModelChoiceField(
             queryset=queryset, widget=forms.Select,
