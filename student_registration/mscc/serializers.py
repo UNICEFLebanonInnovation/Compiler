@@ -176,6 +176,7 @@ class MainSerializer(serializers.ModelSerializer):
             'modified_by_name',
             'created',
             'modified',
+            'consent',
             'child_first_name',
             'child_father_name',
             'child_last_name',

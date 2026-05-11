@@ -794,6 +794,7 @@ class MainForm(forms.ModelForm):
         model = Registration
         fields = (
             # 'center',
+            # 'center',
             'child_outreach',
             'student_old',
             'child_first_name',

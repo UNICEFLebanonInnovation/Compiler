@@ -956,6 +956,7 @@ class BridgingForm(CommonForm):
                         css_class='row card-body',
                     ),
                     Div(
+                        HTML('<span class="badge-form badge-pill">2</span>'),
                         Div('new_registry', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
@@ -1339,6 +1340,7 @@ class BridgingForm(CommonForm):
                         css_class='row card-body',
                     ),
                     Div(
+                        HTML('<span class="badge-form badge-pill">2</span>'),
                         Div('new_registry', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
