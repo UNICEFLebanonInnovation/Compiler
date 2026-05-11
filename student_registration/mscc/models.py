@@ -250,6 +250,13 @@ class Registration(TimeStampedModel):
         null=True,
         verbose_name=_('Cash support programmes that child is already benefiting from')
     )
+    consent = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Informed Consent Received to Share Data Externally')
+    )
     mscc_packages = ArrayField(
         models.CharField(
             choices=MSCC_PACKAGES,

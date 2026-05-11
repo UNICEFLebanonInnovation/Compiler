@@ -879,6 +879,12 @@ class BridgingForm(CommonForm):
         required=False,
         widget=CustomClearableFileInput
     )
+    consent = forms.ChoiceField(
+        label=_('Informed Consent Received to Share Data Externally'),
+        widget=forms.Select,
+        required=True,
+        choices=Bridging.YES_NO,
+    )
     registration_date = forms.DateField(
         label=_("Registration date"),
         required=True,
@@ -943,6 +949,11 @@ class BridgingForm(CommonForm):
                         'student_id',
                         'enrollment_id',
                         'partner_name',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('consent', css_class='col-md-3'),
+                        css_class='row card-body',
                     ),
                     Div(
                         Div('new_registry', css_class='col-md-3'),
@@ -1321,6 +1332,11 @@ class BridgingForm(CommonForm):
                         'student_id',
                         'enrollment_id',
                         'partner_name',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('consent', css_class='col-md-3'),
+                        css_class='row card-body',
                     ),
                     Div(
                         Div('new_registry', css_class='col-md-3'),
@@ -2018,6 +2034,7 @@ class BridgingForm(CommonForm):
             'labour_weekly_income',
             'source_of_transportation',
             'student_p_code',
+            'consent',
             'consent_parents',
             'registration_date',
             'enrolled_formal_education'

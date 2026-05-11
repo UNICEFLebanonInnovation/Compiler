@@ -50,6 +50,12 @@ class MainForm(forms.ModelForm):
     #     empty_label='-------',
     #     required=True, to_field_name='id',
     # )
+    consent = forms.ChoiceField(
+        label=_('Informed Consent Received to Share Data Externally'),
+        widget=forms.Select,
+        required=True,
+        choices=YES_NO,
+    )
     child_first_name = forms.CharField(
         label=_("Child\'s First Name"),
         widget=forms.TextInput, required=True
@@ -817,6 +823,7 @@ class MainForm(forms.ModelForm):
             'source_of_identification_specify',
             'child_fe_unique_id',
             'cash_support_programmes',
+            'consent',
             # 'mscc_packages',
             'father_educational_level',
             'mother_educational_level',

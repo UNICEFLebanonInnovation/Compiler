@@ -2156,6 +2156,13 @@ class Bridging(CLM):
         null=True,
         verbose_name=_('Consent from parents'),
     )
+    consent = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Informed Consent Received to Share Data Externally')
+    )
     registration_date = models.DateField(
         blank=True,
         null=True,
