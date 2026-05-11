@@ -447,6 +447,7 @@ class BridgingSerializer(CLMSerializer):
             'using_digital_platform',
             'school_contacted_caretaker',
             'discussion_topic',
+            'consent',
             'registration_date',
             'mid_test1',
             'mid_test2',
