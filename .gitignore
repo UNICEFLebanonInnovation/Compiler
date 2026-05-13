@@ -91,3 +91,4 @@ celerybeat-schedule
 # Ignore virtual environments
 .venv*
 bma-08-04*
+bma*
