@@ -228,6 +228,8 @@ class EducationGradingFormView(LoginRequiredMixin,
                 grade_data = EducationProgrammeAssessment.objects.get(id=instance)
                 if pre_post == 'pre':
                     data = grade_data.pre_test
+                if pre_post == 'mid':
+                    data = grade_data.mid_test
                 if pre_post == 'post':
                     data = grade_data.post_test
                 return EducationGradingForm(data, registry=registry, programme_type=programme_type,pre_post=pre_post, instance=instance, request=self.request)
