@@ -1056,75 +1056,75 @@ class EducationGradingForm(forms.ModelForm):
         choices=YES_NO
     )
 
-    arabic_grade = forms.IntegerField(
+    arabic_grade = forms.DecimalField(
         label=_('Arabic Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'step': '0.01'})),
         required=False,
         initial=0
     )
-    language_grade = forms.IntegerField(
+    language_grade = forms.DecimalField(
         label=_('Foreign Language Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'step': '0.01'})),
         required=False,
         initial=0
     )
-    english_grade = forms.IntegerField(
+    english_grade = forms.DecimalField(
         label=_('English Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'step': '0.01'})),
         required=False,
         initial=0
     )
-    french_grade = forms.IntegerField(
+    french_grade = forms.DecimalField(
         label=_('French Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'step': '0.01'})),
         required=False,
         initial=0
     )
-    math_grade = forms.IntegerField(
+    math_grade = forms.DecimalField(
         label=_('Mathematics Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'step': '0.01'})),
         required=False,
         initial=0
     )
-    science_grade = forms.IntegerField(
+    science_grade = forms.DecimalField(
         label=_('Sciences Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'step': '0.01'})),
         required=False,
         initial=0
     )
-    biology_grade = forms.IntegerField(
+    biology_grade = forms.DecimalField(
         label=_('Biology Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'step': '0.01'})),
         required=False,
         initial=0
     )
-    chemistry_grade = forms.IntegerField(
+    chemistry_grade = forms.DecimalField(
         label=_('Chemistry Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'step': '0.01'})),
         required=False,
         initial=0
     )
-    physics_grade = forms.IntegerField(
+    physics_grade = forms.DecimalField(
         label=_('Physics Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'step': '0.01'})),
         required=False,
         initial=0
     )
-    social_emotional_grade = forms.IntegerField(
+    social_emotional_grade = forms.DecimalField(
         label=_('Social-Emotional Development Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'step': '0.01'})),
         required=False,
         initial=0
     )
-    artistic_grade = forms.IntegerField(
+    artistic_grade = forms.DecimalField(
         label=_('Artistic Development Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'step': '0.01'})),
         required=False,
         initial=0
     )
-    psychomotor_grade = forms.IntegerField(
+    psychomotor_grade = forms.DecimalField(
         label=_('Psychomotor Development Grade'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'step': '0.01'})),
         required=False,
         initial=0
     )
@@ -2487,44 +2487,44 @@ class YouthScoringForm(forms.ModelForm):
 
 
 class EducationSchoolGradingForm(forms.ModelForm):
-    arabic_grade = forms.IntegerField(
-        widget=forms.NumberInput(attrs=({'maxlength': 4, 'max': 100})),
+    arabic_grade = forms.DecimalField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'step': '0.01'})),
         required=False,
         label="Arabic Language",
         initial=0
     )
-    language_grade = forms.IntegerField(
-        widget=forms.NumberInput(attrs=({'maxlength': 4, 'max': 100})),
+    language_grade = forms.DecimalField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'step': '0.01'})),
         required=False,
         label="Foreign Language",
         initial=0
     )
-    math_grade = forms.IntegerField(
-        widget=forms.NumberInput(attrs=({'maxlength': 4, 'max': 100})),
+    math_grade = forms.DecimalField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'step': '0.01'})),
         required=False,
         label="Mathematics",
         initial=0
     )
-    biology_grade = forms.IntegerField(
-        widget=forms.NumberInput(attrs=({'maxlength': 4, 'max': 100})),
+    biology_grade = forms.DecimalField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'step': '0.01'})),
         required=False,
         label="Biology",
         initial=0
     )
-    chemistry_grade = forms.IntegerField(
-        widget=forms.NumberInput(attrs=({'maxlength': 4, 'max': 100})),
+    chemistry_grade = forms.DecimalField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'step': '0.01'})),
         required=False,
         label="Chemistry",
         initial=0
     )
-    physics_grade = forms.IntegerField(
-        widget=forms.NumberInput(attrs=({'maxlength': 4, 'max': 100})),
+    physics_grade = forms.DecimalField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'step': '0.01'})),
         required=False,
         label="Physics",
         initial=0
     )
-    science_grade = forms.IntegerField(
-        widget=forms.NumberInput(attrs=({'maxlength': 4, 'max': 100})),
+    science_grade = forms.DecimalField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'step': '0.01'})),
         required=False,
         label="Science",
         initial=0
