@@ -15,6 +15,7 @@ from rest_framework import viewsets, mixins, permissions
 from rest_framework.decorators import action
 
 from student_registration.attendances.models import CLMAttendance, CLMAttendanceStudent, CLMStudentAbsences, CLMStudentTotalAttendance
+from student_registration.attendances.serializers import CLMAttendanceStudentSerializer
 from student_registration.schools.models import (
     School,
     PartnerOrganization,
@@ -190,6 +191,7 @@ class BridgingAttendanceHeatmapViewSet(mixins.ListModelMixin,
                                        viewsets.GenericViewSet):
     model = CLMAttendanceStudent
     queryset = CLMAttendanceStudent.objects.all()
+    serializer_class = CLMAttendanceStudentSerializer
     permission_classes = (permissions.AllowAny,)
 
     @action(detail=False, methods=['get'], url_path='percentage')
