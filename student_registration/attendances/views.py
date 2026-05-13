@@ -239,12 +239,15 @@ class MainAttendanceCreateView(LoginRequiredMixin, GroupRequiredMixin, CreateVie
             if school is not None:
                 school = int(school)
                 registration_level = self.request.GET.get('registration_level', '')
+                section = self.request.GET.get('section', '')
                 day_off = self.request.GET.get('day_off', '')
                 if school > 0 and registration_level != '' and day_off == 'no':
                     queryset = Bridging.objects.filter(
                                                        round__current_round_bridging=True,
                                                        school=school,
                                                        registration_level=registration_level)
+                    if section != '':
+                        queryset = queryset.filter(section=section)
                     if attendance_date is not None:
                         queryset = queryset.filter(
                             Q(registration_date__isnull=True) | Q(registration_date__lte=attendance_date),
@@ -296,11 +299,13 @@ class MainAttendanceCreateView(LoginRequiredMixin, GroupRequiredMixin, CreateVie
         attendance_date = self.request.GET.get('attendance_date', '')
         school = self.request.GET.get('school', '')
         registration_level = self.request.GET.get('registration_level', '')
+        section = self.request.GET.get('section', '')
 
         attendance = None
         if school != '' and registration_level != '' and attendance_date != '':
             attendance = CLMAttendance.objects.filter(school=school,
                                                       registration_level=registration_level,
+                                                      section=section if section != '' else None,
                                                       attendance_date=attendance_date,
                                                      ).values('id').first()
         if attendance:
@@ -343,6 +348,8 @@ class MainAttendanceCreateView(LoginRequiredMixin, GroupRequiredMixin, CreateVie
             initial_values['school'] = int(self.request.GET.get('school', 0))
             if self.request.GET.get('registration_level', None):
                 initial_values['registration_level'] = self.request.GET.get('registration_level', '')
+            if self.request.GET.get('section', None):
+                initial_values['section'] = self.request.GET.get('section', '')
             if self.request.GET.get('day_off', None):
                 initial_values['day_off'] = self.request.GET.get('day_off', '')
             if self.request.GET.get('attendance_date', None):

@@ -359,6 +359,13 @@ class CLMAttendance(TimeStampedModel):
         choices=REGISTRATION_LEVEL,
         verbose_name=_('Registration level')
     )
+    section = models.CharField(
+        max_length=1,
+        blank=True,
+        null=True,
+        choices=Bridging.SECTION_CHOICES,
+        verbose_name=_('Section')
+    )
     attendance_date = models.DateField(
         blank=True,
         null=True,
@@ -775,4 +782,3 @@ class MSCCAttendanceChild(TimeStampedModel):
 
     def __unicode__(self):
         return '{} - {}'.format(self.child, self.attendance_day)
-

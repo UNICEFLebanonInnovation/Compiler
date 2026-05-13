@@ -189,10 +189,12 @@ class MainAttendanceForm(forms.ModelForm):
         if self.instance.id is None:
             school = cleaned_data.get("school")
             registration_level = cleaned_data.get("registration_level")
+            section = cleaned_data.get("section")
 
             # if school != '' and registration_level != '' and attendance_date != '' and day_off != '':
             #     num_results = CLMAttendance.objects.filter(school=school,
             #                                                registration_level=registration_level,
+            #                                                section=section,
             #                                                attendance_date=attendance_date,
             #                                                ).count()
             #     if num_results > 0:
@@ -219,6 +221,7 @@ class MainAttendanceForm(forms.ModelForm):
             'attendance_date',
             'school',
             'registration_level',
+            'section',
             'day_off',
             'close_reason',
             'round_id')
