@@ -1055,7 +1055,6 @@ class EducationGradingForm(forms.ModelForm):
         widget=forms.Select, required=False,
         choices=YES_NO
     )
-
     arabic_grade = forms.DecimalField(
         label=_('Arabic Grade'),
         widget=forms.NumberInput(attrs=({'maxlength': 4, 'step': '0.01'})),
