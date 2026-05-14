@@ -12,7 +12,7 @@ class RegistrationTable(tables.Table):
     #                                       template_name='django_tables2/youth/status_column.html')
     # outreached = tables.TemplateColumn(verbose_name=_('Outreach Child?'), orderable=False,
     #                                    template_name='django_tables2/youth/outreached_column.html')
-    adolescent_disability = tables.Column(verbose_name=_('Disability'), accessor='adolescent.disability')
+    adolescent_disability = tables.Column(verbose_name=_('Disability'), accessor='adolescent.disability.name_en')
 
     class Meta:
         model = Registration
@@ -29,7 +29,7 @@ class RegistrationTable(tables.Table):
             'adolescent.mother_fullname',
             'adolescent.gender',
             'adolescent_age',
-            'adolescent.nationality',
+            'adolescent.nationality_name_en',
             'adolescent_disability'
         )
 

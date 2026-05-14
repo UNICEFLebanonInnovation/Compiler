@@ -29,6 +29,10 @@ from student_registration.locations.models import Location
 from .serializers import MainSerializer
 import datetime
 
+
+def _name_en_label(obj):
+    return getattr(obj, "name_en", None) or getattr(obj, "name", str(obj))
+
 DAYS = list(((str(x), x) for x in range(1, 32)))
 DAYS.insert(0, ('', '---------'))
 
@@ -269,6 +273,20 @@ class MainForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(MainForm, self).__init__(*args, **kwargs)
+
+        name_en_fields = [
+            'adolescent_nationality',
+            'main_caregiver_nationality',
+            'adolescent_governorate',
+            'adolescent_district',
+            'adolescent_cadaster',
+            'adolescent_disability',
+            'father_educational_level',
+            'mother_educational_level',
+        ]
+        for field_name in name_en_fields:
+            if field_name in self.fields:
+                self.fields[field_name].label_from_instance = _name_en_label
 
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
