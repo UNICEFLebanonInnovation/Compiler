@@ -512,7 +512,8 @@ def load_districts(request):
 
     template = _get_template(
         request,
-        'location/city_dropdown_list_options.html'
+        'location/city_dropdown_list_options.html',
+        youth_template='youth/location/city_dropdown_list_options.html',
     )
     return render(request, template, {'cities': cities})
 
@@ -531,7 +532,8 @@ def load_cadasters(request):
 
     template = _get_template(
         request,
-        'location/cadaster_dropdown_list_options.html'
+        'location/cadaster_dropdown_list_options.html',
+        youth_template='youth/location/cadaster_dropdown_list_options.html',
     )
     return render(request, template, {'cities': cities})
 
