@@ -8,11 +8,8 @@ from .models import Registration, ProgramDocument
 class RegistrationTable(tables.Table):
     action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
                                           template_name='django_tables2/youth/action_column.html')
-    # status_column = tables.TemplateColumn(verbose_name=_('Status'), orderable=False,
-    #                                       template_name='django_tables2/youth/status_column.html')
-    # outreached = tables.TemplateColumn(verbose_name=_('Outreach Child?'), orderable=False,
-    #                                    template_name='django_tables2/youth/outreached_column.html')
     adolescent_disability = tables.Column(verbose_name=_('Disability'), accessor='adolescent.disability.name_en')
+    adolescent_nationality = tables.Column(verbose_name=_('Nationality'), accessor='adolescent.nationality.name_en')
 
     class Meta:
         model = Registration
@@ -20,8 +17,6 @@ class RegistrationTable(tables.Table):
         attrs = {'class': 'table table-bordered table-striped table-hover'}
         fields = (
             'action_column',
-            # 'status_column',
-            # 'outreached',
             'adolescent.unicef_id',
             'adolescent.first_name',
             'adolescent.father_name',
@@ -29,7 +24,7 @@ class RegistrationTable(tables.Table):
             'adolescent.mother_fullname',
             'adolescent.gender',
             'adolescent_age',
-            'adolescent.nationality_name_en',
+            'adolescent_nationality',
             'adolescent_disability'
         )
 

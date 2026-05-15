@@ -55,7 +55,7 @@ class EnrolledProgramsForm(forms.ModelForm):
     )
     completion_date = forms.DateField(
         label=_("Date of completion"),
-        required=True
+        required=False
     )
     donor = forms.ModelChoiceField(
         queryset=Donor.objects.filter(active=True),
