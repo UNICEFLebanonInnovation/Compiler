@@ -369,28 +369,28 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             main_caregiver_norm = raw_main_caregiver[:1].upper() + raw_main_caregiver[1:] if raw_main_caregiver else ''
             values['main_caregiver'] = main_caregiver_norm
 
-            nationality = Nationality.objects.filter(name=values.get('nationality')).first()
+            nationality = Nationality.objects.filter(name_en=values.get('nationality')).first()
 
             gov_name = (values.get('governorate') or '').strip()
             dist_name = (values.get('district') or '').strip()
             cad_name = (values.get('cadaster') or '').strip()
 
-            gov = Location.objects.filter(name=gov_name, type_id=1).first()
+            gov = Location.objects.filter(name_en=gov_name, type_id=1).first()
 
             district_qs = Location.objects.none()
             dist = None
             if dist_name:
-                district_qs = Location.objects.filter(name=dist_name, type_id=2)
+                district_qs = Location.objects.filter(name_en=dist_name, type_id=2)
                 if gov:
                     dist = district_qs.filter(parent_id=gov.id).first()
 
             cadaster_qs = Location.objects.none()
             cad = None
             if cad_name:
-                cadaster_qs = Location.objects.filter(name=cad_name, type_id=3)
+                cadaster_qs = Location.objects.filter(name_en=cad_name, type_id=3)
                 if dist:
                     cad = cadaster_qs.filter(parent_id=dist.id).first()
-            disability = Disability.objects.filter(name=values.get('disability')).first()
+            disability = Disability.objects.filter(name_en=values.get('disability')).first()
 
             if not nationality:
                 invalid_fields.append("nationality ({0})".format(values.get('nationality')))
@@ -400,7 +400,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                 if gov and district_qs.exists():
                     parent_ids = [pid for pid in district_qs.values_list('parent_id', flat=True) if pid]
                     parent_names = list(
-                        Location.objects.filter(id__in=parent_ids).values_list('name', flat=True)
+                        Location.objects.filter(id__in=parent_ids).values_list('name_en', flat=True)
                     )
                     if parent_names:
                         parent_names = sorted(set(parent_names))
@@ -430,7 +430,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                     else:
                         parent_ids = [pid for pid in cadaster_qs.values_list('parent_id', flat=True) if pid]
                         parent_names = list(
-                            Location.objects.filter(id__in=parent_ids).values_list('name', flat=True)
+                            Location.objects.filter(id__in=parent_ids).values_list('name_en', flat=True)
                         )
                         if parent_names:
                             parent_names = sorted(set(parent_names))
@@ -462,21 +462,21 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             father_ed = None
             father_ed_val = (values.get('father_educational_level') or '').strip()
             if father_ed_val:
-                father_ed = EducationalLevel.objects.filter(name=father_ed_val).first()
+                father_ed = EducationalLevel.objects.filter(name_en=father_ed_val).first()
                 if not father_ed:
                     invalid_fields.append("father_educational_level ({0})".format(father_ed_val))
 
             mother_ed = None
             mother_ed_val = (values.get('mother_educational_level') or '').strip()
             if mother_ed_val:
-                mother_ed = EducationalLevel.objects.filter(name=mother_ed_val).first()
+                mother_ed = EducationalLevel.objects.filter(name_en=mother_ed_val).first()
                 if not mother_ed:
                     invalid_fields.append("mother_educational_level ({0})".format(mother_ed_val))
 
             caregiver_nat = None
             caregiver_nat_val = (values.get('main_caregiver_nationality') or '').strip()
             if caregiver_nat_val:
-                caregiver_nat = Nationality.objects.filter(name=caregiver_nat_val).first()
+                caregiver_nat = Nationality.objects.filter(name_en=caregiver_nat_val).first()
                 if not caregiver_nat:
                     invalid_fields.append("main_caregiver_nationality ({0})".format(caregiver_nat_val))
 
