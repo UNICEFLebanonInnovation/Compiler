@@ -41,7 +41,10 @@ def get_api_data(token, data):
         resp = requests.post(settings.UNIQUE_ID_API_URL, headers=headers, data=json_data)
         result = json.loads(resp.text)
 
-        individuals = result["individual"] if "individual" in result else []
+        individuals = result.get("individual")
+        if individuals is None:
+            individuals = result.get("individuals", [])
+
         if len(individuals) == 1:
             return individuals[0]
         return individuals
