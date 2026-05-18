@@ -191,6 +191,18 @@ select {
 <!--                                                  <input type="text" class="form-control disabled-input" disabled />-->
                                               </div>
                                           </div>
+                                          <div class="form-row">
+                                              <div class="col-md-6">
+                                                  <div class="select-wrapper">
+                                                      <select id="section" class="form-control" name="section">
+                                                          <option value="">Section</option>
+                                                          {% for label, value in section.items %}
+                                                              <option value="{{ value }}">{{ label }}</option>
+                                                          {% endfor %}
+                                                      </select>
+                                                  </div>
+                                              </div>
+                                          </div>
                                                           <div class="form-row">
                     <div class="col-md-6">
                         <div role="group" class="btn-group-sm btn-group">

@@ -457,11 +457,14 @@ class MainAttendanceUpdateView(LoginRequiredMixin, UpdateView):
         )
 
     def get_formset(self, attendance_id):
+        attendance = CLMAttendance.objects.select_related('school').get(id=attendance_id)
         queryset = CLMAttendanceStudent.objects.filter(attendance_day__id=attendance_id)
         queryset = queryset.order_by('student__first_name', 'student__father_name', 'student__last_name')
 
         data = []
+        existing_student_ids = []
         for line in queryset:
+            existing_student_ids.append(line.student.id)
             student = {
                 'id': line.id,
                 'student_id': line.student.id,
@@ -471,6 +474,38 @@ class MainAttendanceUpdateView(LoginRequiredMixin, UpdateView):
                 'absence_reason_other': line.absence_reason_other
             }
             data.append(student)
+
+        if attendance.day_off == 'no':
+            eligible_query = Bridging.objects.filter(
+                round__current_round_bridging=True,
+                school=attendance.school_id,
+                registration_level=attendance.registration_level,
+            )
+            if attendance.section:
+                eligible_query = eligible_query.filter(section=attendance.section)
+
+            if attendance.attendance_date is not None:
+                eligible_query = eligible_query.filter(
+                    Q(registration_date__isnull=True) | Q(registration_date__lte=attendance.attendance_date),
+                    Q(dropout_date__isnull=True) | Q(dropout_date__gt=attendance.attendance_date)
+                )
+
+            if existing_student_ids:
+                eligible_query = eligible_query.exclude(student_id__in=existing_student_ids)
+
+            eligible_query = eligible_query.order_by('student__first_name', 'student__father_name', 'student__last_name')
+
+            new_students = []
+            for reg in eligible_query:
+                new_students.append({
+                    'student_id': reg.student.id,
+                    'student_name': '{} (New)'.format(reg.student.full_name),
+                    'attended': 'yes',
+                    'absence_reason': '',
+                    'absence_reason_other': ''
+                })
+
+            data = new_students + data
         return self.get_initial_student_formset(data)
 
     def get_initial_student_formset(self, initial_records):

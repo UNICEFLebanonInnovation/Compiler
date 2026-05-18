@@ -89,6 +89,7 @@ class AttendanceView(LoginRequiredMixin,
         # education_program_dict = OrderedDict(sorted_education_programs)
 
         registration_level_dict = OrderedDict((display, value) for value, display in Bridging.REGISTRATION_LEVEL if value)
+        section_dict = OrderedDict((display, value) for value, display in CLMAttendance._meta.get_field('section').choices if value)
 
         instance = CLMAttendance.objects.filter(id=1).last()
         #
@@ -106,6 +107,7 @@ class AttendanceView(LoginRequiredMixin,
             'close_reason': close_reason,
             'school': school,
             'registration_level': registration_level_dict,
+            'section': section_dict,
             'round': rounds
         }
 
@@ -138,6 +140,7 @@ class LoadAttendanceChildren(LoginRequiredMixin, TemplateView):
         round_id = self.request.GET.get("round_id")
         school_id = self.request.GET.get("school_id")
         registration_level = self.request.GET.get("registration_level")
+        section = self.request.GET.get("section")
 
         if attendance_date_str is None:
             return {'instances': [], 'error_message': 'Attendance date is required.'}
@@ -155,7 +158,7 @@ class LoadAttendanceChildren(LoginRequiredMixin, TemplateView):
                 return {'instances': [], 'error_message': 'Attendance date is not a working day.'}
 
             else:
-                instances = load_child_attendance(round_id, attendance_date_str, school_id, registration_level)
+                instances = load_child_attendance(round_id, attendance_date_str, school_id, registration_level, section)
                 return {'instances': instances, 'error_message': None}
 
         except ValueError:

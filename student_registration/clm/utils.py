@@ -3407,7 +3407,7 @@ def get_outreach_child(outreach_id):
     return initial
 
 
-def load_child_attendance(round_id, attendance_date, school_id, registration_level):
+def load_child_attendance(round_id, attendance_date, school_id, registration_level, section=None):
     from datetime import datetime
 
     result = []
@@ -3418,14 +3418,18 @@ def load_child_attendance(round_id, attendance_date, school_id, registration_lev
                 round_id=round_id,
                 attendance_date=attendance_date,
                 school_id=school_id,
-                registration_level=registration_level
+                registration_level=registration_level,
+                section=section if section else None
             ).last()
 
         if attendance:
             attendances = CLMAttendanceStudent.objects.filter(attendance_day=attendance, registration__deleted=False).select_related('student')
+            existing_student_ids = []
             for att in attendances:
                 registration = att.registration if att.registration else None
                 student = att.student if att.student else None
+                if student:
+                    existing_student_ids.append(student.id)
 
                 result.append({
                     'registration_id': registration.id if registration else None,
@@ -3438,6 +3442,37 @@ def load_child_attendance(round_id, attendance_date, school_id, registration_lev
                     'absence_reason': att.absence_reason,
                     'absence_reason_other': att.absence_reason_other
                 })
+
+            # Add newly eligible students (if any) on top when they are not yet in CLMAttendanceStudent
+            registrations = Bridging.objects.filter(
+                round=round_id,
+                school=school_id,
+                registration_level=registration_level,
+                registration_date__lte=attendance_date,
+                deleted=False
+            ).exclude(
+                learning_result='dropout', dropout_date__lte=attendance_date
+            ).select_related('student')
+            if section:
+                registrations = registrations.filter(section=section)
+            if existing_student_ids:
+                registrations = registrations.exclude(student_id__in=existing_student_ids)
+
+            new_students = []
+            for reg in registrations.order_by('student__first_name', 'student__father_name', 'student__last_name'):
+                new_students.append({
+                    'registration_id': reg.id,
+                    'child_id': reg.student.id,
+                    'child_fullname': '{} (New)'.format(reg.student.full_name),
+                    'child_mother_fullname': reg.student.mother_fullname,
+                    'child_birthday': reg.student.birthday,
+                    'child_nationality': reg.student.nationality.name,
+                    'attended': 'Yes',
+                    'absence_reason': '',
+                    'absence_reason_other': ''
+                })
+
+            result = new_students + result
         else:
             registrations = Bridging.objects.filter(
                 round=round_id,
@@ -3448,6 +3483,8 @@ def load_child_attendance(round_id, attendance_date, school_id, registration_lev
             ).exclude(
                 learning_result='dropout', dropout_date__lte=attendance_date
             ).select_related('student')
+            if section:
+                registrations = registrations.filter(section=section)
 
             for reg in registrations:
                 result.append({
@@ -3476,6 +3513,7 @@ def create_attendance(data):
     round_id = data["round_id"]
     school_id = data["school_id"]
     registration_level = data["registration_level"]
+    section = data.get("section")
     children_attendance = data["children_attendance"]
 
     try:
@@ -3484,7 +3522,8 @@ def create_attendance(data):
                 round_id=round_id,
                 attendance_date=attendance_date,
                 school_id=school_id,
-                registration_level=registration_level
+                registration_level=registration_level,
+                section=section if section else None
             )
             attendance.day_off = day_off
             attendance.close_reason = close_reason
@@ -3524,48 +3563,47 @@ def create_attendance(data):
         return False
 
 
-def update_child_attendance(registration_id, education_program, old_class_section, new_class_section):
+def update_child_attendance(registration_id, old_section, new_section):
 
     child_attendances = CLMAttendanceStudent.objects.filter(
         registration_id=registration_id,
-        attendance_day__education_program=education_program,
-        attendance_day__class_section=old_class_section
-    )
+        attendance_day__section=old_section
+    ).select_related('attendance_day')
 
     try:
         if child_attendances:
             for ca in child_attendances:
-                center_id = ca.attendance_day.center.id
+                school_id = ca.attendance_day.school_id
                 attendance_date = ca.attendance_day.attendance_date
+                round_id = ca.attendance_day.round_id
+                registration_level = ca.attendance_day.registration_level
 
-                # Search if attendance for the new class exists and move the child attendance to it
+                # Search if attendance for the new section exists and move the child attendance to it
                 new_attendance = CLMAttendance.objects.filter(
-                    center_id=center_id,
+                    school_id=school_id,
+                    round_id=round_id,
                     attendance_date=attendance_date,
-                    education_program=education_program,
-                    class_section=new_class_section
+                    registration_level=registration_level,
+                    section=new_section
                 ).last()
 
                 attendance_id = ca.attendance_day.id
 
-                # Count the number of other attendances for the same day
+                # Count the number of other attendance students for the same day
                 other_children_count = CLMAttendanceStudent.objects.filter(attendance_day=ca.attendance_day).exclude(id=ca.id).count()
 
                 if new_attendance:
                     ca.attendance_day = new_attendance
                     ca.save()
                 else:
-                    ca.delete()
-
-                if other_children_count == 0:
-                    try:
-                        old_attendance = CLMAttendance.objects.get(id=attendance_id)
-
-                        # Delete the unique old_attendance instance
-                        old_attendance.delete()
-
-                    except CLMAttendance.DoesNotExist:
-                        pass
+                    if other_children_count == 0:
+                        try:
+                            old_attendance = CLMAttendance.objects.get(id=attendance_id)
+                            old_attendance.delete()
+                        except CLMAttendance.DoesNotExist:
+                            pass
+                    else:
+                        ca.delete()
         return True
 
     except Exception as ex:

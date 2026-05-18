@@ -28,6 +28,7 @@ $(document).on('click', '#save_attendance_children', function(e){
     var round_id = $("#round").val();
     var school_id = $("#school").val();
     var registration_level = $("#registration_level").val();
+    var section = $("#section").val();
 
     if (!attendance_date || !attendance_day_off || !round_id || !school_id || !registration_level) {
         showModal("Please fill all mandatory fields: Attendance Date, Attendance Day Off, Round, School, and Registration Level.");
@@ -91,6 +92,7 @@ $(document).on('click', '#save_attendance_children', function(e){
         "round_id": round_id,
         "school_id": school_id,
         "registration_level": registration_level,
+        "section": section,
         "children_attendance": children_attendance
     };
 
@@ -123,6 +125,7 @@ $(document).on('click', '#load_attendance_children', function(e) {
     var round_id = $("#round").val();
     var school_id = $("#school").val();
     var registration_level = $("#registration_level").val();
+    var section = $("#section").val();
 
     if (!attendance_date || !round_id || !school_id || !registration_level) {
         showModal("Please fill: Attendance Date, Round, School, and Registration Level.");
@@ -142,7 +145,8 @@ $(document).on('click', '#load_attendance_children', function(e) {
             'attendance_date': attendance_date,
             'round_id': round_id,
             'school_id': school_id,
-            'registration_level': registration_level
+            'registration_level': registration_level,
+            'section': section
         },
         dataType: 'html',
         success: function(response) {
@@ -180,7 +184,7 @@ $(document).on('click', '#load_attendance_children', function(e) {
     }
 
     // Trigger on all critical field changes
-    $('#round, #school, #registration_level').on('change', function() {
+    $('#round, #school, #registration_level, #section').on('change', function() {
         resetAttendanceUI();
     });
 });

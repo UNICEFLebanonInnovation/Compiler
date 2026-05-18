@@ -1940,11 +1940,19 @@ class BridgingForm(CommonForm):
     def save(self, request=None, instance=None, serializer=None):
 
         from student_registration.students.utils import generate_one_unique_id
+        from .utils import update_child_attendance
+
+        old_section = None
+        if instance and instance.pk:
+            old_section = instance.section
 
         instance = super(BridgingForm, self).save(request=request, instance=instance, serializer=BridgingSerializer)
         if not instance:
             return None
         instance.save()
+
+        if old_section != instance.section:
+            update_child_attendance(instance.id, old_section, instance.section)
 
         consent_parents = request.FILES.get('consent_parents', False)
         if consent_parents:
