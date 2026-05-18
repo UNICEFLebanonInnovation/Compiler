@@ -407,6 +407,7 @@ class BridgingSerializer(CLMSerializer):
             'caretaker_mother_name',
             'round_start_date',
             'registration_level',
+            'section',
             'cadaster',
             'school',
             'miss_school_date',
