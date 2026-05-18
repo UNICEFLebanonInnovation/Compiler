@@ -3578,7 +3578,7 @@ def update_child_attendance(registration_id, old_section, new_section):
                 round_id = ca.attendance_day.round_id
                 registration_level = ca.attendance_day.registration_level
 
-                # Search if attendance for the new section exists and move the child attendance to it
+                # Search if attendance for the new section exists
                 new_attendance = CLMAttendance.objects.filter(
                     school_id=school_id,
                     round_id=round_id,
@@ -3586,24 +3586,52 @@ def update_child_attendance(registration_id, old_section, new_section):
                     registration_level=registration_level,
                     section=new_section
                 ).last()
+                if not new_attendance:
+                    # Create a matching attendance day for the new section
+                    new_attendance = CLMAttendance.objects.create(
+                        school_id=school_id,
+                        round_id=round_id,
+                        attendance_date=attendance_date,
+                        registration_level=registration_level,
+                        section=new_section,
+                        day_off=ca.attendance_day.day_off,
+                        close_reason=ca.attendance_day.close_reason
+                    )
 
                 attendance_id = ca.attendance_day.id
 
                 # Count the number of other attendance students for the same day
                 other_children_count = CLMAttendanceStudent.objects.filter(attendance_day=ca.attendance_day).exclude(id=ca.id).count()
 
-                if new_attendance:
+                existing_in_new_attendance = CLMAttendanceStudent.objects.filter(
+                    attendance_day=new_attendance,
+                    registration_id=ca.registration_id,
+                    student_id=ca.student_id
+                ).exclude(id=ca.id).last()
+
+                if existing_in_new_attendance:
+                    # Preserve latest attendance status/reason from the old section row
+                    existing_in_new_attendance.attended = ca.attended
+                    existing_in_new_attendance.absence_reason = ca.absence_reason
+                    existing_in_new_attendance.absence_reason_other = ca.absence_reason_other
+                    existing_in_new_attendance.save()
+                    ca.delete()
+                else:
                     ca.attendance_day = new_attendance
                     ca.save()
-                else:
-                    if other_children_count == 0:
-                        try:
-                            old_attendance = CLMAttendance.objects.get(id=attendance_id)
-                            old_attendance.delete()
-                        except CLMAttendance.DoesNotExist:
-                            pass
-                    else:
-                        ca.delete()
+
+                if other_children_count == 0:
+                    try:
+                        old_attendance = CLMAttendance.objects.get(id=attendance_id)
+                        old_attendance.delete()
+                    except CLMAttendance.DoesNotExist:
+                        pass
+                elif ca.id and not CLMAttendanceStudent.objects.filter(id=ca.id).exists():
+                    # already deleted after merge
+                    pass
+                elif ca.attendance_day_id != attendance_id:
+                    # moved away; nothing else to do
+                    pass
         return True
 
     except Exception as ex:
