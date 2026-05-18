@@ -565,7 +565,7 @@ class ProgramDocument(TimeStampedModel):
         super().save(*args, **kwargs)
 
     def get_governorate_names(self):
-        return ", ".join(pop.name for pop in self.governorates.all())
+        return ", ".join(getattr(pop, 'name_en', pop.name) for pop in self.governorates.all())
     # get_governorate_names.short_description = _('Governorates')
 
     def get_population_groups_name(self):

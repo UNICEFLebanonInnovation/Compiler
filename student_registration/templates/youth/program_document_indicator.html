@@ -124,7 +124,7 @@
             </select>
           </div>
           <div class="col-md-3">
-            <select class="form-control required-field sub-select" name="sub_indicator_${id}" id="sub_${id}" ${isSubEnabled ? '' : 'disabled'}>
+            <select class="form-control sub-select" name="sub_indicator_${id}" id="sub_${id}" ${isSubEnabled ? '' : 'disabled'}>
               ${subOptions}
             </select>
           </div>
@@ -206,7 +206,7 @@
         // reset
         row.find('.form-control').css('border', '');
 
-        if (!masterIndicator || !subIndicator || baseline === '' || target === '') {
+        if (!masterIndicator || baseline === '' || target === '') {
           hasError = true;
           row.find('.form-control').each(function () {
             if (!$(this).val()?.trim()) {

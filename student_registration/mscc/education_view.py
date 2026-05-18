@@ -211,13 +211,13 @@ class EducationGradingFormView(LoginRequiredMixin,
             kwargs['form'] = self.get_form()
         kwargs['registry'] = self.kwargs['registry']
         kwargs['programme_type'] = self.kwargs['programme_type']
-        kwargs['pre_post'] = self.kwargs['pre_post'] if 'pre_post' in self.kwargs else None
+        kwargs['pre_post'] = self.kwargs.get('pre_post', 'pre')
         return super(EducationGradingFormView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         registry = self.kwargs['registry']
         programme_type = self.kwargs['programme_type']
-        pre_post = self.kwargs['pre_post'] if 'pre_post' in self.kwargs else None
+        pre_post = self.kwargs.get('pre_post', 'pre')
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         data = {}
         if self.request.method == "POST":
@@ -228,6 +228,8 @@ class EducationGradingFormView(LoginRequiredMixin,
                 grade_data = EducationProgrammeAssessment.objects.get(id=instance)
                 if pre_post == 'pre':
                     data = grade_data.pre_test
+                if pre_post == 'mid':
+                    data = grade_data.mid_test
                 if pre_post == 'post':
                     data = grade_data.post_test
                 return EducationGradingForm(data, registry=registry, programme_type=programme_type,pre_post=pre_post, instance=instance, request=self.request)
@@ -236,7 +238,7 @@ class EducationGradingFormView(LoginRequiredMixin,
     def form_valid(self, form):
         registry = self.kwargs['registry']
         programme_type = self.kwargs['programme_type']
-        pre_post = self.kwargs['pre_post'] if 'pre_post' in self.kwargs else None
+        pre_post = self.kwargs.get('pre_post', 'pre')
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         form.save(request=self.request, registry=registry,  programme_type=programme_type, pre_post=pre_post,
                   instance=instance)

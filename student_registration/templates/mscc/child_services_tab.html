@@ -124,6 +124,13 @@
                                             </li>
                                           {% if result1.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, RS Grade 7, RS Grade 8, RS Grade 9' and instance.type == 'Walk-in' %}
                                           {% else %}
+                                            {% if result1.education_program in 'BLN Level 1, BLN Level 2, BLN Level 3' %}
+                                            <li class="nav-item">
+                                                <a role="tab" class="nav-link" id="tab-c-14" data-toggle="tab" href="#tab-animated-14">
+                                                    <span>Mid Grading </span>
+                                                </a>
+                                            </li>
+                                            {% endif %}
                                             <li class="nav-item">
                                                 <a role="tab" class="nav-link" id="tab-c-12" data-toggle="tab" href="#tab-animated-12">
                                                     <span>Post Grading </span>
@@ -492,6 +499,30 @@
                                                 </div>
                                             </div>
 
+                                          {% if result1.education_program in 'BLN Level 1, BLN Level 2, BLN Level 3' %}
+                                          <div class="tab-pane" id="tab-animated-14" role="tabpanel">
+                                              <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
+                                                  {% if result %}
+                                                    <a href="{% url 'mscc:service_education_grading_edit' instance.id result1.education_program 'mid' result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Mid Grades">Edit</a>
+                                                  {% endif %}
+                                              </div>
+                                              <div class="scroll-area-sm" style="height: 200px;">
+                                                  <div class="scrollbar-container ps ps--active-y">
+                                                      <div class="p-3">
+                                                          <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
+                                                              <div class="vertical-timeline-item vertical-timeline-element">
+                                                                  <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                      <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mathematics  / 20</h4>
+                                                                          <p> {{result.mid_test.math_grade}}</p>
+                                                                      </div>
+                                                                  </div>
+                                                              </div>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          {% endif %}
                                           <!-- Post Test -->
                                           <div class="tab-pane" id="tab-animated-12" role="tabpanel">
                                                     <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">

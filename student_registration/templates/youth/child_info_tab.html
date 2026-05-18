@@ -36,9 +36,9 @@
                                                 <div class="widget-content-left">
                                                     <div class="widget-heading">Nationality</div>
                                                         {% if instance.adolescent.nationality.id == 6  %}
-                                                            <div class="widget-subheading">{{ instance.adolescent.nationality.name }} - {{ instance.adolescent.nationality_other }}</div>
+                                                            <div class="widget-subheading">{{ instance.adolescent.nationality.name_en|default:instance.adolescent.nationality.name }} - {{ instance.adolescent.nationality_other }}</div>
                                                         {% else %}
-                                                            <div class="widget-subheading">{{ instance.adolescent.nationality.name }}</div>
+                                                            <div class="widget-subheading">{{ instance.adolescent.nationality.name_en|default:instance.adolescent.nationality.name }}</div>
                                                         {% endif %}
                                                 </div>
                                                 <div class="widget-content-right">
@@ -87,7 +87,7 @@
                                                 <div class="widget-content-left">
                                                     <div class="widget-heading">Number</div>
                                                     <div class="widget-subheading">
-                                                      {{ instance.adolescent.number }}
+                                                      {{ instance.adolescent.unicef_id }}
                                                     </div>
                                                 </div>
                                                 <div class="widget-content-right">
@@ -102,7 +102,7 @@
                                                 <div class="widget-content-left">
                                                     <div class="widget-heading">Any disability or special need?</div>
                                                     <div class="widget-subheading">
-                                                      {{ instance.adolescent.disability }}
+                                                      {{ instance.adolescent.disability.name_en }}
                                                     </div>
                                                 </div>
                                                 <div class="widget-content-right">
@@ -165,7 +165,7 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-graduation-hat text-dark"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Father’s educational level</h4>
-                                                                            <p> {{instance.adolescent.father_educational_level}}</p></div>
+                                                                            <p> {{ instance.adolescent.father_educational_level.name_en|default:instance.adolescent.father_educational_level.name_en }}</p></div>
                                                                     </div>
                                                                 </div>
 
@@ -173,7 +173,7 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-graduation-hat text-dark"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mother’s educational level</h4>
-                                                                            <p> {{instance.adolescent.mother_educational_level}}</p></div>
+                                                                            <p> {{ instance.adolescent.mother_educational_level.name_en|default:instance.adolescent.mother_educational_level.name_en }}</p></div>
                                                                     </div>
                                                                 </div>
 
@@ -220,10 +220,10 @@
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Youth's primary caretaker</h4>
                                                                           {% if instance.adolescent.main_caregiver_nationality.id == 6 %}
-                                                                              <p> {{instance.adolescent.main_caregiver_nationality}} - {{instance.adolescent.main_caregiver_other}}</p>
+                                                                              <p> {{instance.adolescent.main_caregiver_nationality.name_en}} - {{instance.adolescent.main_caregiver_other}}</p>
                                                                           {% else %}
 
-                                                                              <p> {{instance.adolescent.main_caregiver_nationality}}</p>
+                                                                              <p> {{instance.adolescent.main_caregiver_nationality.name_en}}</p>
                                                                           {% endif %}
                                                                         </div>
                                                                     </div>
@@ -271,7 +271,7 @@
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-map-marker text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Governorate / District / Cadaster</h4>
-                                                                    <p> {{ instance.adolescent.governorate }} / {{ instance.adolescent.district }} / {{ instance.adolescent.cadaster }}
+                                                                    <p> {{ instance.adolescent.governorate.name_en }} / {{ instance.adolescent.district.name_en }} / {{ instance.adolescent.cadaster.name_en }}
                                                                     </p>
                                                                 </div>
                                                             </div>

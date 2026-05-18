@@ -35,6 +35,10 @@ from student_registration.locations.models import Location
 from student_registration.users.templatetags.custom_tags import has_group
 
 
+def _name_en_label(obj):
+    return getattr(obj, "name_en", None) or getattr(obj, "name", str(obj))
+
+
 class EnrolledProgramsForm(forms.ModelForm):
     education_status = forms.ChoiceField(
         label=_("Youth's educational level when registering"),
@@ -51,7 +55,7 @@ class EnrolledProgramsForm(forms.ModelForm):
     )
     completion_date = forms.DateField(
         label=_("Date of completion"),
-        required=True
+        required=False
     )
     donor = forms.ModelChoiceField(
         queryset=Donor.objects.filter(active=True),
@@ -116,6 +120,10 @@ class EnrolledProgramsForm(forms.ModelForm):
         instance = kwargs.pop('instance', None)
 
         super(EnrolledProgramsForm, self).__init__(*args, **kwargs)
+
+        for field_name in ['governorate', 'district', 'cadaster']:
+            if field_name in self.fields:
+                self.fields[field_name].label_from_instance = _name_en_label
 
         self.fields['registration_id'].initial = registry
 
@@ -469,6 +477,9 @@ class ProgramDocumentForm(forms.ModelForm):
 
 
         super(ProgramDocumentForm, self).__init__(*args, **kwargs)
+
+        if 'governorates' in self.fields:
+            self.fields['governorates'].label_from_instance = _name_en_label
 
         form_action = reverse('youth:program_program_document_add')
         if instance:

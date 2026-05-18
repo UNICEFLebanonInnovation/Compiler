@@ -1064,6 +1064,7 @@ class ALPAssignmentMatrix(models.Model):
 
 class EducationalLevel(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    name_en = models.CharField(max_length=100, unique=True, blank=True, null=True)
 
     class Meta:
         ordering = ['id']

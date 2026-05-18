@@ -74,7 +74,7 @@ class PlaceholderFilterSet(FilterSet):
 
 
 class MainFilter(PlaceholderFilterSet):
-    adolescent__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
+    adolescent__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name_en')
                                 .order_by('name').distinct(), empty_label='Nationality')
 
     adolescent__first_name = CharFilter(lookup_expr='icontains' )
@@ -94,15 +94,15 @@ class FullFilter(PlaceholderFilterSet):
     partner = ChoiceFilter(
         choices=PartnerOrganization.objects.filter(active=True, is_youth=True).values_list('id', 'short_name').order_by('short_name').distinct(), empty_label='Partner')
     adolescent__governorate = ChoiceFilter(
-        choices=Location.objects.filter(parent__isnull=True).values_list('id', 'name').order_by('name').distinct(),
+        choices=Location.objects.filter(parent__isnull=True).values_list('id', 'name_en').order_by('name_en').distinct(),
         empty_label='Governorate'
     )
     adolescent__district = ChoiceFilter(
-        choices=Location.objects.filter(parent__isnull=False, type=2).values_list('id', 'name').order_by('name').distinct(),
+        choices=Location.objects.filter(parent__isnull=False, type=2).values_list('id', 'name_en').order_by('name_en').distinct(),
         empty_label='district'
     )
     adolescent__cadaster = ChoiceFilter(
-        choices=Location.objects.filter(parent__isnull=False, type=3).values_list('id', 'name').order_by('name').distinct(),
+        choices=Location.objects.filter(parent__isnull=False, type=3).values_list('id', 'name_en').order_by('name_en').distinct(),
         empty_label='Cadaster'
     )
 
@@ -112,12 +112,12 @@ class FullFilter(PlaceholderFilterSet):
     adolescent__unicef_id = CharFilter(lookup_expr='icontains')
     adolescent__gender = ChoiceFilter(choices=Adolescent.GENDER, empty_label='Gender')
     adolescent__nationality = ChoiceFilter(
-        choices=Nationality.objects.values_list('id', 'name').order_by('name').distinct(),
+        choices=Nationality.objects.values_list('id', 'name_en').order_by('name_en').distinct(),
         empty_label='Nationality'
     )
 
     adolescent__disability = ChoiceFilter(
-        choices=Disability.objects.values_list('id', 'name').order_by('name').distinct(),
+        choices=Disability.objects.values_list('id', 'name_en').order_by('name_en').distinct(),
         empty_label='Disability'
     )
     adolescent__first_phone_number = CharFilter(lookup_expr='icontains')
@@ -202,15 +202,15 @@ class FullFilter(PlaceholderFilterSet):
 class PartnerFilter(PlaceholderFilterSet):
 
     adolescent__governorate = ChoiceFilter(
-        choices=Location.objects.filter(parent__isnull=True).values_list('id', 'name').order_by('name').distinct(),
+        choices=Location.objects.filter(parent__isnull=True).values_list('id', 'name_en').order_by('name_en').distinct(),
         empty_label='Governorate'
     )
     adolescent__district = ChoiceFilter(
-        choices=Location.objects.filter(parent__isnull=False, type=2).values_list('id', 'name').order_by('name').distinct(),
+        choices=Location.objects.filter(parent__isnull=False, type=2).values_list('id', 'name_en').order_by('name_en').distinct(),
         empty_label='District'
     )
     adolescent__cadaster = ChoiceFilter(
-        choices=Location.objects.filter(parent__isnull=False, type=3).values_list('id', 'name').order_by('name').distinct(),
+        choices=Location.objects.filter(parent__isnull=False, type=3).values_list('id', 'name_en').order_by('name_en').distinct(),
         empty_label='Cadaster'
     )
 
@@ -220,12 +220,12 @@ class PartnerFilter(PlaceholderFilterSet):
     adolescent__unicef_id = CharFilter(lookup_expr='icontains')
     adolescent__gender = ChoiceFilter(choices=Adolescent.GENDER, empty_label='Gender')
     adolescent__nationality = ChoiceFilter(
-        choices=Nationality.objects.values_list('id', 'name').order_by('name').distinct(),
+        choices=Nationality.objects.values_list('id', 'name_en').order_by('name_en').distinct(),
         empty_label='Nationality'
     )
 
     adolescent__disability = ChoiceFilter(
-        choices=Disability.objects.values_list('id', 'name').order_by('name').distinct(),
+        choices=Disability.objects.values_list('id', 'name_en').order_by('name_en').distinct(),
         empty_label='Disability'
     )
     adolescent__first_phone_number = CharFilter(lookup_expr='icontains')

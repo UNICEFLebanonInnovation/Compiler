@@ -326,9 +326,10 @@ class AttendanceHeatmapViewSet(mixins.ListModelMixin,
     @action(detail=False, methods=['get'], url_path='percentage')
     def percentage(self, request, *args, **kwargs):
         year = int(self.request.GET.get('year', timezone.now().year))
+        year_0 = int(self.request.GET.get('year_0', timezone.now().year - 1))
 
         base_qs = MSCCAttendanceChild.objects.filter(
-            attendance_day__attendance_date__year=year
+            attendance_day__attendance_date__year__in=[year, year_0]
         )
 
         monthly_rows = _aggregate_attendance(

@@ -1181,6 +1181,15 @@ class EducationGradingForm(forms.ModelForm):
                 field_init(self.fields['math_grade'], 'Mathematics', 20)
             if pre_post == "mid":
                 field_init(self.fields['math_grade'], 'Mathematics', 20)
+                self.fields['math_grade'].required = True
+                self.fields['arabic_grade'].required = False
+                self.fields['english_grade'].required = False
+                self.fields['french_grade'].required = False
+                self.fields['arabic_grade'].hidden_widget()
+                if provide_french_language:
+                    self.fields['french_grade'].hidden_widget()
+                else:
+                    self.fields['english_grade'].hidden_widget()
 
         if programme_type == "ABLN Level 1":
             field_init(self.fields['arabic_grade'], 'Arabic Language Development', 46)
@@ -1303,6 +1312,7 @@ class EducationGradingForm(forms.ModelForm):
 
         if programme_type in ["BLN Level 1", "BLN Level 2", "BLN Level 3"]:
             language_field = 'french_grade' if provide_french_language else 'english_grade'
+            first_grade_row_css = ' d-none' if pre_post == "mid" else ''
             self.helper.layout = Layout(
                 Div(
                     Div(
@@ -1328,7 +1338,7 @@ class EducationGradingForm(forms.ModelForm):
                         Div('arabic_grade', css_class='col-md-4'),
                         HTML('<span class="badge-form badge-pill">' + str(2 + ctr) + '</span>'),
                         Div(language_field, css_class='col-md-4'),
-                        css_class='row card-body ' + grade_field_css + display_pre_fields_css
+                        css_class='row card-body ' + grade_field_css + display_pre_fields_css + first_grade_row_css
                     ),
                     Div(
                         HTML('<span class="badge-form badge-pill">' + str(3 + ctr) + '</span>'),
@@ -1603,6 +1613,8 @@ class EducationGradingForm(forms.ModelForm):
             instance = EducationProgrammeAssessment.objects.get(id=instance)
             if pre_post == "pre":
                 instance.pre_test = request.POST
+            if pre_post == "mid":
+                instance.mid_test = request.POST
             if pre_post == "post":
                 instance.post_test = request.POST
 

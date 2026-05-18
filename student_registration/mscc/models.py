@@ -1682,6 +1682,7 @@ class EducationProgrammeAssessment(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
     pre_test = JSONField(default=dict)
+    mid_test = JSONField(default=dict)
     post_test = JSONField(default=dict)
     school_test = JSONField(default=dict)
     programme_type = models.CharField(
