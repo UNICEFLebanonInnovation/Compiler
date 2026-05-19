@@ -879,6 +879,16 @@ class BridgingForm(CommonForm):
         required=False,
         widget=CustomClearableFileInput
     )
+    formal_education_referral_consent = forms.FileField(
+        label=_("Formal education referral consent"),
+        required=False,
+        widget=CustomClearableFileInput
+    )
+    other_additional_document = forms.FileField(
+        label=_("Other additional document"),
+        required=False,
+        widget=CustomClearableFileInput
+    )
     consent = forms.ChoiceField(
         label=_('Informed Consent Received to Share Data Externally'),
         widget=forms.Select,
@@ -1318,6 +1328,13 @@ class BridgingForm(CommonForm):
                     Div(
                         HTML('<span class="badge-form badge-pill">1</span>'),
                         Div('consent_parents', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('formal_education_referral_consent', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('other_additional_document', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
                     _bridging_form_actions(self.request),
@@ -1704,6 +1721,13 @@ class BridgingForm(CommonForm):
                     Div(
                         HTML('<span class="badge-form badge-pill">1</span>'),
                         Div('consent_parents', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('formal_education_referral_consent', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('other_additional_document', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
                     _bridging_form_actions(self.request),
@@ -1958,6 +1982,14 @@ class BridgingForm(CommonForm):
         if consent_parents:
             instance.consent_parents = consent_parents
 
+        formal_education_referral_consent = request.FILES.get('formal_education_referral_consent', False)
+        if formal_education_referral_consent:
+            instance.formal_education_referral_consent = formal_education_referral_consent
+
+        other_additional_document = request.FILES.get('other_additional_document', False)
+        if other_additional_document:
+            instance.other_additional_document = other_additional_document
+
         instance.save()
 
         if instance:
@@ -2046,6 +2078,8 @@ class BridgingForm(CommonForm):
             'student_p_code',
             'consent',
             'consent_parents',
+            'formal_education_referral_consent',
+            'other_additional_document',
             'registration_date',
             'enrolled_formal_education'
         )

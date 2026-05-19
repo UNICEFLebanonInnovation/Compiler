@@ -2156,6 +2156,18 @@ class Bridging(CLM):
         null=True,
         verbose_name=_('Consent from parents'),
     )
+    formal_education_referral_consent = models.FileField(
+        upload_to='uploads/student',
+        blank=True,
+        null=True,
+        verbose_name=_('Formal education referral consent'),
+    )
+    other_additional_document = models.FileField(
+        upload_to='uploads/student',
+        blank=True,
+        null=True,
+        verbose_name=_('Other additional document'),
+    )
     consent = models.CharField(
         max_length=10,
         blank=True,
