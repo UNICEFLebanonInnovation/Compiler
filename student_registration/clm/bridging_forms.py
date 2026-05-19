@@ -880,12 +880,12 @@ class BridgingForm(CommonForm):
         widget=CustomClearableFileInput
     )
     formal_education_referral_consent = forms.FileField(
-        label=_("Formal education referral consent"),
+        label=_("2- Formal education referral consent"),
         required=False,
         widget=CustomClearableFileInput
     )
     other_additional_document = forms.FileField(
-        label=_("Other additional document"),
+        label=_("3- Other additional document"),
         required=False,
         widget=CustomClearableFileInput
     )

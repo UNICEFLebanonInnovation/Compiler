@@ -11,11 +11,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='bridging',
             name='formal_education_referral_consent',
-            field=models.FileField(blank=True, null=True, upload_to='uploads/student', verbose_name='Formal education referral consent'),
+            field=models.FileField(blank=True, null=True, upload_to='uploads/student', verbose_name='2- Formal education referral consent'),
         ),
         migrations.AddField(
             model_name='bridging',
             name='other_additional_document',
-            field=models.FileField(blank=True, null=True, upload_to='uploads/student', verbose_name='Other additional document'),
+            field=models.FileField(blank=True, null=True, upload_to='uploads/student', verbose_name='3- Other additional document'),
         ),
     ]
