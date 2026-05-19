@@ -29,6 +29,7 @@ from django_tables2.export.views import ExportMixin
 from dal import autocomplete
 from student_registration.backends.utils import download_file
 
+
 from .utils import is_allowed_create, is_allowed_edit
 from .models import (
     Student,
@@ -453,7 +454,20 @@ def teacher_export_data(request):
         return HttpResponse("An error occurred: " + str(e), status=500)
 
 
+from pathlib import Path
+
+from django.core.files.storage import default_storage
+from django.http import FileResponse, HttpResponse
+
+
 def serve_file(request, file_path):
-    from pathlib import Path
     file_name = Path(file_path).name
-    return download_file(file_path, file_name, delete_after=False)
+
+    try:
+        file = default_storage.open(file_path, "rb")
+        response = FileResponse(file, as_attachment=True, filename=file_name)
+        return response
+
+    except Exception as exc:
+        return HttpResponse(f"Error reading file: {exc}", status=404)
+
