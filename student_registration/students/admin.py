@@ -23,12 +23,28 @@ class NationalityResource(resources.ModelResource):
         fields = (
             'id',
             'name',
+            'name_en',
         )
-        export_order = ('name', )
+        export_order = (
+            'id',
+            'name',
+            'name_en',
+        )
 
 
 class NationalityAdmin(ImportExportModelAdmin):
     resource_class = NationalityResource
+    list_display = (
+        'name',
+        'name_en',
+    )
+    list_filter = (
+
+    )
+    search_fields = (
+        'name',
+        'name_en',
+    )
 
 
 class IDTypeResource(resources.ModelResource):

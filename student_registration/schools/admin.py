@@ -344,8 +344,23 @@ class EducationalLevelResource(resources.ModelResource):
         fields = (
             'id',
             'name',
+            'name_en',
         )
         export_order = fields
+
+class EducationalLevelAdmin(ImportExportModelAdmin):
+    resource_class = EducationalLevelResource
+    list_display = (
+        'name',
+        'name_en',
+    )
+    list_filter = (
+
+    )
+    search_fields = (
+        'name',
+        'name_en',
+    )
 
 
 class EvaluationResource(resources.ModelResource):
@@ -636,8 +651,7 @@ class EvaluationAdmin(ImportExportModelAdmin):
         )
 
 
-class EducationalLevelAdmin(ImportExportModelAdmin):
-    resource_class = EducationalLevelResource
+
 
 
 class SchoolResource(resources.ModelResource):
