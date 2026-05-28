@@ -807,7 +807,7 @@ class PDListView(LoginRequiredMixin,
         else:
             return ProgramDocument.objects.none()
 
-        return qs.distinct('id')
+        return qs.distinct()
 
     def get_table_class(self):
         if has_group(self.request.user, 'YOUTH_UNICEF'):
