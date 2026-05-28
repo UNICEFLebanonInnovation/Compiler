@@ -10,7 +10,27 @@ class RegistrationTable(tables.Table):
                                           template_name='django_tables2/youth/action_column.html')
     adolescent_disability = tables.Column(verbose_name=_('Disability'), accessor='adolescent.disability.name_en')
     adolescent_nationality = tables.Column(verbose_name=_('Nationality'), accessor='adolescent.nationality.name_en')
+    adolescent_age = tables.Column(verbose_name=_('Age'), accessor='adolescent_age')
 
+
+    def order_adolescent_age(self, queryset, is_descending):
+        """Order age via DOB fields since `adolescent_age` is a computed property."""
+        if is_descending:
+            ordering = (
+                'adolescent__birthday_year',
+                'adolescent__birthday_month',
+                'adolescent__birthday_day',
+                'id',
+            )
+        else:
+            ordering = (
+                '-adolescent__birthday_year',
+                '-adolescent__birthday_month',
+                '-adolescent__birthday_day',
+                '-id',
+            )
+        return queryset.order_by(*ordering), True
+    
     class Meta:
         model = Registration
         template = 'django_tables2/bootstrap.html'

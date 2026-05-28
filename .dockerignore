@@ -2,3 +2,8 @@
 !.coveragerc
 !.env
 !.pylintrc
+bma/
+.venv/
+venv/
+__pycache__/
+*.pyc
