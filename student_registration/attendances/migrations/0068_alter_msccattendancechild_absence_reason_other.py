@@ -11,6 +11,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='msccattendancechild',
             name='absence_reason_other',
-            field=models.TextField(blank=True, null=True, verbose_name='specify'),
+            field=models.CharField(blank=True, max_length=1000, null=True, verbose_name='specify'),
         ),
     ]
