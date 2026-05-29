@@ -4,14 +4,6 @@ var host = protocol+window.location.host;
 
 $(document).ready(function() {
 
-    var ABSENCE_REASON_OTHER_MAX_LENGTH = 500;
-
-    $(document).on('input', '.absence_reason_other', function() {
-        if (this.value.length > ABSENCE_REASON_OTHER_MAX_LENGTH) {
-            this.value = this.value.substring(0, ABSENCE_REASON_OTHER_MAX_LENGTH);
-        }
-    });
-
     $('.attendance_day_off label').click(function(e) {
         setTimeout(
           function()
