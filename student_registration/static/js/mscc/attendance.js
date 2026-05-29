@@ -5,16 +5,11 @@ var host = protocol+window.location.host;
 $(document).ready(function() {
 
     var ABSENCE_REASON_OTHER_MAX_LENGTH = 500;
-    var DEFAULT_FORM_ERROR_MESSAGE = 'Please check the form mandatory fields.';
-    var ABSENCE_REASON_OTHER_TOO_LONG_MESSAGE = 'The absence other reason text is too long. Please enter 500 characters or fewer.';
 
-    function showAttendanceWarning(message) {
-        $('#formErrorModal #swal2-content').text(message);
-        $('#formErrorModal').modal('show');
-    }
-
-    $('#formErrorModal').on('hidden.bs.modal', function() {
-        $('#formErrorModal #swal2-content').text(DEFAULT_FORM_ERROR_MESSAGE);
+    $(document).on('input', '.absence_reason_other', function() {
+        if (this.value.length > ABSENCE_REASON_OTHER_MAX_LENGTH) {
+            this.value = this.value.substring(0, ABSENCE_REASON_OTHER_MAX_LENGTH);
+        }
     });
 
     $('.attendance_day_off label').click(function(e) {
@@ -60,11 +55,6 @@ $(document).ready(function() {
         var absence_reason_other = $item.find(".absence_reason_other").val();
 
         // Validation logic
-        if (absence_reason_other.length > ABSENCE_REASON_OTHER_MAX_LENGTH) {
-            $item.find(".absence_reason_other").addClass("is-invalid");
-            isValid = false;
-        }
-
         if (attended === 'No') {
             if (!absence_reason) {
                 $item.find(".absence_reason").addClass("is-invalid");
@@ -85,10 +75,7 @@ $(document).ready(function() {
     });
 
     if (!isValid) {
-        var hasLongAbsenceReason = $('.absence_reason_other.is-invalid').filter(function() {
-            return $(this).val().length > ABSENCE_REASON_OTHER_MAX_LENGTH;
-        }).length > 0;
-        showAttendanceWarning(hasLongAbsenceReason ? ABSENCE_REASON_OTHER_TOO_LONG_MESSAGE : DEFAULT_FORM_ERROR_MESSAGE);
+        $('#formErrorModal').modal('show');
         return;
     }
 
@@ -122,8 +109,6 @@ $(document).ready(function() {
         },
         error: function(response) {
             console.log(response);
-            var errorMessage = response.responseJSON && response.responseJSON.error ? response.responseJSON.error : DEFAULT_FORM_ERROR_MESSAGE;
-            showAttendanceWarning(errorMessage);
             $('.app-drawer-overlay').addClass('d-none');
         },
         complete: function() {

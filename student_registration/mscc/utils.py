@@ -517,7 +517,7 @@ def create_attendance(data, center_id):
 
             attendance_child.attended = child.get('attended')
             attendance_child.absence_reason = child.get('absence_reason')
-            attendance_child.absence_reason_other = child.get('absence_reason_other')
+            attendance_child.absence_reason_other = (child.get('absence_reason_other') or '')[:500]
             attendance_child.save()
 
         return True
