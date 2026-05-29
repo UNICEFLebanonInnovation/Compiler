@@ -139,6 +139,17 @@ def save_attendance_children(request):
     except ValueError:
         return HttpResponseBadRequest("Invalid JSON payload")
 
+    for child in data.get('children_attendance', []):
+        absence_reason_other = child.get('absence_reason_other') or ''
+        if len(absence_reason_other) > 500:
+            return JsonResponse(
+                {
+                    "result": False,
+                    "error": "The absence other reason text is too long. Please enter 500 characters or fewer.",
+                },
+                status=400,
+            )
+
     try:
         result = create_attendance(data, request.GET.get("center_id"))
     except Exception:  # pragma: no cover - safety net
