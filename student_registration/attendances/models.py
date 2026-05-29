@@ -742,8 +742,7 @@ class MSCCAttendanceChild(TimeStampedModel):
         null=True,
         choices=ABSENCE_REASON
     )
-    absence_reason_other = models.CharField(
-        max_length=500,
+    absence_reason_other = models.TextField(
         blank=True,
         null=True,
         verbose_name=_('specify')
