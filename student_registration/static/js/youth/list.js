@@ -2,6 +2,37 @@
 
 $(document).ready(function() {
 
+
+    function refreshSubProgramsForSelectedMasterPrograms() {
+        var masterPrograms = $("#id_master_program").val();
+        var $subProgram = $("#id_sub_program");
+
+        if (!$("#id_master_program").length || !$subProgram.length) {
+            return;
+        }
+
+        if (!masterPrograms || masterPrograms.length === 0) {
+            $subProgram.html('<option value="">---------</option>');
+            return;
+        }
+
+        $.ajax({
+            url: window.youthLoadSubProgramsUrl || "/youth/load-sub-programs/",
+            data: {
+                'id_master_program': masterPrograms,
+                'selected_sub_program': $subProgram.val()
+            },
+            success: function(data) {
+                $subProgram.html(data);
+            }
+        });
+    }
+
+    $("#id_master_program").on("change", refreshSubProgramsForSelectedMasterPrograms);
+    if ($("#id_master_program").val() && $("#id_master_program").val().length > 0) {
+        refreshSubProgramsForSelectedMasterPrograms();
+    }
+
     $(document).on('click', '.download-report', function(e){
         e.preventDefault();
 

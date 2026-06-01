@@ -116,8 +116,11 @@
 
 {% block extra_js %}
 
+    <script>
+      window.youthLoadSubProgramsUrl = "{% url 'youth:load_sub_programs' %}";
+    </script>
     <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/youth/list.js' %}?v=26"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/youth/list.js' %}?v=27"></script>
     <script type="text/javascript" src="{% static 'js/youth/general.js' %}?v=1"></script>
 
 

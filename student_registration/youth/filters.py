@@ -34,6 +34,34 @@ from student_registration.clm.models import Disability, EducationalLevel
 from student_registration.schools.models import PartnerOrganization
 
 
+def _indicator_number_sort_key(indicator):
+    try:
+        return (0, [int(p) for p in indicator.number.split('.')])
+    except (AttributeError, ValueError):
+        return (1, indicator.number or '')
+
+
+def _master_program_choices():
+    return [
+        (mp.id, "{} - {}".format(mp.number, mp.name))
+        for mp in sorted(
+            MasterProgram.objects.filter(active=True),
+            key=_indicator_number_sort_key
+        )
+    ]
+
+
+def _sub_program_choices(master_program_ids=None):
+    queryset = SubProgram.objects.filter(master_program__active=True)
+    if master_program_ids:
+        queryset = queryset.filter(master_program_id__in=master_program_ids)
+
+    return [
+        (sp.id, "{} - {}".format(sp.number, sp.name))
+        for sp in sorted(queryset, key=_indicator_number_sort_key)
+    ]
+
+
 class PlaceholderFilterSet(FilterSet):
     """Base FilterSet that hides labels and uses placeholders."""
 
@@ -43,6 +71,7 @@ class PlaceholderFilterSet(FilterSet):
         self.form.helper.form_method = "get"     # django-filter expects GET
         self.form.helper.form_class = "form-inline"
         self.form.helper.form_tag = True
+        self._limit_sub_program_choices_to_selected_master_program()
         # self.form.helper.add_input(Submit("submit", "Filter"))
         # self.form.helper.add_input(Rest("Rest", "Cancel"))
         all_fields = list(self.form.fields)  # -> ['type', 'partner', 'round', ...]
@@ -71,6 +100,33 @@ class PlaceholderFilterSet(FilterSet):
             field.label = ''
             if isinstance(field.widget, (forms.TextInput, forms.NumberInput)):
                 field.widget.attrs.setdefault('placeholder', label)
+
+    def _get_selected_values(self, field_name):
+        if not self.data:
+            return []
+
+        values = []
+        if hasattr(self.data, 'getlist'):
+            values.extend(self.data.getlist(field_name))
+            values.extend(self.data.getlist('{}[]'.format(field_name)))
+
+        raw_value = self.data.get(field_name)
+        if raw_value:
+            values.append(raw_value)
+
+        selected_values = []
+        for value in values:
+            selected_values.extend(str(value).split(','))
+
+        return [value for value in selected_values if value]
+
+    def _limit_sub_program_choices_to_selected_master_program(self):
+        if 'master_program' not in self.form.fields or 'sub_program' not in self.form.fields:
+            return
+
+        master_program_ids = self._get_selected_values('master_program')
+        if master_program_ids:
+            self.form.fields['sub_program'].choices = _sub_program_choices(master_program_ids)
 
 
 class MainFilter(PlaceholderFilterSet):
@@ -149,15 +205,7 @@ class FullFilter(PlaceholderFilterSet):
         lookup_expr='lte', label='End Date'
     )
     master_program = MultipleChoiceFilter(
-        choices=lambda: [
-            (mp.id, "{} - {}".format(mp.number, mp.name))
-            for mp in sorted(
-                MasterProgram.objects.filter(active=True
-                                             # , created__year=datetime.datetime.now().year
-                                             ),
-                key=lambda m: [int(p) for p in m.number.split('.')]
-            )
-        ],
+        choices=_master_program_choices,
         field_name='enrolled_programs__master_program',
         label='Master Indicator',
         method='filter_by_master_program',
@@ -165,13 +213,7 @@ class FullFilter(PlaceholderFilterSet):
     )
 
     sub_program = MultipleChoiceFilter(
-        choices=lambda: [
-            (sp.id, "{} - {}".format(sp.number, sp.name))
-            for sp in sorted(
-                SubProgram.objects.filter(master_program__active=True),
-                key=lambda s: [int(p) for p in s.number.split('.')]
-            )
-        ],
+        choices=_sub_program_choices,
         field_name='enrolled_programs__sub_program',
         label='Sub Program',
         method='filter_by_sub_program',
@@ -256,15 +298,7 @@ class PartnerFilter(PlaceholderFilterSet):
         lookup_expr='lte', label='End Date'
     )
     master_program = MultipleChoiceFilter(
-        choices=lambda: [
-            (mp.id, "{} - {}".format(mp.number, mp.name))
-            for mp in sorted(
-                MasterProgram.objects.filter(active=True
-                                             # , created__year=datetime.datetime.now().year
-                                             ),
-                key=lambda m: [int(p) for p in m.number.split('.')]
-            )
-        ],
+        choices=_master_program_choices,
         field_name='enrolled_programs__master_program',
         label='Master Indicator',
         method='filter_by_master_program',
@@ -272,13 +306,7 @@ class PartnerFilter(PlaceholderFilterSet):
     )
 
     sub_program = MultipleChoiceFilter(
-        choices=lambda: [
-            (sp.id, "{} - {}".format(sp.number, sp.name))
-            for sp in sorted(
-                SubProgram.objects.filter(master_program__active=True),
-                key=lambda s: [int(p) for p in s.number.split('.')]
-            )
-        ],
+        choices=_sub_program_choices,
         field_name='enrolled_programs__sub_program',
         label='Sub Program',
         method='filter_by_sub_program',

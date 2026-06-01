@@ -28,7 +28,6 @@ import traceback
 from student_registration.students.utils import generate_one_unique_id
 from student_registration.students.models import Nationality
 
-logger = logging.getLogger(__name__)
 from .filters import (
     MainFilter,
     FullFilter,
@@ -60,6 +59,15 @@ from .utils import *
 
 from student_registration.users.templatetags.custom_tags import has_group
 from student_registration.locations import views as location_views
+
+logger = logging.getLogger(__name__)
+
+
+def _indicator_number_sort_key(indicator):
+    try:
+        return (0, [int(p) for p in indicator.number.split('.')])
+    except (AttributeError, ValueError):
+        return (1, indicator.number or '')
 
 
 class ProfileView(LoginRequiredMixin,
@@ -861,10 +869,39 @@ def load_master_program(request):
 
 def load_sub_program(request):
     sub_programs = []
+
+    master_program_ids = request.GET.getlist('id_master_program[]') or request.GET.getlist('id_master_program')
     if request.GET.get('id_master_program'):
-        id_master_program = request.GET.get('id_master_program')
-        sub_programs = SubProgram.objects.filter(master_program_id=id_master_program).order_by('name')
-    return render(request, 'youth/sub_program_dropdown_list_options.html', {'sub_programs': sub_programs})
+        master_program_ids.append(request.GET.get('id_master_program'))
+
+    master_program_ids = [
+        program_id
+        for raw_program_id in master_program_ids
+        for program_id in str(raw_program_id).split(',')
+        if program_id
+    ]
+
+    if master_program_ids:
+        sub_programs = sorted(
+            SubProgram.objects.filter(master_program_id__in=master_program_ids),
+            key=_indicator_number_sort_key
+        )
+
+    selected_sub_program_ids = request.GET.getlist('selected_sub_program[]') or request.GET.getlist('selected_sub_program')
+    if request.GET.get('selected_sub_program'):
+        selected_sub_program_ids.append(request.GET.get('selected_sub_program'))
+
+    selected_sub_program_ids = [
+        sub_program_id
+        for raw_sub_program_id in selected_sub_program_ids
+        for sub_program_id in str(raw_sub_program_id).split(',')
+        if sub_program_id
+    ]
+
+    return render(request, 'youth/sub_program_dropdown_list_options.html', {
+        'sub_programs': sub_programs,
+        'selected_sub_program_ids': selected_sub_program_ids,
+    })
 
 
 def program_document_indicators_view(request, program_document_id):
