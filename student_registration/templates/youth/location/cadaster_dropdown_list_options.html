@@ -1,4 +1,4 @@
 <option value="">---------</option>
 {% for city in cities %}
-<option value="{{ city.pk }}">{{ city.name_en|default:city.name }}</option>
+<option value="{{ city.pk }}"{% if city.pk|stringformat:"s" in selected_city_ids %} selected{% endif %}>{{ city.name_en|default:city.name }}</option>
 {% endfor %}

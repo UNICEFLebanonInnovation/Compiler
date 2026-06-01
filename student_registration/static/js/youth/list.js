@@ -33,6 +33,70 @@ $(document).ready(function() {
         refreshSubProgramsForSelectedMasterPrograms();
     }
 
+    function refreshCadastersForSelectedDistrict() {
+        var district = $("#id_adolescent__district").val();
+        var $cadaster = $("#id_adolescent__cadaster");
+
+        if (!$("#id_adolescent__district").length || !$cadaster.length) {
+            return;
+        }
+
+        if (!district) {
+            $cadaster.html('<option value="">---------</option>');
+            return;
+        }
+
+        $.ajax({
+            url: window.youthLoadCadastersUrl || "/youth/load-cadasters/",
+            data: {
+                'id_adolescent_district': district,
+                'selected_cadaster': $cadaster.val()
+            },
+            success: function(data) {
+                $cadaster.html(data);
+            }
+        });
+    }
+
+    function refreshDistrictsForSelectedGovernorate() {
+        var governorate = $("#id_adolescent__governorate").val();
+        var $district = $("#id_adolescent__district");
+        var $cadaster = $("#id_adolescent__cadaster");
+
+        if (!$("#id_adolescent__governorate").length || !$district.length) {
+            return;
+        }
+
+        if (!governorate) {
+            $district.html('<option value="">---------</option>');
+            if ($cadaster.length) {
+                $cadaster.html('<option value="">---------</option>');
+            }
+            return;
+        }
+
+        $.ajax({
+            url: window.youthLoadDistrictsUrl || "/youth/load-districts/",
+            data: {
+                'id_adolescent_governorate': governorate,
+                'selected_district': $district.val()
+            },
+            success: function(data) {
+                $district.html(data);
+                refreshCadastersForSelectedDistrict();
+            }
+        });
+    }
+
+    $("#id_adolescent__governorate").on("change", refreshDistrictsForSelectedGovernorate);
+    $("#id_adolescent__district").on("change", refreshCadastersForSelectedDistrict);
+
+    if ($("#id_adolescent__governorate").val()) {
+        refreshDistrictsForSelectedGovernorate();
+    } else if ($("#id_adolescent__district").val()) {
+        refreshCadastersForSelectedDistrict();
+    }
+
     $(document).on('click', '.download-report', function(e){
         e.preventDefault();
 

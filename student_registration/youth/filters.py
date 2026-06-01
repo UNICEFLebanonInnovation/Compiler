@@ -62,6 +62,31 @@ def _sub_program_choices(master_program_ids=None):
     ]
 
 
+def _location_choices(location_type=None, parent_ids=None):
+    queryset = Location.objects.all()
+    if location_type is None:
+        queryset = queryset.filter(parent__isnull=True)
+    else:
+        queryset = queryset.filter(parent__isnull=False, type=location_type)
+
+    if parent_ids:
+        queryset = queryset.filter(parent_id__in=parent_ids)
+
+    return queryset.values_list('id', 'name_en').order_by('name_en').distinct()
+
+
+def _governorate_choices():
+    return _location_choices()
+
+
+def _district_choices(governorate_ids=None):
+    return _location_choices(location_type=2, parent_ids=governorate_ids)
+
+
+def _cadaster_choices(district_ids=None):
+    return _location_choices(location_type=3, parent_ids=district_ids)
+
+
 class PlaceholderFilterSet(FilterSet):
     """Base FilterSet that hides labels and uses placeholders."""
 
@@ -72,6 +97,7 @@ class PlaceholderFilterSet(FilterSet):
         self.form.helper.form_class = "form-inline"
         self.form.helper.form_tag = True
         self._limit_sub_program_choices_to_selected_master_program()
+        self._limit_location_choices_to_selected_parents()
         # self.form.helper.add_input(Submit("submit", "Filter"))
         # self.form.helper.add_input(Rest("Rest", "Cancel"))
         all_fields = list(self.form.fields)  # -> ['type', 'partner', 'round', ...]
@@ -120,6 +146,11 @@ class PlaceholderFilterSet(FilterSet):
 
         return [value for value in selected_values if value]
 
+    def _set_choice_field_options(self, field_name, choices):
+        existing_choices = list(self.form.fields[field_name].choices)
+        empty_choices = existing_choices[:1] if existing_choices and existing_choices[0][0] == '' else []
+        self.form.fields[field_name].choices = empty_choices + list(choices)
+
     def _limit_sub_program_choices_to_selected_master_program(self):
         if 'master_program' not in self.form.fields or 'sub_program' not in self.form.fields:
             return
@@ -127,6 +158,19 @@ class PlaceholderFilterSet(FilterSet):
         master_program_ids = self._get_selected_values('master_program')
         if master_program_ids:
             self.form.fields['sub_program'].choices = _sub_program_choices(master_program_ids)
+
+    def _limit_location_choices_to_selected_parents(self):
+        if 'adolescent__governorate' not in self.form.fields:
+            return
+
+        governorate_ids = self._get_selected_values('adolescent__governorate')
+        district_ids = self._get_selected_values('adolescent__district')
+
+        if governorate_ids and 'adolescent__district' in self.form.fields:
+            self._set_choice_field_options('adolescent__district', _district_choices(governorate_ids))
+
+        if district_ids and 'adolescent__cadaster' in self.form.fields:
+            self._set_choice_field_options('adolescent__cadaster', _cadaster_choices(district_ids))
 
 
 class MainFilter(PlaceholderFilterSet):
@@ -150,15 +194,15 @@ class FullFilter(PlaceholderFilterSet):
     partner = ChoiceFilter(
         choices=PartnerOrganization.objects.filter(active=True, is_youth=True).values_list('id', 'short_name').order_by('short_name').distinct(), empty_label='Partner')
     adolescent__governorate = ChoiceFilter(
-        choices=Location.objects.filter(parent__isnull=True).values_list('id', 'name_en').order_by('name_en').distinct(),
+        choices=_governorate_choices,
         empty_label='Governorate'
     )
     adolescent__district = ChoiceFilter(
-        choices=Location.objects.filter(parent__isnull=False, type=2).values_list('id', 'name_en').order_by('name_en').distinct(),
+        choices=_district_choices,
         empty_label='district'
     )
     adolescent__cadaster = ChoiceFilter(
-        choices=Location.objects.filter(parent__isnull=False, type=3).values_list('id', 'name_en').order_by('name_en').distinct(),
+        choices=_cadaster_choices,
         empty_label='Cadaster'
     )
 
@@ -244,15 +288,15 @@ class FullFilter(PlaceholderFilterSet):
 class PartnerFilter(PlaceholderFilterSet):
 
     adolescent__governorate = ChoiceFilter(
-        choices=Location.objects.filter(parent__isnull=True).values_list('id', 'name_en').order_by('name_en').distinct(),
+        choices=_governorate_choices,
         empty_label='Governorate'
     )
     adolescent__district = ChoiceFilter(
-        choices=Location.objects.filter(parent__isnull=False, type=2).values_list('id', 'name_en').order_by('name_en').distinct(),
+        choices=_district_choices,
         empty_label='District'
     )
     adolescent__cadaster = ChoiceFilter(
-        choices=Location.objects.filter(parent__isnull=False, type=3).values_list('id', 'name_en').order_by('name_en').distinct(),
+        choices=_cadaster_choices,
         empty_label='Cadaster'
     )
 

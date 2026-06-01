@@ -498,6 +498,23 @@ def _get_template(request, default_template, youth_template=None):
     return default_template
 
 
+def _get_selected_ids(request, *keys):
+    selected_ids = []
+    for key in keys:
+        selected_ids.extend(request.GET.getlist(key))
+        selected_ids.extend(request.GET.getlist('{}[]'.format(key)))
+        value = request.GET.get(key)
+        if value:
+            selected_ids.append(value)
+
+    return [
+        selected_id
+        for raw_selected_id in selected_ids
+        for selected_id in str(raw_selected_id).split(',')
+        if selected_id
+    ]
+
+
 def load_districts(request):
     id_governorate = _get_first_param(
         request,
@@ -515,7 +532,10 @@ def load_districts(request):
         'location/city_dropdown_list_options.html',
         youth_template='youth/location/city_dropdown_list_options.html',
     )
-    return render(request, template, {'cities': cities})
+    return render(request, template, {
+        'cities': cities,
+        'selected_city_ids': _get_selected_ids(request, 'selected_city', 'selected_district'),
+    })
 
 
 def load_cadasters(request):
@@ -535,7 +555,10 @@ def load_cadasters(request):
         'location/cadaster_dropdown_list_options.html',
         youth_template='youth/location/cadaster_dropdown_list_options.html',
     )
-    return render(request, template, {'cities': cities})
+    return render(request, template, {
+        'cities': cities,
+        'selected_city_ids': _get_selected_ids(request, 'selected_city', 'selected_cadaster'),
+    })
 
 
 def load_schools(request):
