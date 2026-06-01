@@ -59,14 +59,15 @@ class PDTable(tables.Table):
     partner = tables.Column(verbose_name=_('Partner'), accessor='partner.short_name')
     type = tables.Column(verbose_name=_('Type'), accessor='project_type')
     sectors = tables.Column(verbose_name=_('Sectors'))
-    governorate = tables.Column(accessor='get_governorate_names', verbose_name=_('Governorates'))
-    population_groups = tables.Column(accessor='get_population_groups_name', verbose_name=_('Population Groups'))
+    governorate = tables.Column(accessor='get_governorate_names', verbose_name=_('Governorates'), orderable=False)
+    population_groups = tables.Column(accessor='get_population_groups_name', verbose_name=_('Population Groups'), orderable=False)
     master_programs = tables.Column(
         accessor='get_master_program_names',
         verbose_name=_('Master Programs'),
         attrs={'td': {'class': 'master-programs-col'}, 'th': {'class': 'master-programs-col'}},
+        orderable=False,
     )
-    donor_names = tables.Column(accessor='get_donor_names', verbose_name=_('Donors'))
+    donor_names = tables.Column(accessor='get_donor_names', verbose_name=_('Donors'), orderable=False)
     budget = tables.Column(verbose_name=_('Budget'))
 
     class Meta:
@@ -105,9 +106,9 @@ class PDPartnerTable(tables.Table):
     partner = tables.Column(verbose_name=_('Partner'), accessor='partner.short_name')
     type = tables.Column(verbose_name=_('Type'), accessor='project_type')
     sectors = tables.Column(verbose_name=_('Sectors'))
-    governorate = tables.Column(accessor='get_governorate_names', verbose_name=_('Governorates'))
-    population_groups = tables.Column(accessor='get_population_groups_name', verbose_name=_('Population Groups'))
-    master_programs = tables.Column(accessor='get_master_program_names', verbose_name=_('Master Programs'))
+    governorate = tables.Column(accessor='get_governorate_names', verbose_name=_('Governorates'), orderable=False)
+    population_groups = tables.Column(accessor='get_population_groups_name', verbose_name=_('Population Groups'), orderable=False)
+    master_programs = tables.Column(accessor='get_master_program_names', verbose_name=_('Master Programs'), orderable=False)
     budget = tables.Column(verbose_name=_('Budget'))
 
     class Meta:
