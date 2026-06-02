@@ -33,11 +33,19 @@
 
         <a type="button" href="{{ column.attrs.url_pre_assessment }}{{ record.id }}" tabindex="0" class="dropdown-item">
           <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-create btn-icon-wrapper"> </i></button>
-          {% trans "Pre-Assessment" %}</a>
+          {% if request.user.partner and request.user.partner.is_Kayany %}
+            {% trans "Pre-Assessment" %}</a>
+          {% else %}
+            {% trans "Pre-Assessment-Term 1" %}</a>
+          {% endif %}
 
         <a type="button" href="{{ column.attrs.url_post_assessment }}{{ record.id }}?v=2" tabindex="0" class="dropdown-item">
           <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-create btn-icon-wrapper"> </i></button>
-          {% trans "Post-Assessment" %}</a>
+          {% if request.user.partner and request.user.partner.is_Kayany %}
+            {% trans "Post-Assessment" %}</a>
+          {% else %}
+            {% trans "Post-Assessment-Term 2" %}</a>
+          {% endif %}
 
 
       {% if request.user.partner and request.user.partner.is_Kayany %}

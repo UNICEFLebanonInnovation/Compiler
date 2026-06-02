@@ -2324,7 +2324,7 @@ class BridgingPreAssessmentForm(forms.ModelForm):
         if not is_Kayany:
             self.helper.layout = Layout(
                 Div(
-                    Div(HTML('<h4 id="alternatives-to-hidden-labels">' + _('Pre-Assessment') + '</h4>'), css_class='row card-body'),
+                    Div(HTML('<h4 id="alternatives-to-hidden-labels">' + _('Pre-Assessment-Term 1') + '</h4>'), css_class='row card-body'),
                     Div(Div('registration_level', css_class='col-md-3 d-none'), Div('language', css_class='col-md-3 d-none'), css_class='row card-body'),
                     Div(
                         Div(HTML('<h5>English/French</h5>'), css_class='row card-body'),
@@ -2535,6 +2535,8 @@ class BridgingPreAssessmentForm(forms.ModelForm):
         model = Bridging
         fields = (
         )
+
+
 class BridgingAssessmentForm(forms.ModelForm):
     REGISTRATION_LEVEL = (
         ('', '----------'),
@@ -2893,6 +2895,8 @@ class BridgingAssessmentForm(forms.ModelForm):
 
             self.helper.layout = Layout(
                 Div(
+                    Div(HTML('<h4 id="alternatives-to-hidden-labels">' + _('Post-Assessment-Term 2') + '</h4>'),
+                        css_class='row card-body'),
                     Div(
                         Div('registration_level', css_class='col-md-3 d-none'),
                         Div('language', css_class='col-md-3 d-none'),
@@ -2960,6 +2964,8 @@ class BridgingAssessmentForm(forms.ModelForm):
         else:
             self.helper.layout = Layout(
                 Div(
+                    Div(HTML('<h4 id="alternatives-to-hidden-labels">' + _('Pre-Assessment') + '</h4>'),
+                        css_class='row card-body'),
                     Div(
                         Div('registration_level', css_class='col-md-3 d-none'),
                         Div('language', css_class='col-md-3 d-none'),
