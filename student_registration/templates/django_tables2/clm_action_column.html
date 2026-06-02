@@ -39,6 +39,16 @@
             {% trans "Pre-Assessment-Term 1" %}</a>
           {% endif %}
 
+      {% if not request.user.partner or not request.user.partner.is_Kayany %}
+        <a type="button" href="{{ column.attrs.url_math_assessment }}{{ record.id }}/pre" tabindex="0" class="dropdown-item">
+          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-create btn-icon-wrapper"> </i></button>
+          {% trans "Post-Assessment-Term 1" %}</a>
+
+        <a type="button" href="{{ column.attrs.url_math_assessment }}{{ record.id }}/post" tabindex="0" class="dropdown-item">
+          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-create btn-icon-wrapper"> </i></button>
+          {% trans "Pre-Assessment-Term 2" %}</a>
+      {% endif %}
+
         <a type="button" href="{{ column.attrs.url_post_assessment }}{{ record.id }}?v=2" tabindex="0" class="dropdown-item">
           <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-create btn-icon-wrapper"> </i></button>
           {% if request.user.partner and request.user.partner.is_Kayany %}

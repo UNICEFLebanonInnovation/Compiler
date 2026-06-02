@@ -2182,6 +2182,8 @@ class Bridging(CLM):
     )
     mid_test1 = JSONField(default=dict)
     mid_test2 = JSONField(default=dict)
+    post_test_term_1 = JSONField(default=dict)
+    pre_test_term_2 = JSONField(default=dict)
 
     enrolled_formal_education = models.CharField(
         max_length=10,

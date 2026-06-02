@@ -344,6 +344,8 @@ class BridgingSerializer(CLMSerializer):
 
     mid_test1 = serializers.JSONField(required=False)
     mid_test2 = serializers.JSONField(required=False)
+    post_test_term_1 = serializers.JSONField(required=False)
+    pre_test_term_2 = serializers.JSONField(required=False)
 
     class Meta:
         model = Bridging
@@ -351,6 +353,8 @@ class BridgingSerializer(CLMSerializer):
             # 'cycle',
             # 'referral',
             'child_outreach',
+            'post_test_term_1',
+            'pre_test_term_2',
             'residence_type',
             'have_labour',
             'labours',

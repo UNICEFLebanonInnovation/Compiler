@@ -2093,6 +2093,177 @@ class BridgingForm(CommonForm):
         )
 
 
+class BridgingMathAssessmentForm(forms.ModelForm):
+    REGISTRATION_LEVEL = (
+        ('', '----------'),
+        ('level_one', _('Level one')),
+        ('level_two', _('Level two')),
+        ('level_three', _('Level three')),
+    )
+
+    ASSESSMENT_CONFIG = {
+        'pre': {
+            'title': _('Post-Assessment-Term 1'),
+            'storage_field': 'post_test_term_1',
+            'fields_by_level': {
+                'level_one': {
+                    'math_natural_numbers': 10,
+                    'math_addition': 5,
+                    'math_location': 5,
+                    'math_plane_figures': 5,
+                },
+                'level_two': {
+                    'math_natural_numbers': 10,
+                    'math_addition': 10,
+                    'math_location': 4,
+                    'math_plane_figures': 3,
+                    'math_subtraction': 8,
+                },
+                'level_three': {
+                    'math_natural_numbers': 12,
+                    'math_addition': 12,
+                    'math_plane_figures': 4,
+                    'math_subtraction': 12,
+                    'math_multiplication': 5,
+                },
+            },
+        },
+        'post': {
+            'title': _('Pre-Assessment-Term 2'),
+            'storage_field': 'pre_test_term_2',
+            'fields_by_level': {
+                'level_one': {
+                    'math_natural_numbers': 10,
+                    'math_addition': 6,
+                    'math_subtraction': 5,
+                    'math_length': 2,
+                    'math_solid_figures': 2,
+                },
+                'level_two': {
+                    'math_natural_numbers': 7,
+                    'math_addition': 8,
+                    'math_subtraction': 5,
+                    'math_length': 3,
+                    'math_solid_figures': 3,
+                    'math_plane_figures': 4,
+                    'math_multiplication': 5,
+                },
+                'level_three': {
+                    'math_natural_numbers': 9,
+                    'math_addition': 6,
+                    'math_subtraction': 6,
+                    'math_length': 5,
+                    'math_multiplication': 7,
+                    'math_location': 3,
+                    'math_division': 6,
+                    'math_fractions': 3,
+                },
+            },
+        },
+    }
+
+    math_natural_numbers = forms.FloatField(label=_('Natural Numbers'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_addition = forms.FloatField(label=_('Addition'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_location = forms.FloatField(label=_('Location'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_plane_figures = forms.FloatField(label=_('Plane Figures'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_subtraction = forms.FloatField(label=_('Subtraction'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_multiplication = forms.FloatField(label=_('Multiplication'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_length = forms.FloatField(label=_('Length'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_solid_figures = forms.FloatField(label=_('Solid Figures'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_division = forms.FloatField(label=_('Division'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_fractions = forms.FloatField(label=_('Fractions'), widget=forms.NumberInput(attrs=({'maxlength': 4})), min_value=0, required=False)
+    math_sum = forms.CharField(label='', initial='0', required=False, widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    registration_level = forms.ChoiceField(label=_("Registration level"), widget=forms.Select, required=False, choices=REGISTRATION_LEVEL)
+    clm_type = forms.CharField(label=_('CLM type'), required=False, widget=forms.HiddenInput())
+
+    @staticmethod
+    def _category_total(source_data, fields):
+        return sum(source_data.get(field) or 0 for field in fields)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        self.assessment_stage = kwargs.pop('assessment_stage', 'pre')
+        super(BridgingMathAssessmentForm, self).__init__(*args, **kwargs)
+
+        instance = kwargs['instance'] if 'instance' in kwargs else None
+        self.fields['clm_type'].initial = 'Bridging'
+        self.config = self.ASSESSMENT_CONFIG.get(self.assessment_stage, self.ASSESSMENT_CONFIG['pre'])
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = reverse(
+            'clm:bridging_math_assessment',
+            kwargs={'pk': instance.id, 'assessment_stage': self.assessment_stage}
+        )
+
+        selected_registration_level = ''
+        if self.data:
+            selected_registration_level = self.data.get('registration_level', '')
+        if not selected_registration_level:
+            selected_registration_level = self.initial.get('registration_level', '') if hasattr(self, 'initial') else ''
+        if not selected_registration_level and instance:
+            selected_registration_level = getattr(instance, 'registration_level', '')
+        level_max_grades = self.config['fields_by_level'].get(selected_registration_level, {})
+        layout_fields = list(level_max_grades.keys())
+
+        for field_name, max_grade in level_max_grades.items():
+            if field_name in self.fields:
+                self.fields[field_name].label = '{} / {}'.format(self.fields[field_name].label, max_grade)
+
+        self.initial['math_sum'] = self._category_total(self.initial, layout_fields)
+        math_total = sum(level_max_grades.values()) if level_max_grades else 0
+        rows = []
+        for index in range(0, len(layout_fields), 4):
+            rows.append(Div(*[Div(field, css_class='col-md-3') for field in layout_fields[index:index + 4]], css_class='row card-body'))
+
+        self.helper.layout = Layout(
+            Div(
+                Div(HTML('<h4 id="alternatives-to-hidden-labels">' + self.config['title'] + '</h4>'), css_class='row card-body'),
+                Div(Div('registration_level', css_class='col-md-3 d-none'), Div('clm_type', css_class='col-md-3 d-none'), css_class='row card-body'),
+                Div(
+                    Div(HTML('<h5>Math</h5>'), css_class='row card-body'),
+                    *rows,
+                    Div(HTML('<strong>Total scores (Math) / {}</strong>'.format(math_total)), Div('math_sum', css_class='col-md-3'), css_class='row card-body'),
+                    css_id='assessment_scores_section'
+                ),
+                _bridging_form_actions(self.request)
+            )
+        )
+
+    def clean(self):
+        cleaned_data = super(BridgingMathAssessmentForm, self).clean()
+        registration_level = cleaned_data.get('registration_level')
+        max_grades = self.config['fields_by_level'].get(registration_level, {})
+        for field in max_grades:
+            if cleaned_data.get(field) is None:
+                self.add_error(field, 'This field is required')
+        for field, max_grade in max_grades.items():
+            value = cleaned_data.get(field)
+            if value is not None and value > max_grade:
+                self.add_error(field, 'This value is greater that {}'.format(max_grade))
+        cleaned_data['math_sum'] = self._category_total(cleaned_data, list(max_grades.keys()))
+        if hasattr(self, 'data'):
+            self.data = self.data.copy()
+            self.data['math_sum'] = cleaned_data.get('math_sum', 0)
+        return cleaned_data
+
+    def save(self, instance=None, request=None):
+        instance = super(BridgingMathAssessmentForm, self).save(commit=False)
+        instance.modified_by = request.user
+        registration_level = self.cleaned_data.get('registration_level')
+        max_grades = self.config['fields_by_level'].get(registration_level, {})
+        assessment_data = {
+            "Bridging_ASSESSMENT/{}".format(field): request.POST.get(field)
+            for field in max_grades
+        }
+        assessment_data["Bridging_ASSESSMENT/math_sum"] = self.cleaned_data.get('math_sum')
+        setattr(instance, self.config['storage_field'], assessment_data)
+        instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+    class Meta:
+        model = Bridging
+        fields = ()
+
 class BridgingPreAssessmentForm(forms.ModelForm):
     REGISTRATION_LEVEL = (
         ('', '----------'),

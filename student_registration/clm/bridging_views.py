@@ -64,6 +64,7 @@ from student_registration.schools.models import (
 from student_registration.backends.models import ExportHistory
 from .bridging_forms import (
     BridgingPreAssessmentForm,
+    BridgingMathAssessmentForm,
     BridgingAssessmentForm,
     BridgingMidAssessmentForm,
     BridgingFollowupForm,
@@ -660,6 +661,72 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
 
         return get_object_or_404(Bridging, id=bridging_id)
 
+
+class BridgingMathAssessmentView(LoginRequiredMixin,
+                             GroupRequiredMixin,
+                             FormView):
+    template_name = 'clm/bridging_math_assessment.html'
+    form_class = BridgingMathAssessmentForm
+    success_url = '/clm/bridging-list/'
+    group_required = [u"CLM_Bridging"]
+
+    def get_instance(self):
+        pk = self.kwargs.get('pk')
+        try:
+            bridging_id = int(pk)
+        except (TypeError, ValueError):
+            raise Http404("Invalid Disrasa id")
+
+        return get_object_or_404(Bridging, id=bridging_id)
+
+    def get_assessment_stage(self):
+        return self.kwargs.get('assessment_stage', 'pre')
+
+    def get_context_data(self, **kwargs):
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        context = super(BridgingMathAssessmentView, self).get_context_data(**kwargs)
+        context['assessment_title'] = self.form_class.ASSESSMENT_CONFIG.get(
+            self.get_assessment_stage(),
+            self.form_class.ASSESSMENT_CONFIG['pre']
+        )['title']
+        return context
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = self.get_instance()
+        assessment_stage = self.get_assessment_stage()
+
+        if self.request.method == "POST":
+            return form_class(
+                self.request.POST,
+                instance=instance,
+                request=self.request,
+                assessment_stage=assessment_stage
+            )
+
+        data = BridgingSerializer(instance).data
+        config = form_class.ASSESSMENT_CONFIG.get(assessment_stage, form_class.ASSESSMENT_CONFIG['pre'])
+        p_test = data.get(config['storage_field']) or {}
+        for fields_by_level in config['fields_by_level'].values():
+            for field in fields_by_level:
+                key = 'Bridging_ASSESSMENT/{}'.format(field)
+                if key in p_test:
+                    data[field] = p_test[key]
+        if 'Bridging_ASSESSMENT/math_sum' in p_test:
+            data['math_sum'] = p_test['Bridging_ASSESSMENT/math_sum']
+
+        return form_class(
+            data,
+            instance=instance,
+            request=self.request,
+            assessment_stage=assessment_stage
+        )
+
+    def form_valid(self, form):
+        instance = self.get_instance()
+        form.save(request=self.request, instance=instance)
+        return super(BridgingMathAssessmentView, self).form_valid(form)
 
 class BridgingPreAssessmentView(LoginRequiredMixin,
                              GroupRequiredMixin,
