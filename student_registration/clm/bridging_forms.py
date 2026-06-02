@@ -2195,13 +2195,18 @@ class BridgingMathAssessmentForm(forms.ModelForm):
             kwargs={'pk': instance.id, 'assessment_stage': self.assessment_stage}
         )
 
-        selected_registration_level = ''
-        if self.data:
-            selected_registration_level = self.data.get('registration_level', '')
+        selected_registration_level = getattr(instance, 'registration_level', '') if instance else ''
         if not selected_registration_level:
             selected_registration_level = self.initial.get('registration_level', '') if hasattr(self, 'initial') else ''
-        if not selected_registration_level and instance:
-            selected_registration_level = getattr(instance, 'registration_level', '')
+        if not selected_registration_level and self.data:
+            selected_registration_level = self.data.get('registration_level', '')
+
+        self.initial['registration_level'] = selected_registration_level
+        self.fields['registration_level'].initial = selected_registration_level
+        if self.is_bound:
+            self.data = self.data.copy()
+            self.data['registration_level'] = selected_registration_level
+
         level_max_grades = self.config['fields_by_level'].get(selected_registration_level, {})
         layout_fields = list(level_max_grades.keys())
 
@@ -2231,7 +2236,8 @@ class BridgingMathAssessmentForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(BridgingMathAssessmentForm, self).clean()
-        registration_level = cleaned_data.get('registration_level')
+        registration_level = getattr(self.instance, 'registration_level', '') or cleaned_data.get('registration_level')
+        cleaned_data['registration_level'] = registration_level
         max_grades = self.config['fields_by_level'].get(registration_level, {})
         for field in max_grades:
             if cleaned_data.get(field) is None:
@@ -2249,7 +2255,7 @@ class BridgingMathAssessmentForm(forms.ModelForm):
     def save(self, instance=None, request=None):
         instance = super(BridgingMathAssessmentForm, self).save(commit=False)
         instance.modified_by = request.user
-        registration_level = self.cleaned_data.get('registration_level')
+        registration_level = getattr(instance, 'registration_level', '') or self.cleaned_data.get('registration_level')
         max_grades = self.config['fields_by_level'].get(registration_level, {})
         assessment_data = {
             "Bridging_ASSESSMENT/{}".format(field): request.POST.get(field)

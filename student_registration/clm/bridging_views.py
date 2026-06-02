@@ -706,6 +706,7 @@ class BridgingMathAssessmentView(LoginRequiredMixin,
             )
 
         data = BridgingSerializer(instance).data
+        data['registration_level'] = instance.registration_level
         config = form_class.ASSESSMENT_CONFIG.get(assessment_stage, form_class.ASSESSMENT_CONFIG['pre'])
         p_test = data.get(config['storage_field']) or {}
         for fields_by_level in config['fields_by_level'].values():
@@ -717,7 +718,7 @@ class BridgingMathAssessmentView(LoginRequiredMixin,
             data['math_sum'] = p_test['Bridging_ASSESSMENT/math_sum']
 
         return form_class(
-            data,
+            initial=data,
             instance=instance,
             request=self.request,
             assessment_stage=assessment_stage
