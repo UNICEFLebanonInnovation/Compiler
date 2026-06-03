@@ -66,6 +66,19 @@ from django.forms.widgets import ClearableFileInput
 YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 
 
+def _bridging_score_value(value):
+    if value in (None, ''):
+        return 0
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return 0
+
+
+def _bridging_category_total(source_data, fields):
+    return sum(_bridging_score_value(source_data.get(field)) for field in fields)
+
+
 def _bridging_form_actions(request):
     is_world_learning_partner = (
         request and
@@ -2178,7 +2191,7 @@ class BridgingMathAssessmentForm(forms.ModelForm):
 
     @staticmethod
     def _category_total(source_data, fields):
-        return sum(source_data.get(field) or 0 for field in fields)
+        return _bridging_category_total(source_data, fields)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -2322,7 +2335,7 @@ class BridgingPreAssessmentForm(forms.ModelForm):
 
     @staticmethod
     def _category_total(source_data, fields):
-        return sum(source_data.get(field) or 0 for field in fields)
+        return _bridging_category_total(source_data, fields)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -2873,7 +2886,7 @@ class BridgingAssessmentForm(forms.ModelForm):
 
     @staticmethod
     def _category_total(source_data, fields):
-        return sum(source_data.get(field) or 0 for field in fields)
+        return _bridging_category_total(source_data, fields)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
