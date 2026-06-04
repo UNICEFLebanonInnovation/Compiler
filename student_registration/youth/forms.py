@@ -96,7 +96,7 @@ class MainForm(forms.ModelForm):
     main_caregiver_nationality = forms.ModelChoiceField(
         queryset=Nationality.objects.all(), widget=forms.Select,
         label=_('Caregiver Nationality'),
-        required=True, to_field_name='id',
+        required=False, to_field_name='id',
     )
     main_caregiver_nationality_other = forms.CharField(
         label=_('If Other, Please specify'),
@@ -156,7 +156,7 @@ class MainForm(forms.ModelForm):
     )
     main_caregiver = forms.ChoiceField(
         label=_("Who is the youth\'s primary caregiver?"),
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=Adolescent.MAIN_CAREGIVER
     )
     main_caregiver_other = forms.CharField(
@@ -165,7 +165,7 @@ class MainForm(forms.ModelForm):
     )
     caregiver_first_name = forms.CharField(
         label=_("Caregiver First Name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput, required=False
     )
     caregiver_middle_name = forms.CharField(
         label=_("Caregiver Middle Name"),
@@ -173,7 +173,7 @@ class MainForm(forms.ModelForm):
     )
     caregiver_last_name = forms.CharField(
         label=_("Caregiver Last Name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput, required=False
     )
     caregiver_mother_name = forms.CharField(
         label=_("Caregiver Mother Full Name"),
@@ -184,7 +184,7 @@ class MainForm(forms.ModelForm):
         initial=13,
         widget=forms.Select,
         label=_('ID type of the caregiver'),
-        required=True, to_field_name='id',
+        required=False, to_field_name='id',
 
     )
     case_number = forms.RegexField(

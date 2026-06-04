@@ -3389,11 +3389,9 @@ class BridgingAssessmentForm(forms.ModelForm):
             cleaned_data['arabic_sum'] = self._category_total(cleaned_data, [field for field in required_fields if field.startswith('arabic_')])
             cleaned_data['math_sum'] = self._category_total(cleaned_data, [field for field in required_fields if field.startswith('math_')])
         else:
-            exam3 = cleaned_data.get("exam3")
-            if exam3 is None:
-                self.add_error('exam3', 'This field is required')
-            elif exam3 > 20:
-                self.add_error('exam3', 'This value is greater that 20')
+            cleaned_data['english_french_sum'] = 0
+            cleaned_data['arabic_sum'] = 0
+            cleaned_data['math_sum'] = 0
 
         if hasattr(self, 'data'):
             self.data = self.data.copy()
