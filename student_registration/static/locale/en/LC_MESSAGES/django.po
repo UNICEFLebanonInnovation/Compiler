@@ -9318,6 +9318,34 @@ msgstr ""
 msgid "User"
 msgstr ""
 
+#: student_registration/templates/django_tables2
+msgid "Actions"
+msgstr "Actions"
+
+#: student_registration/templates/django_tables2
+msgid "Toggle Dropdown"
+msgstr "Toggle Dropdown"
+
+#: student_registration/templates/django_tables2
+msgid "View Profile"
+msgstr "View Profile"
+
+#: student_registration/templates/django_tables2
+msgid "Disable"
+msgstr "Disable"
+
+#: student_registration/templates/django_tables2
+msgid "Indicators"
+msgstr "Indicators"
+
+#: student_registration/templates/django_tables2
+msgid "previous"
+msgstr "previous"
+
+#: student_registration/templates/django_tables2
+msgid "next"
+msgstr "next"
+
 #~ msgid "synchronize"
 #~ msgstr "Send your data"
 
