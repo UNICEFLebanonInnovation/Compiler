@@ -9739,8 +9739,34 @@ msgstr "تعديل كلمة السر"
 msgid "User"
 msgstr ""
 
-#, fuzzy
-#~| msgid "Outreach barcode"
+#: student_registration/templates/django_tables2
+msgid "Actions"
+msgstr "الإجراءات"
+
+#: student_registration/templates/django_tables2
+msgid "Toggle Dropdown"
+msgstr "تبديل القائمة المنسدلة"
+
+#: student_registration/templates/django_tables2
+msgid "View Profile"
+msgstr "عرض الملف الشخصي"
+
+#: student_registration/templates/django_tables2
+msgid "Disable"
+msgstr "تعطيل"
+
+#: student_registration/templates/django_tables2
+msgid "Indicators"
+msgstr "المؤشرات"
+
+#: student_registration/templates/django_tables2
+msgid "previous"
+msgstr "السابق"
+
+#: student_registration/templates/django_tables2
+msgid "next"
+msgstr "التالي"
+
 #~ msgid "AOutreach"
 #~ msgstr "رقم الباركود"
 
