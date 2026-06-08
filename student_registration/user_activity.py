@@ -8,9 +8,23 @@ from student_registration.backends.models import UserActivity
 
 logger = logging.getLogger(__name__)
 
+SENSITIVE_FIELDS = {
+    "csrfmiddlewaretoken",
+    "password",
+    "password1",
+    "password2",
+    "old_password",
+    "new_password",
+    "new_password1",
+    "new_password2",
+    "token",
+    "key",
+    "secret",
+}
+
 
 class UserActivityMiddleware(MiddlewareMixin):
-    """Middleware to log user activity for authenticated users."""
+    """Middleware to log user activity for authenticated users, including admin."""
 
     def __init__(self, get_response=None):
         self.get_response = get_response
@@ -28,28 +42,51 @@ class UserActivityMiddleware(MiddlewareMixin):
             return request.POST.copy()
         return request.GET.copy()
 
+    def _sanitize_data(self, data):
+        if hasattr(data, "lists"):
+            data = dict(data.lists())
+
+        if not isinstance(data, dict):
+            return data
+
+        sanitized_data = {}
+        for key, value in data.items():
+            if key.lower() in SENSITIVE_FIELDS:
+                sanitized_data[key] = "********"
+            else:
+                sanitized_data[key] = value
+        return sanitized_data
+
+    def _should_log_request(self, request):
+        return request.user.is_authenticated
+
+    def _is_admin_request(self, request):
+        resolver_match = getattr(request, "resolver_match", None)
+        if resolver_match and resolver_match.app_name == "admin":
+            return True
+        return request.path.startswith("/admin/")
+
     def __call__(self, request):
         response = self.get_response(request)
         try:
-            if request.user.is_authenticated and not request.path.startswith("/admin"):
-                data = self._extract_data(request)
-                if hasattr(data, "lists"):
-                    data_dict = dict(data.lists())
-                else:
-                    data_dict = data
+            if self._should_log_request(request):
+                data_dict = self._sanitize_data(self._extract_data(request))
 
-                data_dict.update(
-                    {
-                        "ip": request.META.get("REMOTE_ADDR"),
-                        "user_agent": request.META.get("HTTP_USER_AGENT", ""),
-                    }
-                )
+                if isinstance(data_dict, dict):
+                    data_dict.update(
+                        {
+                            "ip": request.META.get("REMOTE_ADDR"),
+                            "user_agent": request.META.get("HTTP_USER_AGENT", ""),
+                            "is_admin": self._is_admin_request(request),
+                            "status_code": response.status_code,
+                        }
+                    )
 
                 serialized_data = json.dumps(data_dict)
 
                 UserActivity.objects.create(
                     username=request.user.username,
-                    path=request.get_full_path(),
+                    path=request.path,
                     method=request.method,
                     data=serialized_data,
                 )
