@@ -130,11 +130,18 @@ class ExportHistory(TimeStampedModel):
 
 
 class UserActivity(models.Model):
-    username = models.CharField(max_length=255)
+    username = models.CharField(max_length=255, db_index=True)
     path = models.TextField()
-    method = models.CharField(max_length=10)
+    method = models.CharField(max_length=10, db_index=True)
     data = models.TextField(blank=True, null=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ['-timestamp']
+        indexes = [
+            models.Index(fields=['username', '-timestamp'], name='user_activity_user_ts_idx'),
+            models.Index(fields=['method', '-timestamp'], name='user_activity_method_ts_idx'),
+        ]
 
     def __str__(self):
         return "{} - {} {}".format(self.username, self.method, self.path)

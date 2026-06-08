@@ -3,7 +3,8 @@ from __future__ import absolute_import, unicode_literals
 
 from django.contrib import admin
 from django.urls import path
-from django.db.models import Count
+from django.db.models import Count, Q
+from django.db.models.functions import Substr
 from django.template.response import TemplateResponse
 
 from import_export import resources, fields
@@ -171,12 +172,15 @@ class ExportHistoryAdmin(admin.ModelAdmin):
 class UserActivityAdmin(admin.ModelAdmin):
 
     change_list_template = 'admin/user_activity_change_list.html'
+    list_per_page = 50
+    show_full_result_count = False
+    ordering = ('-timestamp',)
 
     list_display = (
         'username',
-        'path',
+        'path_preview',
         'method',
-        'data',
+        'data_preview',
         'timestamp',
     )
     list_filter = (
@@ -184,9 +188,39 @@ class UserActivityAdmin(admin.ModelAdmin):
     )
     search_fields = (
         'username',
-        'path'
-
     )
+
+    @admin.display(description='Path')
+    def path_preview(self, obj):
+        return obj.path_preview
+
+    @admin.display(description='Data')
+    def data_preview(self, obj):
+        return obj.data_preview
+
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .defer('path', 'data')
+            .annotate(
+                path_preview=Substr('path', 1, 200),
+                data_preview=Substr('data', 1, 200),
+            )
+        )
+
+    def get_search_results(self, request, queryset, search_term):
+        search_term = search_term.strip()
+        if not search_term:
+            return queryset, False
+
+        if '@' in search_term:
+            return queryset.filter(username=search_term), False
+
+        search_filter = Q(username__icontains=search_term)
+        if search_term.startswith('/'):
+            search_filter |= Q(path__icontains=search_term)
+        return queryset.filter(search_filter), False
 
     def get_urls(self):
         urls = super().get_urls()
