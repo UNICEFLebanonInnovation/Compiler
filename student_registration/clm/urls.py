@@ -388,6 +388,11 @@ urlpatterns = [
         name='attendance'
     ),
     re_path(
+        r'^attendance-heatmap/$',
+        view=attendance_views.BridgingAttendanceHeatmap.as_view(),
+        name='attendance_heatmap'
+    ),
+    re_path(
         r'^load-attendance-children/$',
         view=attendance_views.LoadAttendanceChildren.as_view(),
         name='load_attendance_children'

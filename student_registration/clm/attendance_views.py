@@ -187,6 +187,62 @@ class LoadAttendanceChild(LoginRequiredMixin,
         }
 
 
+class BridgingAttendanceHeatmap(LoginRequiredMixin, TemplateView):
+    template_name = 'clm/attendance_heatmap.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        year = int(self.request.GET.get('year', timezone.now().year))
+
+        base_qs = CLMAttendanceStudent.objects.filter(
+            attendance_day__attendance_date__year=year
+        )
+
+        queryset = _aggregate_attendance(
+            base_qs,
+            'attendance_day__attendance_date',
+        )
+
+        level_qs = _aggregate_attendance(
+            base_qs,
+            'attendance_day__attendance_date',
+            'attendance_day__registration_level',
+        )
+
+        level_choices = dict(CLMAttendance.REGISTRATION_LEVEL)
+        level_totals = {}
+
+        for row in level_qs:
+            level = row['attendance_day__registration_level'] or 'Unknown'
+            label = level_choices.get(level, level) or 'Unknown'
+            key = (label, row['attendance_day__attendance_date'])
+            totals = level_totals.setdefault(key, {'total': 0, 'absent': 0})
+            totals['total'] += row['total'] or 0
+            totals['absent'] += row['absent'] or 0
+
+        level_data = OrderedDict()
+
+        for (level, attendance_date), data in sorted(level_totals.items(), key=lambda item: (item[0][0], item[0][1])):
+            if level not in level_data:
+                level_data[level] = []
+
+            level_data[level].append({
+                'attendance_day__attendance_date': attendance_date,
+                'total': data['total'],
+                'absent': data['absent'],
+            })
+
+        years = CLMAttendanceStudent.objects.dates(
+            'attendance_day__attendance_date', 'year'
+        )
+
+        context['attendance_json'] = json.dumps(list(queryset), default=str)
+        context['program_attendance_json'] = json.dumps(level_data, default=str)
+        context['year'] = year
+        context['years'] = [d.year for d in years]
+        return context
+
+
 class BridgingAttendanceHeatmapViewSet(mixins.ListModelMixin,
                                        viewsets.GenericViewSet):
     model = CLMAttendanceStudent
