@@ -22,6 +22,7 @@ from student_registration.clm.models import Disability, EducationalLevel
 from student_registration.adolescent.models import Adolescent
 from .models import (
     Registration,
+    YOUTH_EDUCATION_STATUS,
 )
 
 from student_registration.locations.models import Location
@@ -131,6 +132,11 @@ class MainForm(forms.ModelForm):
         queryset=Disability.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
         initial=1
+    )
+    education_status = forms.ChoiceField(
+        label=_("Youth's educational level when registering"),
+        widget=forms.Select, required=True,
+        choices=YOUTH_EDUCATION_STATUS,
     )
     father_educational_level = forms.ModelChoiceField(
         queryset=EducationalLevel.objects.all(), widget=forms.Select,
@@ -360,6 +366,11 @@ class MainForm(forms.ModelForm):
                     Div('adolescent_disability', css_class='col-md-4'),
                     css_class='row card-body',
                 ),
+                Div(
+                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                    Div('education_status', css_class='col-md-6'),
+                    css_class='row card-body',
+                ),
                 css_id='step-1',
             ),
             Div(
@@ -573,6 +584,7 @@ class MainForm(forms.ModelForm):
             'adolescent_cadaster',
             'adolescent_address',
             'adolescent_disability',
+            'education_status',
             'father_educational_level',
             'mother_educational_level',
             'first_phone_number',

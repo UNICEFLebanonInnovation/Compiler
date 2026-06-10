@@ -40,11 +40,6 @@ def _name_en_label(obj):
 
 
 class EnrolledProgramsForm(forms.ModelForm):
-    education_status = forms.ChoiceField(
-        label=_("Youth's educational level when registering"),
-        widget=forms.Select, required=True,
-        choices=EnrolledPrograms.EDUCATION_STATUS,
-    )
     dropout_date = forms.DateField(
         label=_("Please Specify dropout date from school"),
         required=False
@@ -187,8 +182,6 @@ class EnrolledProgramsForm(forms.ModelForm):
             Div(
                 Div(
                     HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('education_status', css_class='col-md-6'),
-                    HTML('<span class="badge-form-0 badge-pill"></span>'),
                     Div('dropout_date', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
@@ -253,7 +246,6 @@ class EnrolledProgramsForm(forms.ModelForm):
         else:
             instance = EnrolledPrograms.objects.get(id=instance)
 
-        instance.education_status = validated_data.get('education_status')
         dropout_date_str = validated_data.get('dropout_date')
         if dropout_date_str:
             dropout_date = datetime.strptime(dropout_date_str, '%Y-%m-%d')
@@ -323,7 +315,6 @@ class EnrolledProgramsForm(forms.ModelForm):
         model = EnrolledPrograms
         fields = (
             'registration_id',
-            'education_status',
             'dropout_date',
             'registration_date',
             'completion_date',
