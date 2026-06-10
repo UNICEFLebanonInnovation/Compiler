@@ -127,15 +127,22 @@ class EnrolledProgramsForm(forms.ModelForm):
         self.fields['registration_id'].initial = registry
         self.fields['selected_registration_ids'].initial = ','.join(map(str, self.selected_registration_ids))
 
+        is_bulk_add = not registry and not instance
+
         registration_obj = None
         if registry:
             registration_obj = Registration.objects.filter(id=registry).select_related('adolescent').first()
 
-        if self.data:
+        if is_bulk_add:
+            same_location = False
+            self.fields.pop('same_location', None)
+        elif self.data:
             same_location = self.data.get('same_location') in ['on', 'True', 'true', True, '1']
         else:
             same_location = self.initial.get('same_location', True)
-        self.fields['same_location'].initial = same_location
+
+        if 'same_location' in self.fields:
+            self.fields['same_location'].initial = same_location
 
         gov_initial = self.initial.get('governorate')
         dist_initial = self.initial.get('district')
@@ -186,48 +193,53 @@ class EnrolledProgramsForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
-        self.helper.layout = Layout(
-            Field('registration_id'),
-            Field('selected_registration_ids'),
+
+        form_rows = [
             Div(
-                Div(
-                    HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('registration_date', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('completion_date', css_class='col-md-3'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">4</span>'),
-                    Div('donor', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">5</span>'),
-                    Div('program_document', css_class='col-md-3'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">6</span>'),
-                    Div('master_program', css_class='col-md-9'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">7</span>'),
-                    Div('sub_program', css_class='col-md-9'),
-                    css_class='row card-body'
-                ),
+                HTML('<span class="badge-form badge-pill">2</span>'),
+                Div('registration_date', css_class='col-md-3'),
+                HTML('<span class="badge-form badge-pill">3</span>'),
+                Div('completion_date', css_class='col-md-3'),
+                css_class='row card-body'
+            ),
+            Div(
+                HTML('<span class="badge-form badge-pill">4</span>'),
+                Div('donor', css_class='col-md-3'),
+                HTML('<span class="badge-form badge-pill">5</span>'),
+                Div('program_document', css_class='col-md-3'),
+                css_class='row card-body'
+            ),
+            Div(
+                HTML('<span class="badge-form badge-pill">6</span>'),
+                Div('master_program', css_class='col-md-9'),
+                css_class='row card-body'
+            ),
+            Div(
+                HTML('<span class="badge-form badge-pill">7</span>'),
+                Div('sub_program', css_class='col-md-9'),
+                css_class='row card-body'
+            ),
+        ]
+
+        if not is_bulk_add:
+            form_rows.append(
                 Div(
                     HTML('<span class="badge-form badge-pill">8</span>'),
                     Div('same_location', css_class='col-md-3'),
                     css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">9</span>'),
-                    Div('governorate', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">10</span>'),
-                    Div('district', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">11</span>'),
-                    Div('cadaster', css_class='col-md-3'),
-                    css_class='row card-body'
-                ),
+                )
+            )
+
+        form_rows.extend([
+            Div(
+                HTML('<span class="badge-form badge-pill">9</span>'),
+                Div('governorate', css_class='col-md-3'),
+                HTML('<span class="badge-form-2 badge-pill">10</span>'),
+                Div('district', css_class='col-md-3'),
+                HTML('<span class="badge-form-2 badge-pill">11</span>'),
+                Div('cadaster', css_class='col-md-3'),
+                css_class='row card-body'
+            ),
             FormActions(
                 Submit('save', 'Save',
                        css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
@@ -237,9 +249,16 @@ class EnrolledProgramsForm(forms.ModelForm):
                     '<a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="{}">Cancel</a>'.format(
                         '/youth/child-profile/{}/'.format(registry) if registry else '/youth/list/')
                 )
-            ),
-            css_id='step-1'
-        )
+            )
+        ])
+
+        self.helper.layout = Layout(
+            Field('registration_id'),
+            Field('selected_registration_ids'),
+            Div(
+                *form_rows,
+                css_id='step-1'
+            )
         )
 
     def _apply_posted_program_data(self, instance, request, registry=None):
