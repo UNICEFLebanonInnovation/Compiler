@@ -622,6 +622,26 @@ class ProgramDocumentIndicator(TimeStampedModel):
         return self.master_indicator.name
 
 
+YOUTH_EDUCATION_STATUS = Choices(
+    ('', '----------'),
+    ('Never registered in any formal school before', _('Never registered in any formal school before')),
+    ('Was registered in formal school but didn\'t continue',
+     _('Was registered in formal school but didn\'t continue')),
+    ('Was registered in non formal program and was referred to MSCC',
+     _('Was registered in non formal program and was referred to MSCC')),
+    ('Was registered in non formal program but didn\'t continue',
+     _('Was registered in non formal program but didn\'t continue')),
+    ('Was enrolled in TVET Programs', _('Was enrolled in TVET Programs')),
+    ('Was Registered in Formal Education but not attending',
+     _('Was Registered in Formal Education but not attending')),
+    ('Currently registered in Formal Education school', _('Currently registered in Formal Education school')),
+    ('Currently registered in Formal Education school but not attending',
+     _('Currently registered in Formal Education school but not attending')),
+    ('Completed university degree', _('Completed university degree')),
+    ('No', _('No')),
+)
+
+
 class Registration(TimeStampedModel):
 
     YES_NO = Choices(
@@ -681,6 +701,13 @@ class Registration(TimeStampedModel):
         verbose_name=_('Modified by'),
     )
     deleted = models.BooleanField(blank=True, default=False)
+    education_status = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        choices=YOUTH_EDUCATION_STATUS,
+        verbose_name=_("Youth's educational level when registering")
+    )
     # registration_date = models.DateField(
     #     blank=True,
     #     null=True,
@@ -733,24 +760,7 @@ class Registration(TimeStampedModel):
 
 class EnrolledPrograms(TimeStampedModel):
 
-    EDUCATION_STATUS = Choices(
-        ('', '----------'),
-        ('Never registered in any formal school before', _('Never registered in any formal school before')),
-        ('Was registered in formal school but didn\'t continue',
-         _('Was registered in formal school but didn\'t continue')),
-        ('Was registered in non formal program and was referred to MSCC',
-         _('Was registered in non formal program and was referred to MSCC')),
-        ('Was registered in non formal program but didn\'t continue',
-         _('Was registered in non formal program but didn\'t continue')),
-        ('Was enrolled in TVET Programs', _('Was enrolled in TVET Programs')),
-        ('Was Registered in Formal Education but not attending',
-         _('Was Registered in Formal Education but not attending')),
-        ('Currently registered in Formal Education school', _('Currently registered in Formal Education school')),
-        ('Currently registered in Formal Education school but not attending', _('Currently registered in Formal Education school but not attending')),
-        ('Completed university degree', _('Completed university degree')),
-
-        ('No', _('No')),
-    )
+    EDUCATION_STATUS = YOUTH_EDUCATION_STATUS
     DROPOUT_PROGRAM = Choices(
         ('', '----------'),
         ('Was registered in CBECE level 1-2', _('Was registered in CBECE level 1-2')),
