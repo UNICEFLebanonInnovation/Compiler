@@ -1,6 +1,6 @@
 # coding: utf-8
 import django_tables2 as tables
-from django.utils.safestring import mark_safe
+from django.utils.html import format_html
 from django.utils.translation import gettext as _
 
 from .models import Registration, ProgramDocument
@@ -10,9 +10,11 @@ class RegistrationTable(tables.Table):
     action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
                                           template_name='django_tables2/youth/action_column.html')
     enroll_program = tables.TemplateColumn(
-        verbose_name=mark_safe(
+        verbose_name=format_html(
+            '<span class="enroll-program-header">{}</span> '
             '<input type="checkbox" id="enroll-program-check-all" '
-            'aria-label="Check all enroll program registrations">'
+            'aria-label="Check all enroll program registrations">',
+            _('Enroll')
         ),
         orderable=False,
         template_code=(
