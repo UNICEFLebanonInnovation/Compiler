@@ -136,6 +136,7 @@ class EnrolledProgramsForm(forms.ModelForm):
         if is_bulk_add:
             same_location = False
             self.fields.pop('same_location', None)
+            self.fields['sub_program'].required = False
         elif self.data:
             same_location = self.data.get('same_location') in ['on', 'True', 'true', True, '1']
         else:
@@ -266,7 +267,7 @@ class EnrolledProgramsForm(forms.ModelForm):
         validated_data = request.POST
 
         instance.master_program_id = validated_data.get('master_program')
-        instance.sub_program_id = validated_data.get('sub_program')
+        instance.sub_program_id = validated_data.get('sub_program') or None
         instance.donor_id = validated_data.get('donor')
         instance.program_document_id = validated_data.get('program_document')
 
