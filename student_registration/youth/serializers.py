@@ -124,6 +124,7 @@ class MainSerializer(serializers.ModelSerializer):
     caregiver_last_name = serializers.CharField(source='adolescent.caregiver_last_name', required=False)
     caregiver_mother_name = serializers.CharField(source='adolescent.caregiver_mother_name', required=False)
     education_status = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    dropout_date = serializers.DateField(required=False, allow_null=True)
     created = serializers.CharField(read_only=True)
     csrfmiddlewaretoken = serializers.IntegerField(source='owner.id', read_only=True)
     save = serializers.IntegerField(source='owner.id', read_only=True)
@@ -179,6 +180,7 @@ class MainSerializer(serializers.ModelSerializer):
             'adolescent_disability',
             'adolescent_disability_id',
             'education_status',
+            'dropout_date',
             'father_educational_level',
             'father_educational_level_id',
             'mother_educational_level',

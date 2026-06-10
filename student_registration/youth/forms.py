@@ -138,6 +138,10 @@ class MainForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=YOUTH_EDUCATION_STATUS,
     )
+    dropout_date = forms.DateField(
+        label=_("Please Specify dropout date from school"),
+        required=False
+    )
     father_educational_level = forms.ModelChoiceField(
         queryset=EducationalLevel.objects.all(), widget=forms.Select,
         label=_('What is the father\'s educational level?'),
@@ -369,6 +373,8 @@ class MainForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge-form-2 badge-pill">15</span>'),
                     Div('education_status', css_class='col-md-6'),
+                    HTML('<span class="badge-form-2 badge-pill" id="span_dropout_date">16</span>'),
+                    Div('dropout_date', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 css_id='step-1',
@@ -509,19 +515,32 @@ class MainForm(forms.ModelForm):
         except ValueError:
             self.add_error('adolescent_birthday_year', 'The date is not valid.')
 
+        education_status = cleaned_data.get('education_status')
+        dropout_date = cleaned_data.get('dropout_date')
+        if education_status == 'Currently registered in Formal Education school but not attending' and not dropout_date:
+            self.add_error('dropout_date', _('This field is required.'))
+        elif education_status != 'Currently registered in Formal Education school but not attending':
+            cleaned_data['dropout_date'] = None
+
         return cleaned_data
 
     def save(self, request=None, instance=None):
 
         from student_registration.students.utils import generate_one_unique_id
 
+        post_data = request.POST.copy()
+        if post_data.get('education_status') != 'Currently registered in Formal Education school but not attending':
+            post_data.pop('dropout_date', None)
+
         if instance:
-            serializer = MainSerializer(instance, data=request.POST)
+            serializer = MainSerializer(instance, data=post_data)
             if serializer.is_valid():
                 old_dob_year = instance.adolescent.birthday_year
                 old_dob_month = instance.adolescent.birthday_month
                 old_dob_age = instance.adolescent
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
+                if post_data.get('education_status') != 'Currently registered in Formal Education school but not attending':
+                    instance.dropout_date = None
                 instance.modified_by = request.user
                 instance.save()
                 request.session['instance_id'] = instance.id
@@ -529,9 +548,11 @@ class MainForm(forms.ModelForm):
             else:
                 messages.warning(request, serializer.errors)
         else:
-            serializer = MainSerializer(data=request.POST)
+            serializer = MainSerializer(data=post_data)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
+                if post_data.get('education_status') != 'Currently registered in Formal Education school but not attending':
+                    instance.dropout_date = None
                 instance.owner = request.user
                 instance.modified_by = request.user
                 instance.partner = request.user.partner
@@ -585,6 +606,7 @@ class MainForm(forms.ModelForm):
             'adolescent_address',
             'adolescent_disability',
             'education_status',
+            'dropout_date',
             'father_educational_level',
             'mother_educational_level',
             'first_phone_number',

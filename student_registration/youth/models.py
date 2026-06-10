@@ -708,6 +708,11 @@ class Registration(TimeStampedModel):
         choices=YOUTH_EDUCATION_STATUS,
         verbose_name=_("Youth's educational level when registering")
     )
+    dropout_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_("Please Specify dropout date from school")
+    )
     # registration_date = models.DateField(
     #     blank=True,
     #     null=True,
