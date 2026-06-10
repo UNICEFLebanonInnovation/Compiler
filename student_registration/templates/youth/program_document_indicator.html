@@ -129,7 +129,7 @@
             </select>
           </div>
           <div class="col-md-2">
-            <input type="number" class="form-control required-field" name="baseline_${id}" value="${baseline}" />
+            <input type="number" class="form-control" name="baseline_${id}" value="${baseline}" />
           </div>
           <div class="col-md-2">
             <input type="number" class="form-control required-field" name="target_${id}" value="${target}" />
@@ -206,9 +206,9 @@
         // reset
         row.find('.form-control').css('border', '');
 
-        if (!masterIndicator || baseline === '' || target === '') {
+        if (!masterIndicator || target === '') {
           hasError = true;
-          row.find('.form-control').each(function () {
+          row.find('.required-field').each(function () {
             if (!$(this).val()?.trim()) {
               $(this).css('border', '2px solid red');
             }
