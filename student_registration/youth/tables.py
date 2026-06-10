@@ -1,5 +1,6 @@
 # coding: utf-8
 import django_tables2 as tables
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 
 from .models import Registration, ProgramDocument
@@ -8,6 +9,24 @@ from .models import Registration, ProgramDocument
 class RegistrationTable(tables.Table):
     action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
                                           template_name='django_tables2/youth/action_column.html')
+    enroll_program = tables.TemplateColumn(
+        verbose_name=mark_safe(
+            '<input type="checkbox" id="enroll-program-check-all" '
+            'aria-label="Check all enroll program registrations">'
+        ),
+        orderable=False,
+        template_code=(
+            '<input type="checkbox" '
+            'class="enroll-program-checkbox" '
+            'name="enroll_program" '
+            'value="{{ record.id }}" '
+            'aria-label="Enroll program for registration {{ record.id }}">'
+        ),
+        attrs={
+            'td': {'class': 'text-center enroll-program-column'},
+            'th': {'class': 'text-center enroll-program-column'},
+        },
+    )
     adolescent_disability = tables.Column(verbose_name=_('Disability'), accessor='adolescent.disability.name_en')
     adolescent_nationality = tables.Column(verbose_name=_('Nationality'), accessor='adolescent.nationality.name_en')
     adolescent_age = tables.Column(verbose_name=_('Age'), accessor='adolescent_age')
@@ -37,6 +56,7 @@ class RegistrationTable(tables.Table):
         attrs = {'class': 'table table-bordered table-striped table-hover'}
         fields = (
             'action_column',
+            'enroll_program',
             'adolescent.unicef_id',
             'adolescent.first_name',
             'adolescent.father_name',

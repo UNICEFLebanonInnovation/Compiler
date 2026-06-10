@@ -3,6 +3,28 @@
 $(document).ready(function() {
 
 
+    function updateEnrollProgramCheckAllState() {
+        var $checkboxes = $(".enroll-program-checkbox");
+        var $checkAll = $("#enroll-program-check-all");
+
+        if (!$checkAll.length || !$checkboxes.length) {
+            return;
+        }
+
+        var checkedCount = $checkboxes.filter(":checked").length;
+        $checkAll.prop("checked", checkedCount === $checkboxes.length);
+        $checkAll.prop("indeterminate", checkedCount > 0 && checkedCount < $checkboxes.length);
+    }
+
+    $(document).on("change", "#enroll-program-check-all", function() {
+        $(".enroll-program-checkbox").prop("checked", $(this).prop("checked"));
+        updateEnrollProgramCheckAllState();
+    });
+
+    $(document).on("change", ".enroll-program-checkbox", updateEnrollProgramCheckAllState);
+    updateEnrollProgramCheckAllState();
+
+
     function refreshSubProgramsForSelectedMasterPrograms() {
         var masterPrograms = $("#id_master_program").val();
         var $subProgram = $("#id_sub_program");
