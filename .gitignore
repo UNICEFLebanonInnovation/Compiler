@@ -92,3 +92,4 @@ celerybeat-schedule
 .venv*
 bma-08-04*
 bma*
+mscc*

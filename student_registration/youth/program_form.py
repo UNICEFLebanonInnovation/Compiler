@@ -181,7 +181,6 @@ class EnrolledProgramsForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
                     Div('dropout_date', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
