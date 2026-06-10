@@ -73,7 +73,7 @@ class EnrolledProgramsForm(forms.ModelForm):
         queryset=SubProgram.objects.all(), widget=forms.Select,
         label=_('Sub Indicator'),
         empty_label='-------',
-        required=True, to_field_name='id',
+        required=False, to_field_name='id',
     )
 
     same_location = forms.BooleanField(
@@ -136,7 +136,6 @@ class EnrolledProgramsForm(forms.ModelForm):
         if is_bulk_add:
             same_location = False
             self.fields.pop('same_location', None)
-            self.fields['sub_program'].required = False
         elif self.data:
             same_location = self.data.get('same_location') in ['on', 'True', 'true', True, '1']
         else:
