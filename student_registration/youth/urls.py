@@ -51,6 +51,11 @@ urlpatterns = [
         name='pd_add'
     ),
     re_path(
+        r'^program/enrolled-programs-add/$',
+        view=program_view.EnrolledProgramsFormView.as_view(),
+        name='program_enrolled_programs_add_bulk'
+    ),
+    re_path(
         r'^program/enrolled-programs-add/(?P<registry>[\w.@+-]+)/$',
         view=program_view.EnrolledProgramsFormView.as_view(),
         name='program_enrolled_programs_add'

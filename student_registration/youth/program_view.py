@@ -21,30 +21,47 @@ class EnrolledProgramsFormView(LoginRequiredMixin,
     group_required = [u"YOUTH"]
 
     def get_success_url(self):
-        return '/youth/child-profile/{}/'.format(str(self.kwargs['registry']))
+        registry = self.kwargs.get('registry')
+        if registry:
+            return '/youth/child-profile/{}/'.format(str(registry))
+        return '/youth/list/'
+
+    def get_selected_registration_ids(self):
+        selected_registration_ids = self.request.POST.get('selected_registration_ids')
+        if selected_registration_ids:
+            return [registration_id for registration_id in selected_registration_ids.split(',') if registration_id]
+        return self.request.GET.getlist('registrations')
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        kwargs['registry'] = self.kwargs['registry']
+        kwargs['registry'] = self.kwargs.get('registry')
+        kwargs['selected_registration_ids'] = self.get_selected_registration_ids()
         return super(EnrolledProgramsFormView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
-        registry = self.kwargs['registry']
+        registry = self.kwargs.get('registry')
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        selected_registration_ids = self.get_selected_registration_ids()
         if self.request.method == "POST":
             return EnrolledProgramsForm(self.request.POST, instance=instance, registry=registry,
+                                        selected_registration_ids=selected_registration_ids,
                                         request=self.request)
         if instance:
             data = to_array(EnrolledProgramsForm.Meta.fields, EnrolledPrograms.objects.get(id=instance))
             return EnrolledProgramsForm(initial=data, registry=registry, instance=instance, request=self.request)
-        return EnrolledProgramsForm(registry=registry, instance=instance, request=self.request)
+        return EnrolledProgramsForm(registry=registry, instance=instance,
+                                    selected_registration_ids=selected_registration_ids,
+                                    request=self.request)
 
     def form_valid(self, form):
-        registry = self.kwargs['registry']
+        registry = self.kwargs.get('registry')
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
-        form.save(request=self.request, registry=registry, instance=instance)
+        if registry or instance:
+            form.save(request=self.request, registry=registry, instance=instance)
+        else:
+            form.save_bulk(request=self.request)
         return super(EnrolledProgramsFormView, self).form_valid(form)
 
 

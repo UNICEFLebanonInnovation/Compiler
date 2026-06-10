@@ -104,11 +104,13 @@ class EnrolledProgramsForm(forms.ModelForm):
     )
 
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
+    selected_registration_ids = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         registry = kwargs.pop('registry', None)
         instance = kwargs.pop('instance', None)
+        selected_registration_ids = kwargs.pop('selected_registration_ids', None)
 
         super(EnrolledProgramsForm, self).__init__(*args, **kwargs)
 
@@ -116,7 +118,14 @@ class EnrolledProgramsForm(forms.ModelForm):
             if field_name in self.fields:
                 self.fields[field_name].label_from_instance = _name_en_label
 
+        self.selected_registration_ids = selected_registration_ids or []
+        if isinstance(self.selected_registration_ids, str):
+            self.selected_registration_ids = [
+                registration_id for registration_id in self.selected_registration_ids.split(',') if registration_id
+            ]
+
         self.fields['registration_id'].initial = registry
+        self.fields['selected_registration_ids'].initial = ','.join(map(str, self.selected_registration_ids))
 
         registration_obj = None
         if registry:
@@ -166,7 +175,10 @@ class EnrolledProgramsForm(forms.ModelForm):
         else:
             self.fields['cadaster'].queryset = Location.objects.none()
 
-        form_action = reverse('youth:program_enrolled_programs_add', kwargs={'registry': registry})
+        if registry:
+            form_action = reverse('youth:program_enrolled_programs_add', kwargs={'registry': registry})
+        else:
+            form_action = reverse('youth:program_enrolled_programs_add_bulk')
         if instance:
             form_action = reverse('youth:program_enrolled_programs_edit',
                                   kwargs={'registry': registry, 'pk': instance})
@@ -175,6 +187,8 @@ class EnrolledProgramsForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
         self.helper.layout = Layout(
+            Field('registration_id'),
+            Field('selected_registration_ids'),
             Div(
                 Div(
                     HTML('<span class="badge-form badge-pill">2</span>'),
@@ -220,22 +234,17 @@ class EnrolledProgramsForm(forms.ModelForm):
                 Reset('reset', 'Reset',
                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 HTML(
-                    '<a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="/youth/child-profile/{}/">Cancel</a>'.format(
-                        registry)
+                    '<a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="{}">Cancel</a>'.format(
+                        '/youth/child-profile/{}/'.format(registry) if registry else '/youth/list/')
                 )
             ),
             css_id='step-1'
         )
         )
 
-    def save(self, request=None, instance=None, registry=None):
+    def _apply_posted_program_data(self, instance, request, registry=None):
         from datetime import datetime
         validated_data = request.POST
-
-        if not instance:
-            instance = EnrolledPrograms.objects.create(registration_id=registry)
-        else:
-            instance = EnrolledPrograms.objects.get(id=instance)
 
         instance.master_program_id = validated_data.get('master_program')
         instance.sub_program_id = validated_data.get('sub_program')
@@ -272,13 +281,40 @@ class EnrolledProgramsForm(forms.ModelForm):
             instance.completion_date = completion_date
 
         instance.save()
-
-        registry = instance.registration
-        registry.save()
-
-        messages.success(request, _('Your data has been sent successfully to the server'))
-
+        instance.registration.save()
         return instance
+
+    def save(self, request=None, instance=None, registry=None):
+        if not instance:
+            instance = EnrolledPrograms.objects.create(registration_id=registry)
+        else:
+            instance = EnrolledPrograms.objects.get(id=instance)
+
+        instance = self._apply_posted_program_data(instance, request, registry=registry)
+        messages.success(request, _('Your data has been sent successfully to the server'))
+        return instance
+
+    def save_bulk(self, request=None):
+        selected_registration_ids = self.cleaned_data.get('selected_registration_ids') or ''
+        registration_ids = [
+            registration_id for registration_id in selected_registration_ids.split(',') if registration_id
+        ]
+        registration_ids = list(dict.fromkeys(registration_ids))
+        saved_instances = []
+
+        for registration_id in registration_ids:
+            instance = EnrolledPrograms.objects.create(registration_id=registration_id)
+            saved_instances.append(
+                self._apply_posted_program_data(instance, request, registry=registration_id)
+            )
+
+        messages.success(
+            request,
+            _('Your data has been sent successfully to the server for %(count)s registrations') % {
+                'count': len(saved_instances)
+            }
+        )
+        return saved_instances
 
     def clean(self):
         cleaned_data = super(EnrolledProgramsForm, self).clean()
@@ -286,6 +322,20 @@ class EnrolledProgramsForm(forms.ModelForm):
         completion_date = cleaned_data.get("completion_date")
         if registration_date and completion_date and registration_date > completion_date:
             self.add_error('registration_date', 'Registration Date must be less than Completion Date')
+
+        selected_registration_ids = cleaned_data.get('selected_registration_ids')
+        if not cleaned_data.get('registration_id') and not selected_registration_ids:
+            self.add_error('selected_registration_ids', _('Please select at least one registration.'))
+        elif selected_registration_ids:
+            registration_ids = [
+                registration_id for registration_id in selected_registration_ids.split(',') if registration_id
+            ]
+            existing_count = Registration.objects.filter(id__in=registration_ids).count()
+            if existing_count != len(set(registration_ids)):
+                self.add_error(
+                    'selected_registration_ids',
+                    _('One or more selected registrations could not be found.')
+                )
 
         same_location = cleaned_data.get('same_location')
         if not same_location:

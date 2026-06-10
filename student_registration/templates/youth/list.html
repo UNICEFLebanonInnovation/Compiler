@@ -63,6 +63,7 @@
                             </div>
                         <div class="page-title-actions">
 <a href="{% url 'youth:child_add' %}?type=Core-Package" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Beneficiary</a>
+<button type="button" id="enroll-checked-registrations" class="mr-3 btn-icon btn btn-info"><i class="fa fa-check btn-icon-wrapper"> </i>Enroll the checked Registrations in a Program</button>
 <a href="{% url 'backends:adolescent_upload' %}?type=Core-Package" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Bulk Import</a>
                         </div>
                         </div>
@@ -120,9 +121,10 @@
       window.youthLoadSubProgramsUrl = "{% url 'youth:load_sub_programs' %}";
       window.youthLoadDistrictsUrl = "{% url 'youth:load_districts' %}";
       window.youthLoadCadastersUrl = "{% url 'youth:load_cadasters' %}";
+      window.youthBulkEnrollProgramsUrl = "{% url 'youth:program_enrolled_programs_add_bulk' %}";
     </script>
     <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/youth/list.js' %}?v=28"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/youth/list.js' %}?v=29"></script>
     <script type="text/javascript" src="{% static 'js/youth/general.js' %}?v=1"></script>
 
 

@@ -22,7 +22,7 @@
                           <i class="fa fa-id-card"></i>
                       </span>
                       <span class="d-inline-block">
-                        Enroll in a  Program
+                        {% if registry %}Enroll in a Program{% else %}Enroll Checked Registrations in a Program{% endif %}
                       </span>
                   </div>
                   <div class="page-title-subheading opacity-10">
@@ -33,9 +33,15 @@
                                                         Home
                                                     </a>
                                                 </li>
+                              {% if registry %}
                               <li class="breadcrumb-item">
                                     <a href="{% url 'youth:child_profile' registry %}">{% get_child_fullname  registry %}</a>
                               </li>
+                              {% else %}
+                              <li class="breadcrumb-item">
+                                    <a href="{% url 'youth:list' %}">List</a>
+                              </li>
+                              {% endif %}
                                <li class="breadcrumb-item">
                                      Enroll in a Program
                               </li>
@@ -53,6 +59,11 @@
 
 <div class="main-card mb-3 card">
                                 <div class="card-body">
+                                    {% if selected_registration_ids %}
+                                    <div class="alert alert-info">
+                                        Enrolling {{ selected_registration_ids|length }} checked registration{{ selected_registration_ids|length|pluralize }}.
+                                    </div>
+                                    {% endif %}
                                     <div id="smartwizard3" class="forms-wizard">
                                         <ul class="forms-wizard">
                                             <li>

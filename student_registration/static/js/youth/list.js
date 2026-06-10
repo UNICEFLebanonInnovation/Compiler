@@ -24,6 +24,20 @@ $(document).ready(function() {
     $(document).on("change", ".enroll-program-checkbox", updateEnrollProgramCheckAllState);
     updateEnrollProgramCheckAllState();
 
+    $(document).on("click", "#enroll-checked-registrations", function() {
+        var registrationIds = $(".enroll-program-checkbox:checked").map(function() {
+            return $(this).val();
+        }).get();
+
+        if (!registrationIds.length) {
+            alert("Please check at least one registration to enroll.");
+            return;
+        }
+
+        var enrollUrl = window.youthBulkEnrollProgramsUrl || "/youth/program/enrolled-programs-add/";
+        window.location.href = enrollUrl + "?" + $.param({registrations: registrationIds}, true);
+    });
+
 
     function refreshSubProgramsForSelectedMasterPrograms() {
         var masterPrograms = $("#id_master_program").val();
