@@ -39,7 +39,7 @@ DAYS.insert(0, ('', '---------'))
 
 class MainForm(forms.ModelForm):
     # YEARS = list(((str(x), x) for x in range(Adolescent.CURRENT_YEAR - 20, Adolescent.CURRENT_YEAR + 1)))
-    YEARS = list(((str(x), x) for x in range(1990, Adolescent.CURRENT_YEAR + 1)))
+    YEARS = list(((str(x), x) for x in range(1980, Adolescent.CURRENT_YEAR + 1)))
     YEARS.insert(0, ('', '---------'))
 
     # center = forms.ModelChoiceField(
