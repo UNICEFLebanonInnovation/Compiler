@@ -115,8 +115,12 @@ def send_push_to_web_0(user, title, body, data=None):
     )
 
     # Send the notification to all tokens.
-    response = messaging.send_multicast(message)
-    return response.success_count > 0
+    try:
+        response = messaging.send_multicast(message)
+        return response.success_count > 0
+    except Exception as e:
+        logger.exception("Failed to send push notification to user %s: %s", user.pk, e)
+        return False
 
 
 def send_push_to_web(user, title, body, data=None):
@@ -147,20 +151,24 @@ def send_push_to_web(user, title, body, data=None):
             user.pk,
         )
         return False
-    message = messaging.Message(
-        notification=messaging.Notification(
-            title=title,
-            body=body,
-        ),
-        webpush=messaging.WebpushConfig(
-            headers={"Urgency": "high"},
-            notification=messaging.WebpushNotification(
+    try:
+        message = messaging.Message(
+            notification=messaging.Notification(
                 title=title,
                 body=body,
-                icon="/static/images/logo.png",
             ),
-        ),
-        token=token_obj.token,
-        data=data or {},
-    )
-    return messaging.send(message)
+            webpush=messaging.WebpushConfig(
+                headers={"Urgency": "high"},
+                notification=messaging.WebpushNotification(
+                    title=title,
+                    body=body,
+                    icon="/static/images/logo.png",
+                ),
+            ),
+            token=token_obj.token,
+            data=data or {},
+        )
+        return messaging.send(message)
+    except Exception as e:
+        logger.exception("Failed to send push notification to user %s: %s", user.pk, e)
+        return False
