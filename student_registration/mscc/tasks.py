@@ -49,6 +49,19 @@ def _run_with_new_db_connection(fn, *args, **kwargs):
         close_old_connections()
 
 
+def _send_export_notification(user, title, body, data):
+    """Send export push notifications without changing export status on failure."""
+    if not user:
+        return
+    try:
+        send_push_to_web(user, title, body, data=data)
+    except Exception:
+        logger.exception(
+            "Unable to send MSCC export notification to user %s",
+            getattr(user, 'pk', None),
+        )
+
+
 def _generate_mscc_export(export_id, fields=None, file_format='csv'):
     try:
         export = ExportHistory.objects.get(id=export_id)
@@ -101,26 +114,26 @@ def _generate_mscc_export(export_id, fields=None, file_format='csv'):
         export.file_url = file_url
         export.status = 'done'
         export.save()
-        if user:
-            send_push_to_web(
-                user,
-                "Makani export ready",
-                "Your export is ready to download.",
-                data={"type": "mscc_export_ready", "url": file_url},
-            )
+        _send_export_notification(
+            user,
+            "Makani export ready",
+            "Your export is ready to download.",
+            data={"type": "mscc_export_ready", "url": file_url},
+        )
     except Exception as e:
         logger.exception('Error generating export: %s', e)
         if export:
             export.status = 'failed'
             export.save()
-            if export.created_by:
-                # Notify the user that the export failed and include the reason
-                send_push_to_web(
-                    export.created_by,
-                    "Makani export failed",
-                    str(e),
-                    data={"type": "mscc_export_failed", "reason": str(e)},
-                )
+            # Notify the user that the export failed and include the reason.
+            _send_export_notification(
+                export.created_by,
+                "Makani export failed",
+                str(e),
+                data={"type": "mscc_export_failed", "reason": str(e)},
+            )
+
+
 def _generate_filtered_mscc_export(export_id, nationality="", first_name="", last_name="",
                                    father_name="", mother_fullname="", round=""):
     """Generate an MSCC export with optional filtering and notify the user.
@@ -210,24 +223,22 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
         export.file_url = file_url
         export.status = 'done'
         export.save()
-        if user:
-            send_push_to_web(
-                user,
-                "Makani export ready",
-                "Your export is ready to download.",
-                data={"type": "mscc_export_ready", "url": file_url},
-            )
+        _send_export_notification(
+            user,
+            "Makani export ready",
+            "Your export is ready to download.",
+            data={"type": "mscc_export_ready", "url": file_url},
+        )
     except Exception as e:  # pragma: no cover - logged for debugging purposes
         logger.exception('Error generating export: %s', e)
         export.status = 'failed'
         export.save()
-        if export.created_by:
-            send_push_to_web(
-                export.created_by,
-                "Makani export failed",
-                str(e),
-                data={"type": "mscc_export_failed", "reason": str(e)},
-            )
+        _send_export_notification(
+            export.created_by,
+            "Makani export failed",
+            str(e),
+            data={"type": "mscc_export_failed", "reason": str(e)},
+        )
 
 
 def queue_mscc_export(export_id, fields=None, file_format='csv'):
