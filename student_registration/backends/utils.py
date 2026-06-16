@@ -140,31 +140,31 @@ def send_push_to_web(user, title, body, data=None):
         )
         return False
 
-    root_dirt = Path(__file__).parents[2]
-    FIREBASE_CREDENTIALS_FILE = os.path.join(str(root_dirt / "utility"), 'firebase-creds.json')
-    cred = credentials.Certificate(FIREBASE_CREDENTIALS_FILE)
+    try:
+        root_dirt = Path(__file__).parents[2]
+        FIREBASE_CREDENTIALS_FILE = os.path.join(str(root_dirt / "utility"), 'firebase-creds.json')
+        cred = credentials.Certificate(FIREBASE_CREDENTIALS_FILE)
 
-    if not firebase_admin._apps:
-        firebase_admin.initialize_app(cred)
+        if not firebase_admin._apps:
+            firebase_admin.initialize_app(cred)
 
-    payload_data = {k: str(v) for k, v in (data or {}).items()}
-    message = messaging.Message(
-        notification=messaging.Notification(
-            title=title,
-            body=body,
-        ),
-        webpush=messaging.WebpushConfig(
-            headers={"Urgency": "high"},
-            notification=messaging.WebpushNotification(
+        payload_data = {k: str(v) for k, v in (data or {}).items()}
+        message = messaging.Message(
+            notification=messaging.Notification(
                 title=title,
                 body=body,
-                icon="/static/images/logo.png",
             ),
-        ),
-        token=token_obj.token,
-        data=payload_data,
-    )
-    try:
+            webpush=messaging.WebpushConfig(
+                headers={"Urgency": "high"},
+                notification=messaging.WebpushNotification(
+                    title=title,
+                    body=body,
+                    icon="/static/images/logo.png",
+                ),
+            ),
+            token=token_obj.token,
+            data=payload_data,
+        )
         return messaging.send(message)
     except Exception as exc:  # pragma: no cover - depends on external FCM service
         logger.exception("Unable to send web push notification to user %s: %s", user.pk, exc)
