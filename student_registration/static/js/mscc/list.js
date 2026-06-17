@@ -70,11 +70,43 @@ $(document).ready(function() {
 
 
 
+    function addExportNotification(url, text) {
+        var items = [];
+        try {
+            items = JSON.parse(localStorage.getItem('msccNotifications')) || [];
+        } catch (e) {
+            items = [];
+        }
+        items.unshift({ url: url, text: text });
+        if (items.length > 5) {
+            items = items.slice(0, 5);
+        }
+        localStorage.setItem('msccNotifications', JSON.stringify(items));
+
+        var list = $('#mscc-notification-list');
+        if (list.length) {
+            list.find('span:contains("No notifications")').closest('li').remove();
+            var li = $('<li/>', { class: 'nav-item' });
+            $('<a/>', { class: 'nav-link', href: url, target: '_blank', text: text }).appendTo(li);
+            list.prepend(li);
+            if (list.children('li').length > 5) {
+                list.children('li:last-child').remove();
+            }
+            var count = $('#mscc-unread-count');
+            if (count.length) {
+                var current = parseInt(count.text(), 10) || 0;
+                count.text(current + 1);
+            }
+        }
+    }
+
     function showExportReady(url) {
         $('#alertModal').modal('hide');
         if (url && url !== '#') {
             var readyModal = $('#downloadReadyModal');
             if (readyModal.length) {
+                var timestamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
+                addExportNotification(url, 'Makani export ' + timestamp);
                 readyModal.find('.download-link').attr('href', url);
                 readyModal.modal('show');
             } else {
