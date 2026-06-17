@@ -32,8 +32,67 @@
     .table-container {
         min-height: 200px;
     }
+    .youth-list-page-title {
+        box-sizing: border-box;
+        max-width: calc(100vw - 2rem);
+        overflow-x: hidden;
+    }
+    .youth-list-title-wrapper {
+        display: grid !important;
+        grid-template-columns: minmax(320px, max-content) minmax(0, 1fr);
+        align-items: center !important;
+        column-gap: 2rem;
+        max-width: 100%;
+    }
+    .youth-list-title-wrapper > .page-title-heading {
+        min-width: 0;
+    }
+    .youth-list-title-wrapper .page-title-head {
+        white-space: nowrap;
+    }
+    .youth-list-actions {
+        align-self: start;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 2.25rem;
+        width: 100%;
+        max-width: 100%;
+    }
+    .youth-list-actions .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0 !important;
+        max-width: 100%;
+        text-align: center;
+        white-space: normal;
+    }
+    #enroll-checked-registrations {
+        max-width: 520px;
+    }
+    @media (max-width: 1400px) {
+        .youth-list-title-wrapper {
+            grid-template-columns: 1fr;
+            row-gap: 1rem;
+        }
+        .youth-list-actions {
+            justify-content: flex-start;
+            margin-top: 0;
+        }
+    }
+    @media (max-width: 767.98px) {
+        .youth-list-title-wrapper .page-title-head {
+            white-space: normal;
+        }
+        .youth-list-actions .btn {
+            width: 100%;
+        }
+    }
 </style>
-<div class="app-page-title">
+<div class="app-page-title youth-list-page-title">
+                        <div class="page-title-wrapper youth-list-title-wrapper">
                         <div class="page-title-wrapper">
                             <div class="page-title-heading">
                                 <div>
@@ -61,7 +120,7 @@
                                     </div>
                                 </div>
                             </div>
-                        <div class="page-title-actions">
+                        <div class="page-title-actions youth-list-actions">
 <a href="{% url 'youth:child_add' %}?type=Core-Package" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Beneficiary</a>
 <button type="button" id="enroll-checked-registrations" class="mr-3 btn-icon btn btn-info"><i class="fa fa-check btn-icon-wrapper"> </i>Enroll the checked Registrations in a Program</button>
 <a href="{% url 'backends:adolescent_upload' %}?type=Core-Package" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Bulk Import</a>
