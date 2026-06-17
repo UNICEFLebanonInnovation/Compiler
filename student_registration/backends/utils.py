@@ -34,6 +34,12 @@ class ExportStorage(AzureStorage):
     """Azure storage backend dedicated for exported files."""
     location = "export"
 
+    # Export filenames are UUID-based, so collisions are not expected. Allowing
+    # overwrites skips django-storages' pre-upload existence check, which avoids
+    # noisy Azure SDK ``HEAD`` requests that return 404 before a new blob is
+    # created.
+    overwrite_files = True
+
 
 def download_file(file_name, returned_file_name, content_type="application/octet-stream", delete_after=True):
     """Retrieve a file from Azure storage and return it as an HTTP response."""
@@ -175,9 +181,11 @@ def send_push_to_web(user, title, body, data=None):
             data=payload_data,
         )
         return messaging.send(message)
-    except Exception:
-        logger.exception(
-            "Unable to send web push notification to user %s. The triggering operation will continue.",
+    except Exception as exc:
+        logger.warning(
+            "Unable to send web push notification to user %s; continuing without push notification. %s: %s",
             user.pk,
+            exc.__class__.__name__,
+            exc,
         )
         return False
