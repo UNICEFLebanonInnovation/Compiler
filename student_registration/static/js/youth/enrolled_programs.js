@@ -1,7 +1,6 @@
 
 
 $(document).ready(function() {
-    reorganizeForm();
 
     var initialGov = $('#id_governorate').val();
     var initialDistrict = $('#id_district').val();
