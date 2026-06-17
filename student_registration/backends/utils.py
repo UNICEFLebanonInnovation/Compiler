@@ -5,6 +5,7 @@ import os
 import io
 import re
 import logging
+import warnings
 
 from pathlib import Path
 from time import mktime
@@ -130,9 +131,15 @@ def send_push_to_web(user, title, body, data=None):
 
     Firebase errors (for example an expired or mismatched service-account key
     causing ``invalid_grant: Invalid JWT Signature``) should not mark exports as
-    failed after the export file has already been generated and uploaded.  The
-    error is logged so credentials can still be fixed operationally.
+    failed after the export file has already been generated and uploaded.  These
+    failures are intentionally silent because exports are still available from
+    the export history/download endpoint.
     """
+    warnings.filterwarnings(
+        "ignore",
+        message="You are using a Python version.*google.api_core.*",
+        category=FutureWarning,
+    )
     import firebase_admin
     from firebase_admin import credentials, messaging
 
@@ -181,11 +188,5 @@ def send_push_to_web(user, title, body, data=None):
             data=payload_data,
         )
         return messaging.send(message)
-    except Exception as exc:
-        logger.warning(
-            "Unable to send web push notification to user %s; continuing without push notification. %s: %s",
-            user.pk,
-            exc.__class__.__name__,
-            exc,
-        )
+    except Exception:
         return False
