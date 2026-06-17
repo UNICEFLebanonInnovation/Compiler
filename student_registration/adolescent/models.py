@@ -16,6 +16,8 @@ from student_registration.students.utils import generate_id, generate_one_unique
 class Adolescent(TimeStampedModel):
 
     CURRENT_YEAR = datetime.datetime.now().year
+    BIRTHDAY_YEAR_START = 1980
+    BIRTHDAY_YEAR_END = 2050
     MONTHS = Choices(
         ('', '---------'),
         ('1', _('January')),
@@ -95,7 +97,7 @@ class Adolescent(TimeStampedModel):
         blank=True,
         null=True,
         default=0,
-        choices=((str(x), x) for x in range(1990, 2050)),
+        choices=[(str(x), x) for x in range(BIRTHDAY_YEAR_START, BIRTHDAY_YEAR_END)],
         verbose_name=_('Birthday year')
     )
     birthday_month = models.CharField(
