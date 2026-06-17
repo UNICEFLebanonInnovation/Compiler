@@ -156,6 +156,16 @@ LOGGING = {
             'handlers': ['console'],
             'propagate': False,
         },
+        'azure.core.pipeline.policies.http_logging_policy': {
+            'level': 'WARNING',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+        'azure.storage.blob': {
+            'level': 'WARNING',
+            'handlers': ['console'],
+            'propagate': False,
+        },
     },
 }
 

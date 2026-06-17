@@ -113,6 +113,19 @@ LOGGING = {
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
             'propagate': True,
         },
+        # Azure SDK INFO logs include authenticated request URLs used for the
+        # upload call itself. They are not browser download links for the private
+        # exports container, so keep them out of normal local logs.
+        'azure.core.pipeline.policies.http_logging_policy': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+        'azure.storage.blob': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
     },
     'root': {
         'handlers': ['console', ],
