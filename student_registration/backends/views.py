@@ -140,14 +140,21 @@ class ExporterViewSet(LoginRequiredMixin,
 
 @login_required
 def export_history_list(request):
-    exports = (
-        ExportHistory.objects.filter(created_by=request.user)
-        .order_by('-created')[:5]
-    )
+    exports = ExportHistory.objects.filter(created_by=request.user)
+    export_id = request.GET.get('export_id')
+    if export_id:
+        exports = exports.filter(id=export_id)
+    exports = exports.order_by('-created')[:5]
+
     data = []
     for export in exports:
         timestamp = localtime(export.created).strftime('%Y-%m-%d %H:%M')
-        data.append({'url': export.file_url or '#', 'text': f'MSCC export {timestamp}'})
+        data.append({
+            'id': export.id,
+            'url': export.file_url or '#',
+            'text': f'MSCC export {timestamp}',
+            'status': export.status,
+        })
     return JsonResponse({'exports': data})
 
 

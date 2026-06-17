@@ -69,6 +69,57 @@ $(document).ready(function() {
     });
 
 
+
+    function showExportReady(url) {
+        $('#alertModal').modal('hide');
+        if (url && url !== '#') {
+            var readyModal = $('#downloadReadyModal');
+            if (readyModal.length) {
+                readyModal.find('.download-link').attr('href', url);
+                readyModal.modal('show');
+            } else {
+                window.open(url, '_blank');
+            }
+        } else {
+            showModal('Export is ready, but no download link was returned. Please check export history.');
+        }
+    }
+
+    window.pollExportUntilReady = function(exportId) {
+        if (!exportId) {
+            return;
+        }
+
+        var attempts = 0;
+        var maxAttempts = 120;
+        var interval = window.setInterval(function() {
+            attempts += 1;
+            $.ajax({
+                url: '/backends/export-history-list/?export_id=' + encodeURIComponent(exportId),
+                type: 'GET',
+                headers: getHeader(),
+                success: function(data) {
+                    var exportItem = data.exports && data.exports[0];
+                    if (!exportItem) {
+                        return;
+                    }
+                    if (exportItem.status === 'done') {
+                        window.clearInterval(interval);
+                        showExportReady(exportItem.url);
+                    } else if (exportItem.status === 'failed') {
+                        window.clearInterval(interval);
+                        showModal('Export failed. Please try again later.');
+                    }
+                }
+            });
+
+            if (attempts >= maxAttempts) {
+                window.clearInterval(interval);
+                showModal('Export is still running. Please check export history in a few minutes.');
+            }
+        }, 3000);
+    };
+
     $(document).on('click', '.download-center-report', function(e){
         e.preventDefault();
 
@@ -129,10 +180,11 @@ $(document).ready(function() {
                                + "&round=" + round,
             type: "GET",
             headers: requestHeaders,
-            success: function() {
+            success: function(data) {
                $(".downloading-message").hide();
                $('.download-report').removeClass('disabled');
-               showModal('Export started. You will be notified when ready.');
+               showModal('Export started. The download dialog will appear when ready.');
+               window.pollExportUntilReady(data.export_id);
             },
             error: function() {
                showModal('Failed to start export. Please try again later.');
@@ -176,9 +228,10 @@ $(document).ready(function() {
                                + "&round=" + round,
             type: 'GET',
             headers: requestHeaders,
-            success: function(){
+            success: function(data){
                 $('#exportOptionsModal').modal('hide');
-                showModal('Export started. You will be notified when ready.');
+                showModal('Export started. The download dialog will appear when ready.');
+                window.pollExportUntilReady(data.export_id);
             },
             error: function(){
                 showModal('Failed to start export. Please try again later.');

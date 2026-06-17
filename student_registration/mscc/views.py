@@ -982,7 +982,7 @@ def export_list_background(request):
         mother_fullname,
         round,
     )
-    return JsonResponse({'status': 'started'})
+    return JsonResponse({'status': 'started', 'export_id': export_record.id})
 
 
 def export_child_list_background(request):
