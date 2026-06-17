@@ -32,16 +32,16 @@
     .table-container {
         min-height: 200px;
     }
-    .youth-list-page-title {
+.youth-list-page-title {
         box-sizing: border-box;
         max-width: calc(100vw - 2rem);
         overflow-x: hidden;
     }
     .youth-list-title-wrapper {
         display: grid !important;
-        grid-template-columns: minmax(320px, max-content) minmax(0, 1fr);
-        align-items: center !important;
-        column-gap: 2rem;
+        grid-template-columns: 1fr;
+        align-items: start !important;
+        row-gap: 0.75rem;
         max-width: 100%;
     }
     .youth-list-title-wrapper > .page-title-heading {
@@ -51,12 +51,10 @@
         white-space: nowrap;
     }
     .youth-list-actions {
-        align-self: start;
         display: flex;
         flex-wrap: wrap;
         gap: 1rem;
         justify-content: flex-end;
-        margin-top: 2.25rem;
         width: 100%;
         max-width: 100%;
     }
@@ -74,12 +72,10 @@
     }
     @media (max-width: 1400px) {
         .youth-list-title-wrapper {
-            grid-template-columns: 1fr;
             row-gap: 1rem;
         }
         .youth-list-actions {
             justify-content: flex-start;
-            margin-top: 0;
         }
     }
     @media (max-width: 767.98px) {
@@ -89,6 +85,7 @@
         .youth-list-actions .btn {
             width: 100%;
         }
+
     }
 </style>
 <div class="app-page-title youth-list-page-title">
