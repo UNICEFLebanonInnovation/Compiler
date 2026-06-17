@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseForbidden, HttpResponse, JsonResponse
-from django.utils.timezone import localtime
+from django.utils.timezone import is_naive, localtime
 
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
@@ -148,7 +148,8 @@ def export_history_list(request):
 
     data = []
     for export in exports:
-        timestamp = localtime(export.created).strftime('%Y-%m-%d %H:%M')
+        created = export.created if is_naive(export.created) else localtime(export.created)
+        timestamp = created.strftime('%Y-%m-%d %H:%M')
         data.append({
             'id': export.id,
             'url': export.file_url or '#',
