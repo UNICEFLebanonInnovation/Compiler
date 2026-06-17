@@ -120,21 +120,17 @@ def send_push_to_web_0(user, title, body, data=None):
 
 
 def send_push_to_web(user, title, body, data=None):
+    """Send a web push notification without failing the caller's workflow.
+
+    Firebase errors (for example an expired or mismatched service-account key
+    causing ``invalid_grant: Invalid JWT Signature``) should not mark exports as
+    failed after the export file has already been generated and uploaded.  The
+    error is logged so credentials can still be fixed operationally.
+    """
     import firebase_admin
     from firebase_admin import credentials, messaging
 
     from student_registration.users.models import WebPushToken
-
-    # Tokens are registered from the client via the save_fcm_token view
-    # (``/api/save-fcm-token/``).  If a user has never visited the app with
-    # notifications enabled there will be no token to use here.
-    root_dirt = Path(__file__).parents[2]
-    FIREBASE_CREDENTIALS_FILE = os.path.join(str(root_dirt / "utility"), 'firebase-creds.json')
-    cred = credentials.Certificate(FIREBASE_CREDENTIALS_FILE)
-    # firebase_app = firebase_admin.initialize_app(cred)
-
-    if not firebase_admin._apps:
-        firebase_admin.initialize_app(cred)
 
     token_obj = (
         WebPushToken.objects.filter(user=user)
@@ -147,20 +143,41 @@ def send_push_to_web(user, title, body, data=None):
             user.pk,
         )
         return False
-    message = messaging.Message(
-        notification=messaging.Notification(
-            title=title,
-            body=body,
-        ),
-        webpush=messaging.WebpushConfig(
-            headers={"Urgency": "high"},
-            notification=messaging.WebpushNotification(
+
+    # Tokens are registered from the client via the save_fcm_token view
+    # (``/api/save-fcm-token/``).  If a user has never visited the app with
+    # notifications enabled there will be no token to use here.
+    root_dirt = Path(__file__).parents[2]
+    firebase_credentials_file = os.path.join(str(root_dirt / "utility"), 'firebase-creds.json')
+
+    try:
+        if not firebase_admin._apps:
+            cred = credentials.Certificate(firebase_credentials_file)
+            firebase_admin.initialize_app(cred)
+
+        # FCM requires all data payload values to be strings.
+        payload_data = {k: str(v) for k, v in (data or {}).items()}
+
+        message = messaging.Message(
+            notification=messaging.Notification(
                 title=title,
                 body=body,
-                icon="/static/images/logo.png",
             ),
-        ),
-        token=token_obj.token,
-        data=data or {},
-    )
-    return messaging.send(message)
+            webpush=messaging.WebpushConfig(
+                headers={"Urgency": "high"},
+                notification=messaging.WebpushNotification(
+                    title=title,
+                    body=body,
+                    icon="/static/images/logo.png",
+                ),
+            ),
+            token=token_obj.token,
+            data=payload_data,
+        )
+        return messaging.send(message)
+    except Exception:
+        logger.exception(
+            "Unable to send web push notification to user %s. The triggering operation will continue.",
+            user.pk,
+        )
+        return False
