@@ -56,6 +56,12 @@ class MainForm(forms.ModelForm):
         required=True,
         choices=YES_NO,
     )
+    child_is_idp = forms.ChoiceField(
+        label=_('Child is IDP?'),
+        widget=forms.Select,
+        required=True,
+        choices=YES_NO,
+    )
     child_first_name = forms.CharField(
         label=_("Child\'s First Name"),
         widget=forms.TextInput, required=True
@@ -824,6 +830,7 @@ class MainForm(forms.ModelForm):
             'child_fe_unique_id',
             'cash_support_programmes',
             'consent',
+            'child_is_idp',
             # 'mscc_packages',
             'father_educational_level',
             'mother_educational_level',

@@ -257,6 +257,13 @@ class Registration(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Informed Consent Received to Share Data Externally')
     )
+    child_is_idp = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Child is IDP?')
+    )
     mscc_packages = ArrayField(
         models.CharField(
             choices=MSCC_PACKAGES,
