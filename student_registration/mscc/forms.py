@@ -480,7 +480,6 @@ class MainForm(forms.ModelForm):
         'caregiver_last_name',
         'caregiver_mother_name',
         'have_labour',
-        'id_type',
         'child_living_arrangement',
     )
 
@@ -493,20 +492,8 @@ class MainForm(forms.ModelForm):
         package_type = self._get_package_type(instance)
 
         if package_type == 'Core-Package':
-            self.fields['father_educational_level'].required = True
-            self.fields['mother_educational_level'].required = True
-            self.fields['first_phone_owner'].required = True
-            self.fields['first_phone_number'].required = True
-            self.fields['first_phone_number_confirm'].required = True
-            self.fields['main_caregiver'].required = True
-            self.fields['children_number_under18'].required = True
-            self.fields['caregiver_first_name'].required = True
-            self.fields['caregiver_middle_name'].required = True
-            self.fields['caregiver_last_name'].required = True
-            self.fields['caregiver_mother_name'].required = True
-            self.fields['have_labour'].required = True
-            self.fields['id_type'].required = True
-            self.fields['child_living_arrangement'].required = True
+            for field_name in self.core_package_required_fields:
+                self.fields[field_name].required = True
         else:
             for field_name in self.core_package_required_fields:
                 self.fields[field_name].required = False
@@ -614,8 +601,6 @@ class MainForm(forms.ModelForm):
             children_number_under18 = cleaned_data.get("children_number_under18")
             if not children_number_under18:
                 self.add_error('children_number_under18', 'This field is required')
-
-
 
             have_labour = cleaned_data.get("have_labour")
             labour_type = cleaned_data.get("labour_type")
@@ -798,6 +783,9 @@ class MainForm(forms.ModelForm):
                 old_dob_age = instance.child_age
 
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
+                if request.POST.get('child_is_idp') == 'Yes' and not request.POST.get('id_type'):
+                    instance.child.id_type = None
+                    instance.child.save(update_fields=['id_type'])
 
                 instance.modified_by = request.user
                 instance.save()
@@ -815,6 +803,9 @@ class MainForm(forms.ModelForm):
             serializer = MainSerializer(data=request.POST)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
+                if request.POST.get('child_is_idp') == 'Yes' and not request.POST.get('id_type'):
+                    instance.child.id_type = None
+                    instance.child.save(update_fields=['id_type'])
 
                 instance.owner = request.user
                 instance.modified_by = request.user

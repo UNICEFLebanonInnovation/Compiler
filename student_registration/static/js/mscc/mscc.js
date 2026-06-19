@@ -612,12 +612,11 @@ function reorganizeForm()
     var child_gender = $('select#id_child_gender').val();
     var package_type = $('#id_type').val();
     var child_is_idp = $('select#id_child_is_idp').val();
-    var caregiverIdTypeRequired = package_type == 'Core-Package' && child_is_idp != 'Yes';
 
-    $('#id_id_type').prop('required', caregiverIdTypeRequired);
-    if (!caregiverIdTypeRequired) {
-        $('#id_id_type').removeClass('error-field is-invalid');
-        $('#div_id_id_type .invalid-feedback, #div_id_id_type .error-message').remove();
+    if (child_is_idp !=  'Yes') {
+        $('#id_first_phone_number').prop('required', false);
+    } else {
+        $('#id_first_phone_number').prop('required', true);
     }
 
     if (package_type == 'Core-Package') {
