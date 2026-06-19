@@ -120,6 +120,10 @@ $(document).ready(function() {
         reorganizeForm();
     });
 
+    $(document).on('change', 'select#id_child_is_idp', function(){
+        reorganizeForm();
+    });
+
     $(document).on('change', 'select#id_child_gender', function(){
         reorganizeForm();
     });
@@ -607,6 +611,14 @@ function reorganizeForm()
 //  child_gender
     var child_gender = $('select#id_child_gender').val();
     var package_type = $('#id_type').val();
+    var child_is_idp = $('select#id_child_is_idp').val();
+    var caregiverIdTypeRequired = package_type == 'Core-Package' && child_is_idp != 'Yes';
+
+    $('#id_id_type').prop('required', caregiverIdTypeRequired);
+    if (!caregiverIdTypeRequired) {
+        $('#id_id_type').removeClass('error-field is-invalid');
+        $('#div_id_id_type .invalid-feedback, #div_id_id_type .error-message').remove();
+    }
 
     if (package_type == 'Core-Package') {
         $('#id_first_phone_number').prop('required', true);
@@ -1039,7 +1051,14 @@ function validateMainForm(showModal, step) {
                 valid = false;
             }
         }
+        var child_is_idp = $('#id_child_is_idp').val();
+        var caregiverIdTypeRequired = child_is_idp != 'Yes';
         var id_type = $('#id_id_type').val();
+        if (caregiverIdTypeRequired && id_type === '') {
+            showError('#id_id_type', 'This field is required');
+            valid = false;
+        }
+
         var case_number = $('#id_case_number').val();
         var case_confirm = $('#id_case_number_confirm').val();
         var parent_case = $('#id_parent_individual_case_number').val();

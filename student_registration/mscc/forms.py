@@ -588,7 +588,11 @@ class MainForm(forms.ModelForm):
                 if not labour_condition:
                     self.add_error('labour_condition', 'This field is required')
 
+            child_is_idp = cleaned_data.get("child_is_idp")
             id_type = cleaned_data.get("id_type")
+            if child_is_idp != "Yes" and not id_type:
+                self.add_error('id_type', 'This field is required')
+
             case_number = cleaned_data.get("case_number")
             case_number_confirm = cleaned_data.get("case_number_confirm")
             parent_individual_case_number = cleaned_data.get("parent_individual_case_number")
