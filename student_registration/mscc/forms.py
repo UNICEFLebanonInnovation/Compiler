@@ -467,12 +467,50 @@ class MainForm(forms.ModelForm):
     partner_name = forms.CharField(widget=forms.HiddenInput, required=False)
     type = forms.CharField(widget=forms.HiddenInput, required=False)
 
+    core_package_required_fields = (
+        'father_educational_level',
+        'mother_educational_level',
+        'first_phone_owner',
+        'first_phone_number',
+        'first_phone_number_confirm',
+        'main_caregiver',
+        'children_number_under18',
+        'caregiver_first_name',
+        'caregiver_middle_name',
+        'caregiver_last_name',
+        'caregiver_mother_name',
+        'have_labour',
+        'id_type',
+        'child_living_arrangement',
+    )
+
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(MainForm, self).__init__(*args, **kwargs)
 
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
+        package_type = self._get_package_type(instance)
+
+        if package_type == 'Core-Package':
+            self.fields['father_educational_level'].required = True
+            self.fields['mother_educational_level'].required = True
+            self.fields['first_phone_owner'].required = True
+            self.fields['first_phone_number'].required = True
+            self.fields['first_phone_number_confirm'].required = True
+            self.fields['main_caregiver'].required = True
+            self.fields['children_number_under18'].required = True
+            self.fields['caregiver_first_name'].required = True
+            self.fields['caregiver_middle_name'].required = True
+            self.fields['caregiver_last_name'].required = True
+            self.fields['caregiver_mother_name'].required = True
+            self.fields['have_labour'].required = True
+            self.fields['id_type'].required = True
+            self.fields['child_living_arrangement'].required = True
+        else:
+            for field_name in self.core_package_required_fields:
+                self.fields[field_name].required = False
+
         form_action = reverse('mscc:child_add')
         if instance:
             display_registry = ' d-none'
@@ -481,6 +519,17 @@ class MainForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
+
+    def _get_package_type(self, instance):
+        if self.data.get('type'):
+            return self.data.get('type')
+        if self.initial.get('type'):
+            return self.initial.get('type')
+        if instance:
+            return instance.type
+        if self.request:
+            return self.request.GET.get('type') or self.request.GET.get('package_type')
+        return None
 
     def clean(self):
         cleaned_data = super(MainForm, self).clean()

@@ -960,28 +960,8 @@ function validateMainForm(showModal, step) {
 
     var package_type = $('#id_type').val();
     if (package_type == 'Core-Package') {
-        if ($('#id_father_educational_level').val() === '') {
-            showError('#id_father_educational_level', 'This field is required');
-            valid = false;
-        }
-        if ($('#id_mother_educational_level').val() === '') {
-            showError('#id_mother_educational_level', 'This field is required');
-            valid = false;
-        }
         var first_phone = $('#id_first_phone_number').val();
         var first_phone_confirm = $('#id_first_phone_number_confirm').val();
-        if ($('#id_first_phone_owner').val() === '') {
-            showError('#id_first_phone_owner', 'This field is required');
-            valid = false;
-        }
-        if (first_phone === '') {
-            showError('#id_first_phone_number', 'This field is required');
-            valid = false;
-        }
-        if (first_phone_confirm === '') {
-            showError('#id_first_phone_number_confirm', 'This field is required');
-            valid = false;
-        }
         if (first_phone !== first_phone_confirm) {
             showError('#id_first_phone_number_confirm', 'The phone numbers are not matched');
             valid = false;
@@ -993,10 +973,6 @@ function validateMainForm(showModal, step) {
             valid = false;
         }
         var main_caregiver = $('#id_main_caregiver').val();
-        if (main_caregiver === '') {
-            showError('#id_main_caregiver', 'This field is required');
-            valid = false;
-        }
         if (main_caregiver == 'Other' && $('#id_main_caregiver_other').val() === '') {
             showError('#id_main_caregiver_other', 'This field is required');
             valid = false;
@@ -1005,32 +981,8 @@ function validateMainForm(showModal, step) {
             showError('#id_main_caregiver_nationality_other', 'This field is required');
             valid = false;
         }
-        if ($('#id_children_number_under18').val() === '') {
-            showError('#id_children_number_under18', 'This field is required');
-            valid = false;
-        }
-        if ($('#id_caregiver_first_name').val() === '') {
-            showError('#id_caregiver_first_name', 'This field is required');
-            valid = false;
-        }
-        if ($('#id_caregiver_middle_name').val() === '') {
-            showError('#id_caregiver_middle_name', 'This field is required');
-            valid = false;
-        }
-        if ($('#id_caregiver_last_name').val() === '') {
-            showError('#id_caregiver_last_name', 'This field is required');
-            valid = false;
-        }
-        if ($('#id_caregiver_mother_name').val() === '') {
-            showError('#id_caregiver_mother_name', 'This field is required');
-            valid = false;
-        }
         var have_labour = $('#id_have_labour').val();
-        if (have_labour === '') {
-            showError('#id_have_labour', 'This field is required');
-            valid = false;
-        }
-        if (have_labour != 'No') {
+        if (have_labour && have_labour != 'No') {
             if ($('#id_labour_type').val() === '') {
                 showError('#id_labour_type', 'This field is required');
                 valid = false;
@@ -1054,11 +1006,6 @@ function validateMainForm(showModal, step) {
         var child_is_idp = $('#id_child_is_idp').val();
         var caregiverIdTypeRequired = child_is_idp != 'Yes';
         var id_type = $('#id_id_type').val();
-        if (caregiverIdTypeRequired && id_type === '') {
-            showError('#id_id_type', 'This field is required');
-            valid = false;
-        }
-
         var case_number = $('#id_case_number').val();
         var case_confirm = $('#id_case_number_confirm').val();
         var parent_case = $('#id_parent_individual_case_number').val();
@@ -1224,14 +1171,6 @@ function validateMainForm(showModal, step) {
             }
         }
 
-        if ($('#id_caregiver_mother_name').val() === '') {
-            showError('#id_caregiver_mother_name', 'This field is required');
-            valid = false;
-        }
-        if ($('#id_child_living_arrangement').val() === '') {
-            showError('#id_child_living_arrangement', 'This field is required');
-            valid = false;
-        }
 //        if ($('#id_cash_support_programmes').val() === '') {
 //            showError('#id_cash_support_programmes', 'This field is required');
 //            valid = false;
