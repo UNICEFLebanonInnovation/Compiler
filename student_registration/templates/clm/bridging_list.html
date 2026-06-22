@@ -57,12 +57,25 @@
         padding-right: 0;
         min-width: 0;
     }
+    .clm-bridging-list-table {
+        overflow-x: auto;
+        overflow-y: visible;
+        flex-wrap: nowrap;
+        padding-bottom: 0.5rem;
+        -webkit-overflow-scrolling: touch;
+    }
+    .clm-bridging-list-table > .col-lg-12 {
+        flex: 0 0 auto;
+        width: max-content;
+        min-width: 100%;
+    }
     .clm-bridging-list-table .card {
-        max-width: 100%;
+        width: max-content;
+        min-width: 100%;
+        max-width: none;
     }
     .clm-bridging-list-table .table-responsive {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+        overflow-x: visible;
     }
     .clm-bridging-list-table .table-responsive table {
         width: max-content !important;
