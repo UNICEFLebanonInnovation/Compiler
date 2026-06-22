@@ -627,7 +627,7 @@ class EducationServiceForm(forms.ModelForm):
     round = forms.ModelChoiceField(
         queryset=Round.objects.filter(current_year=True),
         widget=forms.Select,
-        label=_('Round'),
+        label=_('Cycle'),
         empty_label='-------',
         required=True, to_field_name='id',
     )

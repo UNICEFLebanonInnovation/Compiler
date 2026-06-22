@@ -54,7 +54,7 @@ class PlaceholderFilterSet(FilterSet):
 
 
 class MainFilter(PlaceholderFilterSet):
-    NO_ROUND_OPTION = ('no_round', 'No Round')
+    NO_ROUND_OPTION = ('no_round', 'No Cycle')
 
     type = ChoiceFilter(choices=PACKAGE_TYPES, empty_label='Package type')
     child__first_name = CharFilter(lookup_expr='icontains' )
@@ -68,7 +68,7 @@ class MainFilter(PlaceholderFilterSet):
                                 .order_by('name').distinct(), empty_label='Nationality')
     round = ChoiceFilter(
         choices=[NO_ROUND_OPTION] + list(Round.objects.filter(current_year=True).values_list('id', 'name').order_by('name').distinct()),
-        empty_label='Round',
+        empty_label='Cycle',
         method='filter_round'
     )
     programme_type = ChoiceFilter(choices=EducationService.EDUCATION_PROGRAM,
@@ -100,7 +100,7 @@ class MainFilter(PlaceholderFilterSet):
 
 
 class FullFilter(PlaceholderFilterSet):
-    NO_ROUND_OPTION = ('no_round', 'No Round')
+    NO_ROUND_OPTION = ('no_round', 'No Cycle')
 
     type = ChoiceFilter(choices=PACKAGE_TYPES, empty_label='Package type')
     partner = ChoiceFilter(choices=PartnerOrganization.objects.values_list('id', 'name')
@@ -108,7 +108,7 @@ class FullFilter(PlaceholderFilterSet):
 
     round = ChoiceFilter(
         choices=[NO_ROUND_OPTION] + list(Round.objects.filter(current_year=True).values_list('id', 'name').order_by('name').distinct()),
-        empty_label='Round',
+        empty_label='Cycle',
         method='filter_round'
     )
 
