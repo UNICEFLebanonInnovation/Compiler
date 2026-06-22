@@ -181,10 +181,6 @@ $(document).ready(function() {
 
         e.preventDefault();
 
-        if ($(this).hasClass("disabled") || $(this).attr("aria-disabled") === "true") {
-            return;
-        }
-
         var buttonId = $(this).attr("id");
         var registrationId = $(this).data("registration-id");
         var parentTR = $(this).closest('tr');
