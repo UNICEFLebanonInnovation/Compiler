@@ -14,7 +14,8 @@
           <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-create btn-icon-wrapper"> </i></button>
           {% trans "Edit" %}</a>
 
-        {% if record.has_enrolled_programs %}
+        {% has_enrolled_programs record as enrolled_programs_exists %}
+        {% if not enrolled_programs_exists %}
           <a type="button" href="" tabindex="0" class="dropdown-item delete-student"  data-registration-id="{{ record.id }}">
              <button id="delete-button-{{ record.id }}" class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-cancel btn-icon-wrapper"> </i></button>
           {% trans "Disable" %}</a>

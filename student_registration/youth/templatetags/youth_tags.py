@@ -16,6 +16,7 @@ def have_service(services, service_name):
     if service_name in services:
         return services[service_name]
 
+
 @register.simple_tag
 def get_enrolled_program(registry):
     if type(registry) == 'int':
@@ -25,6 +26,15 @@ def get_enrolled_program(registry):
         return enrolled_programs.master_program
     else:
         return None
+
+
+@register.simple_tag
+def has_enrolled_programs(registry):
+    registry_id = registry if isinstance(registry, int) else getattr(registry, 'pk', None)
+    if not registry_id:
+        return False
+    return EnrolledPrograms.objects.filter(registration_id=registry_id).exists()
+
 
 @register.simple_tag
 def get_service(registry, service_name):
