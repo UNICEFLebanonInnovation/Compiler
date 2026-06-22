@@ -46,6 +46,28 @@
         text-align: center;
         white-space: normal;
     }
+    .clm-bridging-list-content-row {
+        width: 100% !important;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+    .clm-bridging-list-content-row > .col-lg-12 {
+        padding-left: 0;
+        padding-right: 0;
+        min-width: 0;
+    }
+    .clm-bridging-list-table .card {
+        max-width: 100%;
+    }
+    .clm-bridging-list-table .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .clm-bridging-list-table .table-responsive table {
+        width: max-content !important;
+        min-width: 100%;
+    }
     @media (max-width: 1400px) {
         .clm-bridging-list-title-wrapper {
             row-gap: 1rem;
@@ -105,7 +127,7 @@
                         </div>
 </div>
 
-<div class="row">
+<div class="row clm-bridging-list-content-row">
     <div class="col-lg-12">
 <div id="accordion" class="accordion-wrapper mb-3 form-filters">
     <div class="card">
@@ -129,7 +151,7 @@
     </div>
 </div>
 
-<div class="row table-list">
+<div class="row table-list clm-bridging-list-content-row clm-bridging-list-table">
     <div class="col-lg-12">
         <div class="card-hover-shadow-2x mb-3 card">
             <div class="card-body" style="min-height: 300px;">
