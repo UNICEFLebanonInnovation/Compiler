@@ -18,9 +18,8 @@
     }
     .clm-bridging-list-title-wrapper {
         display: grid !important;
-        grid-template-columns: minmax(0, 1fr) auto;
-        align-items: center !important;
-        column-gap: 1rem;
+        grid-template-columns: 1fr;
+        align-items: start !important;
         row-gap: 0.75rem;
         max-width: 100%;
     }
@@ -35,8 +34,7 @@
         flex-wrap: wrap;
         gap: 1rem;
         justify-content: flex-end;
-        justify-self: end;
-        width: auto;
+        width: 100%;
         max-width: 100%;
     }
     .clm-bridging-list-actions .btn {
@@ -48,17 +46,15 @@
         text-align: center;
         white-space: normal;
     }
-    @media (max-width: 767.98px) {
+    @media (max-width: 1400px) {
         .clm-bridging-list-title-wrapper {
-            grid-template-columns: 1fr;
-            align-items: start !important;
             row-gap: 1rem;
         }
         .clm-bridging-list-actions {
             justify-content: flex-start;
-            justify-self: stretch;
-            width: 100%;
         }
+    }
+    @media (max-width: 767.98px) {
         .clm-bridging-list-title-wrapper .page-title-head {
             white-space: normal;
         }
@@ -111,7 +107,7 @@
 
 <div class="row">
     <div class="col-lg-12">
-<div id="accordion" class="accordion-wrapper mb-3 form-filters" style="width: 1620px;">
+<div id="accordion" class="accordion-wrapper mb-3 form-filters">
     <div class="card">
         <div id="headingOne" class="card-header">
             <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block collapsed">
@@ -133,10 +129,10 @@
     </div>
 </div>
 
-<div class="row table-list" style="width: 1620px;">
+<div class="row table-list">
     <div class="col-lg-12">
         <div class="card-hover-shadow-2x mb-3 card">
-            <div class="card-body">
+            <div class="card-body" style="min-height: 300px;">
                 <div class="mb-2 text-muted">
                     <span class="breadcrumb-item">Showing {{ table.rows|length }} record{{ table.rows|length|pluralize }}</span>
                 </div>
