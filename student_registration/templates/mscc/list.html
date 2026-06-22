@@ -10,8 +10,64 @@
 
 {% block content %}
 
-<div class="app-page-title">
-                        <div class="page-title-wrapper">
+<style>
+    .mscc-list-page-title {
+        box-sizing: border-box;
+        max-width: calc(100vw - 2rem);
+        overflow-x: hidden;
+    }
+    .mscc-list-title-wrapper {
+        display: grid !important;
+        grid-template-columns: 1fr;
+        align-items: start !important;
+        row-gap: 0.75rem;
+        max-width: 100%;
+    }
+    .mscc-list-title-wrapper > .page-title-heading {
+        min-width: 0;
+    }
+    .mscc-list-title-wrapper .page-title-head {
+        white-space: nowrap;
+    }
+    .mscc-list-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: flex-end;
+        width: 100%;
+        max-width: 100%;
+        padding-right: 2rem;
+    }
+    .mscc-list-actions .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0 !important;
+        max-width: 100%;
+        text-align: center;
+        white-space: normal;
+    }
+    @media (max-width: 1400px) {
+        .mscc-list-title-wrapper {
+            row-gap: 1rem;
+        }
+        .mscc-list-actions {
+            justify-content: flex-start;
+            padding-right: 0;
+        }
+    }
+    @media (max-width: 767.98px) {
+        .mscc-list-title-wrapper .page-title-head {
+            white-space: normal;
+        }
+        .mscc-list-actions .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="app-page-title mscc-list-page-title">
+                        <div class="page-title-wrapper mscc-list-title-wrapper">
                             <div class="page-title-heading">
                                 <div>
                                     <div class="page-title-head center-elem page-title-heading">
@@ -56,7 +112,7 @@
                                 </div>
                             </div>
 
-                        <div class="page-title-actions">
+                        <div class="page-title-actions mscc-list-actions">
 {% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id and request.user.partner and not request.user.partner.is_world_learning %}
 
 <a href="#" data-toggle="modal" data-target="#child-registration-modal" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Beneficiary</a>
