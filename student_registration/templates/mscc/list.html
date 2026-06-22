@@ -11,6 +11,13 @@
 {% block content %}
 
 <style>
+    body {
+        overflow-x: hidden;
+    }
+    .app-main__inner {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
     .mscc-list-page-title {
         box-sizing: border-box;
         max-width: calc(100vw - 2rem);
@@ -69,6 +76,7 @@
         min-width: 0;
     }
     .mscc-list-table {
+        max-width: 100%;
         overflow-x: auto;
         overflow-y: visible;
         flex-wrap: nowrap;
