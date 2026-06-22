@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 
 from rest_framework import status
-from django.db.models import F, Q
+from django.db.models import Exists, F, OuterRef, Q
 from django.urls import reverse
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
@@ -195,6 +195,11 @@ class MainListView(LoginRequiredMixin,
 
         qs = (
             Registration.objects.filter(deleted=False)
+                .annotate(
+                has_enrolled_programs=Exists(
+                    EnrolledPrograms.objects.filter(registration_id=OuterRef('pk'))
+                )
+            )
                 .select_related(
                 'adolescent',
                 'adolescent__disability',

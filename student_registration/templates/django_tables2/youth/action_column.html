@@ -13,11 +13,10 @@
         <a type="button" href="{% url 'youth:child_edit' record.id %}" tabindex="0" class="dropdown-item">
           <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-create btn-icon-wrapper"> </i></button>
           {% trans "Edit" %}</a>
-        <a type="button" href="" tabindex="0" class="dropdown-item delete-student"  data-registration-id="{{ record.id }}">
-          <button id="delete-button-{{ record.id }}" class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-cancel btn-icon-wrapper"> </i></button>
+        <a type="button" href="" tabindex="{% if record.has_enrolled_programs %}-1{% else %}0{% endif %}" class="dropdown-item delete-student{% if record.has_enrolled_programs %} disabled{% endif %}" data-registration-id="{{ record.id }}"{% if record.has_enrolled_programs %} aria-disabled="true"{% endif %}>
+          <button id="delete-button-{{ record.id }}" class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info" {% if record.has_enrolled_programs %}disabled{% endif %}><i class="ion-android-cancel btn-icon-wrapper"> </i></button>
           {% trans "Disable" %}</a>
 
     </div>
 </div>
-
 
