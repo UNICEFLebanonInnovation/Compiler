@@ -10,97 +10,8 @@
 
 {% block main_content %}
 
-<style>
-    .clm-bridging-list-page-title {
-        box-sizing: border-box;
-        max-width: calc(100vw - 2rem);
-        overflow-x: hidden;
-    }
-    .clm-bridging-list-title-wrapper {
-        display: grid !important;
-        grid-template-columns: 1fr;
-        align-items: start !important;
-        row-gap: 0.75rem;
-        max-width: 100%;
-    }
-    .clm-bridging-list-title-wrapper > .page-title-heading {
-        min-width: 0;
-    }
-    .clm-bridging-list-title-wrapper .page-title-head {
-        white-space: nowrap;
-    }
-    .clm-bridging-list-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        justify-content: flex-end;
-        width: 100%;
-        max-width: 100%;
-    }
-    .clm-bridging-list-actions .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 0 !important;
-        max-width: 100%;
-        text-align: center;
-        white-space: normal;
-    }
-    .clm-bridging-list-content-row {
-        width: 100% !important;
-        max-width: 100%;
-        margin-left: 0;
-        margin-right: 0;
-    }
-    .clm-bridging-list-content-row > .col-lg-12 {
-        padding-left: 0;
-        padding-right: 0;
-        min-width: 0;
-    }
-    .clm-bridging-list-table {
-        overflow-x: auto;
-        overflow-y: visible;
-        flex-wrap: nowrap;
-        padding-bottom: 0.5rem;
-        -webkit-overflow-scrolling: touch;
-    }
-    .clm-bridging-list-table > .col-lg-12 {
-        flex: 0 0 auto;
-        width: max-content;
-        min-width: 100%;
-    }
-    .clm-bridging-list-table .card {
-        width: max-content;
-        min-width: 100%;
-        max-width: none;
-    }
-    .clm-bridging-list-table .table-responsive {
-        overflow-x: visible;
-    }
-    .clm-bridging-list-table .table-responsive table {
-        width: max-content !important;
-        min-width: 100%;
-    }
-    @media (max-width: 1400px) {
-        .clm-bridging-list-title-wrapper {
-            row-gap: 1rem;
-        }
-        .clm-bridging-list-actions {
-            justify-content: flex-start;
-        }
-    }
-    @media (max-width: 767.98px) {
-        .clm-bridging-list-title-wrapper .page-title-head {
-            white-space: normal;
-        }
-        .clm-bridging-list-actions .btn {
-            width: 100%;
-        }
-    }
-</style>
-
-<div class="app-page-title clm-bridging-list-page-title">
-                        <div class="page-title-wrapper clm-bridging-list-title-wrapper">
+<div class="app-page-title">
+                        <div class="page-title-wrapper">
                             <div class="page-title-heading">
                                 <div>
                                     <div class="page-title-head center-elem page-title-heading">
@@ -127,7 +38,7 @@
                                     </div>
                                 </div>
                             </div>
-                        <div class="page-title-actions clm-bridging-list-actions">
+                        <div class="page-title-actions">
 
 {% if 'Bridging'|is_allowed_create %}
 {% if not request.user.partner or not request.user.partner.is_world_learning %}
@@ -140,9 +51,9 @@
                         </div>
 </div>
 
-<div class="row clm-bridging-list-content-row">
+<div class="row">
     <div class="col-lg-12">
-<div id="accordion" class="accordion-wrapper mb-3 form-filters">
+<div id="accordion" class="accordion-wrapper mb-3 form-filters" style="width: 1620px;">
     <div class="card">
         <div id="headingOne" class="card-header">
             <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block collapsed">
@@ -164,10 +75,10 @@
     </div>
 </div>
 
-<div class="row table-list clm-bridging-list-content-row clm-bridging-list-table">
+<div class="row table-list" style="width: 1620px;">
     <div class="col-lg-12">
         <div class="card-hover-shadow-2x mb-3 card">
-            <div class="card-body" style="min-height: 300px;">
+            <div class="card-body">
                 <div class="mb-2 text-muted">
                     <span class="breadcrumb-item">Showing {{ table.rows|length }} record{{ table.rows|length|pluralize }}</span>
                 </div>

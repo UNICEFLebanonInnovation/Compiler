@@ -11,48 +11,6 @@
 {% block content %}
 
 <style>
-    body {
-        overflow-x: hidden;
-    }
-    .app-main__inner {
-        max-width: 100%;
-        overflow-x: hidden;
-    }
-    .mscc-list-page-title {
-        box-sizing: border-box;
-        max-width: calc(100vw - 2rem);
-        overflow-x: hidden;
-    }
-    .mscc-list-title-wrapper {
-        display: grid !important;
-        grid-template-columns: 1fr;
-        align-items: start !important;
-        row-gap: 0.75rem;
-        max-width: 100%;
-    }
-    .mscc-list-title-wrapper > .page-title-heading {
-        min-width: 0;
-    }
-    .mscc-list-title-wrapper .page-title-head {
-        white-space: nowrap;
-    }
-    .mscc-list-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        justify-content: flex-end;
-        width: 100%;
-        max-width: 100%;
-    }
-    .mscc-list-actions .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 0 !important;
-        max-width: 100%;
-        text-align: center;
-        white-space: normal;
-    }
     #child-registration-modal .registration-type-actions {
         gap: 1rem;
     }
@@ -64,62 +22,10 @@
         min-height: 42px;
         white-space: normal;
     }
-    .mscc-list-content-row {
-        width: 100% !important;
-        max-width: 100%;
-        margin-left: 0;
-        margin-right: 0;
-    }
-    .mscc-list-content-row > .col-lg-12 {
-        padding-left: 0;
-        padding-right: 0;
-        min-width: 0;
-    }
-    .mscc-list-table {
-        max-width: 100%;
-        overflow-x: auto;
-        overflow-y: visible;
-        flex-wrap: nowrap;
-        padding-bottom: 0.5rem;
-        -webkit-overflow-scrolling: touch;
-    }
-    .mscc-list-table > .col-lg-12 {
-        flex: 0 0 auto;
-        width: max-content;
-        min-width: 100%;
-    }
-    .mscc-list-table .card {
-        width: max-content;
-        min-width: 100%;
-        max-width: none;
-    }
-    .mscc-list-table .table-responsive {
-        overflow-x: visible;
-    }
-    .mscc-list-table .table-responsive table {
-        width: max-content !important;
-        min-width: 100%;
-    }
-    @media (max-width: 1400px) {
-        .mscc-list-title-wrapper {
-            row-gap: 1rem;
-        }
-        .mscc-list-actions {
-            justify-content: flex-start;
-        }
-    }
-    @media (max-width: 767.98px) {
-        .mscc-list-title-wrapper .page-title-head {
-            white-space: normal;
-        }
-        .mscc-list-actions .btn {
-            width: 100%;
-        }
-    }
 </style>
 
-<div class="app-page-title mscc-list-page-title">
-                        <div class="page-title-wrapper mscc-list-title-wrapper">
+<div class="app-page-title">
+                        <div class="page-title-wrapper">
                             <div class="page-title-heading">
                                 <div>
                                     <div class="page-title-head center-elem page-title-heading">
@@ -164,7 +70,7 @@
                                 </div>
                             </div>
 
-                        <div class="page-title-actions mscc-list-actions">
+                        <div class="page-title-actions">
 {% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id and request.user.partner and not request.user.partner.is_world_learning %}
 
 <button type="button" data-toggle="modal" data-target="#child-registration-modal" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Beneficiary</button>
@@ -180,7 +86,7 @@
 {% endif %}
 </div>
 
-<div class="row mscc-list-content-row">
+<div class="row w-100">
     <div class="col-lg-12">
 <div id="accordion" class="accordion-wrapper mb-3 form-filters">
     <div class="card">
@@ -204,10 +110,10 @@
     </div>
 </div>
 
-<div class="row table-list mscc-list-content-row mscc-list-table">
+<div class="row table-list w-100">
     <div class="col-lg-12">
         <div class="card-hover-shadow-2x mb-3 card">
-            <div class="card-body" style="min-height: 300px;">
+            <div class="card-body">
                 <div class="mb-2 text-muted">
                     Showing {{ table.rows|length }} record{{ table.rows|length|pluralize }}
                 </div>
