@@ -197,6 +197,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
         'Adolescent Address': 'address',
         'Special Need': 'disability',
         'Youth Educational Level When Registering' : 'education_status',
+        'Dropout Date': 'dropout_date',
         'Father Educational Level': 'father_educational_level',
         'Mother Educational Level': 'mother_educational_level',
         'First Phone Number': 'first_phone_number',
@@ -474,11 +475,34 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             ed_status = None
             ed_status_val = (values.get('education_status') or '').strip()
             if ed_status_val:
-                # 'want to read from YOUTH_EDUCATION_STATUS'
-                ed_status = EducationalLevel.objects.filter(name_en=ed_status_val).first()
-                if not ed_status:
+                valid_education_statuses = [choice[0] for choice in YOUTH_EDUCATION_STATUS]
+                if ed_status_val in valid_education_statuses:
+                    ed_status = ed_status_val
+                else:
                     invalid_fields.append("education_status ({0})".format(ed_status_val))
 
+
+            dropout_date = None
+            dropout_date_val = values.get('dropout_date')
+            if dropout_date_val:
+                if isinstance(dropout_date_val, datetime.datetime):
+                    dropout_date = dropout_date_val.date()
+                elif isinstance(dropout_date_val, datetime.date):
+                    dropout_date = dropout_date_val
+                else:
+                    dropout_date_val = str(dropout_date_val).strip()
+                    try:
+                        dropout_date = datetime.datetime.strptime(dropout_date_val, '%Y-%m-%d').date()
+                        if dropout_date_val != dropout_date.strftime('%Y-%m-%d'):
+                            invalid_fields.append("dropout_date ({0}) must be in yyyy-mm-dd format".format(dropout_date_val))
+                    except Exception:
+                        invalid_fields.append("dropout_date ({0}) must be in yyyy-mm-dd format".format(dropout_date_val))
+
+            if (
+                ed_status == 'Currently registered in Formal Education school but not attending'
+                and not dropout_date
+            ):
+                invalid_fields.append("dropout_date is required when education_status is ({0})".format(ed_status))
 
             father_ed = None
             father_ed_val = (values.get('father_educational_level') or '').strip()
@@ -531,6 +555,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                     'cad': cad,
                     'disability': disability,
                     'ed_status': ed_status,
+                    'dropout_date': dropout_date,
                     'father_ed': father_ed,
                     'mother_ed': mother_ed,
                     'caregiver_nat': caregiver_nat,
@@ -609,7 +634,6 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                     cadaster=references['cad'],
                     address=values.get('address'),
                     disability=references['disability'],
-                    education_status=references['ed_status'],
                     father_educational_level=references['father_ed'],
                     mother_educational_level=references['mother_ed'],
                     first_phone_number=values.get('first_phone_number'),
@@ -642,6 +666,8 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
 
                 Registration.objects.create(
                     adolescent=adolescent,
+                    education_status=references['ed_status'],
+                    dropout_date=references['dropout_date'],
                     owner=request.user,
                     partner_id=getattr(request.user, 'partner_id', None),
                     center_id=getattr(request.user, 'center_id', None),
