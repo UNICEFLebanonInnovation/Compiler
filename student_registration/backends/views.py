@@ -24,7 +24,9 @@ from student_registration.students.models import Nationality, IDType
 from student_registration.students.utils import generate_bulk_unique_id
 from student_registration.clm.models import Disability, EducationalLevel
 from student_registration.locations.models import Location
-from student_registration.youth.models import Registration
+from student_registration.youth.models import Registration, YOUTH_EDUCATION_STATUS
+
+
 
 
 from .exporter import export_full_data
@@ -194,6 +196,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
         'Cadaster': 'cadaster',
         'Adolescent Address': 'address',
         'Special Need': 'disability',
+        'Youth Educational Level When Registering' : 'education_status',
         'Father Educational Level': 'father_educational_level',
         'Mother Educational Level': 'mother_educational_level',
         'First Phone Number': 'first_phone_number',
@@ -467,6 +470,16 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                 invalid_fields.append("DOB (invalid date parts)")
 
             # ---- Optional lookups: not mandatory, but if provided must exist
+
+            ed_status = None
+            ed_status_val = (values.get('education_status') or '').strip()
+            if ed_status_val:
+                # 'want to read from YOUTH_EDUCATION_STATUS'
+                ed_status = EducationalLevel.objects.filter(name_en=ed_status_val).first()
+                if not ed_status:
+                    invalid_fields.append("education_status ({0})".format(ed_status_val))
+
+
             father_ed = None
             father_ed_val = (values.get('father_educational_level') or '').strip()
             if father_ed_val:
@@ -517,6 +530,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                     'dist': dist,
                     'cad': cad,
                     'disability': disability,
+                    'ed_status': ed_status,
                     'father_ed': father_ed,
                     'mother_ed': mother_ed,
                     'caregiver_nat': caregiver_nat,
@@ -595,6 +609,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                     cadaster=references['cad'],
                     address=values.get('address'),
                     disability=references['disability'],
+                    education_status=references['ed_status'],
                     father_educational_level=references['father_ed'],
                     mother_educational_level=references['mother_ed'],
                     first_phone_number=values.get('first_phone_number'),
