@@ -78,11 +78,14 @@ def generate_one_unique_id(pk,first_name,father_name, last_name, mother_fullname
 
 
 def generate_bulk_unique_id(data):
+    print("generate_bulk_unique_id sent:", data)
     token = get_api_token()
     if not token:
+        print("generate_bulk_unique_id received:", 0)
         return 0
 
     data = get_api_data(token, data)
+    print("generate_bulk_unique_id received:", data)
     return {int(indiv["id"]): indiv["unicef_id"] for indiv in data}
 
 
