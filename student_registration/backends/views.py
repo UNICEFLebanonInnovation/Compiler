@@ -18,6 +18,7 @@ from openpyxl import load_workbook
 from django.core.files.base import ContentFile
 import csv
 import io
+import re
 
 from student_registration.adolescent.models import Adolescent
 from student_registration.students.models import Nationality, IDType
@@ -248,6 +249,8 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
 
         return message + "."
 
+    phone_number_regex = re.compile(r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$')
+
     mandatory_fields = [
         'first_name',
         'father_name',
@@ -385,6 +388,16 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                 continue
 
             invalid_fields = []
+
+            first_phone_number = str(values.get('first_phone_number') or '').strip()
+            second_phone_number = str(values.get('second_phone_number') or '').strip()
+            values['first_phone_number'] = first_phone_number
+            values['second_phone_number'] = second_phone_number
+
+            if not self.phone_number_regex.match(first_phone_number):
+                invalid_fields.append("invalid phone number first_phone_number")
+            if second_phone_number and not self.phone_number_regex.match(second_phone_number):
+                invalid_fields.append("invalid phone number second_phone_number")
 
             # ---- Normalize gender (and validate)
             raw_gender = (values.get('gender') or '').strip()
