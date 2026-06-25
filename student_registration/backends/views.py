@@ -613,9 +613,12 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
 
         bulk_ids = {}
         if payload["individuals"]:
+            print("generate_bulk_unique_id sent:", payload)
             try:
                 bulk_ids = generate_bulk_unique_id(payload) or {}
-            except Exception:
+                print("generate_bulk_unique_id received:", bulk_ids)
+            except Exception as exc:
+                print("generate_bulk_unique_id received error:", exc)
                 bulk_ids = {}
 
         # ---- Persist valid rows
