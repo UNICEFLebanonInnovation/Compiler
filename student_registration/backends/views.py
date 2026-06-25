@@ -225,9 +225,10 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
         'ID number of the youth': 'other_number',
     }
 
-    def _build_error_entry(self, row_values, row_number, error_message):
+    def _build_error_entry(self, row_values, row_number, error_message, generator_error=''):
         ordered = OrderedDict()
         ordered['error'] = error_message
+        ordered['generate_bulk_unique_id_error'] = generator_error
         ordered['row'] = row_number
         for field in self.mapping.values():
             ordered[field] = row_values.get(field, '')
@@ -617,7 +618,8 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                     self._build_error_entry(
                         values,
                         row_number,
-                        self._unicef_id_generation_error_message(prospective_unicef_id)
+                        self._unicef_id_generation_error_message(prospective_unicef_id),
+                        str(prospective_unicef_id).strip() if prospective_unicef_id else ''
                     )
                 )
                 continue
