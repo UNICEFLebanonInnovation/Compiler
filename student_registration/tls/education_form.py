@@ -704,24 +704,7 @@ class EducationServiceForm(forms.ModelForm):
 
             self.fields['education_program'].choices = choices
 
-        choices_education_status = list()
-        if package_type == 'Walk-in':
-            choices_education_status.append(('', _('----------')))
-            choices_education_status.append(('Currently registered in Formal Education school',
-                                             _('Currently registered in Formal Education school')))
-            choices_education_status.append(('Currently registered in Formal Education school but not attending',
-                                             _('Currently registered in Formal Education school but not attending')))
-            self.fields['education_status'].choices = choices_education_status
-
         display_edu_section = ''
-        if package_type != 'Core-Package':
-            display_edu_section = ' d-none'
-            self.fields['education_program'].choices = []
-            self.fields['education_program'].initial = ''
-            self.fields['education_program'].required = False
-            self.fields['class_section'].required = False
-            self.fields['registration_date'].required = False
-
 
         if registry:
             child_id = Registration.objects.filter(id=registry).values_list('child_id', flat=True).first()

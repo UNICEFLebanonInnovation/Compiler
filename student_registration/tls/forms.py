@@ -491,17 +491,13 @@ class MainForm(forms.ModelForm):
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         package_type = self._get_package_type(instance)
 
-        if package_type == 'Core-Package':
-            for field_name in self.core_package_required_fields:
-                self.fields[field_name].required = True
-        else:
-            for field_name in self.core_package_required_fields:
-                self.fields[field_name].required = False
+        for field_name in self.core_package_required_fields:
+            self.fields[field_name].required = True
 
-        form_action = reverse('mscc:child_add')
+        form_action = reverse('tls:child_add')
         if instance:
             display_registry = ' d-none'
-            form_action = reverse('mscc:child_edit', kwargs={'pk': instance.id})
+            form_action = reverse('tls:child_edit', kwargs={'pk': instance.id})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -516,7 +512,7 @@ class MainForm(forms.ModelForm):
             return instance.type
         if self.request:
             return self.request.GET.get('type') or self.request.GET.get('package_type')
-        return None
+        return 'TLS'
 
     def clean(self):
         cleaned_data = super(MainForm, self).clean()
@@ -561,222 +557,224 @@ class MainForm(forms.ModelForm):
         if source_of_identification == 'Other Sources' and not source_of_identification_specify:
             self.add_error('source_of_identification_specify', 'This field is required')
 
-        package_type = cleaned_data.get("type")
-        if package_type == 'Core-Package':
+        cleaned_data['type'] = 'TLS'
 
-            father_educational_level = cleaned_data.get("father_educational_level")
-            mother_educational_level = cleaned_data.get("mother_educational_level")
-            if not father_educational_level:
-                self.add_error('father_educational_level', 'This field is required')
-            if not mother_educational_level:
-                self.add_error('mother_educational_level', 'This field is required')
+        father_educational_level = cleaned_data.get("father_educational_level")
+        mother_educational_level = cleaned_data.get("mother_educational_level")
+        if not father_educational_level:
+            self.add_error('father_educational_level', 'This field is required')
+        if not mother_educational_level:
+            self.add_error('mother_educational_level', 'This field is required')
 
-            first_phone_owner = cleaned_data.get("first_phone_owner")
-            first_phone_number = cleaned_data.get("first_phone_number")
-            first_phone_number_confirm = cleaned_data.get("first_phone_number_confirm")
-            second_phone_number = cleaned_data.get("second_phone_number")
-            second_phone_number_confirm = cleaned_data.get("second_phone_number_confirm")
-            if not first_phone_owner:
-                self.add_error('first_phone_owner', 'This field is required')
-            if not first_phone_number:
-                self.add_error('first_phone_number', 'This field is required')
-            if not first_phone_number_confirm:
-                self.add_error('first_phone_number_confirm', 'This field is required')
-            elif first_phone_number != first_phone_number_confirm:
-                msg = "The phone numbers are not matched"
-                self.add_error('first_phone_number_confirm', msg)
-            if second_phone_number != second_phone_number_confirm:
-                msg = "The phone numbers are not matched"
-                self.add_error('second_phone_number_confirm', msg)
+        first_phone_owner = cleaned_data.get("first_phone_owner")
+        first_phone_number = cleaned_data.get("first_phone_number")
+        first_phone_number_confirm = cleaned_data.get("first_phone_number_confirm")
+        second_phone_number = cleaned_data.get("second_phone_number")
+        second_phone_number_confirm = cleaned_data.get("second_phone_number_confirm")
+        if not first_phone_owner:
+            self.add_error('first_phone_owner', 'This field is required')
+        if not first_phone_number:
+            self.add_error('first_phone_number', 'This field is required')
+        if not first_phone_number_confirm:
+            self.add_error('first_phone_number_confirm', 'This field is required')
+        elif first_phone_number != first_phone_number_confirm:
+            msg = "The phone numbers are not matched"
+            self.add_error('first_phone_number_confirm', msg)
+        if second_phone_number != second_phone_number_confirm:
+            msg = "The phone numbers are not matched"
+            self.add_error('second_phone_number_confirm', msg)
 
-            main_caregiver = cleaned_data.get("main_caregiver")
-            main_caregiver_other = cleaned_data.get("main_caregiver_other")
+        main_caregiver = cleaned_data.get("main_caregiver")
+        main_caregiver_other = cleaned_data.get("main_caregiver_other")
 
-            if not main_caregiver:
-                self.add_error('main_caregiver', 'This field is required')
-            if main_caregiver == 'Other' and not main_caregiver_other:
-                self.add_error('main_caregiver_other', 'This field is required')
+        if not main_caregiver:
+            self.add_error('main_caregiver', 'This field is required')
+        if main_caregiver == 'Other' and not main_caregiver_other:
+            self.add_error('main_caregiver_other', 'This field is required')
 
 
-            children_number_under18 = cleaned_data.get("children_number_under18")
-            if not children_number_under18:
-                self.add_error('children_number_under18', 'This field is required')
+        children_number_under18 = cleaned_data.get("children_number_under18")
+        if not children_number_under18:
+            self.add_error('children_number_under18', 'This field is required')
 
-            have_labour = cleaned_data.get("have_labour")
-            labour_type = cleaned_data.get("labour_type")
-            labour_type_specify = cleaned_data.get("labour_type_specify")
-            labour_hours = cleaned_data.get("labour_hours")
-            labour_weekly_income = cleaned_data.get("labour_weekly_income")
-            labour_condition = cleaned_data.get("labour_condition")
-            if not have_labour:
-                self.add_error('have_labour', 'This field is required')
-            if have_labour != 'No':
-                if not labour_type:
-                    self.add_error('labour_type', 'This field is required')
-                elif labour_type == 'Other services' and not labour_type_specify:
-                    self.add_error('labour_type_specify', 'This field is required')
-                if not labour_hours:
-                    self.add_error('labour_hours', 'This field is required')
-                if not labour_weekly_income:
-                    self.add_error('labour_weekly_income', 'This field is required')
-                if not labour_condition:
-                    self.add_error('labour_condition', 'This field is required')
+        have_labour = cleaned_data.get("have_labour")
+        labour_type = cleaned_data.get("labour_type")
+        labour_type_specify = cleaned_data.get("labour_type_specify")
+        labour_hours = cleaned_data.get("labour_hours")
+        labour_weekly_income = cleaned_data.get("labour_weekly_income")
+        labour_condition = cleaned_data.get("labour_condition")
+        if not have_labour:
+            self.add_error('have_labour', 'This field is required')
+        if have_labour != 'No':
+            if not labour_type:
+                self.add_error('labour_type', 'This field is required')
+            elif labour_type == 'Other services' and not labour_type_specify:
+                self.add_error('labour_type_specify', 'This field is required')
+            if not labour_hours:
+                self.add_error('labour_hours', 'This field is required')
+            if not labour_weekly_income:
+                self.add_error('labour_weekly_income', 'This field is required')
+            if not labour_condition:
+                self.add_error('labour_condition', 'This field is required')
 
-            child_is_idp = cleaned_data.get("child_is_idp")
-            id_type = cleaned_data.get("id_type")
-            if child_is_idp != "Yes" and not id_type:
-                self.add_error('id_type', 'This field is required')
+        child_is_idp = cleaned_data.get("child_is_idp")
+        id_type = cleaned_data.get("id_type")
+        if child_is_idp != "Yes" and not id_type:
+            self.add_error('id_type', 'This field is required')
 
-            case_number = cleaned_data.get("case_number")
-            case_number_confirm = cleaned_data.get("case_number_confirm")
-            parent_individual_case_number = cleaned_data.get("parent_individual_case_number")
-            parent_individual_case_number_confirm = cleaned_data.get("parent_individual_case_number_confirm")
-            individual_case_number = cleaned_data.get("individual_case_number")
-            individual_case_number_confirm = cleaned_data.get("individual_case_number_confirm")
+        case_number = cleaned_data.get("case_number")
+        case_number_confirm = cleaned_data.get("case_number_confirm")
+        parent_individual_case_number = cleaned_data.get("parent_individual_case_number")
+        parent_individual_case_number_confirm = cleaned_data.get("parent_individual_case_number_confirm")
+        individual_case_number = cleaned_data.get("individual_case_number")
+        individual_case_number_confirm = cleaned_data.get("individual_case_number_confirm")
 
-            # UNHCR Registered
+        # UNHCR Registered
 
-            if id_type and id_type.id == 1:
-                if not case_number:
-                    self.add_error('case_number', 'This field is required')
-                elif case_number != case_number_confirm:
-                    msg = "The case numbers are not matched"
-                    self.add_error('case_number_confirm', msg)
+        if id_type and id_type.id == 1:
+            if not case_number:
+                self.add_error('case_number', 'This field is required')
+            elif case_number != case_number_confirm:
+                msg = "The case numbers are not matched"
+                self.add_error('case_number_confirm', msg)
 
-                if parent_individual_case_number != parent_individual_case_number_confirm:
-                    msg = "The individual case numbers are not matched"
-                    self.add_error('parent_individual_case_number_confirm', msg)
+            if parent_individual_case_number != parent_individual_case_number_confirm:
+                msg = "The individual case numbers are not matched"
+                self.add_error('parent_individual_case_number_confirm', msg)
 
-                if individual_case_number != individual_case_number_confirm:
-                    msg = "The individual case numbers are not matched"
-                    self.add_error('individual_case_number_confirm', msg)
+            if individual_case_number != individual_case_number_confirm:
+                msg = "The individual case numbers are not matched"
+                self.add_error('individual_case_number_confirm', msg)
 
-            recorded_number = cleaned_data.get("recorded_number")
-            recorded_number_confirm = cleaned_data.get("recorded_number_confirm")
+        recorded_number = cleaned_data.get("recorded_number")
+        recorded_number_confirm = cleaned_data.get("recorded_number_confirm")
 
-            # UNHCR Recorded
-            if id_type and id_type.id == 2:
-                if not recorded_number:
-                    self.add_error('recorded_number', 'This field is required')
-                elif recorded_number != recorded_number_confirm:
-                    msg = "The recorded numbers are not matched"
-                    self.add_error('recorded_number_confirm', msg)
+        # UNHCR Recorded
+        if id_type and id_type.id == 2:
+            if not recorded_number:
+                self.add_error('recorded_number', 'This field is required')
+            elif recorded_number != recorded_number_confirm:
+                msg = "The recorded numbers are not matched"
+                self.add_error('recorded_number_confirm', msg)
 
-            parent_syrian_national_number = cleaned_data.get("parent_syrian_national_number")
-            parent_syrian_national_number_confirm = cleaned_data.get("parent_syrian_national_number_confirm")
-            syrian_national_number = cleaned_data.get("syrian_national_number")
-            syrian_national_number_confirm = cleaned_data.get("syrian_national_number_confirm")
+        parent_syrian_national_number = cleaned_data.get("parent_syrian_national_number")
+        parent_syrian_national_number_confirm = cleaned_data.get("parent_syrian_national_number_confirm")
+        syrian_national_number = cleaned_data.get("syrian_national_number")
+        syrian_national_number_confirm = cleaned_data.get("syrian_national_number_confirm")
 
-            # Syrian national ID
-            if id_type and id_type.id == 3:
-                if not parent_syrian_national_number:
-                    self.add_error('parent_syrian_national_number', 'This field is required')
-                elif parent_syrian_national_number and not len(parent_syrian_national_number) == 11:
-                    msg = "Please enter a valid number (11 digits)"
-                    self.add_error('parent_syrian_national_number', msg)
+        # Syrian national ID
+        if id_type and id_type.id == 3:
+            if not parent_syrian_national_number:
+                self.add_error('parent_syrian_national_number', 'This field is required')
+            elif parent_syrian_national_number and not len(parent_syrian_national_number) == 11:
+                msg = "Please enter a valid number (11 digits)"
+                self.add_error('parent_syrian_national_number', msg)
 
-                if not parent_syrian_national_number_confirm:
-                    self.add_error('parent_syrian_national_number_confirm', 'This field is required')
-                elif parent_syrian_national_number_confirm and not len(parent_syrian_national_number_confirm) == 11:
-                    msg = "Please enter a valid number (11 digits)"
-                    self.add_error('parent_syrian_national_number_confirm', msg)
+            if not parent_syrian_national_number_confirm:
+                self.add_error('parent_syrian_national_number_confirm', 'This field is required')
+            elif parent_syrian_national_number_confirm and not len(parent_syrian_national_number_confirm) == 11:
+                msg = "Please enter a valid number (11 digits)"
+                self.add_error('parent_syrian_national_number_confirm', msg)
 
-                if parent_syrian_national_number != parent_syrian_national_number_confirm:
-                    msg = "The national numbers are not matched"
-                    self.add_error('parent_syrian_national_number_confirm', msg)
+            if parent_syrian_national_number != parent_syrian_national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('parent_syrian_national_number_confirm', msg)
 
-                if syrian_national_number != syrian_national_number_confirm:
-                    msg = "The national numbers are not matched"
-                    self.add_error('syrian_national_number_confirm', msg)
+            if syrian_national_number != syrian_national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('syrian_national_number_confirm', msg)
 
-            parent_sop_national_number = cleaned_data.get("parent_sop_national_number")
-            parent_sop_national_number_confirm = cleaned_data.get("parent_sop_national_number_confirm")
-            sop_national_number = cleaned_data.get("sop_national_number")
-            sop_national_number_confirm = cleaned_data.get("sop_national_number_confirm")
+        parent_sop_national_number = cleaned_data.get("parent_sop_national_number")
+        parent_sop_national_number_confirm = cleaned_data.get("parent_sop_national_number_confirm")
+        sop_national_number = cleaned_data.get("sop_national_number")
+        sop_national_number_confirm = cleaned_data.get("sop_national_number_confirm")
 
-            # Palestinian national ID
-            if id_type and id_type.id == 4:
-                if not parent_sop_national_number:
-                    self.add_error('parent_sop_national_number', 'This field is required')
+        # Palestinian national ID
+        if id_type and id_type.id == 4:
+            if not parent_sop_national_number:
+                self.add_error('parent_sop_national_number', 'This field is required')
 
-                if not parent_sop_national_number_confirm:
-                    self.add_error('parent_sop_national_number_confirm', 'This field is required')
+            if not parent_sop_national_number_confirm:
+                self.add_error('parent_sop_national_number_confirm', 'This field is required')
 
-                if parent_sop_national_number != parent_sop_national_number_confirm:
-                    msg = "The national numbers are not matched"
-                    self.add_error('parent_sop_national_number_confirm', msg)
+            if parent_sop_national_number != parent_sop_national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('parent_sop_national_number_confirm', msg)
 
-                if sop_national_number != sop_national_number_confirm:
-                    msg = "The national numbers are not matched"
-                    self.add_error('sop_national_number_confirm', msg)
+            if sop_national_number != sop_national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('sop_national_number_confirm', msg)
 
-            parent_national_number = cleaned_data.get("parent_national_number")
-            parent_national_number_confirm = cleaned_data.get("parent_national_number_confirm")
-            national_number = cleaned_data.get("national_number")
-            national_number_confirm = cleaned_data.get("national_number_confirm")
+        parent_national_number = cleaned_data.get("parent_national_number")
+        parent_national_number_confirm = cleaned_data.get("parent_national_number_confirm")
+        national_number = cleaned_data.get("national_number")
+        national_number_confirm = cleaned_data.get("national_number_confirm")
 
-            # Lebanese national ID
-            if id_type and id_type.id == 5:
-                if parent_national_number and not len(parent_national_number) == 12:
-                    msg = "Please enter a valid number (12 digits)"
-                    self.add_error('parent_national_number', msg)
+        # Lebanese national ID
+        if id_type and id_type.id == 5:
+            if parent_national_number and not len(parent_national_number) == 12:
+                msg = "Please enter a valid number (12 digits)"
+                self.add_error('parent_national_number', msg)
 
-                if parent_national_number_confirm and not len(parent_national_number_confirm) == 12:
-                    msg = "Please enter a valid number (12 digits)"
-                    self.add_error('parent_national_number_confirm', msg)
+            if parent_national_number_confirm and not len(parent_national_number_confirm) == 12:
+                msg = "Please enter a valid number (12 digits)"
+                self.add_error('parent_national_number_confirm', msg)
 
-                if parent_national_number != parent_national_number_confirm:
-                    msg = "The national numbers are not matched"
-                    self.add_error('parent_national_number_confirm', msg)
+            if parent_national_number != parent_national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('parent_national_number_confirm', msg)
 
-                if national_number != national_number_confirm:
-                    msg = "The national numbers are not matched"
-                    self.add_error('national_number_confirm', msg)
+            if national_number != national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('national_number_confirm', msg)
 
-            parent_other_number = cleaned_data.get("parent_other_number")
-            parent_other_number_confirm = cleaned_data.get("parent_other_number_confirm")
-            other_number = cleaned_data.get("other_number")
-            other_number_confirm = cleaned_data.get("other_number_confirm")
+        parent_other_number = cleaned_data.get("parent_other_number")
+        parent_other_number_confirm = cleaned_data.get("parent_other_number_confirm")
+        other_number = cleaned_data.get("other_number")
+        other_number_confirm = cleaned_data.get("other_number_confirm")
 
-            parent_extract_record = cleaned_data.get("parent_extract_record")
-            parent_extract_record_confirm = cleaned_data.get("parent_extract_record_confirm")
+        parent_extract_record = cleaned_data.get("parent_extract_record")
+        parent_extract_record_confirm = cleaned_data.get("parent_extract_record_confirm")
 
-            # Other nationality
-            if id_type and id_type.id == 6:
-                if not parent_other_number:
-                    self.add_error('parent_other_number', 'This field is required')
+        # Other nationality
+        if id_type and id_type.id == 6:
+            if not parent_other_number:
+                self.add_error('parent_other_number', 'This field is required')
 
-                if not parent_other_number_confirm:
-                    self.add_error('parent_other_number_confirm', 'This field is required')
+            if not parent_other_number_confirm:
+                self.add_error('parent_other_number_confirm', 'This field is required')
 
-                if parent_other_number != parent_other_number_confirm:
-                    msg = "The ID numbers are not matched"
-                    self.add_error('parent_other_number_confirm', msg)
+            if parent_other_number != parent_other_number_confirm:
+                msg = "The ID numbers are not matched"
+                self.add_error('parent_other_number_confirm', msg)
 
-                if other_number != other_number_confirm:
-                    msg = "The ID numbers are not matched"
-                    self.add_error('other_number_confirm', msg)
+            if other_number != other_number_confirm:
+                msg = "The ID numbers are not matched"
+                self.add_error('other_number_confirm', msg)
 
-            if id_type and id_type == 9:
-                if parent_extract_record != parent_extract_record_confirm:
-                    msg = "The Parent Extract Record are not matched"
-                    self.add_error('parent_extract_record_confirm', msg)
+        if id_type and id_type == 9:
+            if parent_extract_record != parent_extract_record_confirm:
+                msg = "The Parent Extract Record are not matched"
+                self.add_error('parent_extract_record_confirm', msg)
 
-            child_living_arrangement = cleaned_data.get("child_living_arrangement")
-            if not child_living_arrangement:
-                self.add_error('child_living_arrangement', 'This field is required')
+        child_living_arrangement = cleaned_data.get("child_living_arrangement")
+        if not child_living_arrangement:
+            self.add_error('child_living_arrangement', 'This field is required')
 
-            # cash_support_programmes = cleaned_data.get("cash_support_programmes")
-            # if not cash_support_programmes:
-            #     self.add_error('cash_support_programmes', 'This field is required')
+        # cash_support_programmes = cleaned_data.get("cash_support_programmes")
+        # if not cash_support_programmes:
+        #     self.add_error('cash_support_programmes', 'This field is required')
 
 
     def save(self, request=None, instance=None):
 
         from student_registration.students.utils import generate_one_unique_id
 
+        post_data = request.POST.copy()
+        post_data['type'] = 'TLS'
+
         if instance:
-            serializer = MainSerializer(instance, data=request.POST)
+            serializer = MainSerializer(instance, data=post_data)
             if serializer.is_valid():
                 old_dob_year = instance.child.birthday_year
                 old_dob_month = instance.child.birthday_month
@@ -800,7 +798,7 @@ class MainForm(forms.ModelForm):
                 messages.warning(request, serializer.errors)
 
         else:
-            serializer = MainSerializer(data=request.POST)
+            serializer = MainSerializer(data=post_data)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
                 if request.POST.get('child_is_idp') == 'Yes' and not request.POST.get('id_type'):
