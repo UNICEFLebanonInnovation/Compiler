@@ -55,6 +55,25 @@
                                             <div class="col-sm-6">
                                                 <div class="widget-chart widget-chart-hover">
                                                     <div class="icon-wrapper rounded-circle">
+                                                        <div class="icon-wrapper-bg bg-info"></div>
+                                                        <i class="lnr-laptop-phone text-info"></i>
+                                                    </div>
+                                                    <div class="widget-numbers">
+                                                        {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
+                                                            <a href="{% url 'tls:list' %}">TLS</a>
+                                                        {% else %}
+                                                            <span class="text-muted">TLS</span>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="widget-subheading"></div>
+                                                    <div class="widget-description text-info">
+                                                        <span class="pl-1"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="widget-chart widget-chart-hover">
+                                                    <div class="icon-wrapper rounded-circle">
                                                         <div class="icon-wrapper-bg bg-primary"></div>
                                                         <i class="lnr-cog text-primary"></i></div>
                                                   <div class="widget-numbers">
