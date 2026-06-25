@@ -246,12 +246,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
         if generated_value:
             message += ": {0}".format(str(generated_value).strip())
 
-        message += (
-            ". Please verify the uploaded adolescent identity fields, especially "
-            "Adolescent First Name, Father Name, Last Name, Mother Fullname, "
-            "date of birth, nationality, and gender."
-        )
-        return message
+        return message + "."
 
     mandatory_fields = [
         'first_name',
