@@ -375,6 +375,9 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             if row_number is None:
                 row_number = len(validated_rows) + len(not_imported) + 2
 
+            for name_field in ('first_name', 'father_name', 'last_name', 'mother_fullname'):
+                values[name_field] = str(values.get(name_field) or '').strip()
+
             # ---- Missing mandatory fields
             missing = [f for f in self.mandatory_fields if not values.get(f)]
             if missing:
