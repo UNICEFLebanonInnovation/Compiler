@@ -233,6 +233,21 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             ordered[field] = row_values.get(field, '')
         return ordered
 
+    def _is_unicef_id_generation_error(self, generated_value):
+        if not generated_value:
+            return True
+
+        generated_value = str(generated_value).strip()
+        error_terms = ('error', 'invalid', 'unable', 'failed', 'failure', 'translate')
+        return any(term in generated_value.lower() for term in error_terms)
+
+    def _unicef_id_generation_error_message(self, generated_value):
+        message = "Unable to generate UNICEF ID"
+        if generated_value:
+            message += ": {0}".format(str(generated_value).strip())
+
+        return message + "."
+
     mandatory_fields = [
         'first_name',
         'father_name',
@@ -597,12 +612,13 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             row_number = row['row_number']
             prospective_unicef_id = bulk_ids.get(idx)
 
-            if not prospective_unicef_id:
+
+            if self._is_unicef_id_generation_error(prospective_unicef_id):
                 not_imported.append(
                     self._build_error_entry(
                         values,
                         row_number,
-                        "Unable to generate UNICEF ID"
+                        self._unicef_id_generation_error_message(prospective_unicef_id)
                     )
                 )
                 continue
