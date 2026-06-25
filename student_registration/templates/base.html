@@ -111,10 +111,17 @@
                                                 <ul class="nav flex-column">
                                                     <li class="nav-item-header nav-item">Makani</li>
                                                     <li class="nav-item">
+                                                        {% if request.resolver_match.namespace == "tls" %}
+                                                        <a href="{% url 'tls:list' %}" class="nav-link">
+                                                            <i class="nav-link-icon lnr-inbox"></i>
+                                                            <span>Student Registration</span>
+                                                        </a>
+                                                        {% else %}
                                                         <a href="{% url 'mscc:list' %}" class="nav-link">
                                                             <i class="nav-link-icon lnr-inbox"></i>
                                                             <span>Student Registration</span>
                                                         </a>
+                                                        {% endif %}
                                                     </li>
                                                   {% if not request.user.partner or not request.user.partner.is_world_learning %}
                                                     <li class="nav-item">
