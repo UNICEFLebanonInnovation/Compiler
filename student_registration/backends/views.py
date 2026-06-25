@@ -21,7 +21,7 @@ import io
 
 from student_registration.adolescent.models import Adolescent
 from student_registration.students.models import Nationality, IDType
-from student_registration.students.utils import generate_bulk_unique_id
+from student_registration.students.utils import generate_bulk_unique_id, generate_one_unique_id
 from student_registration.clm.models import Disability, EducationalLevel
 from student_registration.locations.models import Location
 from student_registration.youth.models import Registration, YOUTH_EDUCATION_STATUS
@@ -612,6 +612,20 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             references = row['references']
             row_number = row['row_number']
             prospective_unicef_id = bulk_ids.get(idx)
+            bulk_unicef_id_error = ''
+
+            if self._is_unicef_id_generation_error(prospective_unicef_id):
+                bulk_unicef_id_error = str(prospective_unicef_id).strip() if prospective_unicef_id else ''
+                prospective_unicef_id = generate_one_unique_id(
+                    '0',
+                    values.get('first_name') or '',
+                    values.get('father_name') or '',
+                    values.get('last_name') or '',
+                    values.get('mother_fullname') or '',
+                    row['dob'].strftime('%Y-%m-%d') if row['dob'] else '',
+                    row['nationality_en'] or '',
+                    row['gender'] or ''
+                )
 
             if self._is_unicef_id_generation_error(prospective_unicef_id):
                 not_imported.append(
@@ -619,7 +633,9 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                         values,
                         row_number,
                         self._unicef_id_generation_error_message(prospective_unicef_id),
-                        str(prospective_unicef_id).strip() if prospective_unicef_id else ''
+                        bulk_unicef_id_error or (
+                            str(prospective_unicef_id).strip() if prospective_unicef_id else ''
+                        )
                     )
                 )
                 continue
