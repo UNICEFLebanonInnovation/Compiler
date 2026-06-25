@@ -24,16 +24,14 @@ from django_tables2.export.views import ExportMixin
 from student_registration.attendances.models import MSCCAttendanceChild
 from student_registration.backends.models import ExportHistory
 from student_registration.backends.utils import ExportStorage
-from student_registration.mscc.education_form import EducationServiceForm
-from student_registration.mscc.filters import FullFilter, MainFilter
-from student_registration.mscc.forms import MainForm
-from student_registration.mscc.models import EducationService, ProvidedServices, Registration, Round
-from student_registration.mscc.serializers import MainSerializer
-from student_registration.mscc.tables import BootstrapTable, FullTable, PartnerTable, YouthMainTable
-from student_registration.mscc.utils import DEFAULT_PACKAGE_TYPE, generate_services, to_array
+from .education_form import EducationServiceForm
+from .filters import FullFilter, MainFilter
+from .forms import MainForm
+from .models import EducationService, ProvidedServices, Registration, Round
+from .serializers import MainSerializer
+from .tables import BootstrapTable, FullTable, PartnerTable, TLSMainTable, YouthMainTable
+from .utils import DEFAULT_PACKAGE_TYPE, generate_services, to_array
 from student_registration.users.templatetags.custom_tags import has_group
-
-from .tables import TLSMainTable
 
 TLS_PACKAGE_TYPE = 'TLS'
 
