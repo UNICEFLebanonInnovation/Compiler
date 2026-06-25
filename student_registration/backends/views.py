@@ -395,9 +395,9 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             values['second_phone_number'] = second_phone_number
 
             if not self.phone_number_regex.match(first_phone_number):
-                invalid_fields.append("invalid phone number first_phone_number")
+                invalid_fields.append("invalid first phone number")
             if second_phone_number and not self.phone_number_regex.match(second_phone_number):
-                invalid_fields.append("invalid phone number second_phone_number")
+                invalid_fields.append("invalid second phone number")
 
             # ---- Normalize gender (and validate)
             raw_gender = (values.get('gender') or '').strip()
