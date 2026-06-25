@@ -64,7 +64,7 @@ class TLSProfileView(LoginRequiredMixin, TemplateView):
 
 
 class TLSAddView(LoginRequiredMixin, GroupRequiredMixin, FormView):
-    template_name = 'mscc/main_form.html'
+    template_name = 'tls/main_form.html'
     form_class = MainForm
     success_url = reverse_lazy('tls:list')
     group_required = [u'MSCC', u'MSCC_CENTER']
@@ -93,7 +93,7 @@ class TLSAddView(LoginRequiredMixin, GroupRequiredMixin, FormView):
 
 
 class TLSEditView(LoginRequiredMixin, GroupRequiredMixin, FormView):
-    template_name = 'mscc/main_form.html'
+    template_name = 'tls/main_form.html'
     form_class = MainForm
     success_url = reverse_lazy('tls:list')
     group_required = [u'MSCC', u'MSCC_CENTER']
@@ -191,7 +191,7 @@ class TLSListView(LoginRequiredMixin, GroupRequiredMixin, FilterView, ExportMixi
 
 
 class TLSEducationServiceFormView(LoginRequiredMixin, GroupRequiredMixin, FormView):
-    template_name = 'mscc/service_education_service_form.html'
+    template_name = 'tls/service_education_service_form.html'
     form_class = EducationServiceForm
     success_url = reverse_lazy('tls:list')
     group_required = [u'MSCC', u'MSCC_CENTER']
