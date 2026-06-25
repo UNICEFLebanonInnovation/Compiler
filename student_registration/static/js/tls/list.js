@@ -73,7 +73,7 @@ $(document).ready(function() {
     function addExportNotification(url, text) {
         var items = [];
         try {
-            items = JSON.parse(localStorage.getItem('msccNotifications')) || [];
+            items = JSON.parse(localStorage.getItem('tlsNotifications')) || [];
         } catch (e) {
             items = [];
         }
@@ -81,9 +81,9 @@ $(document).ready(function() {
         if (items.length > 5) {
             items = items.slice(0, 5);
         }
-        localStorage.setItem('msccNotifications', JSON.stringify(items));
+        localStorage.setItem('tlsNotifications', JSON.stringify(items));
 
-        var list = $('#mscc-notification-list');
+        var list = $('#tls-notification-list');
         if (list.length) {
             list.find('span:contains("No notifications")').closest('li').remove();
             var li = $('<li/>', { class: 'nav-item' });
@@ -92,7 +92,7 @@ $(document).ready(function() {
             if (list.children('li').length > 5) {
                 list.children('li:last-child').remove();
             }
-            var count = $('#mscc-unread-count');
+            var count = $('#tls-unread-count');
             if (count.length) {
                 var current = parseInt(count.text(), 10) || 0;
                 count.text(current + 1);
@@ -106,7 +106,7 @@ $(document).ready(function() {
             var readyModal = $('#downloadReadyModal');
             if (readyModal.length) {
                 var timestamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
-                addExportNotification(url, 'Makani export ' + timestamp);
+                addExportNotification(url, 'TLS export ' + timestamp);
                 readyModal.find('.download-link').attr('href', url);
                 readyModal.modal('show');
             } else {
@@ -174,7 +174,7 @@ $(document).ready(function() {
 
                $(".downloading-message").hide();
                $('.download-center-report').removeClass('disabled');
-               window.open("/mscc/export-download/" + data,
+               window.open("/tls/export-download/" + data,
                            "_blank");
 
             },
@@ -204,7 +204,7 @@ $(document).ready(function() {
         $('.download-report').addClass('disabled');
 
         $.ajax({
-            url: "/mscc/export-list-background/?nationality=" + nationality
+            url: "/tls/export-list-background/?nationality=" + nationality
                                 + "&first_name=" + first_name
                                 + "&last_name=" + last_name
                                 + "&father_name=" + father_name
@@ -252,7 +252,7 @@ $(document).ready(function() {
         }
         requestHeaders = getHeader();
         $.ajax({
-            url: "/mscc/export-list-background/?nationality=" + nationality
+            url: "/tls/export-list-background/?nationality=" + nationality
                                 + "&first_name=" + first_name
                                 + "&last_name=" + last_name
                                 + "&father_name=" + father_name
