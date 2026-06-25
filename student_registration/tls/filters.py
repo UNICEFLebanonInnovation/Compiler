@@ -17,7 +17,8 @@ from .models import (
     Registration,
     EducationService,
     Round,
-    PACKAGE_TYPES
+    PACKAGE_TYPES,
+    EDUCATION_PROGRAM
 )
 from student_registration.child.models import Child
 from student_registration.schools.models import PartnerOrganization
@@ -71,7 +72,7 @@ class MainFilter(PlaceholderFilterSet):
         empty_label='Cycle',
         method='filter_round'
     )
-    programme_type = ChoiceFilter(choices=EducationService.EDUCATION_PROGRAM,
+    programme_type = ChoiceFilter(choices=EDUCATION_PROGRAM,
                                   field_name='education_service__education_program',
                                   empty_label='Programme Type', method='filter_education_program')
     child__first_phone_number = CharFilter(lookup_expr='icontains')
@@ -130,7 +131,7 @@ class FullFilter(PlaceholderFilterSet):
     child__gender = ChoiceFilter(choices=Child.GENDER, empty_label='Gender')
     child__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
                                       .order_by('name').distinct(), empty_label='Nationality')
-    programme_type = ChoiceFilter(choices=EducationService.EDUCATION_PROGRAM,
+    programme_type = ChoiceFilter(choices=EDUCATION_PROGRAM,
                                   field_name='education_service__education_program',
                                   empty_label='Programme Type', method='filter_education_program')
 

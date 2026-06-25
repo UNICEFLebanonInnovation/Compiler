@@ -32,7 +32,8 @@ from .models import (
     EducationProgrammeWLAssessment,
     TarlAssessment,
     YES_NO,
-    Round
+    Round,
+    EDUCATION_PROGRAM
 )
 from student_registration.schools.models import (
     School,
@@ -634,7 +635,7 @@ class EducationServiceForm(forms.ModelForm):
     education_program = forms.ChoiceField(
         label=_("Core Package Program"),
         widget=forms.Select, required=True,
-        choices=EducationService.EDUCATION_PROGRAM,
+        choices=EDUCATION_PROGRAM,
     )
     ppl_sector = forms.ChoiceField(
         label=_('PPL Sector'),
@@ -671,7 +672,7 @@ class EducationServiceForm(forms.ModelForm):
 
         self.fields['registration_id'].initial = registry
 
-        programme_labels = dict(EducationService.EDUCATION_PROGRAM)
+        programme_labels = dict(EDUCATION_PROGRAM)
         service_programs = list(ServiceProgramOption.objects.all())
 
         if service_programs:
