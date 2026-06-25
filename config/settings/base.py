@@ -105,6 +105,7 @@ LOCAL_APPS = [
     'student_registration.staffs',
     'student_registration.child',
     'student_registration.mscc',
+    'student_registration.tls',
     'student_registration.youth',
     'student_registration.adolescent',
 ]

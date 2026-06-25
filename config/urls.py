@@ -106,6 +106,7 @@ urlpatterns = [
     re_path(r'^students/', include('student_registration.students.urls', namespace='students')),
     re_path(r'^clm/', include('student_registration.clm.urls', namespace='clm')),
     re_path(r'^mscc/', include('student_registration.mscc.urls', namespace='mscc')),
+    re_path(r'^tls/', include('student_registration.tls.urls', namespace='tls')),
     re_path(r'^youth/', include('student_registration.youth.urls', namespace='youth')),
     re_path(r'^outreach/', include('student_registration.outreach.urls', namespace='outreach')),
     re_path(r'^attendances/', include('student_registration.attendances.urls', namespace='attendances')),

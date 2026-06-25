@@ -505,6 +505,8 @@ class MainListView(LoginRequiredMixin,
     group_required = [u"MSCC"]
 
     filterset_class = MainFilter
+    package_type_filter = None
+    exclude_package_type = 'TLS'
 
     def get_queryset(self):
         user = self.request.user
@@ -547,6 +549,11 @@ class MainListView(LoginRequiredMixin,
         )
 
         round_filter = Q(round__isnull=True) | Q(round__current_year=True)
+
+        if self.package_type_filter:
+            qs = qs.filter(type=self.package_type_filter)
+        if self.exclude_package_type:
+            qs = qs.exclude(type=self.exclude_package_type)
 
         if has_group(user, 'MSCC_UNICEF') or is_world_learning:
             return qs.filter(round_filter).order_by('child__first_name', 'child__father_name', 'child__last_name')

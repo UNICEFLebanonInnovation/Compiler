@@ -1,0 +1,54 @@
+{% extends "mscc/base.html" %}
+{% load static i18n %}
+{% load django_bootstrap5 %}
+{% load util_tags %}
+{% bootstrap_css %}
+
+{% block project_title %}TLS Child Profile{% endblock %}
+
+{% block content %}
+<div class="app-page-title">
+  <div class="page-title-wrapper">
+    <div class="page-title-heading">
+      <div>
+        <div class="page-title-head center-elem page-title-heading">
+          <span class="d-inline-block pr-2"><i class="fa fa-child"></i></span>
+          <span class="d-inline-block">TLS Child Profile - {{ instance.child.full_name }}</span>
+        </div>
+        <div class="page-title-subheading opacity-10">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a>Home</a></li>
+              <li class="breadcrumb-item"><a href="{% url 'tls:list' %}">TLS List</a></li>
+              <li class="active breadcrumb-item" aria-current="page">Child Info.</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="mb-3 card">
+      <div class="tabs-lg-alternate card-header">
+        <ul class="nav nav-justified">
+          <li class="nav-item">
+            <a data-toggle="tab" href="#tab-eg9-0" class="nav-link show active">
+              <div class="widget-number">Child Info.</div>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="tab-content">
+        <div class="tab-pane show active" id="tab-eg9-0" role="tabpanel">
+          <div class="card-body">
+            {% include 'mscc/child_info_tab.html' %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
