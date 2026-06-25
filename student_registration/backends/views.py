@@ -16,6 +16,7 @@ from django.views import View
 from django.shortcuts import render, redirect, get_object_or_404
 from openpyxl import load_workbook
 from django.core.files.base import ContentFile
+from django.db import transaction
 import csv
 import io
 
@@ -616,31 +617,15 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
 
             if self._is_unicef_id_generation_error(prospective_unicef_id):
                 bulk_unicef_id_error = str(prospective_unicef_id).strip() if prospective_unicef_id else ''
-                prospective_unicef_id = generate_one_unique_id(
-                    '0',
-                    values.get('first_name') or '',
-                    values.get('father_name') or '',
-                    values.get('last_name') or '',
-                    values.get('mother_fullname') or '',
-                    row['dob'].strftime('%Y-%m-%d') if row['dob'] else '',
-                    row['nationality_en'] or '',
-                    row['gender'] or ''
-                )
+                prospective_unicef_id = None
 
-            if self._is_unicef_id_generation_error(prospective_unicef_id):
-                not_imported.append(
-                    self._build_error_entry(
-                        values,
-                        row_number,
-                        self._unicef_id_generation_error_message(prospective_unicef_id),
-                        bulk_unicef_id_error or (
-                            str(prospective_unicef_id).strip() if prospective_unicef_id else ''
-                        )
-                    )
-                )
-                continue
-
-            if Registration.objects.filter(adolescent__unicef_id=prospective_unicef_id, deleted=False).exists():
+            if (
+                prospective_unicef_id
+                and Registration.objects.filter(
+                    adolescent__unicef_id=prospective_unicef_id,
+                    deleted=False
+                ).exists()
+            ):
                 not_imported.append(
                     self._build_error_entry(
                         values,
@@ -651,69 +636,109 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                 continue
 
             try:
-                adolescent = Adolescent.objects.create(
-                    first_name=values.get('first_name'),
-                    father_name=values.get('father_name'),
-                    last_name=values.get('last_name'),
-                    birthday_year=values.get('birthday_year'),
-                    birthday_month=values.get('birthday_month'),
-                    birthday_day=values.get('birthday_day'),
-                    gender=values.get('gender'),
-                    mother_fullname=values.get('mother_fullname'),
-                    nationality=references['nationality'],
-                    nationality_other=values.get('nationality_other'),
-                    governorate=references['gov'],
-                    district=references['dist'],
-                    cadaster=references['cad'],
-                    address=values.get('address'),
-                    disability=references['disability'],
-                    father_educational_level=references['father_ed'],
-                    mother_educational_level=references['mother_ed'],
-                    first_phone_number=values.get('first_phone_number'),
-                    second_phone_number=values.get('second_phone_number'),
-                    main_caregiver=values.get('main_caregiver'),
-                    main_caregiver_other=values.get('main_caregiver_other'),
-                    caregiver_first_name=values.get('caregiver_first_name'),
-                    caregiver_middle_name=values.get('caregiver_middle_name'),
-                    caregiver_last_name=values.get('caregiver_last_name'),
-                    main_caregiver_nationality=references['caregiver_nat'],
-                    main_caregiver_nationality_other=values.get('main_caregiver_nationality_other'),
-                    id_type=references['id_type'],
-                    case_number=values.get('case_number'),
-                    parent_individual_case_number=values.get('parent_individual_case_number'),
-                    individual_case_number=values.get('individual_case_number'),
-                    recorded_number=values.get('recorded_number'),
-                    unrwa_number=values.get('unrwa_number'),
-                    parent_syrian_national_number=values.get('parent_syrian_national_number'),
-                    syrian_national_number=values.get('syrian_national_number'),
-                    parent_sop_national_number=values.get('parent_sop_national_number'),
-                    sop_national_number=values.get('sop_national_number'),
-                    parent_national_number=values.get('parent_national_number'),
-                    national_number=values.get('national_number'),
-                    parent_other_number=values.get('parent_other_number'),
-                    other_number=values.get('other_number'),
-                )
+                with transaction.atomic():
+                    adolescent = Adolescent.objects.create(
+                        first_name=values.get('first_name'),
+                        father_name=values.get('father_name'),
+                        last_name=values.get('last_name'),
+                        birthday_year=values.get('birthday_year'),
+                        birthday_month=values.get('birthday_month'),
+                        birthday_day=values.get('birthday_day'),
+                        gender=values.get('gender'),
+                        mother_fullname=values.get('mother_fullname'),
+                        nationality=references['nationality'],
+                        nationality_other=values.get('nationality_other'),
+                        governorate=references['gov'],
+                        district=references['dist'],
+                        cadaster=references['cad'],
+                        address=values.get('address'),
+                        disability=references['disability'],
+                        father_educational_level=references['father_ed'],
+                        mother_educational_level=references['mother_ed'],
+                        first_phone_number=values.get('first_phone_number'),
+                        second_phone_number=values.get('second_phone_number'),
+                        main_caregiver=values.get('main_caregiver'),
+                        main_caregiver_other=values.get('main_caregiver_other'),
+                        caregiver_first_name=values.get('caregiver_first_name'),
+                        caregiver_middle_name=values.get('caregiver_middle_name'),
+                        caregiver_last_name=values.get('caregiver_last_name'),
+                        main_caregiver_nationality=references['caregiver_nat'],
+                        main_caregiver_nationality_other=values.get(
+                            'main_caregiver_nationality_other'
+                        ),
+                        id_type=references['id_type'],
+                        case_number=values.get('case_number'),
+                        parent_individual_case_number=values.get(
+                            'parent_individual_case_number'
+                        ),
+                        individual_case_number=values.get('individual_case_number'),
+                        recorded_number=values.get('recorded_number'),
+                        unrwa_number=values.get('unrwa_number'),
+                        parent_syrian_national_number=values.get(
+                            'parent_syrian_national_number'
+                        ),
+                        syrian_national_number=values.get('syrian_national_number'),
+                        parent_sop_national_number=values.get(
+                            'parent_sop_national_number'
+                        ),
+                        sop_national_number=values.get('sop_national_number'),
+                        parent_national_number=values.get('parent_national_number'),
+                        national_number=values.get('national_number'),
+                        parent_other_number=values.get('parent_other_number'),
+                        other_number=values.get('other_number'),
+                    )
 
-                adolescent.unicef_id = prospective_unicef_id
-                adolescent.save()
+                    if not prospective_unicef_id:
+                        prospective_unicef_id = generate_one_unique_id(
+                            str(adolescent.pk),
+                            adolescent.first_name,
+                            adolescent.father_name,
+                            adolescent.last_name,
+                            adolescent.mother_fullname,
+                            adolescent.birthdate,
+                            adolescent.nationality_name_en,
+                            adolescent.gender
+                        )
 
-                Registration.objects.create(
-                    adolescent=adolescent,
-                    education_status=references['ed_status'],
-                    dropout_date=references['dropout_date'],
-                    owner=request.user,
-                    partner_id=getattr(request.user, 'partner_id', None),
-                    center_id=getattr(request.user, 'center_id', None),
-                )
+                    if self._is_unicef_id_generation_error(prospective_unicef_id):
+                        raise ValueError(
+                            self._unicef_id_generation_error_message(
+                                prospective_unicef_id
+                            )
+                        )
 
-                imported += 1
+                    duplicate_exists = Registration.objects.filter(
+                        adolescent__unicef_id=prospective_unicef_id,
+                        deleted=False
+                    ).exists()
+                    if duplicate_exists:
+                        raise ValueError(
+                            "Invalid: duplicate unicef_id ({0})".format(
+                                prospective_unicef_id
+                            )
+                        )
+
+                    adolescent.unicef_id = prospective_unicef_id
+                    adolescent.save()
+
+                    Registration.objects.create(
+                        adolescent=adolescent,
+                        education_status=references['ed_status'],
+                        dropout_date=references['dropout_date'],
+                        owner=request.user,
+                        partner_id=getattr(request.user, 'partner_id', None),
+                        center_id=getattr(request.user, 'center_id', None),
+                    )
+
+                    imported += 1
 
             except Exception as ex:
                 not_imported.append(
                     self._build_error_entry(
                         values,
                         row_number,
-                        str(ex)
+                        str(ex),
+                        bulk_unicef_id_error
                     )
                 )
 
