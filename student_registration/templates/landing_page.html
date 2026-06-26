@@ -55,18 +55,18 @@
                                             <div class="col-sm-6">
                                                 <div class="widget-chart widget-chart-hover">
                                                     <div class="icon-wrapper rounded-circle">
-                                                        <div class="icon-wrapper-bg bg-info"></div>
-                                                        <i class="lnr-book text-info"></i>
+                                                        <div class="icon-wrapper-bg bg-dark"></div>
+                                                        <i class="lnr-book text-dark"></i>
                                                     </div>
                                                     <div class="widget-numbers">
                                                         {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
-                                                            <a href="{% url 'tls:list' %}">TLS</a>
+                                                            <a href="{% url 'tls:list' %}" class="text-dark">TLS</a>
                                                         {% else %}
                                                             <span class="text-muted">TLS</span>
                                                         {% endif %}
                                                     </div>
                                                     <div class="widget-subheading"></div>
-                                                    <div class="widget-description text-info">
+                                                    <div class="widget-description text-dark">
                                                         <span class="pl-1"></span>
                                                     </div>
                                                 </div>
