@@ -106,7 +106,7 @@
                                 <div class="dropdown-mega-menu">
                                     <div class="grid-menu grid-menu-3col">
                                         <div class="no-gutters row">
-                                            {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
+                                            {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" or request.user|has_group:"TLS" or request.user|has_group:"TLS_PARTNER" or request.user|has_group:"TLS_UNICEF" or request.user|has_group:"TLS_CENTER" %}
                                             <div class="col-sm-6 col-xl-4">
                                                 <ul class="nav flex-column">
                                                     <li class="nav-item-header nav-item">Makani</li>

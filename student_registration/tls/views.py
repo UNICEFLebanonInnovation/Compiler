@@ -67,7 +67,7 @@ class TLSAddView(LoginRequiredMixin, GroupRequiredMixin, FormView):
     template_name = 'tls/main_form.html'
     form_class = MainForm
     success_url = reverse_lazy('tls:list')
-    group_required = [u'MSCC', u'MSCC_CENTER']
+    group_required = [u'TLS', u'TLS_CENTER', u'TLS_PARTNER', u'TLS_UNICEF']
 
     def get_success_url(self):
         return reverse('tls:child_profile', kwargs={'pk': self.request.session.get('instance_id')})
@@ -96,7 +96,7 @@ class TLSEditView(LoginRequiredMixin, GroupRequiredMixin, FormView):
     template_name = 'tls/main_form.html'
     form_class = MainForm
     success_url = reverse_lazy('tls:list')
-    group_required = [u'MSCC', u'MSCC_CENTER']
+    group_required = [u'TLS', u'TLS_CENTER', u'TLS_PARTNER', u'TLS_UNICEF']
 
     def get_success_url(self):
         return reverse('tls:child_profile', kwargs={'pk': self.request.session.get('instance_id')})
@@ -131,7 +131,7 @@ class TLSListView(LoginRequiredMixin, GroupRequiredMixin, FilterView, ExportMixi
     model = Registration
     template_name = 'tls/list.html'
     table = BootstrapTable(Registration.objects.all(), order_by='id')
-    group_required = [u'MSCC']
+    group_required = [u'TLS', u'TLS_CENTER', u'TLS_PARTNER', u'TLS_UNICEF']
     filterset_class = MainFilter
 
     def get_queryset(self):
@@ -165,27 +165,27 @@ class TLSListView(LoginRequiredMixin, GroupRequiredMixin, FilterView, ExportMixi
         )
         round_filter = Q(round__isnull=True) | Q(round__current_year=True)
 
-        if has_group(user, 'MSCC_UNICEF') or is_world_learning:
+        if has_group(user, 'TLS_UNICEF') or is_world_learning:
             return qs.filter(round_filter).order_by('child__first_name', 'child__father_name', 'child__last_name')
-        if has_group(user, 'MSCC_PARTNER') and partner_id:
+        if has_group(user, 'TLS_PARTNER') and partner_id:
             return qs.filter(round_filter, partner=partner_id).order_by('child__first_name', 'child__father_name', 'child__last_name')
-        if has_group(user, 'MSCC_CENTER') and center_id:
+        if has_group(user, 'TLS_CENTER') and center_id:
             return qs.filter(round_filter, center=center_id).order_by('child__first_name', 'child__father_name', 'child__last_name')
         return Registration.objects.none()
 
     def get_table_class(self):
-        if has_group(self.request.user, 'MSCC_UNICEF'):
+        if has_group(self.request.user, 'TLS_UNICEF'):
             return FullTable
-        if has_group(self.request.user, 'MSCC_PARTNER'):
+        if has_group(self.request.user, 'TLS_PARTNER'):
             return PartnerTable
-        if has_group(self.request.user, 'MSCC_CENTER'):
+        if has_group(self.request.user, 'TLS_CENTER'):
             return self.table_class
-        if not has_group(self.request.user, 'MSCC_FULL'):
+        if not has_group(self.request.user, 'TLS'):
             return YouthMainTable
         return self.table_class
 
     def get_filterset_class(self):
-        if has_group(self.request.user, 'MSCC_UNICEF'):
+        if has_group(self.request.user, 'TLS_UNICEF'):
             return FullFilter
         return self.filterset_class
 
@@ -194,7 +194,7 @@ class TLSEducationServiceFormView(LoginRequiredMixin, GroupRequiredMixin, FormVi
     template_name = 'tls/service_education_service_form.html'
     form_class = EducationServiceForm
     success_url = reverse_lazy('tls:list')
-    group_required = [u'MSCC', u'MSCC_CENTER']
+    group_required = [u'TLS', u'TLS_CENTER', u'TLS_PARTNER', u'TLS_UNICEF']
 
     def _resolve_package_type(self):
         return TLS_PACKAGE_TYPE or DEFAULT_PACKAGE_TYPE
@@ -254,12 +254,12 @@ def _generate_filtered_tls_export(export_id, round_id=''):
         tls_data_query += ' AND type = %s'
         query_params.append(TLS_PACKAGE_TYPE)
 
-        if has_group(user, 'MSCC_UNICEF') or is_world_learning:
+        if has_group(user, 'TLS_UNICEF') or is_world_learning:
             tls_data_query += ' AND id > 0'
-        elif has_group(user, 'MSCC_PARTNER') and partner_id:
+        elif has_group(user, 'TLS_PARTNER') and partner_id:
             tls_data_query += ' AND partner_id = %s'
             query_params.append(partner_id)
-        elif has_group(user, 'MSCC_CENTER') and center_id:
+        elif has_group(user, 'TLS_CENTER') and center_id:
             tls_data_query += ' AND center_id = %s'
             query_params.append(center_id)
         else:
