@@ -251,6 +251,12 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
 
     phone_number_regex = re.compile(r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$')
 
+    def _normalize_phone_number(self, phone_number):
+        phone_number = str(phone_number or '').strip()
+        if re.match(r'^3-\d{6}$', phone_number):
+            return '0{0}'.format(phone_number)
+        return phone_number
+
     mandatory_fields = [
         'first_name',
         'father_name',
@@ -392,8 +398,9 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
 
             invalid_fields = []
 
-            first_phone_number = str(values.get('first_phone_number') or '').strip()
-            second_phone_number = str(values.get('second_phone_number') or '').strip()
+            first_phone_number = self._normalize_phone_number(values.get('first_phone_number'))
+            second_phone_number = self._normalize_phone_number(values.get('second_phone_number'))
+
             values['first_phone_number'] = first_phone_number
             values['second_phone_number'] = second_phone_number
 
@@ -573,6 +580,8 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                     )
                 )
                 continue
+
+                
 
             values['gender'] = gender_norm
 
