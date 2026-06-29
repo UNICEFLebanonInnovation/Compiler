@@ -14,6 +14,7 @@ from django.utils.encoding import smart_str
 from django.db import connection, close_old_connections
 from django.core.files.base import ContentFile
 from openpyxl import Workbook
+from kombu.exceptions import OperationalError
 
 from student_registration.backends.models import ExportHistory
 from student_registration.taskapp.celery import app
@@ -269,46 +270,53 @@ def generate_filtered_mscc_export(export_id, nationality="", first_name="", last
 
 
 def _use_inline_export_worker():
-    """Return True when exports should run in the web process.
-
-    Production/staging deployments run the dedicated ``mscc_export`` Celery
-    worker from the Procfile.  Local test/dev environments can opt into eager
-    execution, so keep the existing in-process thread fallback there.
-    """
+    """Return True when exports should run in the web process."""
     return bool(getattr(settings, 'CELERY_TASK_ALWAYS_EAGER', False))
 
 
-def queue_mscc_export(export_id, fields=None, file_format='csv'):
-    """Queue the MSCC export on the dedicated Celery worker."""
+def _submit_inline_export(generator, *args):
+    """Run an export in the local thread pool.
+
+    This keeps local development working when Redis/Celery is not running while
+    preserving the Celery worker path for environments with a broker.
+    """
+    executor = _get_executor()
+    return executor.submit(_run_with_new_db_connection, generator, *args)
+
+
+def _queue_or_run_inline(task, generator, *args):
+    """Queue a Celery task, falling back to the local thread pool if unavailable."""
     if _use_inline_export_worker():
-        executor = _get_executor()
-        return executor.submit(
-            _run_with_new_db_connection,
-            _generate_mscc_export,
-            export_id,
-            fields,
-            file_format,
+        return _submit_inline_export(generator, *args)
+
+    try:
+        return task.delay(*args)
+    except OperationalError:
+        logger.warning(
+            "Celery broker is unavailable; running MSCC export %s inline.",
+            args[0] if args else "unknown",
+            exc_info=True,
         )
-    return generate_mscc_export.delay(export_id, fields, file_format)
+        return _submit_inline_export(generator, *args)
+
+
+def queue_mscc_export(export_id, fields=None, file_format='csv'):
+    """Queue the MSCC export, using an inline fallback if Celery is unavailable."""
+    return _queue_or_run_inline(
+        generate_mscc_export,
+        _generate_mscc_export,
+        export_id,
+        fields,
+        file_format,
+    )
 
 
 def queue_filtered_mscc_export(export_id, nationality="", first_name="", last_name="",
                                father_name="", mother_fullname="", round=""):
-    """Queue the filtered MSCC list export on the dedicated Celery worker."""
-    if _use_inline_export_worker():
-        executor = _get_executor()
-        return executor.submit(
-            _run_with_new_db_connection,
-            _generate_filtered_mscc_export,
-            export_id,
-            nationality,
-            first_name,
-            last_name,
-            father_name,
-            mother_fullname,
-            round,
-        )
-    return generate_filtered_mscc_export.delay(
+    """Queue the filtered MSCC export, using an inline fallback if needed."""
+    return _queue_or_run_inline(
+        generate_filtered_mscc_export,
+        _generate_filtered_mscc_export,
         export_id,
         nationality,
         first_name,
