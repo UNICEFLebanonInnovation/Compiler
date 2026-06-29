@@ -164,7 +164,6 @@ class TLSListView(LoginRequiredMixin, GroupRequiredMixin, FilterView, ExportMixi
             _total_absent_days=Coalesce(Subquery(absent_days, output_field=IntegerField()), 0),
         )
         round_filter = Q(round__isnull=True) | Q(round__current_year=True)
-
         if has_group(user, 'TLS_UNICEF') or is_world_learning:
             return qs.filter(round_filter).order_by('child__first_name', 'child__father_name', 'child__last_name')
         if has_group(user, 'TLS_PARTNER') and partner_id:

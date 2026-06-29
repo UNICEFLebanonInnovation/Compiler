@@ -286,6 +286,13 @@ class Center(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Is the center a TARL center?')
     )
+    is_tls = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is TLS?')
+    )
     neaby_phcc = models.CharField(
         max_length=200,
         blank=True,

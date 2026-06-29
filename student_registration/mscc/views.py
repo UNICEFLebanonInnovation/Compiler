@@ -549,7 +549,6 @@ class MainListView(LoginRequiredMixin,
         )
 
         round_filter = Q(round__isnull=True) | Q(round__current_year=True)
-
         if self.package_type_filter:
             qs = qs.filter(type=self.package_type_filter)
         if self.exclude_package_type:

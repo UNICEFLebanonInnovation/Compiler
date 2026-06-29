@@ -190,12 +190,17 @@ class CenterListView(LoginRequiredMixin,
         user = self.request.user
         center_id = user.center_id
         partner_id = user.partner_id
+        is_tls = self.request.GET.get('is_tls')
+        qs = Center.objects.all()
+        if is_tls in ['Yes', 'No']:
+            qs = qs.filter(is_tls=is_tls)
+
         if has_group(user, 'MSCC_UNICEF'):
-            return Center.objects.order_by('-id')
+            return qs.order_by('-id')
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
-            return Center.objects.filter(partner__id=partner_id).order_by('-id')
+            return qs.filter(partner__id=partner_id).order_by('-id')
         elif has_group(user, 'MSCC_CENTER') and center_id:
-            return Center.objects.filter(id=center_id).order_by('-id')
+            return qs.filter(id=center_id).order_by('-id')
 
         return Center.objects.none()
 

@@ -131,7 +131,7 @@
                                                             <span>Center</span>
                                                         </a>
                                                       {% else %}
-                                                        <a href="{% url 'locations:center_list' %}" class="nav-link">
+                                                        <a href="{% url 'locations:center_list' %}?is_tls=No" class="nav-link">
                                                             <i class="nav-link-icon lnr-picture"></i>
                                                             <span>Centers</span>
                                                         </a>
@@ -169,7 +169,7 @@
                                                             <span>Center</span>
                                                         </a>
                                                       {% else %}
-                                                        <a href="{% url 'locations:center_list' %}" class="nav-link">
+                                                        <a href="{% url 'locations:center_list' %}?is_tls=Yes" class="nav-link">
                                                             <i class="nav-link-icon lnr-picture"></i>
                                                             <span>Center</span>
                                                         </a>
