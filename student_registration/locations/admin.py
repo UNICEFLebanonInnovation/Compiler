@@ -11,7 +11,7 @@ from .models import (
     LocationType,
     Center
 )
-from .forms import CenterAdminForm
+from .forms import CenterAdminForm as BaseCenterAdminForm
 
 
 class LocationResource(resources.ModelResource):
@@ -70,8 +70,8 @@ class CenterResource(resources.ModelResource):
             instance.email = ''
 
 
-class CenterAdminTLSForm(CenterAdminForm):
-    class Meta(CenterAdminForm.Meta):
+class CenterAdminForm(BaseCenterAdminForm):
+    class Meta(BaseCenterAdminForm.Meta):
         fields = (
             'name',
             'partner',
@@ -89,7 +89,7 @@ class CenterAdminTLSForm(CenterAdminForm):
 
 class CenterAdmin(ImportExportModelAdmin):
     resource_class = CenterResource
-    form = CenterAdminTLSForm
+    form = CenterAdminForm
     list_display = (
             'name',
             'governorate',
