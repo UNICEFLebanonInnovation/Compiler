@@ -10,6 +10,8 @@ import warnings
 from pathlib import Path
 from time import mktime
 
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
 from django.http import FileResponse, HttpResponse
 from storages.backends.azure_storage import AzureStorage
 
@@ -32,7 +34,12 @@ class MyEncoder(json.JSONEncoder):
 
 
 class ExportStorage(AzureStorage):
-    """Azure storage backend dedicated for exported files."""
+    """Storage backend dedicated for exported files.
+
+    Production uses Azure blob storage. Local development defaults to the local
+    media folder so exports can complete and be downloaded without waiting on
+    external Azure connectivity.
+    """
     location = "export"
 
     # Export filenames are UUID-based, so collisions are not expected. Allowing
@@ -40,6 +47,45 @@ class ExportStorage(AzureStorage):
     # noisy Azure SDK ``HEAD`` requests that return 404 before a new blob is
     # created.
     overwrite_files = True
+
+    @property
+    def use_local_storage(self):
+        return bool(
+            getattr(settings, 'DEBUG', False) or
+            getattr(settings, 'EXPORT_USE_LOCAL_STORAGE', False)
+        )
+
+    @property
+    def local_storage(self):
+        return FileSystemStorage(
+            location=os.path.join(settings.MEDIA_ROOT, self.location),
+            base_url='{}{}'.format(settings.MEDIA_URL, self.location + '/'),
+        )
+
+    def save(self, name, content, max_length=None):
+        if self.use_local_storage:
+            return self.local_storage.save(name, content, max_length=max_length)
+        return super().save(name, content, max_length=max_length)
+
+    def open(self, name, mode='rb'):
+        if self.use_local_storage:
+            return self.local_storage.open(name, mode)
+        return super().open(name, mode)
+
+    def delete(self, name):
+        if self.use_local_storage:
+            return self.local_storage.delete(name)
+        return super().delete(name)
+
+    def exists(self, name):
+        if self.use_local_storage:
+            return self.local_storage.exists(name)
+        return super().exists(name)
+
+    def url(self, name):
+        if self.use_local_storage:
+            return self.local_storage.url(name)
+        return super().url(name)
 
 
 def download_file(file_name, returned_file_name, content_type="application/octet-stream", delete_after=True):
