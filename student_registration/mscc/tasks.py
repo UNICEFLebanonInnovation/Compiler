@@ -270,27 +270,27 @@ def generate_filtered_mscc_export(export_id, nationality="", first_name="", last
 
 
 def _use_inline_export_worker():
-    """Return True when exports should run in the web process."""
-    return bool(getattr(settings, 'CELERY_TASK_ALWAYS_EAGER', False))
+    """Return True when exports should run in the web process thread pool.
+
+    Local development commonly runs without Redis/Celery, so DEBUG mode uses
+    the existing in-process export worker directly instead of attempting a
+    broker connection for every export click.
+    """
+    return any((
+        getattr(settings, 'DEBUG', False),
+        getattr(settings, 'CELERY_TASK_ALWAYS_EAGER', False),
+        getattr(settings, 'MSCC_EXPORT_USE_INLINE_WORKER', False),
+    ))
 
 
 def _submit_threaded_export(generator, *args):
-    """Run an export in the local thread pool for explicit eager mode."""
+    """Run an export in the local thread pool."""
     executor = _get_executor()
     return executor.submit(_run_with_new_db_connection, generator, *args)
 
 
-def _run_inline_export(generator, *args):
-    """Run an export immediately in the current process.
-
-    This local fallback avoids leaving an ExportHistory record stuck in pending
-    when Redis/Celery is not running.
-    """
-    return _run_with_new_db_connection(generator, *args)
-
-
 def _queue_or_run_inline(task, generator, *args):
-    """Queue a Celery task, falling back to synchronous local execution."""
+    """Queue a Celery task, falling back to the local thread pool."""
     if _use_inline_export_worker():
         return _submit_threaded_export(generator, *args)
 
@@ -298,10 +298,10 @@ def _queue_or_run_inline(task, generator, *args):
         return task.delay(*args)
     except OperationalError:
         logger.warning(
-            "Celery broker is unavailable; running MSCC export %s synchronously.",
+            "Celery broker is unavailable; running MSCC export %s in the local thread pool.",
             args[0] if args else "unknown",
         )
-        return _run_inline_export(generator, *args)
+        return _submit_threaded_export(generator, *args)
 
 
 def queue_mscc_export(export_id, fields=None, file_format='csv'):
