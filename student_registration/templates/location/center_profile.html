@@ -29,7 +29,7 @@
                                                 </li>
                                                 {% if request.user|has_group:"MSCC_PARTNER" %}
                                                 <li class="breadcrumb-item">
-                                                    <a href="{% url 'locations:center_list' %}">List</a>
+                                                    <a href="{% url 'locations:center_list' %}{% if instance.is_tls %}?is_tls={{ instance.is_tls }}{% endif %}">List</a>
                                                 </li>
                                                 {% endif %}
                                                 <li class="active breadcrumb-item" aria-current="page">
