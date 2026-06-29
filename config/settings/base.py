@@ -380,6 +380,10 @@ CELERY_TASK_ROUTES = {
         'queue': 'mscc_export',
         'routing_key': 'mscc_export',
     },
+    'student_registration.mscc.tasks.generate_filtered_mscc_export': {
+        'queue': 'mscc_export',
+        'routing_key': 'mscc_export',
+    },
 }
 ########## END CELERY
 

@@ -1049,7 +1049,7 @@ def export_list_async(request):
         file_format=file_format,
     )
     queue_mscc_export(export_record.id, fields, file_format)
-    return JsonResponse({'status': 'started'})
+    return JsonResponse({'status': 'started', 'export_id': export_record.id})
 
 
 @login_required(login_url='/users/login')

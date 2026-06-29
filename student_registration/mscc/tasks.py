@@ -16,6 +16,7 @@ from django.core.files.base import ContentFile
 from openpyxl import Workbook
 
 from student_registration.backends.models import ExportHistory
+from student_registration.taskapp.celery import app
 from student_registration.backends.utils import ExportStorage, send_push_to_web
 from student_registration.users.templatetags.custom_tags import has_group
 from django.urls import reverse
@@ -240,11 +241,10 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
             )
 
 
-def queue_mscc_export(export_id, fields=None, file_format='csv'):
-    """Run the MSCC export in a background thread."""
-    executor = _get_executor()
-    return executor.submit(
-        _run_with_new_db_connection,
+@app.task(name='student_registration.mscc.tasks.generate_mscc_export')
+def generate_mscc_export(export_id, fields=None, file_format='csv'):
+    """Celery task that generates a full MSCC export."""
+    return _run_with_new_db_connection(
         _generate_mscc_export,
         export_id,
         fields,
@@ -252,13 +252,63 @@ def queue_mscc_export(export_id, fields=None, file_format='csv'):
     )
 
 
+@app.task(name='student_registration.mscc.tasks.generate_filtered_mscc_export')
+def generate_filtered_mscc_export(export_id, nationality="", first_name="", last_name="",
+                                  father_name="", mother_fullname="", round=""):
+    """Celery task that generates a filtered MSCC list export."""
+    return _run_with_new_db_connection(
+        _generate_filtered_mscc_export,
+        export_id,
+        nationality,
+        first_name,
+        last_name,
+        father_name,
+        mother_fullname,
+        round,
+    )
+
+
+def _use_inline_export_worker():
+    """Return True when exports should run in the web process.
+
+    Production/staging deployments run the dedicated ``mscc_export`` Celery
+    worker from the Procfile.  Local test/dev environments can opt into eager
+    execution, so keep the existing in-process thread fallback there.
+    """
+    return bool(getattr(settings, 'CELERY_TASK_ALWAYS_EAGER', False))
+
+
+def queue_mscc_export(export_id, fields=None, file_format='csv'):
+    """Queue the MSCC export on the dedicated Celery worker."""
+    if _use_inline_export_worker():
+        executor = _get_executor()
+        return executor.submit(
+            _run_with_new_db_connection,
+            _generate_mscc_export,
+            export_id,
+            fields,
+            file_format,
+        )
+    return generate_mscc_export.delay(export_id, fields, file_format)
+
+
 def queue_filtered_mscc_export(export_id, nationality="", first_name="", last_name="",
                                father_name="", mother_fullname="", round=""):
-    """Run the filtered MSCC export in a background thread."""
-    executor = _get_executor()
-    return executor.submit(
-        _run_with_new_db_connection,
-        _generate_filtered_mscc_export,
+    """Queue the filtered MSCC list export on the dedicated Celery worker."""
+    if _use_inline_export_worker():
+        executor = _get_executor()
+        return executor.submit(
+            _run_with_new_db_connection,
+            _generate_filtered_mscc_export,
+            export_id,
+            nationality,
+            first_name,
+            last_name,
+            father_name,
+            mother_fullname,
+            round,
+        )
+    return generate_filtered_mscc_export.delay(
         export_id,
         nationality,
         first_name,
