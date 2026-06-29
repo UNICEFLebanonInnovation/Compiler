@@ -59,6 +59,7 @@ def _generate_mscc_export(export_id, fields=None, file_format='csv'):
         return
     try:
         user = export.created_by
+        logger.info("Starting MSCC export %s", export_id)
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM vw_mscc_child")
         mscc_data = cursor.fetchall()
@@ -103,6 +104,7 @@ def _generate_mscc_export(export_id, fields=None, file_format='csv'):
         export.file_url = file_url
         export.status = 'done'
         export.save()
+        logger.info("MSCC export %s completed", export_id)
         if user:
             send_push_to_web(
                 user,
@@ -135,6 +137,7 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
     export = ExportHistory.objects.get(id=export_id)
     try:
         user = export.created_by
+        logger.info("Starting filtered MSCC export %s", export_id)
         cursor = connection.cursor()
         center_id = user.center_id
         partner_id = user.partner_id or 0
@@ -172,6 +175,7 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
 
         cursor.execute(vw_mscc_data_str, query_params)
         mscc_data = cursor.fetchall()
+        logger.info("Filtered MSCC export %s fetched %s rows", export_id, len(mscc_data))
         headers = [col[0] for col in cursor.description]
 
         zip_output = io.BytesIO()
@@ -190,29 +194,29 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
             # Add CSV to ZIP
             zf.writestr('mscc_data.csv', csv_mscc_output.getvalue())
 
-            # Process followup_service_data
-            registration_ids = [row[0] for row in mscc_data]
-            if registration_ids:
-                followup_service_data_str = "SELECT * FROM mscc_followupservice WHERE registration_id IN ({})".format(
-                    ','.join(['%s'] * len(registration_ids)))
-                cursor.execute(followup_service_data_str, registration_ids)
-                followup_service_data = cursor.fetchall()
-                followup_headers = [col[0] for col in cursor.description]
+            if getattr(settings, 'MSCC_EXPORT_INCLUDE_FOLLOWUP_DATA', False):
+                # Process followup_service_data only when explicitly enabled.
+                # On large exports this secondary query can take a long time and
+                # leave the main export pending, so the default MSCC list export
+                # prioritizes producing the requested list file promptly.
+                registration_ids = [row[0] for row in mscc_data]
+                if registration_ids:
+                    followup_service_data_str = "SELECT * FROM mscc_followupservice WHERE registration_id IN ({})".format(
+                        ','.join(['%s'] * len(registration_ids)))
+                    cursor.execute(followup_service_data_str, registration_ids)
+                    followup_service_data = cursor.fetchall()
+                    followup_headers = [col[0] for col in cursor.description]
 
-                # Create CSV for followup_service_data
-                csv_followup_output = io.StringIO()
-                csv_writer = csv.writer(csv_followup_output)
+                    csv_followup_output = io.StringIO()
+                    csv_writer = csv.writer(csv_followup_output)
+                    csv_followup_output.write(codecs.BOM_UTF8.decode('utf-8'))
+                    csv_writer.writerow(followup_headers)
 
-                # Add BOM to handle Arabic text correctly
-                csv_followup_output.write(codecs.BOM_UTF8.decode('utf-8'))
-                csv_writer.writerow(followup_headers)  # Write headers
+                    for row in followup_service_data:
+                        encoded_row = [smart_str(cell) for cell in row]
+                        csv_writer.writerow(encoded_row)
 
-                for row in followup_service_data:
-                    encoded_row = [smart_str(cell) for cell in row]
-                    csv_writer.writerow(encoded_row)
-
-                # Add CSV to ZIP
-                zf.writestr('followup_data.csv', csv_followup_output.getvalue())
+                    zf.writestr('followup_data.csv', csv_followup_output.getvalue())
 
         unique_id = str(uuid.uuid4())
         file_name = f"out_file_{unique_id}.zip"
@@ -222,6 +226,7 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
         export.file_url = file_url
         export.status = 'done'
         export.save()
+        logger.info("Filtered MSCC export %s completed", export_id)
         if user:
             send_push_to_web(
                 user,
