@@ -98,6 +98,13 @@ class CenterAdminForm(forms.ModelForm):
         choices=Center.YES_NO,
         initial='',
     )
+    is_tls = forms.ChoiceField(
+        label=_('Is TLS?'),
+        widget=forms.Select,
+        required=False,
+        choices=Center.YES_NO,
+        initial='',
+    )
     provide_french_language = forms.ChoiceField(
         label=_("Provide French language"),
         widget=forms.Select,
@@ -124,6 +131,7 @@ class CenterAdminForm(forms.ModelForm):
             'cadaster',
             'type',
             'is_tarl',
+            'is_tls',
             'provide_french_language',
             'provided_packages',
             'is_active'

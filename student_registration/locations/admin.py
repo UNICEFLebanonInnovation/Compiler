@@ -11,7 +11,7 @@ from .models import (
     LocationType,
     Center
 )
-from .forms import CenterAdminForm as BaseCenterAdminForm
+from .forms import CenterAdminForm
 
 
 class LocationResource(resources.ModelResource):
@@ -68,23 +68,6 @@ class CenterResource(resources.ModelResource):
     def before_save_instance(self, instance, using_transactions, dry_run):
         if not instance.email:
             instance.email = ''
-
-
-class CenterAdminForm(BaseCenterAdminForm):
-    class Meta(BaseCenterAdminForm.Meta):
-        fields = (
-            'name',
-            'partner',
-            'governorate',
-            'caza',
-            'cadaster',
-            'type',
-            'is_tarl',
-            'is_tls',
-            'provide_french_language',
-            'provided_packages',
-            'is_active'
-        )
 
 
 class CenterAdmin(ImportExportModelAdmin):
