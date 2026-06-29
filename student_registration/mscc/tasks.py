@@ -270,10 +270,10 @@ def generate_filtered_mscc_export(export_id, nationality="", first_name="", last
 
 
 def _use_inline_export_worker():
-    """Return True when exports should run in the web process thread pool.
+    """Return True when exports should run in the web process thread.
 
     Local development commonly runs without Redis/Celery, so DEBUG mode uses
-    the existing in-process export worker directly instead of attempting a
+    the in-process export thread directly instead of attempting a
     broker connection for every export click.
     """
     return any((
@@ -284,13 +284,24 @@ def _use_inline_export_worker():
 
 
 def _submit_threaded_export(generator, *args):
-    """Run an export in the local thread pool."""
-    executor = _get_executor()
-    return executor.submit(_run_with_new_db_connection, generator, *args)
+    """Run an export in a dedicated local daemon thread.
+
+    A per-export thread prevents older stuck local exports from occupying every
+    worker in the shared pool and leaving newer ExportHistory records pending.
+    """
+    export_id = args[0] if args else None
+    thread = threading.Thread(
+        target=_run_with_new_db_connection,
+        args=(generator,) + args,
+        name='mscc-export-{}'.format(export_id or 'unknown'),
+    )
+    thread.daemon = True
+    thread.start()
+    return thread
 
 
 def _queue_or_run_inline(task, generator, *args):
-    """Queue a Celery task, falling back to the local thread pool."""
+    """Queue a Celery task, falling back to the local thread."""
     if _use_inline_export_worker():
         return _submit_threaded_export(generator, *args)
 
@@ -298,7 +309,7 @@ def _queue_or_run_inline(task, generator, *args):
         return task.delay(*args)
     except OperationalError:
         logger.warning(
-            "Celery broker is unavailable; running MSCC export %s in the local thread pool.",
+            "Celery broker is unavailable; running MSCC export %s in the local thread.",
             args[0] if args else "unknown",
         )
         return _submit_threaded_export(generator, *args)
