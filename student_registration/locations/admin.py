@@ -70,9 +70,26 @@ class CenterResource(resources.ModelResource):
             instance.email = ''
 
 
+class CenterAdminTLSForm(CenterAdminForm):
+    class Meta(CenterAdminForm.Meta):
+        fields = (
+            'name',
+            'partner',
+            'governorate',
+            'caza',
+            'cadaster',
+            'type',
+            'is_tarl',
+            'is_tls',
+            'provide_french_language',
+            'provided_packages',
+            'is_active'
+        )
+
+
 class CenterAdmin(ImportExportModelAdmin):
     resource_class = CenterResource
-    form = CenterAdminForm
+    form = CenterAdminTLSForm
     list_display = (
             'name',
             'governorate',
