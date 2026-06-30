@@ -138,6 +138,9 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
         print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: user_id={} username={}'.format(getattr(user, 'id', None), getattr(user, 'username', None)), flush=True)
         cursor = connection.cursor()
         print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: database cursor opened', flush=True)
+        statement_timeout_ms = getattr(settings, 'MSCC_EXPORT_STATEMENT_TIMEOUT_MS', 300000)
+        cursor.execute("SET statement_timeout = %s", [statement_timeout_ms])
+        print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: statement_timeout set to {}ms'.format(statement_timeout_ms), flush=True)
         center_id = user.center_id
         partner_id = user.partner_id or 0
         is_world_learning = bool(user.partner and user.partner.is_world_learning)
@@ -162,16 +165,20 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
 
             query_params.append(round)
 
-        if has_group(user, 'MSCC_UNICEF') or is_world_learning:
-            vw_mscc_data_str += " AND id > 0"
+        if has_group(user, 'MSCC_CENTER') and center_id:
+            vw_mscc_data_str += " AND center_id = %s"
+            query_params.append(center_id)
+            print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: applying MSCC_CENTER scope center_id={}'.format(center_id), flush=True)
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
             vw_mscc_data_str += " AND partner_id = %s"
             query_params.append(partner_id)
-        elif has_group(user, 'MSCC_CENTER') and center_id:
-            vw_mscc_data_str += " AND center_id = %s"
-            query_params.append(center_id)
+            print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: applying MSCC_PARTNER scope partner_id={}'.format(partner_id), flush=True)
+        elif has_group(user, 'MSCC_UNICEF') or is_world_learning:
+            vw_mscc_data_str += " AND id > 0"
+            print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: applying unrestricted UNICEF/WL scope', flush=True)
         else:
             vw_mscc_data_str += " AND id = 0"
+            print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: no matching export scope, forcing empty result', flush=True)
 
         print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: executing main query sql={!r} params={}'.format(vw_mscc_data_str, query_params), flush=True)
         cursor.execute(vw_mscc_data_str, query_params)
