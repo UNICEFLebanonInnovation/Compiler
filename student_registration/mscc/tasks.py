@@ -165,14 +165,14 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
 
             query_params.append(round)
 
-        if has_group(user, 'MSCC_CENTER') and center_id:
-            vw_mscc_data_str += " AND center_id = %s"
-            query_params.append(center_id)
-            print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: applying MSCC_CENTER scope center_id={}'.format(center_id), flush=True)
-        elif has_group(user, 'MSCC_PARTNER') and partner_id:
+        if has_group(user, 'MSCC_PARTNER') and partner_id:
             vw_mscc_data_str += " AND partner_id = %s"
             query_params.append(partner_id)
             print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: applying MSCC_PARTNER scope partner_id={}'.format(partner_id), flush=True)
+        elif has_group(user, 'MSCC_CENTER') and center_id:
+            vw_mscc_data_str += " AND center_id = %s"
+            query_params.append(center_id)
+            print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: applying MSCC_CENTER scope center_id={}'.format(center_id), flush=True)
         elif has_group(user, 'MSCC_UNICEF') or is_world_learning:
             vw_mscc_data_str += " AND id > 0"
             print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: applying unrestricted UNICEF/WL scope', flush=True)
