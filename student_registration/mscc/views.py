@@ -957,22 +957,31 @@ class ChildProfilePreview(LoginRequiredMixin, TemplateView):
 
 @login_required(login_url='/users/login')
 def export_list_background(request):
+    print('[MSCC EXPORT DEBUG] export_list_background: request received', flush=True)
+    print('[MSCC EXPORT DEBUG] export_list_background: method={}'.format(request.method), flush=True)
+    print('[MSCC EXPORT DEBUG] export_list_background: raw GET={}'.format(dict(request.GET)), flush=True)
     user = request.user
+    print('[MSCC EXPORT DEBUG] export_list_background: user_id={} username={}'.format(getattr(user, 'id', None), getattr(user, 'username', None)), flush=True)
     nationality = request.GET.get('nationality', '')
     first_name = request.GET.get('first_name', '')
     last_name = request.GET.get('last_name', '')
     father_name = request.GET.get('father_name', '')
     mother_fullname = request.GET.get('mother_fullname', '')
     round = request.GET.get('round', '')
+    print('[MSCC EXPORT DEBUG] export_list_background: parsed filters nationality={!r}, first_name={!r}, last_name={!r}, father_name={!r}, mother_fullname={!r}, round={!r}'.format(nationality, first_name, last_name, father_name, mother_fullname, round), flush=True)
     if not round:
+        print('[MSCC EXPORT DEBUG] export_list_background: stopping because round is missing', flush=True)
         return JsonResponse({'error': 'Round is not selected. Please select a round before exporting data.'},
                             status=400)
 
+    print('[MSCC EXPORT DEBUG] export_list_background: creating ExportHistory', flush=True)
     export_record = ExportHistory.objects.create(
         export_type='Makani List',
         created_by=user,
         partner_name=user.partner.name if user.partner else ''
     )
+    print('[MSCC EXPORT DEBUG] export_list_background: ExportHistory created id={}'.format(export_record.id), flush=True)
+    print('[MSCC EXPORT DEBUG] export_list_background: queueing filtered export', flush=True)
     queue_filtered_mscc_export(
         export_record.id,
         nationality,
@@ -982,6 +991,7 @@ def export_list_background(request):
         mother_fullname,
         round,
     )
+    print('[MSCC EXPORT DEBUG] export_list_background: queued export id={} and returning response'.format(export_record.id), flush=True)
     return JsonResponse({'status': 'started', 'export_id': export_record.id})
 
 

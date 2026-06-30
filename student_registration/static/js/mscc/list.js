@@ -1,6 +1,7 @@
 
 
 $(document).ready(function() {
+    console.log('[MSCC EXPORT DEBUG] list.js loaded and document ready');
 
 
     const updateMsccListTableWidth = () => {
@@ -118,7 +119,9 @@ $(document).ready(function() {
     }
 
     window.pollExportUntilReady = function(exportId) {
+        console.log('[MSCC EXPORT DEBUG] pollExportUntilReady called', { exportId: exportId });
         if (!exportId) {
+            console.log('[MSCC EXPORT DEBUG] pollExportUntilReady stopped because exportId is empty');
             return;
         }
 
@@ -126,19 +129,24 @@ $(document).ready(function() {
         var maxAttempts = 120;
         var interval = window.setInterval(function() {
             attempts += 1;
+            console.log('[MSCC EXPORT DEBUG] polling export status', { exportId: exportId, attempt: attempts });
             $.ajax({
                 url: '/backends/export-history-list/?export_id=' + encodeURIComponent(exportId),
                 type: 'GET',
                 headers: getHeader(),
                 success: function(data) {
+                    console.log('[MSCC EXPORT DEBUG] export status response', data);
                     var exportItem = data.exports && data.exports[0];
                     if (!exportItem) {
+                        console.log('[MSCC EXPORT DEBUG] export status response did not include an export item yet');
                         return;
                     }
                     if (exportItem.status === 'done') {
+                        console.log('[MSCC EXPORT DEBUG] export completed', exportItem);
                         window.clearInterval(interval);
                         showExportReady(exportItem.url);
                     } else if (exportItem.status === 'failed') {
+                        console.log('[MSCC EXPORT DEBUG] export failed', exportItem);
                         window.clearInterval(interval);
                         showModal('Export failed. Please try again later.');
                     }
@@ -146,6 +154,7 @@ $(document).ready(function() {
             });
 
             if (attempts >= maxAttempts) {
+                console.log('[MSCC EXPORT DEBUG] polling reached max attempts', { exportId: exportId, attempts: attempts });
                 window.clearInterval(interval);
                 showModal('Export is still running. Please check export history in a few minutes.');
             }
@@ -229,6 +238,7 @@ $(document).ready(function() {
 
     $(document).on('click', '.download-report-async', function(e){
         e.preventDefault();
+        console.log('[MSCC EXPORT DEBUG] Export button clicked');
         $('#exportOptionsModal').modal('show');
     });
 
@@ -239,6 +249,14 @@ $(document).ready(function() {
         var father_name = $("#id_child__father_name").val();
         var mother_fullname = $("#id_child__mother_fullname").val();
         var round = $("#id_round").val();
+        console.log('[MSCC EXPORT DEBUG] Start Export clicked with filters', {
+            nationality: nationality,
+            first_name: first_name,
+            last_name: last_name,
+            father_name: father_name,
+            mother_fullname: mother_fullname,
+            round: round
+        });
         var button = $(this);
         var originalHtml = button.html();
         button.prop('disabled', true);
@@ -251,24 +269,32 @@ $(document).ready(function() {
             return;
         }
         requestHeaders = getHeader();
+        var exportParams = $.param({
+            nationality: nationality || '',
+            first_name: first_name || '',
+            last_name: last_name || '',
+            father_name: father_name || '',
+            mother_fullname: mother_fullname || '',
+            round: round || ''
+        });
+        var exportUrl = "/mscc/export-list-background/?" + exportParams;
+        console.log('[MSCC EXPORT DEBUG] Starting export request', { url: exportUrl });
         $.ajax({
-            url: "/mscc/export-list-background/?nationality=" + nationality
-                                + "&first_name=" + first_name
-                                + "&last_name=" + last_name
-                                + "&father_name=" + father_name
-                               + "&mother_fullname=" + mother_fullname
-                               + "&round=" + round,
+            url: exportUrl,
             type: 'GET',
             headers: requestHeaders,
             success: function(data){
+                console.log('[MSCC EXPORT DEBUG] export-list-background success', data);
                 $('#exportOptionsModal').modal('hide');
                 showModal('Export started. The download dialog will appear when ready.');
                 window.pollExportUntilReady(data.export_id);
             },
-            error: function(){
+            error: function(xhr, textStatus, errorThrown){
+                console.log('[MSCC EXPORT DEBUG] export-list-background error', { status: xhr && xhr.status, responseText: xhr && xhr.responseText, textStatus: textStatus, errorThrown: errorThrown });
                 showModal('Failed to start export. Please try again later.');
             },
-            complete: function(){
+            complete: function(xhr, textStatus){
+                console.log('[MSCC EXPORT DEBUG] export-list-background complete', { status: xhr && xhr.status, textStatus: textStatus });
                 button.prop('disabled', false);
                 button.html(originalHtml);
             }

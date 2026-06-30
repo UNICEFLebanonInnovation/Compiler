@@ -130,13 +130,18 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
     storage.  A push notification containing the download URL is sent to the
     requesting user when done.
     """
+    print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: started export_id={} nationality={!r} first_name={!r} last_name={!r} father_name={!r} mother_fullname={!r} round={!r}'.format(export_id, nationality, first_name, last_name, father_name, mother_fullname, round), flush=True)
     export = ExportHistory.objects.get(id=export_id)
+    print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: loaded ExportHistory id={} status={}'.format(export.id, export.status), flush=True)
     try:
         user = export.created_by
+        print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: user_id={} username={}'.format(getattr(user, 'id', None), getattr(user, 'username', None)), flush=True)
         cursor = connection.cursor()
+        print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: database cursor opened', flush=True)
         center_id = user.center_id
         partner_id = user.partner_id or 0
         is_world_learning = bool(user.partner and user.partner.is_world_learning)
+        print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: user scope center_id={} partner_id={} is_world_learning={}'.format(center_id, partner_id, is_world_learning), flush=True)
 
         query_params = []
 
@@ -168,12 +173,15 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
         else:
             vw_mscc_data_str += " AND id = 0"
 
+        print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: executing main query sql={!r} params={}'.format(vw_mscc_data_str, query_params), flush=True)
         cursor.execute(vw_mscc_data_str, query_params)
         mscc_data = cursor.fetchall()
         headers = [col[0] for col in cursor.description]
+        print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: main query returned rows={} headers={}'.format(len(mscc_data), headers), flush=True)
 
         zip_output = io.BytesIO()
         with zipfile.ZipFile(zip_output, 'w') as zf:
+            print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: writing mscc_data.csv to zip', flush=True)
             csv_mscc_output = io.StringIO()
             csv_writer = csv.writer(csv_mscc_output)
 
@@ -190,12 +198,15 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
 
             # Process followup_service_data
             registration_ids = [row[0] for row in mscc_data]
+            print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: registration_ids count={}'.format(len(registration_ids)), flush=True)
             if registration_ids:
                 followup_service_data_str = "SELECT * FROM mscc_followupservice WHERE registration_id IN ({})".format(
                     ','.join(['%s'] * len(registration_ids)))
+                print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: executing followup query rows={} sql={!r}'.format(len(registration_ids), followup_service_data_str), flush=True)
                 cursor.execute(followup_service_data_str, registration_ids)
                 followup_service_data = cursor.fetchall()
                 followup_headers = [col[0] for col in cursor.description]
+                print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: followup query returned rows={} headers={}'.format(len(followup_service_data), followup_headers), flush=True)
 
                 # Create CSV for followup_service_data
                 csv_followup_output = io.StringIO()
@@ -214,13 +225,17 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
 
         unique_id = str(uuid.uuid4())
         file_name = f"out_file_{unique_id}.zip"
+        print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: saving zip file_name={} bytes={}'.format(file_name, len(zip_output.getvalue())), flush=True)
         storage = ExportStorage()
         storage.save(file_name, ContentFile(zip_output.getvalue()))
         file_url = reverse('mscc:export_download', args=[file_name])
+        print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: file saved file_url={}'.format(file_url), flush=True)
         export.file_url = file_url
         export.status = 'done'
         export.save()
+        print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: ExportHistory marked done id={}'.format(export.id), flush=True)
         if user:
+            print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: sending success push notification', flush=True)
             send_push_to_web(
                 user,
                 "Makani export ready",
@@ -228,10 +243,13 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
                 data={"type": "mscc_export_ready", "url": file_url},
             )
     except Exception as e:  # pragma: no cover - logged for debugging purposes
+        print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: exception={!r}'.format(e), flush=True)
         logger.exception('Error generating export: %s', e)
         export.status = 'failed'
         export.save()
+        print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: ExportHistory marked failed id={}'.format(export.id), flush=True)
         if export.created_by:
+            print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: sending failure push notification', flush=True)
             send_push_to_web(
                 export.created_by,
                 "Makani export failed",
@@ -255,8 +273,9 @@ def queue_mscc_export(export_id, fields=None, file_format='csv'):
 def queue_filtered_mscc_export(export_id, nationality="", first_name="", last_name="",
                                father_name="", mother_fullname="", round=""):
     """Run the filtered MSCC export in a background thread."""
+    print('[MSCC EXPORT DEBUG] queue_filtered_mscc_export: submitting export_id={}'.format(export_id), flush=True)
     executor = _get_executor()
-    return executor.submit(
+    future = executor.submit(
         _run_with_new_db_connection,
         _generate_filtered_mscc_export,
         export_id,
@@ -267,3 +286,5 @@ def queue_filtered_mscc_export(export_id, nationality="", first_name="", last_na
         mother_fullname,
         round,
     )
+    print('[MSCC EXPORT DEBUG] queue_filtered_mscc_export: submitted export_id={} future={}'.format(export_id, future), flush=True)
+    return future
