@@ -185,6 +185,17 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
         mscc_data = cursor.fetchall()
         headers = [col[0] for col in cursor.description]
         print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: main query returned rows={} headers={}'.format(len(mscc_data), headers), flush=True)
+        if not mscc_data and "center_id = %s" in vw_mscc_data_str and partner_id:
+            fallback_query = vw_mscc_data_str.replace("center_id = %s", "partner_id = %s", 1)
+            fallback_params = list(query_params)
+            fallback_params[-1] = partner_id
+            print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: center scope returned 0 rows; retrying with partner fallback sql={!r} params={}'.format(fallback_query, fallback_params), flush=True)
+            cursor.execute(fallback_query, fallback_params)
+            mscc_data = cursor.fetchall()
+            headers = [col[0] for col in cursor.description]
+            vw_mscc_data_str = fallback_query
+            query_params = fallback_params
+            print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: partner fallback returned rows={} headers={}'.format(len(mscc_data), headers), flush=True)
 
         zip_output = io.BytesIO()
         with zipfile.ZipFile(zip_output, 'w') as zf:
@@ -228,6 +239,15 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
                     csv_writer.writerow(encoded_row)
 
                 # Add CSV to ZIP
+                zf.writestr('followup_data.csv', csv_followup_output.getvalue())
+            else:
+                print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: no registration ids; writing empty followup_data.csv with headers only', flush=True)
+                cursor.execute("SELECT * FROM mscc_followupservice WHERE 1 = 0")
+                followup_headers = [col[0] for col in cursor.description]
+                csv_followup_output = io.StringIO()
+                csv_writer = csv.writer(csv_followup_output)
+                csv_followup_output.write(codecs.BOM_UTF8.decode('utf-8'))
+                csv_writer.writerow(followup_headers)
                 zf.writestr('followup_data.csv', csv_followup_output.getvalue())
 
         unique_id = str(uuid.uuid4())
