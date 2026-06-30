@@ -18,6 +18,7 @@ from openpyxl import Workbook
 from student_registration.backends.models import ExportHistory
 from student_registration.backends.utils import ExportStorage, send_push_to_web
 from student_registration.users.templatetags.custom_tags import has_group
+from student_registration.mscc.models import Registration
 from django.urls import reverse
 
 logger = logging.getLogger(__name__)
@@ -146,39 +147,52 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
         is_world_learning = bool(user.partner and user.partner.is_world_learning)
         print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: user scope center_id={} partner_id={} is_world_learning={}'.format(center_id, partner_id, is_world_learning), flush=True)
 
-        query_params = []
-
+        registration_qs = Registration.objects.filter(deleted=False)
         if not round:
-            vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE id = 0"
-
+            registration_qs = registration_qs.none()
+            vw_mscc_view_name = "vw_mscc_data"
+            print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: no round selected, forcing empty result', flush=True)
         elif round == "no_round":
-            if is_world_learning:
-                vw_mscc_data_str = "SELECT * FROM vw_mscc_wl_data_no_round WHERE id > 0"
-            else:
-                vw_mscc_data_str = "SELECT * FROM vw_mscc_data_no_round WHERE id > 0"
-
+            registration_qs = registration_qs.filter(round__isnull=True)
+            vw_mscc_view_name = "vw_mscc_wl_data_no_round" if is_world_learning else "vw_mscc_data_no_round"
         else:
-            if is_world_learning:
-                vw_mscc_data_str = "SELECT * FROM vw_mscc_wl_data WHERE round_id = %s"
-            else:
-                vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE round_id = %s"
+            registration_qs = registration_qs.filter(round_id=round)
+            vw_mscc_view_name = "vw_mscc_wl_data" if is_world_learning else "vw_mscc_data"
 
-            query_params.append(round)
+        if nationality:
+            registration_qs = registration_qs.filter(child__nationality_id=nationality)
+        if first_name:
+            registration_qs = registration_qs.filter(child__first_name__icontains=first_name)
+        if last_name:
+            registration_qs = registration_qs.filter(child__last_name__icontains=last_name)
+        if father_name:
+            registration_qs = registration_qs.filter(child__father_name__icontains=father_name)
+        if mother_fullname:
+            registration_qs = registration_qs.filter(child__mother_fullname__icontains=mother_fullname)
 
         if has_group(user, 'MSCC_UNICEF') or is_world_learning:
-            vw_mscc_data_str += " AND id > 0"
-            print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: applying unrestricted UNICEF/WL scope to match MSCC list access', flush=True)
+            print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: collecting unrestricted UNICEF/WL registration ids to match MSCC list access', flush=True)
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
-            vw_mscc_data_str += " AND partner_id = %s"
-            query_params.append(partner_id)
-            print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: applying MSCC_PARTNER scope partner_id={}'.format(partner_id), flush=True)
+            registration_qs = registration_qs.filter(partner_id=partner_id)
+            print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: collecting MSCC_PARTNER registration ids partner_id={}'.format(partner_id), flush=True)
         elif has_group(user, 'MSCC_CENTER') and center_id:
-            vw_mscc_data_str += " AND center_id = %s"
-            query_params.append(center_id)
-            print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: applying MSCC_CENTER scope center_id={}'.format(center_id), flush=True)
+            registration_qs = registration_qs.filter(center_id=center_id)
+            print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: collecting MSCC_CENTER registration ids center_id={}'.format(center_id), flush=True)
         else:
-            vw_mscc_data_str += " AND id = 0"
+            registration_qs = registration_qs.none()
             print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: no matching export scope, forcing empty result', flush=True)
+
+        registration_ids = list(registration_qs.values_list('id', flat=True))
+        print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: collected registration ids count={}'.format(len(registration_ids)), flush=True)
+        if registration_ids:
+            vw_mscc_data_str = "SELECT * FROM {} WHERE id IN ({})".format(
+                vw_mscc_view_name,
+                ','.join(['%s'] * len(registration_ids))
+            )
+            query_params = registration_ids
+        else:
+            vw_mscc_data_str = "SELECT * FROM {} WHERE id = 0".format(vw_mscc_view_name)
+            query_params = []
 
         print('[MSCC EXPORT DEBUG] _generate_filtered_mscc_export: executing main query sql={!r} params={}'.format(vw_mscc_data_str, query_params), flush=True)
         cursor.execute(vw_mscc_data_str, query_params)
