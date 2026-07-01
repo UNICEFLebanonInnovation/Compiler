@@ -287,6 +287,7 @@ def export_data(request):
         center_name = request.GET.get('center_name', '')
         center_type = request.GET.get('center_type', '')
         center_governorate = request.GET.get('center_governorate', '')
+        active_during_emergency = request.GET.get('active_during_emergency', '')
 
 
         vw_center_data_str = "SELECT * FROM vw_center_data WHERE center_id > 0"
@@ -306,6 +307,8 @@ def export_data(request):
             vw_center_data_str += " AND center_type LIKE '%{}%'".format(center_type)
         if center_governorate:
             vw_center_data_str += " AND governorate_id = {}".format(center_governorate)
+        if active_during_emergency:
+            vw_center_data_str += " AND active_during_emergency = '{}'".format(active_during_emergency)
 
         cursor.execute(vw_center_data_str)
         data = cursor.fetchall()
@@ -376,6 +379,7 @@ def export_center_background(request):
         center_name = request.GET.get('center_name', '')
         center_type = request.GET.get('center_type', '')
         center_governorate = request.GET.get('center_governorate', '')
+        active_during_emergency = request.GET.get('active_during_emergency', '')
 
 
         vw_center_data_str = "SELECT * FROM vw_center_data WHERE center_id > 0"
@@ -395,6 +399,8 @@ def export_center_background(request):
             vw_center_data_str += " AND center_type LIKE '%{}%'".format(center_type)
         if center_governorate:
             vw_center_data_str += " AND governorate_id = {}".format(center_governorate)
+        if active_during_emergency:
+            vw_center_data_str += " AND active_during_emergency = '{}'".format(active_during_emergency)
 
         cursor.execute(vw_center_data_str)
         data = cursor.fetchall()
