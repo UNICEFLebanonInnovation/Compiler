@@ -43,6 +43,10 @@ class SchoolFullFilter(PlaceholderFilterSet):
         ('True', _("Yes")),
         ('False', _("No")),
     )
+    YES_NO = Choices(
+        ('Yes', _("Yes")),
+        ('No', _("No")),
+    )
 
     governorate = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=True), empty_label=_('Governorate'))
     district = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=False), empty_label=_('District'))
@@ -57,12 +61,18 @@ class SchoolFullFilter(PlaceholderFilterSet):
         label=_('Is Closed'),
         method='filter_is_closed'
     )
+    active_during_emergency = ChoiceFilter(
+        choices=YES_NO,
+        empty_label=_('Active in emergency?'),
+        label=_('Active in emergency?'),
+    )
 
     class Meta:
         model = School
         fields = {
             'number': ['exact'],
             'name': ['contains'],
+            'active_during_emergency': ['exact'],
         }
 
     def filter_is_closed(self, queryset, name, value):
@@ -78,6 +88,10 @@ class SchoolPartnerFilter(PlaceholderFilterSet):
         ('True', _("Yes")),
         ('False', _("No")),
     )
+    YES_NO = Choices(
+        ('Yes', _("Yes")),
+        ('No', _("No")),
+    )
 
     governorate = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=True), empty_label=_('Governorate'))
     district = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=False), empty_label=_('District'))
@@ -87,12 +101,18 @@ class SchoolPartnerFilter(PlaceholderFilterSet):
         label=_('Is Closed'),
         method='filter_is_closed'
     )
+    active_during_emergency = ChoiceFilter(
+        choices=YES_NO,
+        empty_label=_('Active in emergency?'),
+        label=_('Active in emergency?'),
+    )
 
     class Meta:
         model = School
         fields = {
             'number': ['exact'],
             'name': ['contains'],
+            'active_during_emergency': ['exact'],
         }
 
     def filter_is_closed(self, queryset, name, value):

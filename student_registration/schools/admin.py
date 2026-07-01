@@ -687,6 +687,7 @@ class SchoolResource(resources.ModelResource):
             'number_children_non_lebanese_sbp',
             'CWD_accessible',
             'internet_available',
+            'active_during_emergency',
             'school_digital_capacity',
             'is_first_shift',
             'working_days',
@@ -742,6 +743,7 @@ class SchoolAdmin(ImportExportModelAdmin):
             'number_children_non_lebanese_sbp',
             'CWD_accessible',
             'internet_available',
+            'active_during_emergency',
             'school_digital_capacity',
             'is_first_shift',
             'working_days',
@@ -761,6 +763,7 @@ class SchoolAdmin(ImportExportModelAdmin):
         'governorate',
         'district',
         'is_closed',
+        'active_during_emergency',
         'is_bma',
         'is_unrwa',
     )
@@ -768,7 +771,7 @@ class SchoolAdmin(ImportExportModelAdmin):
         'name',
         'number',
     )
-    list_filter = ('is_closed', 'is_bma','is_unrwa',)
+    list_filter = ('is_closed', 'active_during_emergency', 'is_bma', 'is_unrwa',)
 
     def has_delete_permission(self, request, obj=None):
         return False

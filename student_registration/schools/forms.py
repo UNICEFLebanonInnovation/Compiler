@@ -3320,7 +3320,7 @@ class SchoolForm(forms.ModelForm):
         choices=School.YES_NO
     )
     active_during_emergency = forms.ChoiceField(
-        label=_("Active during emergency"),
+        label=_("Active in emergency?"),
         widget=forms.Select, required=True,
         choices=School.YES_NO
     )
