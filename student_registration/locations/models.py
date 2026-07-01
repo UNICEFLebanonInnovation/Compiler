@@ -263,7 +263,7 @@ class Center(TimeStampedModel):
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Active during emergency')
+        verbose_name=_('Active in emergency?')
     )
     have_digital_hub = models.CharField(
         max_length=50,

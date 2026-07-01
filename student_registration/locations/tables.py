@@ -33,6 +33,7 @@ class CenterTable(tables.Table):
             'email',
             'type',
             'is_tarl',
+            'active_during_emergency',
             'owner_name',
             'modified_by_name'
         )

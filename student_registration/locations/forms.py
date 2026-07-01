@@ -98,6 +98,13 @@ class CenterAdminForm(forms.ModelForm):
         choices=Center.YES_NO,
         initial='',
     )
+    active_during_emergency = forms.ChoiceField(
+        label=_("Active in emergency?"),
+        widget=forms.Select,
+        required=False,
+        choices=Center.YES_NO,
+        initial='',
+    )
     provide_french_language = forms.ChoiceField(
         label=_("Provide French language"),
         widget=forms.Select,
@@ -125,6 +132,7 @@ class CenterAdminForm(forms.ModelForm):
             'type',
             'is_tarl',
             'provide_french_language',
+            'active_during_emergency',
             'provided_packages',
             'is_active'
         )
@@ -231,7 +239,7 @@ class CenterForm(forms.ModelForm):
         choices=Center.YES_NO,
     )
     active_during_emergency = forms.ChoiceField(
-        label=_("Active during emergency"),
+        label=_("Active in emergency?"),
         widget=forms.Select, required=False,
         choices=Center.YES_NO,
     )
