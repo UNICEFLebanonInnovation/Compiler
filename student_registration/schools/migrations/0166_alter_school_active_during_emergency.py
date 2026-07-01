@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
             name='active_during_emergency',
             field=models.CharField(
                 blank=True,
-                choices=[('', '----------'), ('Yes', 'Yes'), ('No', 'No')],
+                choices=[('', '----------'), ('yes', 'Yes'), ('no', 'No')],
                 max_length=10,
                 null=True,
                 verbose_name='Active in emergency?',

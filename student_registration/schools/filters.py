@@ -44,8 +44,8 @@ class SchoolFullFilter(PlaceholderFilterSet):
         ('False', _("No")),
     )
     YES_NO = Choices(
-        ('Yes', _("Yes")),
-        ('No', _("No")),
+        ('yes', _("Yes")),
+        ('no', _("No")),
     )
 
     governorate = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=True), empty_label=_('Governorate'))
@@ -89,8 +89,8 @@ class SchoolPartnerFilter(PlaceholderFilterSet):
         ('False', _("No")),
     )
     YES_NO = Choices(
-        ('Yes', _("Yes")),
-        ('No', _("No")),
+        ('yes', _("Yes")),
+        ('no', _("No")),
     )
 
     governorate = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=True), empty_label=_('Governorate'))
