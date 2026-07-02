@@ -60,6 +60,7 @@ class CenterResource(resources.ModelResource):
             'email',
             'is_tarl',
             'is_tls',
+            'active_during_emergency',
             'is_active',
             'p_code',
         )
@@ -85,6 +86,7 @@ class CenterAdmin(ImportExportModelAdmin):
             'partner',
             'is_tarl',
             'is_tls',
+            'active_during_emergency',
             'is_active',
     )
     list_filter = (
@@ -94,6 +96,7 @@ class CenterAdmin(ImportExportModelAdmin):
         'partner',
         'is_tarl',
         'is_tls',
+        'active_during_emergency',
         'is_active',
     )
     search_fields = (

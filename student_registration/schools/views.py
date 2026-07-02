@@ -1007,15 +1007,18 @@ def export_school_background(request):
         partner_id = user.partner_id if hasattr(user, 'partner_id') else 0
         partner_name = user.partner.name if hasattr(user, 'partner') and user.partner else ''
 
-        qs_school = School.objects.filter(is_bma=True).order_by('-id')
+        qs_school = School.objects.filter(partner_schools__is_dirasa=True).distinct().order_by('-id')
         if not (user.is_staff or has_group(user, 'CLM_BRIDGING_ALL')):
             if school_id > 0:
-                qs_school = School.objects.filter(id=school_id)
+                qs_school = School.objects.filter(
+                    id=school_id,
+                    partner_schools__is_dirasa=True
+                ).distinct()
             elif partner_id > 0:
                 qs_school = School.objects.filter(
-                    is_bma=True,
+                    partner_schools__is_dirasa=True,
                     id__in=PartnerOrganization.objects.filter(id=partner_id).values_list('schools', flat=True)
-                )
+                ).distinct()
             else:
                 qs_school = qs_school.none()
 

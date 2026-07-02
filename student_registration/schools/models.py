@@ -227,7 +227,7 @@ class School(TimeStampedModel):
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Active during emergency')
+        verbose_name=_('Active in emergency?')
     )
     school_digital_capacity = models.IntegerField(
         blank=True, null=True,

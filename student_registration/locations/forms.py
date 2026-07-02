@@ -100,6 +100,8 @@ class CenterAdminForm(forms.ModelForm):
     )
     is_tls = forms.ChoiceField(
         label=_('Is TLS?'),
+        active_during_emergency = forms.ChoiceField(
+        label=_("Active in emergency?"),
         widget=forms.Select,
         required=False,
         choices=Center.YES_NO,
@@ -133,6 +135,7 @@ class CenterAdminForm(forms.ModelForm):
             'is_tarl',
             'is_tls',
             'provide_french_language',
+            'active_during_emergency',
             'provided_packages',
             'is_active'
         )
@@ -239,7 +242,7 @@ class CenterForm(forms.ModelForm):
         choices=Center.YES_NO,
     )
     active_during_emergency = forms.ChoiceField(
-        label=_("Active during emergency"),
+        label=_("Active in emergency?"),
         widget=forms.Select, required=False,
         choices=Center.YES_NO,
     )

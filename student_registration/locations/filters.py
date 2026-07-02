@@ -72,6 +72,11 @@ class CenterFilter(PlaceholderFilterSet):
         empty_label=_('Is TARL center'),
         label=_('Is TARL center'),
     )
+    active_during_emergency = ChoiceFilter(
+        choices=YES_NO,
+        empty_label=_('Active in emergency?'),
+        label=_('Active in emergency?'),
+    )
 
     class Meta:
         model = Center
@@ -79,7 +84,8 @@ class CenterFilter(PlaceholderFilterSet):
             'name',
             'type',
             'governorate',
-            'is_tarl'
+            'is_tarl',
+            'active_during_emergency'
         ]
 
     def filter_is_active(self, queryset, name, value):

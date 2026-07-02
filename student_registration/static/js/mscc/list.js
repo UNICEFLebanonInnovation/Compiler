@@ -158,6 +158,7 @@ $(document).ready(function() {
         var center_name = $("#id_name").val();
         var center_type = $("#id_type").val();
         var center_governorate = $("#id_governorate").val();
+        var active_during_emergency = $("#id_active_during_emergency").val();
 
         requestHeaders = getHeader();
 
@@ -167,7 +168,8 @@ $(document).ready(function() {
         $.ajax({
             url: "/locations/export-center-background/?center_name=" + center_name
                                 + "&center_type=" + center_type
-                                + "&center_governorate=" + center_governorate ,
+                                + "&center_governorate=" + center_governorate
+                                + "&active_during_emergency=" + active_during_emergency ,
             type: "GET",
             headers: requestHeaders,
             success: function(data) {
