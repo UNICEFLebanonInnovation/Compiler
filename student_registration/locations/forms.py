@@ -106,7 +106,6 @@ class CenterAdminForm(forms.ModelForm):
         initial='',
     )
     active_during_emergency = forms.ChoiceField(
-        active_during_emergency = forms.ChoiceField(
         label=_("Active in emergency?"),
         widget=forms.Select,
         required=False,
