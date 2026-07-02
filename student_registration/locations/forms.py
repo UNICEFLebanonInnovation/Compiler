@@ -100,6 +100,12 @@ class CenterAdminForm(forms.ModelForm):
     )
     is_tls = forms.ChoiceField(
         label=_('Is TLS?'),
+        widget=forms.Select,
+        required=False,
+        choices=Center.YES_NO,
+        initial='',
+    )
+    active_during_emergency = forms.ChoiceField(
         active_during_emergency = forms.ChoiceField(
         label=_("Active in emergency?"),
         widget=forms.Select,
