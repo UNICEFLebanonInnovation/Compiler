@@ -18,6 +18,7 @@ from openpyxl import load_workbook
 from django.core.files.base import ContentFile
 import csv
 import io
+import re
 
 from student_registration.adolescent.models import Adolescent
 from student_registration.students.models import Nationality, IDType
@@ -233,6 +234,29 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             ordered[field] = row_values.get(field, '')
         return ordered
 
+    def _is_unicef_id_generation_error(self, generated_value):
+        if not generated_value:
+            return True
+
+        generated_value = str(generated_value).strip()
+        error_terms = ('error', 'invalid', 'unable', 'failed', 'failure', 'translate')
+        return any(term in generated_value.lower() for term in error_terms)
+
+    def _unicef_id_generation_error_message(self, generated_value):
+        message = "Unable to generate UNICEF ID"
+        if generated_value:
+            message += ": {0}".format(str(generated_value).strip())
+
+        return message + "."
+
+    phone_number_regex = re.compile(r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$')
+
+    def _normalize_phone_number(self, phone_number):
+        phone_number = str(phone_number or '').strip()
+        if re.match(r'^3-\d{6}$', phone_number):
+            return '0{0}'.format(phone_number)
+        return phone_number
+
     mandatory_fields = [
         'first_name',
         'father_name',
@@ -357,6 +381,9 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             if row_number is None:
                 row_number = len(validated_rows) + len(not_imported) + 2
 
+            for name_field in ('first_name', 'father_name', 'last_name', 'mother_fullname'):
+                values[name_field] = str(values.get(name_field) or '').strip()
+
             # ---- Missing mandatory fields
             missing = [f for f in self.mandatory_fields if not values.get(f)]
             if missing:
@@ -370,6 +397,17 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                 continue
 
             invalid_fields = []
+
+            first_phone_number = self._normalize_phone_number(values.get('first_phone_number'))
+            second_phone_number = self._normalize_phone_number(values.get('second_phone_number'))
+
+            values['first_phone_number'] = first_phone_number
+            values['second_phone_number'] = second_phone_number
+
+            if not self.phone_number_regex.match(first_phone_number):
+                invalid_fields.append("invalid first phone number")
+            if second_phone_number and not self.phone_number_regex.match(second_phone_number):
+                invalid_fields.append("invalid second phone number")
 
             # ---- Normalize gender (and validate)
             raw_gender = (values.get('gender') or '').strip()
@@ -543,6 +581,8 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                 )
                 continue
 
+                
+
             values['gender'] = gender_norm
 
             validated_rows.append({
@@ -597,12 +637,13 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             row_number = row['row_number']
             prospective_unicef_id = bulk_ids.get(idx)
 
-            if not prospective_unicef_id:
+
+            if self._is_unicef_id_generation_error(prospective_unicef_id):
                 not_imported.append(
                     self._build_error_entry(
                         values,
                         row_number,
-                        "Unable to generate UNICEF ID"
+                        self._unicef_id_generation_error_message(prospective_unicef_id)
                     )
                 )
                 continue
