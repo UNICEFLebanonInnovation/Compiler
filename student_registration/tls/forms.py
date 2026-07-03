@@ -260,8 +260,8 @@ class MainForm(forms.ModelForm):
         label=_('Number of children under 18'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         required=False,
-        initial=0,
-        min_value=0
+        initial=1,
+        min_value=1
     )
     caregiver_first_name = forms.CharField(
         label=_("Caregiver First Name"),
