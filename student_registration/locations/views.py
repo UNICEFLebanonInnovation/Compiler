@@ -71,7 +71,6 @@ from storages.backends.azure_storage import AzureStorage
 
 from django.core.files.base import ContentFile
 # import re
-from django.urls import reverse
 
 from django.contrib.auth.decorators import login_required
 
@@ -154,7 +153,13 @@ class CenterFormView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        return super(CenterFormView, self).get_context_data(**kwargs)
+
+        context = super(CenterFormView, self).get_context_data(**kwargs)
+        pk = self.kwargs.get('pk')
+        if pk:
+            context['instance'] = Center.objects.get(id=pk)
+
+        return context
 
     def get_form(self, form_class=None):
         pk = self.kwargs['pk'] if 'pk' in self.kwargs else None
