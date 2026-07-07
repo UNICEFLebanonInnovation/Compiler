@@ -249,7 +249,11 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
 
         return message + "."
 
-    phone_number_regex = re.compile(r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$')
+    phone_number_regex = re.compile(
+        r'^((\d{2}-\d{6})|'
+        r'(\d{3} \d{1,2} \d{3} \d{3,5})|'
+        r'(\d{3} \d{2} \d{4}))$'
+    )
 
     def _normalize_phone_number(self, phone_number):
         phone_number = str(phone_number or '').strip()
@@ -581,7 +585,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                 )
                 continue
 
-                
+
 
             values['gender'] = gender_norm
 
