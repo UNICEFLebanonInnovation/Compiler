@@ -37,6 +37,17 @@ def _name_en_label(obj):
 DAYS = list(((str(x), x) for x in range(1, 32)))
 DAYS.insert(0, ('', '---------'))
 
+PHONE_NUMBER_REGEX = (
+    r'^((\d{2}-\d{6})|'
+    r'(\d{3} \d{1,2} \d{3} \d{3,5})|'
+    r'(\d{3} \d{2} \d{4}))$'
+)
+PHONE_NUMBER_PLACEHOLDER = (
+    'XX-XXXXXX, XXX X XXX XXX, XXX XX XXX XXX, '
+    'XXX XX XXX XXXX, XXX XX XXX XXXXX, or XXX XX XXXX'
+)
+
+
 
 class MainForm(forms.ModelForm):
     # YEARS = list(((str(x), x) for x in range(Adolescent.CURRENT_YEAR - 20, Adolescent.CURRENT_YEAR + 1)))
@@ -153,14 +164,14 @@ class MainForm(forms.ModelForm):
         required=False, to_field_name='id',
     )
     first_phone_number = forms.RegexField(
-        regex=r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX or 963 XX XXX XXXX'}),
+        regex=PHONE_NUMBER_REGEX,
+        widget=forms.TextInput(attrs={'placeholder': PHONE_NUMBER_PLACEHOLDER}),
         required=True,
         label=_('Primary phone number')
     )
     second_phone_number = forms.RegexField(
-        regex=r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX or 963 XX XXX XXXX'}),
+        regex=PHONE_NUMBER_REGEX,
+        widget=forms.TextInput(attrs={'placeholder': PHONE_NUMBER_PLACEHOLDER}),
         required=False,
         label=_('Secondary phone number')
     )
@@ -389,9 +400,9 @@ class MainForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('first_phone_number', css_class='col-md-4'),
+                    Div('first_phone_number', css_class='col-md-5'),
                     HTML('<span class="badge-form badge-pill">4</span>'),
-                    Div('second_phone_number', css_class='col-md-4'),
+                    Div('second_phone_number', css_class='col-md-6'),
                     css_class='row card-body',
                 ),
                 Div(
