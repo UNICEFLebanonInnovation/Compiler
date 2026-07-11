@@ -6,9 +6,10 @@ import re
 from datetime import datetime, date
 from django.core.exceptions import ValidationError
 from django.db.models import Exists, OuterRef, Subquery
+from django.db.utils import OperationalError, InterfaceError
 from django import forms
 from import_export import resources, fields
-from django.db import transaction
+from django.db import transaction, close_old_connections
 
 from student_registration.outreach.models import OutreachChild
 from student_registration.students.models import Student
@@ -487,41 +488,56 @@ def create_attendance(data, center_id):
     education_program = data["education_program"]
     class_section = data["class_section"]
 
+    def _save_attendance(attendance_date):
+        with transaction.atomic():
+            attendance, created = MSCCAttendance.objects.get_or_create(
+                round_id=round_id,
+                center_id=center_id,
+                attendance_date=attendance_date,
+                education_program=education_program,
+                class_section=class_section,
+            )
+            attendance.day_off = data["attendance_day_off"]
+            attendance.close_reason = data["close_reason"]
+            attendance.save()
+
+            for child in data.get('children_attendance', []):
+                child_id = child.get('child_id')
+                registration_id = child.get('registration_id')
+
+                if not child_id or not registration_id:
+                    logger.warning(f"Missing child_id or registration_id for child: {child}")
+                    continue
+
+                attendance_child, created = MSCCAttendanceChild.objects.get_or_create(
+                    attendance_day=attendance,
+                    child_id=child_id,
+                    registration_id=registration_id
+                )
+
+                attendance_child.attended = child.get('attended')
+                attendance_child.absence_reason = child.get('absence_reason')
+                attendance_child.absence_reason_other = child.get('absence_reason_other')
+                attendance_child.save()
+
     try:
         attendance_date = parse_attendance_date(data["attendance_date"])
-
-        attendance, created = MSCCAttendance.objects.get_or_create(
-            round_id=round_id,
-            center_id=center_id,
-            attendance_date=attendance_date,
-            education_program=education_program,
-            class_section=class_section,
-        )
-        attendance.day_off = data["attendance_day_off"]
-        attendance.close_reason = data["close_reason"]
-        attendance.save()
-
-        for child in data.get('children_attendance', []):
-            child_id = child.get('child_id')
-            registration_id = child.get('registration_id')
-
-            if not child_id or not registration_id:
-                logger.warning(f"Missing child_id or registration_id for child: {child}")
-                continue
-
-            attendance_child, created = MSCCAttendanceChild.objects.get_or_create(
-                attendance_day=attendance,
-                child_id=child_id,
-                registration_id=registration_id
-            )
-
-            attendance_child.attended = child.get('attended')
-            attendance_child.absence_reason = child.get('absence_reason')
-            attendance_child.absence_reason_other = child.get('absence_reason_other')
-            attendance_child.save()
-
+        _save_attendance(attendance_date)
         return True
+    except (OperationalError, InterfaceError) as ex:
+        error_message = str(ex).lower()
+        if "terminating connection due to administrator command" in error_message:
+            logger.warning("Retrying create_attendance after transient DB disconnect: %s", ex)
+            close_old_connections()
+            try:
+                _save_attendance(attendance_date)
+                return True
+            except Exception:
+                logger.exception("Error in create_attendance after retry")
+                return False
 
+        logger.exception("Error in create_attendance: %s", ex)
+        return False
     except Exception as ex:
         logger.exception("Error in create_attendance: %s", ex)
         return False
@@ -857,5 +873,4 @@ def validate_date(date_str):
             continue
 
     raise ValidationError("Date is not valid. Please use the format YYYY-MM-DD.")
-
 
