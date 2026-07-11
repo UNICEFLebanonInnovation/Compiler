@@ -41,12 +41,12 @@ from student_registration.schools.models import School
 from student_registration.backends.tasks import export_attendance
 from .utils import find_attendances, fill_attendancedt
 # calculate_absentees
-from .models import Attendance, Absentee, CLMAttendance, CLMAttendanceStudent, CLMStudentAbsences, CLMStudentTotalAttendance
+from .models import Attendance, Absentee, CLMAttendance, CLMAttendanceStudent, CLMStudentAbsences, CLMStudentTotalAttendance, MSCCAttendanceChild
 from student_registration.clm.models import Bridging
 from student_registration.schools.models import CLMRound
 from student_registration.backends.models import ExportHistory
 
-from .serializers import AttendanceSerializer, AbsenteeSerializer, AttendanceExportSerializer
+from .serializers import AttendanceSerializer, AbsenteeSerializer, AttendanceExportSerializer, MSCCAttendanceChildSerializer
 from .forms import MainAttendanceForm, AttendanceStudentForm, AttendanceAbsenceForm
 from student_registration.users.templatetags.custom_tags import has_group
 
@@ -132,9 +132,28 @@ class AbsenteeViewSet(mixins.ListModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
+        queryset = self.queryset
         if self.request.GET.get('days', None):
-            return self.queryset.filter(absent_days__lte=self.request.GET.get('days', None), absent_days__gte=5)
-        return []
+            return queryset.filter(
+                absent_days__lte=self.request.GET.get('days', None),
+                absent_days__gte=5,
+            )
+        return queryset.none()
+
+
+class MSCCAttendanceRateViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    model = MSCCAttendanceChild
+    queryset = MSCCAttendanceChild.objects.exclude(attendance_rate__isnull=True)
+    serializer_class = MSCCAttendanceChildSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        queryset = self.queryset
+        child_id = self.request.GET.get('child', None)
+        if child_id:
+            queryset = queryset.filter(child_id=child_id)
+            return queryset.order_by('child_id').distinct('child_id')
+        return queryset.none()
 
 
 class AbsenteeView(ListAPIView):

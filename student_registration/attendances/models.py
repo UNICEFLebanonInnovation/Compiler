@@ -205,7 +205,6 @@ class Absentee(TimeStampedModel):
 
     total_absent_days = models.IntegerField(blank=True, null=True)
     total_attended_days = models.IntegerField(blank=True, null=True)
-
     reattend_date = models.DateField(blank=True, null=True)
     validation_status = models.BooleanField(default=False)
     last_modification_date = models.DateField(blank=True, null=True)
@@ -729,6 +728,7 @@ class MSCCAttendanceChild(TimeStampedModel):
         choices=Child.YES_NO,
         verbose_name=_('Child Attended?')
     )
+    attendance_rate = models.FloatField(blank=True, null=True)
     absence_reason = models.CharField(
         max_length=50,
         blank=True,
