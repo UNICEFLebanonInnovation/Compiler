@@ -130,13 +130,11 @@ Example initialization snippet::
 
 
 
-Sentry
-^^^^^^
+Azure Application Insights
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Sentry is an error logging aggregator service. You can sign up for a free account at  https://sentry.io/signup/?code=cookiecutter  or download and host it yourself.
-The system is setup with reasonable defaults, including 404 logging and integration with the WSGI application.
-
-You must set the DSN url in production.
+The application uses Azure Application Insights (via OpenTelemetry) for error logging and telemetry.
+Set the ``AZURE_MONITOR_CONNECTION_STRING`` environment variable in production to enable it.
 
 
 Deployment
