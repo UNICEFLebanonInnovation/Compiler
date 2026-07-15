@@ -672,7 +672,7 @@ class EducationServiceForm(forms.ModelForm):
         self.fields['registration_id'].initial = registry
 
         programme_labels = dict(EducationService.EDUCATION_PROGRAM)
-        service_programs = list(ServiceProgramOption.objects.all())
+        service_programs = list(ServiceProgramOption.objects.filter(is_tarl='Yes'))
 
         if service_programs:
             service_names = {option.service_name for option in service_programs}

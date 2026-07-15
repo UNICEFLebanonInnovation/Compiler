@@ -39,6 +39,28 @@ class PackagesAdmin(ImportExportModelAdmin):
     )
 
 
+class ServiceProgramOptionAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'service_name',
+        'program_code',
+        'is_education',
+        'is_youth',
+        'is_tarl',
+    )
+    list_filter = (
+        'service_name',
+        'program_code',
+        'is_education',
+        'is_youth',
+        'is_tarl',
+    )
+    search_fields = (
+        'service_name',
+        'program_code',
+    )
+
+
 class ProvidedServicesResource(resources.ModelResource):
     class Meta:
         model = ProvidedServices
@@ -462,6 +484,7 @@ admin.site.register(Registration, RegistrationAdmin)
 admin.site.register(EducationHistory, EducationHistoryAdmin)
 admin.site.register(ProvidedServices, ProvidedServicesAdmin)
 admin.site.register(Packages, PackagesAdmin)
+admin.site.register(ServiceProgramOption, ServiceProgramOptionAdmin)
 admin.site.register(InclusionService, InclusionServiceAdmin)
 admin.site.register(DigitalService, DigitalServiceAdmin)
 admin.site.register(PSSService, PSSServiceAdmin)

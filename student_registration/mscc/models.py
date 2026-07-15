@@ -1162,6 +1162,13 @@ class ServiceProgramOption(models.Model):
         choices=YES_NO,
         verbose_name=_('Youth')
     )
+    is_tarl = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('TaRL')
+    )
 
     class Meta:
         ordering = ['service_name', 'program_code']
