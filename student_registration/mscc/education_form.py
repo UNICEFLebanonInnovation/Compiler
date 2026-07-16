@@ -735,19 +735,16 @@ class EducationServiceForm(forms.ModelForm):
             else:
                 current_round_id = None
 
-            # Get rounds already registered excluding the current
+            # Get rounds already registered under non-TLS registrations, excluding the current.
+            registered_education_services = EducationService.objects.filter(
+                registration__child_id=child_id,
+                registration__deleted=False
+            ).exclude(registration__type='TLS')
             if current_round_id:
-                rounds_registered = EducationService.objects.filter(
-                    registration__child_id=child_id,
-                    registration__deleted=False
-                ).exclude(
+                registered_education_services = registered_education_services.exclude(
                     round_id=current_round_id
-                ).values_list('round_id', flat=True)
-            else:
-                rounds_registered = EducationService.objects.filter(
-                    registration__child_id=child_id,
-                    registration__deleted=False
-                ).values_list('round_id', flat=True)
+                )
+            rounds_registered = registered_education_services.values_list('round_id', flat=True)
 
             # Remove any None values
             rounds_registered = [r for r in rounds_registered if r is not None]
