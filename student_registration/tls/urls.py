@@ -2,7 +2,6 @@ from django.urls import re_path
 
 from student_registration.mscc.views import (
     ChildProfilePreview,
-    NewRoundView,
     child_duplication_check,
     get_file,
     main_mark_delete_view,
@@ -23,7 +22,8 @@ urlpatterns = [
     re_path(r'^list/$', view=views.TLSListView.as_view(), name='list'),
     re_path(r'^export-list-background/$', view=views.export_list_background, name='export_list_background'),
     re_path(r'^export-download/(?P<file_name>.+)/$', view=get_file, name='export_download'),
-    re_path(r'^new-round/(?P<pk>[\w.@+-]+)/$', view=NewRoundView.as_view(), name='new_round'),
+    re_path(r'^new-round/(?P<pk>[\w.@+-]+)/$', view=views.TLSNewRoundView.as_view(), name='new_round'),
+    re_path(r'^new-round-redirect/$', view=views.TLSNewRoundRedirectView.as_view(), name='new_round_redirect'),
     re_path('outreach-child-search/$', outreach_child_search, name='outreach_child_search'),
     re_path('outreach-child/$', outreach_child, name='outreach_child'),
     re_path('old-child-search/$', old_child_search, name='old_child_search'),

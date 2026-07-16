@@ -1,4 +1,5 @@
 import codecs
+import copy
 import csv
 import io
 import threading
@@ -14,7 +15,7 @@ from django.db.models.functions import Coalesce
 from django.http import JsonResponse
 from django.urls import reverse, reverse_lazy
 from django.utils.encoding import smart_str
-from django.views.generic import FormView, TemplateView
+from django.views.generic import FormView, RedirectView, TemplateView
 
 from braces.views import GroupRequiredMixin
 from django_filters.views import FilterView
@@ -230,6 +231,43 @@ class TLSEducationServiceFormView(LoginRequiredMixin, GroupRequiredMixin, FormVi
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         form.save(request=self.request, registry=registry, package_type=self._resolve_package_type(), instance=instance)
         return super().form_valid(form)
+
+
+class TLSNewRoundView(LoginRequiredMixin, GroupRequiredMixin, TemplateView):
+    group_required = [u'TLS', u'TLS_CENTER', u'TLS_PARTNER', u'TLS_UNICEF']
+    template_name = 'tls/new_round.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['registry'] = self.kwargs.get('pk')
+        return context
+
+
+class TLSNewRoundRedirectView(LoginRequiredMixin, GroupRequiredMixin, RedirectView):
+    group_required = [u'TLS', u'TLS_CENTER', u'TLS_PARTNER', u'TLS_UNICEF']
+    permanent = False
+
+    def get_redirect_url(self):
+        registry = self.request.GET.get('registry')
+
+        if self.request.GET.get('new_round_confirmation') == 'confirmed':
+            registration = Registration.objects.get(id=registry)
+            new_registration = copy.copy(registration)
+            new_registration.pk = None
+            new_registration.round = None
+            new_registration.owner = self.request.user
+            new_registration.modified_by = self.request.user
+            new_registration.type = TLS_PACKAGE_TYPE
+            if self.request.user.center:
+                new_registration.center = self.request.user.center
+            if self.request.user.partner:
+                new_registration.partner = self.request.user.partner
+            new_registration.save()
+
+            generate_services(new_registration.child.age, new_registration, self.request.user)
+            return reverse('tls:service_education_add', kwargs={'registry': new_registration.id})
+
+        return reverse('tls:new_round', kwargs={'pk': registry})
 
 
 def _generate_filtered_tls_export(export_id, round_id=''):

@@ -1,0 +1,115 @@
+{% extends "tls/base.html" %}
+{% load static i18n %}
+{% load crispy_forms_tags %}
+{% load django_bootstrap5 %}
+{% load util_tags %}
+{% load simple_tags %}
+{% bootstrap_css %}
+
+{% block project_title %}New Round{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="app-page-title">
+      <div class="page-title-wrapper">
+          <div class="page-title-heading">
+              <div>
+                  <div class="page-title-head center-elem page-title-heading">
+                      <span class="d-inline-block pr-2">
+                          <i class="fa fa-id-card"></i>
+                      </span>
+                      <span class="d-inline-block">
+                        Register the Child in a new Round
+                      </span>
+                  </div>
+                  <div class="page-title-subheading opacity-10">
+                      <nav class="" aria-label="breadcrumb">
+                          <ol class="breadcrumb">
+                              <li class="breadcrumb-item">
+                                  <a href="{% url 'tls:list' %}">Home</a>
+                              </li>
+                              <li class="breadcrumb-item">
+                                    <a href="{% url 'tls:child_profile' registry %}?current_tab=services">{% get_child_fullname registry %}</a>
+                              </li>
+                               <li class="breadcrumb-item">
+                                     New Round
+                              </li>
+                          </ol>
+                      </nav>
+                  </div>
+              </div>
+          </div>
+          <div class="page-title-actions"></div>
+      </div>
+</div>
+
+<div class="main-card mb-3 card">
+    <div class="card-body">
+        <div id="smartwizard3" class="forms-wizard">
+            <ul class="forms-wizard">
+                <li>
+                    <a href="#step-1">
+                        <em>1</em><span>Register the Child in a new Round</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="form-wizard-content">
+                <form>
+                    <div id="step-1">
+                        <div class="row card-body">
+                            <h2>To add this child to a new round, click the "Confirm" button to create a new TLS registration and start adding the education information.</h2>
+                        </div>
+
+                        {% get_child_rounds registry as child_rounds %}
+                        {% if child_rounds %}
+                            <div class="row card-body">
+                                <h5>Registration History</h5><br>
+                            </div>
+                            {% for child_round in child_rounds %}
+                              <div class="row card-body">
+                                <h6>{{ child_round }}</h6><br>
+                              </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        <div class="form-group" style="padding-top: 100px;">
+                            <div class="">
+                                <a type="button" href="{% url 'tls:new_round_redirect' %}?registry={{ registry }}&new_round_confirmation=confirmed" name="new_round_confirmation" class="btn btn-primary btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success" id="submit-id-save">Confirm</a>
+                                <a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="{% url 'tls:list' %}">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const confirmButton = document.getElementById("submit-id-save");
+        let isSubmitting = false;
+
+        confirmButton.addEventListener("click", function (event) {
+            if (isSubmitting) {
+                event.preventDefault();
+                return;
+            }
+
+            isSubmitting = true;
+            confirmButton.classList.add("disabled");
+            confirmButton.setAttribute("aria-disabled", "true");
+            confirmButton.style.pointerEvents = "none";
+        });
+    });
+</script>
+
+{% endblock %}
