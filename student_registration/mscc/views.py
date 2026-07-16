@@ -790,6 +790,7 @@ def old_child_search(request):
                     .values(
                     'id',
                     'education_program',
+                    'registration__type',
                     'registration_date',
                     'class_section',
                     'registration__center__name',
