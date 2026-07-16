@@ -24,6 +24,7 @@ urlpatterns = [
     re_path(r'^export-download/(?P<file_name>.+)/$', view=get_file, name='export_download'),
     re_path(r'^new-round/(?P<pk>[\w.@+-]+)/$', view=views.TLSNewRoundView.as_view(), name='new_round'),
     re_path(r'^new-round-redirect/$', view=views.TLSNewRoundRedirectView.as_view(), name='new_round_redirect'),
+    re_path(r'^child-registration-cancel/(?P<pk>[\w.@+-]+)/$', view=views.tls_registration_cancel_view, name='child_registration_cancel'),
     re_path('outreach-child-search/$', outreach_child_search, name='outreach_child_search'),
     re_path('outreach-child/$', outreach_child, name='outreach_child'),
     re_path('old-child-search/$', old_child_search, name='old_child_search'),

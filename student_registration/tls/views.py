@@ -13,6 +13,7 @@ from django.db import connection
 from django.db.models import Count, Exists, IntegerField, OuterRef, Q, Subquery
 from django.db.models.functions import Coalesce
 from django.http import JsonResponse
+from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.encoding import smart_str
 from django.views.generic import FormView, RedirectView, TemplateView
@@ -268,6 +269,20 @@ class TLSNewRoundRedirectView(LoginRequiredMixin, GroupRequiredMixin, RedirectVi
             return reverse('tls:service_education_add', kwargs={'registry': new_registration.id})
 
         return reverse('tls:new_round', kwargs={'pk': registry})
+
+
+def tls_registration_cancel_view(request, pk):
+    if request.user.is_authenticated:
+        try:
+            registration = Registration.objects.get(id=pk)
+            registration.deleted = True
+            registration.save()
+            return redirect('tls:list')
+        except Registration.DoesNotExist:
+            result = {"isSuccessful": False}
+    else:
+        result = {"isSuccessful": False}
+    return JsonResponse(result)
 
 
 def _generate_filtered_tls_export(export_id, round_id=''):
