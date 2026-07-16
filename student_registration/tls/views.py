@@ -307,21 +307,17 @@ def _generate_filtered_tls_export(export_id, round_id=''):
         cursor = connection.cursor()
         center_id = user.center_id
         partner_id = user.partner_id or 0
-        is_world_learning = bool(user.partner and user.partner.is_world_learning)
         query_params = []
 
         if not round_id:
-            tls_data_query = 'SELECT * FROM vw_mscc_data WHERE id = 0'
+            tls_data_query = 'SELECT * FROM vw_tls_data WHERE id = 0'
         elif round_id == 'no_round':
-            tls_data_query = 'SELECT * FROM vw_mscc_wl_data_no_round WHERE id > 0' if is_world_learning else 'SELECT * FROM vw_mscc_data_no_round WHERE id > 0'
+            tls_data_query = 'SELECT * FROM vw_tls_data_no_round WHERE id > 0'
         else:
-            tls_data_query = 'SELECT * FROM vw_mscc_wl_data WHERE round_id = %s' if is_world_learning else 'SELECT * FROM vw_mscc_data WHERE round_id = %s'
+            tls_data_query = 'SELECT * FROM vw_tls_data WHERE round_id = %s'
             query_params.append(round_id)
 
-        tls_data_query += ' AND type = %s'
-        query_params.append(TLS_PACKAGE_TYPE)
-
-        if has_group(user, 'TLS_UNICEF') or is_world_learning:
+        if has_group(user, 'TLS_UNICEF'):
             tls_data_query += ' AND id > 0'
         elif has_group(user, 'TLS_PARTNER') and partner_id:
             tls_data_query += ' AND partner_id = %s'
