@@ -116,17 +116,23 @@ def get_regitration_type(registry):
 
 
 @register.simple_tag
-def get_child_rounds(registry):
+def get_child_rounds(registry, exclude_registration_type=None):
     from django.db.models import Subquery
     registration_ids = Registration.objects.filter(
         child_id=Subquery(
             Registration.objects.filter(id=registry).values('child_id')[:1]
         )
     ).values_list('id', flat=True)
+    education_services = EducationService.objects.filter(
+        registration_id__in=registration_ids,
+        registration__deleted=False,
+    )
+    if exclude_registration_type:
+        education_services = education_services.exclude(registration__type=exclude_registration_type)
+
     round_names = Round.objects.filter(
-        id__in=EducationService.objects.filter
-        (registration_id__in=registration_ids,
-         registration__deleted=False).values_list('round_id',flat=True)).values_list('name', flat=True).distinct()
+        id__in=education_services.values_list('round_id', flat=True)
+    ).values_list('name', flat=True).distinct()
 
     if round_names:
         return round_names
