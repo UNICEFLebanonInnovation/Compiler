@@ -723,14 +723,16 @@ class EducationServiceForm(forms.ModelForm):
             if current_round_id:
                 rounds_registered = EducationService.objects.filter(
                     registration__child_id=child_id,
-                    registration__deleted=False
+                    registration__deleted=False,
+                    registration__type=DEFAULT_PACKAGE_TYPE,
                 ).exclude(
                     round_id=current_round_id
                 ).values_list('round_id', flat=True)
             else:
                 rounds_registered = EducationService.objects.filter(
                     registration__child_id=child_id,
-                    registration__deleted=False
+                    registration__deleted=False,
+                    registration__type=DEFAULT_PACKAGE_TYPE,
                 ).values_list('round_id', flat=True)
 
             # Remove any None values
