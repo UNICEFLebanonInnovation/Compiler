@@ -535,8 +535,9 @@ function append_old_result(data)
         var full_name = "";
         full_name = full_name.concat(child.first_name, " ", child.father_name, " ", child.last_name);
         var educationPrograms = $.map(item.education_service_history || [], function (service) {
+            var typeName = service.registration__type === 'TLS' ? 'TLS' : 'Makani';
             var roundName = service.round__name ? (' - ' + service.round__name) : '';
-            return service.education_program + roundName;
+            return typeName + '- ' + service.education_program + roundName;
         }).join('<br>');
 
 
