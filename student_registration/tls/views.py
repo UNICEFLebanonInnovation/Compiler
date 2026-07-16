@@ -240,7 +240,22 @@ class TLSNewRoundView(LoginRequiredMixin, GroupRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['registry'] = self.kwargs.get('pk')
+        registry = self.kwargs.get('pk')
+        registration_ids = Registration.objects.filter(
+            child_id=Subquery(
+                Registration.objects.filter(id=registry).values('child_id')[:1]
+            ),
+            type=TLS_PACKAGE_TYPE,
+        ).values_list('id', flat=True)
+        child_rounds = Round.objects.filter(
+            id__in=EducationService.objects.filter(
+                registration_id__in=registration_ids,
+                registration__deleted=False,
+            ).values_list('round_id', flat=True)
+        ).values_list('name', flat=True).distinct()
+
+        context['registry'] = registry
+        context['child_rounds'] = child_rounds or None
         return context
 
 
