@@ -836,11 +836,27 @@ load_districts = location_views.load_districts
 load_cadasters = location_views.load_cadasters
 
 
+def _get_accessible_program_documents(request):
+    program_documents = ProgramDocument.objects.all()
+    if (
+        has_group(request.user, 'YOUTH_PARTNER')
+        and request.user.partner_id
+    ):
+        program_documents = program_documents.filter(partner_id=request.user.partner_id)
+    elif not has_group(request.user, 'YOUTH_UNICEF'):
+        program_documents = ProgramDocument.objects.none()
+    return program_documents
+
+
 def load_program_document(request):
-    program_documents = []
+    program_documents = ProgramDocument.objects.none()
     if request.GET.get('id_donor'):
         id_donor = request.GET.get('id_donor')
-        program_documents = ProgramDocument.objects.filter(donors__id=id_donor).order_by('project_name')
+        program_documents = (
+            _get_accessible_program_documents(request)
+            .filter(donors__id=id_donor)
+            .order_by('project_name')
+        )
     return render(request, 'youth/program_document_dropdown_list_options.html', {'program_documents': program_documents})
 
 
@@ -852,7 +868,7 @@ def load_master_program(request):
         id_program_document = request.GET.get('id_program_document')
 
         # Fetch the ProgramDocument by id
-        program_document = ProgramDocument.objects.filter(id=id_program_document).first()
+        program_document = _get_accessible_program_documents(request).filter(id=id_program_document).first()
 
         if program_document:
             master_programs = MasterProgram.objects.filter(

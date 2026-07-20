@@ -114,6 +114,8 @@ class EnrolledProgramsForm(forms.ModelForm):
 
         super(EnrolledProgramsForm, self).__init__(*args, **kwargs)
 
+        self.fields['program_document'].queryset = self._get_program_document_queryset()
+
         for field_name in ['governorate', 'district', 'cadaster']:
             if field_name in self.fields:
                 self.fields[field_name].label_from_instance = _name_en_label
@@ -260,6 +262,16 @@ class EnrolledProgramsForm(forms.ModelForm):
                 css_id='step-1'
             )
         )
+
+
+    def _get_program_document_queryset(self):
+        queryset = ProgramDocument.objects.all().order_by('project_name')
+        if self.request and has_group(self.request.user, 'YOUTH_PARTNER'):
+            if self.request.user.partner_id:
+                queryset = queryset.filter(partner_id=self.request.user.partner_id)
+            else:
+                queryset = ProgramDocument.objects.none()
+        return queryset
 
     def _apply_posted_program_data(self, instance, request, registry=None):
         from datetime import datetime
