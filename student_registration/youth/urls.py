@@ -136,6 +136,11 @@ urlpatterns = [
         name='load_program_document'
     ),
     re_path(
+        r'^load-donor/$',
+        views.load_donor,
+        name='load_donor'
+    ),
+    re_path(
         r'^load-master-program/$',
         views.load_master_program,
         name='load_master_program'

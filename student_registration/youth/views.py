@@ -45,7 +45,8 @@ from .models import (
     ProgramDocument,
     SubProgram,
     EnrolledPrograms,
-    ProgramDocumentIndicator
+    ProgramDocumentIndicator,
+    Donor
 )
 
 from .forms import (
@@ -849,15 +850,18 @@ def _get_accessible_program_documents(request):
 
 
 def load_program_document(request):
-    program_documents = ProgramDocument.objects.none()
-    if request.GET.get('id_donor'):
-        id_donor = request.GET.get('id_donor')
-        program_documents = (
-            _get_accessible_program_documents(request)
-            .filter(donors__id=id_donor)
-            .order_by('project_name')
-        )
+    program_documents = _get_accessible_program_documents(request).order_by('project_name')
     return render(request, 'youth/program_document_dropdown_list_options.html', {'program_documents': program_documents})
+
+
+def load_donor(request):
+    donors = Donor.objects.none()
+    if request.GET.get('id_program_document'):
+        id_program_document = request.GET.get('id_program_document')
+        program_document = _get_accessible_program_documents(request).filter(id=id_program_document).first()
+        if program_document:
+            donors = program_document.donors.filter(active=True).order_by('name')
+    return render(request, 'youth/donor_dropdown_list_options.html', {'donors': donors})
 
 
 def load_master_program(request):

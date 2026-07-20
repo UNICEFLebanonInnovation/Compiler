@@ -41,14 +41,24 @@ $(document).ready(function() {
 
 function load_program_document(url)
 {
-    var value = $("#id_donor").val();
+    $.ajax({
+        url: url,
+        success: function (data) {
+            $("#id_program_document").html(data);
+        }
+    })
+}
+
+function load_donor(url)
+{
+    var value = $("#id_program_document").val();
     $.ajax({
         url: url,
         data: {
-            'id_donor': value
+            'id_program_document': value
         },
         success: function (data) {
-            $("#id_program_document").html(data);
+            $("#id_donor").html(data);
         }
     })
 }

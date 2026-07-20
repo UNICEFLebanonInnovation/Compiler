@@ -1,0 +1,4 @@
+<option value="">---------</option>
+{% for donor in donors %}
+<option value="{{ donor.pk }}">{{ donor.name }}</option>
+{% endfor %}
