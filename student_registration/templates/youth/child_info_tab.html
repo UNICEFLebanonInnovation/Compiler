@@ -357,8 +357,7 @@
     <div>
       <div class="widget-heading">{{ prog.program }}</div>
       <div class="widget-subheading">
-        {{ prog.sub_program }} -- {{ prog.registration_date }} -- {{ prog.completion_date }}
-      </div>
+      {% if prog.sub_program %}{{ prog.sub_program }}{% else %}{{ prog.master_program }}{% endif %} -- {{ prog.registration_date }} -- {{ prog.completion_date }}      </div>
     </div>
 
     <!-- Action icons -->

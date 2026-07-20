@@ -114,6 +114,9 @@ class EnrolledProgramsForm(forms.ModelForm):
 
         super(EnrolledProgramsForm, self).__init__(*args, **kwargs)
 
+        self.fields['program_document'].queryset = self._get_program_document_queryset()
+        self.fields['donor'].queryset = self._get_donor_queryset()
+
         for field_name in ['governorate', 'district', 'cadaster']:
             if field_name in self.fields:
                 self.fields[field_name].label_from_instance = _name_en_label
@@ -204,9 +207,9 @@ class EnrolledProgramsForm(forms.ModelForm):
             ),
             Div(
                 HTML('<span class="badge-form badge-pill">4</span>'),
-                Div('donor', css_class='col-md-3'),
-                HTML('<span class="badge-form badge-pill">5</span>'),
                 Div('program_document', css_class='col-md-3'),
+                HTML('<span class="badge-form badge-pill">5</span>'),
+                Div('donor', css_class='col-md-3'),
                 css_class='row card-body'
             ),
             Div(
@@ -260,6 +263,32 @@ class EnrolledProgramsForm(forms.ModelForm):
                 css_id='step-1'
             )
         )
+
+
+    def _get_selected_program_document_id(self):
+        return (
+            self.data.get('program_document')
+            or self.initial.get('program_document')
+            or getattr(self.instance, 'program_document_id', None)
+        )
+
+    def _get_donor_queryset(self):
+        program_document_id = self._get_selected_program_document_id()
+        if not program_document_id:
+            return Donor.objects.none()
+        return Donor.objects.filter(
+            active=True,
+            programdocument__id=program_document_id,
+        ).distinct().order_by('name')
+
+    def _get_program_document_queryset(self):
+        queryset = ProgramDocument.objects.all().order_by('project_name')
+        if self.request and has_group(self.request.user, 'YOUTH_PARTNER'):
+            if self.request.user.partner_id:
+                queryset = queryset.filter(partner_id=self.request.user.partner_id)
+            else:
+                queryset = ProgramDocument.objects.none()
+        return queryset
 
     def _apply_posted_program_data(self, instance, request, registry=None):
         from datetime import datetime
@@ -339,8 +368,13 @@ class EnrolledProgramsForm(forms.ModelForm):
         cleaned_data = super(EnrolledProgramsForm, self).clean()
         registration_date = cleaned_data.get("registration_date")
         completion_date = cleaned_data.get("completion_date")
+        donor = cleaned_data.get('donor')
+        program_document = cleaned_data.get('program_document')
         if registration_date and completion_date and registration_date > completion_date:
             self.add_error('registration_date', 'Registration Date must be less than Completion Date')
+
+        if donor and program_document and not program_document.donors.filter(pk=donor.pk).exists():
+            self.add_error('donor', _('Please select a donor connected to the selected Program Document.'))
 
         selected_registration_ids = cleaned_data.get('selected_registration_ids')
         if not cleaned_data.get('registration_id') and not selected_registration_ids:

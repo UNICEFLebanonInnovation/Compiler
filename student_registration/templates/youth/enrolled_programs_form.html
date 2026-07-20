@@ -98,13 +98,14 @@
 
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/youth/enrolled_programs.js' %}?v=7"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/youth/enrolled_programs.js' %}?v=8"></script>
     <script type="text/javascript" src="{% static 'js/youth/general.js' %}?v=1"></script>
 
     <script>
       var url_districts = "{% url 'youth:load_districts' %}";
       var url_cadasters = "{% url 'youth:load_cadasters' %}";
       var url_program_document = "{% url 'youth:load_program_document' %}";
+      var url_donor = "{% url 'youth:load_donor' %}";
       var url_master_program = "{% url 'youth:load_master_program' %}";
       var url_sub_programs = "{% url 'youth:load_sub_programs' %}";
 
@@ -116,11 +117,8 @@
           load_cadasters(url_cadasters);
       });
 
-      $("#id_donor").change(function () {
-          load_program_document(url_program_document);
-          load_master_program(url_master_program);
-      });
       $("#id_program_document").change(function () {
+          load_donor(url_donor);
           load_master_program(url_master_program);
       });
       $("#id_master_program").change(function () {
