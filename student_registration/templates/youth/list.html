@@ -70,6 +70,12 @@
     #enroll-checked-registrations {
         max-width: 520px;
     }
+    .enroll-selection-basket {
+        align-items: center;
+        display: inline-flex;
+        gap: 0.5rem;
+        white-space: nowrap;
+    }
     @media (max-width: 1400px) {
         .youth-list-title-wrapper {
             row-gap: 1rem;
@@ -120,6 +126,8 @@
                         <div class="page-title-actions youth-list-actions">
 <a href="{% url 'youth:child_add' %}?type=Core-Package" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Beneficiary</a>
 <button type="button" id="enroll-checked-registrations" class="mr-3 btn-icon btn btn-info"><i class="fa fa-check btn-icon-wrapper"> </i>Enroll the checked Registrations in a Program</button>
+<span class="enroll-selection-basket text-muted">Selected: <strong id="enroll-selected-count">0</strong></span>
+<button type="button" id="clear-enroll-program-selection" class="mr-3 btn btn-outline-secondary" style="display: none;">Clear selected</button>
 <a href="{% url 'backends:adolescent_upload' %}?type=Core-Package" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Bulk Import</a>
                         </div>
                         </div>
@@ -180,7 +188,7 @@
       window.youthBulkEnrollProgramsUrl = "{% url 'youth:program_enrolled_programs_add_bulk' %}";
     </script>
     <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/youth/list.js' %}?v=31"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/youth/list.js' %}?v=32"></script>
     <script type="text/javascript" src="{% static 'js/youth/general.js' %}?v=1"></script>
 
 

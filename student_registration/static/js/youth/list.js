@@ -3,31 +3,87 @@
 $(document).ready(function() {
 
 
+    var enrollSelectionStorageKey = "youthEnrollProgramSelectedRegistrations";
+
+    function getStoredEnrollProgramSelections() {
+        try {
+            return JSON.parse(window.localStorage.getItem(enrollSelectionStorageKey) || "[]").map(String);
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function storeEnrollProgramSelections(registrationIds) {
+        window.localStorage.setItem(enrollSelectionStorageKey, JSON.stringify(registrationIds));
+    }
+
+    function updateEnrollProgramSelectionSummary() {
+        var selectedCount = getStoredEnrollProgramSelections().length;
+        $("#enroll-selected-count").text(selectedCount);
+        $("#clear-enroll-program-selection").toggle(selectedCount > 0);
+    }
+
+    function syncEnrollProgramCheckboxesFromStorage() {
+        var selectedIds = getStoredEnrollProgramSelections();
+        $(".enroll-program-checkbox").each(function() {
+            $(this).prop("checked", selectedIds.indexOf(String($(this).val())) !== -1);
+        });
+    }
+
     function updateEnrollProgramCheckAllState() {
         var $checkboxes = $(".enroll-program-checkbox");
         var $checkAll = $("#enroll-program-check-all");
 
         if (!$checkAll.length || !$checkboxes.length) {
+            updateEnrollProgramSelectionSummary();
             return;
         }
 
         var checkedCount = $checkboxes.filter(":checked").length;
         $checkAll.prop("checked", checkedCount === $checkboxes.length);
         $checkAll.prop("indeterminate", checkedCount > 0 && checkedCount < $checkboxes.length);
+        updateEnrollProgramSelectionSummary();
+    }
+
+    function setEnrollProgramSelection(registrationId, selected) {
+        registrationId = String(registrationId);
+        var selectedIds = getStoredEnrollProgramSelections();
+        var selectedIndex = selectedIds.indexOf(registrationId);
+
+        if (selected && selectedIndex === -1) {
+            selectedIds.push(registrationId);
+        } else if (!selected && selectedIndex !== -1) {
+            selectedIds.splice(selectedIndex, 1);
+        }
+
+        storeEnrollProgramSelections(selectedIds);
     }
 
     $(document).on("change", "#enroll-program-check-all", function() {
-        $(".enroll-program-checkbox").prop("checked", $(this).prop("checked"));
+        var checked = $(this).prop("checked");
+        $(".enroll-program-checkbox").each(function() {
+            $(this).prop("checked", checked);
+            setEnrollProgramSelection($(this).val(), checked);
+        });
         updateEnrollProgramCheckAllState();
     });
 
-    $(document).on("change", ".enroll-program-checkbox", updateEnrollProgramCheckAllState);
+    $(document).on("change", ".enroll-program-checkbox", function() {
+        setEnrollProgramSelection($(this).val(), $(this).prop("checked"));
+        updateEnrollProgramCheckAllState();
+    });
+
+    syncEnrollProgramCheckboxesFromStorage();
     updateEnrollProgramCheckAllState();
 
+    $(document).on("click", "#clear-enroll-program-selection", function() {
+        storeEnrollProgramSelections([]);
+        $(".enroll-program-checkbox").prop("checked", false);
+        updateEnrollProgramCheckAllState();
+    });
+
     $(document).on("click", "#enroll-checked-registrations", function() {
-        var registrationIds = $(".enroll-program-checkbox:checked").map(function() {
-            return $(this).val();
-        }).get();
+        var registrationIds = getStoredEnrollProgramSelections();
 
         if (!registrationIds.length) {
             alert("Please check at least one registration to enroll.");
