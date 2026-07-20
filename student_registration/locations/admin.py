@@ -33,8 +33,23 @@ class LocationResource(resources.ModelResource):
 class LocationAdmin(ImportExportModelAdmin):
     resource_class = LocationResource
     list_display = (
-        'name', 'parent'
+        'name',
+        'name_en',
+        'type',
+        'p_code',
+        'parent',
     )
+    list_filter = (
+        'type',
+    )
+    search_fields = (
+        'name',
+        'name_en',
+        'p_code',
+    )
+
+
+
 
     def get_export_formats(self):
         from student_registration.users.utils import get_default_export_formats
