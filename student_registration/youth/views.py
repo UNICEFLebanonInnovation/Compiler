@@ -902,8 +902,23 @@ def load_sub_program(request):
     ]
 
     if master_program_ids:
+        sub_program_queryset = SubProgram.objects.filter(master_program_id__in=master_program_ids)
+
+        program_document_id = request.GET.get('id_program_document')
+        if program_document_id:
+            program_document = _get_accessible_program_documents(request).filter(id=program_document_id).first()
+            if program_document:
+                sub_program_queryset = sub_program_queryset.filter(
+                    id__in=program_document.indicators
+                        .filter(sub_indicator__isnull=False)
+                        .values_list('sub_indicator_id', flat=True)
+                        .distinct()
+                )
+            else:
+                sub_program_queryset = SubProgram.objects.none()
+
         sub_programs = sorted(
-            SubProgram.objects.filter(master_program_id__in=master_program_ids),
+            sub_program_queryset,
             key=_indicator_number_sort_key
         )
 

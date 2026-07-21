@@ -73,6 +73,7 @@ function load_master_program(url)
         },
         success: function (data) {
             $("#id_master_program").html(data);
+            $("#id_sub_program").html('<option value="">---------</option>');
         }
     })
 }
@@ -80,10 +81,12 @@ function load_master_program(url)
 function load_sub_programs(url)
 {
     var value = $("#id_master_program").val();
+    var programDocument = $("#id_program_document").val();
     $.ajax({
         url: url,
         data: {
-            'id_master_program': value
+            'id_master_program': value,
+            'id_program_document': programDocument
         },
         success: function (data) {
             $("#id_sub_program").html(data);

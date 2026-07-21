@@ -116,6 +116,8 @@ class EnrolledProgramsForm(forms.ModelForm):
 
         self.fields['program_document'].queryset = self._get_program_document_queryset()
         self.fields['donor'].queryset = self._get_donor_queryset()
+        self.fields['master_program'].queryset = self._get_master_program_queryset()
+        self.fields['sub_program'].queryset = self._get_sub_program_queryset()
 
         for field_name in ['governorate', 'district', 'cadaster']:
             if field_name in self.fields:
@@ -289,6 +291,35 @@ class EnrolledProgramsForm(forms.ModelForm):
             else:
                 queryset = ProgramDocument.objects.none()
         return queryset
+
+    def _get_selected_master_program_id(self):
+        return (
+            self.data.get('master_program')
+            or self.initial.get('master_program')
+            or getattr(self.instance, 'master_program_id', None)
+        )
+
+    def _get_master_program_queryset(self):
+        program_document_id = self._get_selected_program_document_id()
+        if not program_document_id:
+            return MasterProgram.objects.none()
+
+        return MasterProgram.objects.filter(
+            id__in=ProgramDocument.objects.filter(id=program_document_id)
+                .values_list('indicators__master_indicator_id', flat=True)
+        ).distinct().order_by('number', 'name')
+
+    def _get_sub_program_queryset(self):
+        program_document_id = self._get_selected_program_document_id()
+        master_program_id = self._get_selected_master_program_id()
+        if not program_document_id or not master_program_id:
+            return SubProgram.objects.none()
+
+        return SubProgram.objects.filter(
+            id__in=ProgramDocument.objects.filter(id=program_document_id)
+                .values_list('indicators__sub_indicator_id', flat=True),
+            master_program_id=master_program_id,
+        ).distinct().order_by('number', 'name')
 
     def _apply_posted_program_data(self, instance, request, registry=None):
         from datetime import datetime
