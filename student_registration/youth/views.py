@@ -64,10 +64,6 @@ from student_registration.locations import views as location_views
 logger = logging.getLogger(__name__)
 
 
-class DashboardView(LoginRequiredMixin, TemplateView):
-    template_name = 'youth/dashboard.html'
-
-
 def _indicator_number_sort_key(indicator):
     try:
         return (0, [int(p) for p in indicator.number.split('.')])
