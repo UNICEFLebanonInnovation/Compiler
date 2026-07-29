@@ -254,7 +254,7 @@
                                     {% endif %}
                                     {% if request.user|has_group:"YOUTH_UNICEF" %}
                                     <div class="col-sm-6 col-xl-4">
-                                        <a href="" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                        <a href="{% url 'youth:dashboard' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-display1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
                                             Youth Dashboard
                                         </a>

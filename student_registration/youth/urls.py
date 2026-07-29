@@ -41,6 +41,11 @@ urlpatterns = [
         name='list'
     ),
     re_path(
+        r'^dashboard/$',
+        view=views.DashboardView.as_view(),
+        name='dashboard'
+    ),
+    re_path(
         r'^pd-list/$',
         view=views.PDListView.as_view(),
         name='pd_list'
