@@ -998,31 +998,6 @@ def save_indicators(request):
         indicators = payload.get('indicators', [])
         deleted_ids = payload.get('deleted_ids', [])
 
-        master_indicator_ids = {
-            item.get('master_indicator')
-            for item in indicators
-            if item.get('master_indicator')
-        }
-        masters_with_sub_indicators = {
-            str(master_id)
-            for master_id in SubProgram.objects.filter(
-                master_program_id__in=master_indicator_ids
-            ).values_list('master_program_id', flat=True)
-        }
-
-        for item in indicators:
-            master_indicator_id = item.get('master_indicator')
-            if (
-                str(master_indicator_id) in masters_with_sub_indicators
-                and not item.get('sub_indicator')
-            ):
-                return JsonResponse({
-                    'error': (
-                        'Sub indicator is required for the selected master '
-                        'indicator.'
-                    )
-                }, status=400)
-
         if deleted_ids:
             ProgramDocumentIndicator.objects.filter(id__in=deleted_ids).delete()
 
