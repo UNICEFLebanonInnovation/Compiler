@@ -45,7 +45,15 @@ EXTRA_MIDDLEWARE = ['student_registration.middleware.AutoLogout',
                     # 'student_registration.one_session.OneSessionPerUserMiddleware',
                     'student_registration.hsts_middleware.HSTSMiddleware',
                     'student_registration.xframe_middleware.XFrameMiddleware', ]
-MIDDLEWARE = WHITENOISE_MIDDLEWARE + MIDDLEWARE + EXTRA_MIDDLEWARE
+SESSION_MIDDLEWARE = "django.contrib.sessions.middleware.SessionMiddleware"
+
+# Ensure the session middleware appears before CsrfViewMiddleware so CSRF_USE_SESSIONS works
+# even if additional middlewares are prepended.
+MIDDLEWARE = WHITENOISE_MIDDLEWARE + [
+    SESSION_MIDDLEWARE,
+] + [
+    middleware for middleware in MIDDLEWARE if middleware != SESSION_MIDDLEWARE
+] + EXTRA_MIDDLEWARE
 
 
 # SECURITY CONFIGURATION
