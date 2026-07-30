@@ -109,7 +109,7 @@
       let subOptions = '<option value="">Select Sub Indicator</option>';
       let isSubEnabled = false;
 
-      if (selectedMaster && subIndicators[selectedMaster]) {
+      if (selectedMaster && (subIndicators[selectedMaster] || []).length > 0) {
         isSubEnabled = true;
         $.each(subIndicators[selectedMaster], function (i, item) {
           subOptions += `<option value="${item.id}" ${item.id == selectedSub ? 'selected' : ''}>${item.name}</option>`;
@@ -124,7 +124,7 @@
             </select>
           </div>
           <div class="col-md-3">
-            <select class="form-control sub-select" name="sub_indicator_${id}" id="sub_${id}" ${isSubEnabled ? '' : 'disabled'}>
+            <select class="form-control sub-select ${isSubEnabled ? 'required-field' : ''}" name="sub_indicator_${id}" id="sub_${id}" ${isSubEnabled ? 'required' : 'disabled'}>
               ${subOptions}
             </select>
           </div>
@@ -180,13 +180,13 @@
       const subSelect = $(`#sub_${rowId}`);
 
       let subOptions = '<option value="">Select Sub Indicator</option>';
-      if (masterId && subIndicators[masterId]) {
+      if (masterId && (subIndicators[masterId] || []).length > 0) {
         $.each(subIndicators[masterId], function (i, item) {
           subOptions += `<option value="${item.id}">${item.name}</option>`;
         });
-        subSelect.prop('disabled', false);
+        subSelect.prop('disabled', false).prop('required', true).addClass('required-field');
       } else {
-        subSelect.prop('disabled', true);
+        subSelect.prop('disabled', true).prop('required', false).removeClass('required-field');
       }
       subSelect.html(subOptions);
     });
@@ -206,7 +206,10 @@
         // reset
         row.find('.form-control').css('border', '');
 
-        if (!masterIndicator || target === '') {
+        const masterHasSubIndicators = masterIndicator
+          && (subIndicators[masterIndicator] || []).length > 0;
+
+        if (!masterIndicator || target === '' || (masterHasSubIndicators && !subIndicator)) {
           hasError = true;
           row.find('.required-field').each(function () {
             if (!$(this).val()?.trim()) {
