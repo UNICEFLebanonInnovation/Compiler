@@ -4,10 +4,20 @@ var arabic_fields = "#id_child_first_name, #id_child_father_name, #id_child_last
 
 $(document).ready(function() {
 
-    $("#submit-id-save").closest('form').submit(function(){
-        // Validation is handled by MainForm on the server, where conditional
-        // requirements match the fields shown by reorganizeForm().
-        $(this).find('#submit-id-save').prop('disabled', true);
+    $("#submit-id-save").click(function(e){
+        var form = $(this).closest('form')[0];
+        var valid = true;
+
+        if (typeof validateMainForm === 'function') {
+            valid = validateMainForm(true);
+        }
+
+        if (valid) {
+            $(this).prop('disabled', true);
+            form.submit();
+        } else {
+            e.preventDefault();
+        }
     });
 
 
@@ -892,9 +902,31 @@ function validateMainForm(showModal, step) {
     };
     clearErrors();
 
+    // The wizard hides inactive steps. Native HTML validation cannot focus a
+    // required control in one of those steps and aborts submission with
+    // "An invalid form control ... is not focusable". Validate all required
+    // controls ourselves instead, while ignoring controls deliberately hidden
+    // by conditional form logic.
+    var requiredControlScope = step ? '#step-' + step + ' [required]' : 'form [required]';
+    $(requiredControlScope).each(function() {
+        var field = $(this);
+        if (field.prop('disabled') || field.closest('.d-none').length) return;
+
+        if (field.is(':checkbox') || field.is(':radio')) {
+            var name = field.attr('name');
+            if ($('input[name="' + name + '"]:checked').length === 0) {
+                showError('input[name="' + name + '"]:first', 'This field is required');
+                valid = false;
+            }
+        } else if (!field.val()) {
+            showError('#' + field.attr('id'), 'This field is required');
+            valid = false;
+        }
+    });
+
     requiredFields.forEach(function(selector) {
         var field = $(selector);
-        if (!field.is(':visible')) return;
+        if (field.closest('.d-none').length) return;
         if (!field.val()) {
             showError(selector, 'This field is required');
             valid = false;
