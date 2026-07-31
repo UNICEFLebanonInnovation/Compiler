@@ -6,19 +6,16 @@ $(document).ready(function() {
 
     $("#submit-id-save").click(function(e){
         var form = $(this).closest('form')[0];
-        var valid = form.checkValidity();
+        var valid = true;
 
         if (typeof validateMainForm === 'function') {
-            valid = validateMainForm(true) && valid;
+            valid = validateMainForm(true);
         }
 
         if (valid) {
             $(this).prop('disabled', true);
             form.submit();
         } else {
-            if (typeof form.reportValidity === 'function') {
-                form.reportValidity();
-            }
             e.preventDefault();
         }
     });
@@ -904,9 +901,31 @@ function validateMainForm(showModal, step) {
     };
     clearErrors();
 
+    // The wizard hides inactive steps. Native HTML validation cannot focus a
+    // required control in one of those steps and aborts submission with
+    // "An invalid form control ... is not focusable". Validate all required
+    // controls ourselves instead, while ignoring controls deliberately hidden
+    // by conditional form logic.
+    var requiredControlScope = step ? '#step-' + step + ' [required]' : 'form [required]';
+    $(requiredControlScope).each(function() {
+        var field = $(this);
+        if (field.prop('disabled') || field.closest('.d-none').length) return;
+
+        if (field.is(':checkbox') || field.is(':radio')) {
+            var name = field.attr('name');
+            if ($('input[name="' + name + '"]:checked').length === 0) {
+                showError('input[name="' + name + '"]:first', 'This field is required');
+                valid = false;
+            }
+        } else if (!field.val()) {
+            showError('#' + field.attr('id'), 'This field is required');
+            valid = false;
+        }
+    });
+
     requiredFields.forEach(function(selector) {
         var field = $(selector);
-        if (!field.is(':visible')) return;
+        if (field.closest('.d-none').length) return;
         if (!field.val()) {
             showError(selector, 'This field is required');
             valid = false;

@@ -111,7 +111,7 @@
                     </ul>
 
                     <div class="form-wizard-content">
-                                            <form method="post" action="{{ form.helper.form_action }}">
+                                            <form method="post" action="{{ form.helper.form_action }}" novalidate>
                                                 {% csrf_token %}
                                                 {% for h in form.hidden_fields %}
                                                     {{ h }}
@@ -387,7 +387,7 @@
 {% block extra_js %}
 
     <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}?v=1"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/tls/tls.js' %}?v=2"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/tls/tls.js' %}?v=3"></script>
     <!--<script type="text/javascript">-->
         <!--(function () {-->
             <!--function hidePageLoader() {-->
