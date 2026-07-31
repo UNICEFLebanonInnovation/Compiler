@@ -100,6 +100,7 @@ class Center(TimeStampedModel):
         ('Informal Settlement', _('Informal Settlement')),
         ('Welfare Center', _('Welfare Center')),
         ('Community Hub', _('Community Hub')),
+        ('SDC', _('SDC')),
     )
     PROVIDED_PACKAGES = Choices(
         ('Education', 'Education'),
