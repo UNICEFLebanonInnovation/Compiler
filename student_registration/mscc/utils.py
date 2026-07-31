@@ -62,6 +62,7 @@ def parse_attendance_date(value):
 
 
 DEFAULT_PACKAGE_TYPE = 'Core-Package'
+ATTENDANCE_PACKAGE_TYPES = ('Core-Package')
 
 
 def to_array(fields, obj):
@@ -573,7 +574,7 @@ def load_child_attendance(center_id, round_id, attendance_date, education_progra
             registrations = (
                 Registration.objects.filter(
                     center_id=center_id,
-                    type='Core-Package',
+                    type__in=ATTENDANCE_PACKAGE_TYPES,
                     deleted=False,
                     round_id=round_id,
                 )
@@ -618,7 +619,7 @@ def load_child_attendance(center_id, round_id, attendance_date, education_progra
             registrations = (
                 Registration.objects.filter(
                     center_id=center_id,
-                    type='Core-Package',
+                    type__in=ATTENDANCE_PACKAGE_TYPES,
                     deleted=False,
                     round_id=round_id,
                 )

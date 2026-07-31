@@ -4,23 +4,10 @@ var arabic_fields = "#id_child_first_name, #id_child_father_name, #id_child_last
 
 $(document).ready(function() {
 
-    $("#submit-id-save").click(function(e){
-        var form = $(this).closest('form')[0];
-        var valid = form.checkValidity();
-
-        if (typeof validateMainForm === 'function') {
-            valid = validateMainForm(true) && valid;
-        }
-
-        if (valid) {
-            $(this).prop('disabled', true);
-            form.submit();
-        } else {
-            if (typeof form.reportValidity === 'function') {
-                form.reportValidity();
-            }
-            e.preventDefault();
-        }
+    $("#submit-id-save").closest('form').submit(function(){
+        // Validation is handled by MainForm on the server, where conditional
+        // requirements match the fields shown by reorganizeForm().
+        $(this).find('#submit-id-save').prop('disabled', true);
     });
 
 
@@ -883,6 +870,7 @@ function validateMainForm(showModal, step) {
         '#id_child_mother_fullname',
         '#id_child_gender',
         '#id_child_nationality',
+        '#id_child_living_arrangement',
         '#id_child_disability',
         '#id_child_marital_status',
         '#id_child_have_children',

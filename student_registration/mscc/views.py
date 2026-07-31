@@ -746,8 +746,15 @@ def old_child_search(request):
 
     form_str = '{} {} {}'.format(first_name, father_name, last_name)
 
+    active_child_ids = Registration.objects.filter(
+        deleted=False,
+        child_id__isnull=False,
+    ).values_list('child_id', flat=True)
+
     filtered_results = Child.objects.filter(
         birthday_year=birthday_year
+    ).filter(
+        id__in=active_child_ids
     )
 
     if birthday_month:
