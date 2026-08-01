@@ -297,6 +297,15 @@ class DigitalServiceForm(forms.ModelForm):
         'RS Grade 7',
         'RS Grade 8',
         'RS Grade 9',
+        'Summer RS Grade 1',
+        'Summer RS Grade 2',
+        'Summer RS Grade 3',
+        'Summer RS Grade 4',
+        'Summer RS Grade 5',
+        'Summer RS Grade 6',
+        'Summer RS Grade 7',
+        'Summer RS Grade 8',
+        'Summer RS Grade 9',
     )
 
     using_akelius = forms.ChoiceField(

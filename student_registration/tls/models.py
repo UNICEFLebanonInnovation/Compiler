@@ -32,6 +32,16 @@ EDUCATION_PROGRAM = Choices(
     ('RS Grade 7', _('RS Grade 7')),
     ('RS Grade 8', _('RS Grade 8')),
     ('RS Grade 9', _('RS Grade 9')),
+    ('Summer RS Grade 1', _('Summer RS Grade 1')),
+    ('Summer RS Grade 2', _('Summer RS Grade 2')),
+    ('Summer RS Grade 3', _('Summer RS Grade 3')),
+    ('Summer RS Grade 4', _('Summer RS Grade 4')),
+    ('Summer RS Grade 5', _('Summer RS Grade 5')),
+    ('Summer RS Grade 6', _('Summer RS Grade 6')),
+    ('Summer RS Grade 7', _('Summer RS Grade 7')),
+    ('Summer RS Grade 8', _('Summer RS Grade 8')),
+    ('Summer RS Grade 9', _('Summer RS Grade 9')),
+
 )
 YES_NO = _MSCC_MODELS.YES_NO
 PACKAGE_TYPES = _MSCC_MODELS.PACKAGE_TYPES
