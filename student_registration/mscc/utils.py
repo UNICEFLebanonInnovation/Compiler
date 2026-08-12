@@ -62,7 +62,7 @@ def parse_attendance_date(value):
 
 
 DEFAULT_PACKAGE_TYPE = 'Core-Package'
-ATTENDANCE_PACKAGE_TYPES = ('Core-Package')
+ATTENDANCE_PACKAGE_TYPES = (DEFAULT_PACKAGE_TYPE,)
 
 
 def to_array(fields, obj):
