@@ -2689,7 +2689,6 @@ class LegoServiceForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
 
-        # Ages outside the LEGO-specific question ranges still use this view.
         # Give the default layout explicit actions; otherwise crispy-forms
         # renders the fields but provides no way to submit them.
         self.helper.layout = Layout(
