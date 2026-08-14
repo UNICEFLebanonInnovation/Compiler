@@ -2679,6 +2679,25 @@ class LegoServiceForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
 
+        # Ages outside the LEGO-specific question ranges still use this view.
+        # Give the default layout explicit actions; otherwise crispy-forms
+        # renders the fields but provides no way to submit them.
+        self.helper.layout = Layout(
+            Div(
+                Div('child_age', css_class='d-none'),
+                Div('participating_lego_sessions', css_class='col-md-8'),
+                Div('participating_education_sessions', css_class='col-md-8'),
+                Div('participating_lego_play_sessions', css_class='col-md-8'),
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                ),
+                css_id='step-1'
+            )
+        )
+
         if 3 <= age <= 14:
             self.helper.layout = Layout(
                 Div(
