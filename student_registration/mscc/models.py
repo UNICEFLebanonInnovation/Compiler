@@ -2395,6 +2395,20 @@ class LegoService(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Is the child participating in LEGO free-play sessions?')
     )
+    lego_play_and_learn_activities = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('LEGO play & learn activities?')
+    )
+    participating_lego_events = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the child participating in LEGO events?')
+    )
 
     class Meta:
         ordering = ['id']

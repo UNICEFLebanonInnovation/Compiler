@@ -2651,6 +2651,16 @@ class LegoServiceForm(forms.ModelForm):
         choices=YES_NO,
         label=_('Is the child participating in LEGO free-play sessions?')
     )
+    lego_play_and_learn_activities = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=YES_NO,
+        label=_('LEGO play & learn activities?')
+    )
+    participating_lego_events = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=YES_NO,
+        label=_('Is the child participating in LEGO events?')
+    )
 
     child_age = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -2688,6 +2698,8 @@ class LegoServiceForm(forms.ModelForm):
                 Div('participating_lego_sessions', css_class='col-md-8'),
                 Div('participating_education_sessions', css_class='col-md-8'),
                 Div('participating_lego_play_sessions', css_class='col-md-8'),
+                Div('lego_play_and_learn_activities', css_class='col-md-8'),
+                Div('participating_lego_events', css_class='col-md-8'),
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
@@ -2718,6 +2730,16 @@ class LegoServiceForm(forms.ModelForm):
                     Div(
                         HTML('<span class="badge-form badge-pill">2</span>'),
                         Div('participating_lego_play_sessions', css_class='col-md-8'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('lego_play_and_learn_activities', css_class='col-md-8'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('participating_lego_events', css_class='col-md-8'),
                         css_class='row card-body'
                     ),
                     FormActions(
@@ -2751,6 +2773,16 @@ class LegoServiceForm(forms.ModelForm):
                         Div('participating_lego_play_sessions', css_class='col-md-8'),
                         css_class='row card-body'
                     ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('lego_play_and_learn_activities', css_class='col-md-8'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">5</span>'),
+                        Div('participating_lego_events', css_class='col-md-8'),
+                        css_class='row card-body'
+                    ),
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
@@ -2773,6 +2805,8 @@ class LegoServiceForm(forms.ModelForm):
         instance.participating_lego_sessions = validated_data.get('participating_lego_sessions')
         instance.participating_education_sessions = validated_data.get('participating_education_sessions')
         instance.participating_lego_play_sessions = validated_data.get('participating_lego_play_sessions')
+        instance.lego_play_and_learn_activities = validated_data.get('lego_play_and_learn_activities')
+        instance.participating_lego_events = validated_data.get('participating_lego_events')
         instance.modified_by = request.user
         instance.save()
 
@@ -2790,4 +2824,6 @@ class LegoServiceForm(forms.ModelForm):
             'participating_lego_sessions',
             'participating_education_sessions',
             'participating_lego_play_sessions',
+            'lego_play_and_learn_activities',
+            'participating_lego_events',
         )
