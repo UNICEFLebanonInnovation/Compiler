@@ -51,34 +51,18 @@
 <!--        {{ form.errors }}-->
 
 <div class="main-card mb-3 card">
-                                <div class="card-body">
-                                    <div id="smartwizard3" class="forms-wizard">
-                                        <ul class="forms-wizard">
-                                            <li>
-                                                <a href="#step-1">
-                                                    <em>1</em><span>LEGO</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                        <div class="form-wizard-content">
+    <div class="card-body">
+        {# LEGO has only one section, so it must not initialize the AJAX/hash-based wizard. #}
+        <div class="form-wizard-content">
+            {% crispy form 'bootstrap3' %}
+        </div>
+        <div class="divider"></div>
 
-                                           {% crispy form 'bootstrap3' %}
-                                        </div>
-                                    </div>
-                                    <div class="divider"></div>
-
-                                    <div class="clearfix">
-                                        <!--<button type="reset" id="reset-btn22" class="btn-shadow float-left btn btn-link">Reset</button>-->
-                                        <a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
-
-                                        <!--<button type="submit" id="submit-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save</button>-->
-                                        <!--<button type="submit" id="submit-btn22-1" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save & add another</button>-->
-
-                                        <button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">Next</button>
-                                        <button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>
-                                    </div>
-                                </div>
-                            </div>
+        <div class="clearfix">
+            <a href="{% url 'mscc:list' %}" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
 
