@@ -287,10 +287,9 @@ class SummerRSAssessmentFormView(LoginRequiredMixin,
             )
 
         if instance:
-            assessment = EducationProgrammeAssessment.objects.get(id=instance)
+            assessment = EducationProgrammeSummerRSAssessment.objects.get(id=instance)
             data = {
                 'pre': assessment.pre_test,
-                'mid': assessment.mid_test,
                 'post': assessment.post_test,
             }[pre_post]
             return SummerRSAssessmentForm(
@@ -360,8 +359,6 @@ class WLBLNAssessmentFormView(LoginRequiredMixin,
                 pre_post=pre_post,
                 request=self.request
             )
-
-
 
         if instance:
             assessment = EducationProgrammeWLAssessment.objects.get(id=instance)

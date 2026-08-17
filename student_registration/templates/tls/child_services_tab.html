@@ -86,7 +86,9 @@
 
   {% if result1 and result2 and result1.education_program and result3 %}
   {% service_data 'EducationProgrammeAssessment' instance as result %}
-  {% if result1.education_program not in 'PPL, BLN Catch-up, ABLN Catch-up, YBLN Catch-up, CBECE Catch-up' %}
+
+
+  {% if result1.education_program not in 'PPL, BLN Catch-up, ABLN Catch-up, YBLN Catch-up, CBECE Catch-up, Summer RS' %}
     <div class="col-md-12 col-lg-6 col-xl-4">
 
                                 <div class="mb-3 card">
@@ -120,7 +122,7 @@
                                                   <span>Pre Grading</span>
                                                 </a>
                                             </li>
-                                          {% if result1.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, RS Grade 7, RS Grade 8, RS Grade 9, Summer RS Grade 1, Summer RS Grade 2, Summer RS Grade 3, Summer RS Grade 4, Summer RS Grade 5, Summer RS Grade 6, Summer RS Grade 7, Summer RS Grade 8, Summer RS Grade 9' and instance.type == 'Walk-in' %}
+                                          {% if result1.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, RS Grade 7, RS Grade 8, RS Grade 9' and instance.type == 'Walk-in' %}
                                           {% else %}
                                             {% if result1.education_program in 'BLN Level 1, BLN Level 2, BLN Level 3' %}
                                             <li class="nav-item">
@@ -141,7 +143,7 @@
                                             </li>
 
                                             {% endif %}
-                                          {% if result1.education_program in 'RS Grade 7, RS Grade 8, RS Grade 9, Summer RS Grade 7, Summer RS Grade 8, Summer RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
+                                          {% if result1.education_program in 'RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
                                             <li class="nav-item">
                                                 <a role="tab" class="nav-link" id="tab-c-16" data-toggle="tab" href="#tab-animated-16">
                                                     <span>School Grading</span>
@@ -149,7 +151,7 @@
                                             </li>
                                             {% endif %}
 
-                                          {% if result1.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, Summer RS Grade 1, Summer RS Grade 2, Summer RS Grade 3, Summer RS Grade 4, Summer RS Grade 5, Summer RS Grade 6' %}
+                                          {% if result1.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6' %}
                                             <li class="nav-item">
                                                 <a role="tab" class="nav-link" id="tab-c-17" data-toggle="tab" href="#tab-animated-17">
                                                     <span>School Grading</span>
@@ -413,7 +415,7 @@
                                                             </div>
                                                           {% endif %}
 
-                                                          {% if result1.education_program  in 'RS Grade 7, RS Grade 8, RS Grade 9, Summer RS Grade 7, Summer RS Grade 8, Summer RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9'  %}
+                                                          {% if result1.education_program  in 'RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9'  %}
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
@@ -459,7 +461,7 @@
                                                                 </div>
                                                             </div>
                                                           {% endif %}
-                                                          {% if result1.education_program  in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, Summer RS Grade 1, Summer RS Grade 2, Summer RS Grade 3, Summer RS Grade 4, Summer RS Grade 5, Summer RS Grade 6'  %}
+                                                          {% if result1.education_program  in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6'  %}
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
@@ -806,7 +808,7 @@
                                                                 </div>
                                                           {% endif %}
 
-                                                          {% if result1.education_program  in 'RS Grade 7, RS Grade 8, RS Grade 9, Summer RS Grade 7, Summer RS Grade 8, Summer RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
+                                                          {% if result1.education_program  in 'RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Development  / 20</h4>
@@ -1281,7 +1283,7 @@
                                                                     </div>
                                                                 </div>
                                                           {% endif %}
-                                                          {% if result1.education_program  in 'RS Grade 7, RS Grade 8, RS Grade 9, Summer RS Grade 7, Summer RS Grade 8, Summer RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9'  %}
+                                                          {% if result1.education_program  in 'RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9'  %}
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Development</h4>
@@ -1338,7 +1340,7 @@
                                                                 </div>
                                                           {% endif %}
 
-                                                          {% if result1.education_program  in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, Summer RS Grade 1, Summer RS Grade 2, Summer RS Grade 3, Summer RS Grade 4, Summer RS Grade 5, Summer RS Grade 6'  %}
+                                                          {% if result1.education_program  in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6'  %}
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Development</h4>
@@ -1383,7 +1385,7 @@
 
                                           </div>
 
-                                        {% if result1.education_program  in 'RS Grade 7, RS Grade 8, RS Grade 9, Summer RS Grade 7, Summer RS Grade 8, Summer RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
+                                        {% if result1.education_program  in 'RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
                                           <div class="tab-pane" id="tab-animated-16" role="tabpanel">
                                                     <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                      {% if result %}
@@ -1446,7 +1448,7 @@
                                             </div>
                                         {% endif %}
 
-                                            {% if result1.education_program  in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, Summer RS Grade 1, Summer RS Grade 2, Summer RS Grade 3, Summer RS Grade 4, Summer RS Grade 5, Summer RS Grade 6' %}
+                                            {% if result1.education_program  in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6' %}
                                           <div class="tab-pane" id="tab-animated-17" role="tabpanel">
                                                     <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                      {% if result %}
@@ -2077,7 +2079,7 @@
                                                   {% elif result1.education_program == 'YFS Level 2 - RS Grade 9' %}
                                                       <h5 class="menu-header-title">YFS Level 2 - Scoring</h5>
                                                   {% else %}
-                                                      <h5 class="menu-header-title">{{ result1.education_program }} - Grading</h5>
+                                                      <h5 class="menu-header-title">{{ result1.education_program }} - Gradingegegerrgergergerrger</h5>
                                                   {% endif %}
                                                     <!--<h6 class="menu-header-subtitle">-->
                                                         <!--You have-->
@@ -3806,7 +3808,7 @@
                                                 </a>
                                             </li>
                                             <li class="nav-item">
-                                                <a role="tab" class="nav-link" id="tab-c-14" data-toggle="tab" href="#tab-animated-14" aria-selected="true">
+                                                <a role="tab" class="nav-link" id="tab-c-144" data-toggle="tab" href="#tab-animated-144" aria-selected="true">
                                                     <span>{% if results|length > 1 %}Last {% endif %}Parents meeting</span>
                                                 </a>
                                             </li>
@@ -3863,7 +3865,7 @@
                                                     <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
                                                 </div>
                                             </div>
-                                            <div class="tab-pane" id="tab-animated-14" role="tabpanel">
+                                            <div class="tab-pane" id="tab-animated-144" role="tabpanel">
                                                 <div class="scroll-area-sm" style="{% if results|length > 1 %}height: 190px;{% else %}height: 222px;{% endif %}">
                                                     <div class="scrollbar-container ps">
                                                         <div class="p-3">

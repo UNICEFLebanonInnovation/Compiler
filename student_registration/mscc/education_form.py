@@ -30,6 +30,7 @@ from .models import (
     EducationRSService,
     EducationProgrammeAssessment,
     EducationProgrammeWLAssessment,
+    EducationProgrammeSummerRSAssessment,
     TarlAssessment,
     YES_NO,
     Round
@@ -2211,14 +2212,12 @@ class SummerRSAssessmentForm(forms.ModelForm):
     def save(self, request=None, instance=None, registry=None, programme_type=None, pre_post=None):
         cleaned_data = wl_bln_json_safe(self.cleaned_data.copy())
         if not instance:
-            instance = EducationProgrammeAssessment.objects.create(registration_id=registry)
+            instance = EducationProgrammeSummerRSAssessment.objects.create(registration_id=registry)
         else:
-            instance = EducationProgrammeAssessment.objects.get(id=instance)
+            instance = EducationProgrammeSummerRSAssessment.objects.get(id=instance)
 
         if pre_post == 'post':
             instance.post_test = cleaned_data
-        elif pre_post == 'mid':
-            instance.mid_test = cleaned_data
         else:
             instance.pre_test = cleaned_data
 
@@ -2229,7 +2228,7 @@ class SummerRSAssessmentForm(forms.ModelForm):
         return instance
 
     class Meta:
-        model = EducationProgrammeAssessment
+        model = EducationProgrammeSummerRSAssessment
         fields = ('programme_type',)
 
 

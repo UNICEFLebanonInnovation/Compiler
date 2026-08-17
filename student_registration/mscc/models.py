@@ -1743,6 +1743,29 @@ class EducationProgrammeWLAssessment(TimeStampedModel):
         verbose_name_plural = "WL BLN  Assessments"
 
 
+class EducationProgrammeSummerRSAssessment(TimeStampedModel):
+
+    registration = models.ForeignKey(
+        Registration,
+        blank=False, null=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+    )
+    pre_test = JSONField(default=dict)
+    post_test = JSONField(default=dict)
+    programme_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Education Programme Type')
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Summer RS Assessment"
+        verbose_name_plural = "Summer RS  Assessments"
+
+
 class TarlAssessment(TimeStampedModel):
     ARABIC_LEVELS = Choices(
         ('Beginner', _('Beginner')),
