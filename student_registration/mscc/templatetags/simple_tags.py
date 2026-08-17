@@ -404,3 +404,27 @@ def grading_improvement(instance, field):
         except ZeroDivisionError:
             return 0.0
     return 0.0
+
+
+@register.simple_tag
+def summer_rs_programme_sections(programme, provide_french_language=None):
+    """Return the same programme-specific subjects shown by the assessment form."""
+    # Imported lazily because education_form imports get_service from this module.
+    from student_registration.mscc.education_form import SUMMER_RS_PROGRAMME_CONFIG
+
+    sections = SUMMER_RS_PROGRAMME_CONFIG.get(programme, {})
+    excluded_prefix = 'english_' if provide_french_language == 'Yes' else 'french_'
+    return [
+        (total_field, config)
+        for total_field, config in sections.items()
+        if not total_field.startswith(excluded_prefix)
+    ]
+
+
+@register.simple_tag
+def summer_rs_score(instance, assessment_period, field):
+    """Read a component score safely from a Summer RS JSON assessment."""
+    if not instance:
+        return 0
+    scores = instance.post_test if assessment_period == 'post' else instance.pre_test
+    return (scores or {}).get(field, 0)
