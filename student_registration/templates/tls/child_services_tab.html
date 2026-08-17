@@ -86,7 +86,7 @@
 
   {% if result1 and result2 and result1.education_program and result3 %}
   {% service_data 'EducationProgrammeAssessment' instance as result %}
-  {% if result1.education_program not in 'PPL, BLN Catch-up, ABLN Catch-up, YBLN Catch-up, CBECE Catch-up, Summer RS Grade 1, Summer RS Grade 2, Summer RS Grade 3, Summer RS Grade 4, Summer RS Grade 5, Summer RS Grade 6, Summer RS Grade 7,Summer RS Grade 8, Summer RS Grade 9' %}
+  {% if result1.education_program not in 'PPL, BLN Catch-up, ABLN Catch-up, YBLN Catch-up, CBECE Catch-up' %}
     <div class="col-md-12 col-lg-6 col-xl-4">
 
                                 <div class="mb-3 card">
@@ -149,6 +149,13 @@
                                             </li>
                                             {% endif %}
 
+                                          {% if result1.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, Summer RS Grade 1, Summer RS Grade 2, Summer RS Grade 3, Summer RS Grade 4, Summer RS Grade 5, Summer RS Grade 6' %}
+                                            <li class="nav-item">
+                                                <a role="tab" class="nav-link" id="tab-c-17" data-toggle="tab" href="#tab-animated-17">
+                                                    <span>School Grading</span>
+                                                </a>
+                                            </li>
+                                            {% endif %}
                                         </ul>
 
                                         <div class="tab-content">
@@ -1439,6 +1446,53 @@
                                             </div>
                                         {% endif %}
 
+                                            {% if result1.education_program  in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, Summer RS Grade 1, Summer RS Grade 2, Summer RS Grade 3, Summer RS Grade 4, Summer RS Grade 5, Summer RS Grade 6' %}
+                                          <div class="tab-pane" id="tab-animated-17" role="tabpanel">
+                                                    <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
+                                                     {% if result %}
+                                                        <a href="{% url 'mscc:service_school_grading' instance.id result1.education_program result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education School Grades">Edit</a>
+                                                      {% endif %}
+                                                    </div>
+                                                <div class="scroll-area-sm" style="height: 200px;">
+                                                    <div class="scrollbar-container ps ps--active-y">
+                                                        <div class="p-3">
+
+                                                        <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Development</h4>
+                                                                           <p> {{result.school_test.arabic_grade}}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Foreign Language</h4>
+                                                                           <p> {{result.school_test.language_grade}}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mathematics</h4>
+                                                                           <p> {{result.school_test.math_grade}}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Science</h4>
+                                                                           <p> {{result.school_test.science_grade}}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                        </div>
+                                                        </div>
+                                                    <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
 
 
                                         </div>
@@ -1453,79 +1507,6 @@
                                     </div>
                                 </div>
                             </div>
-    {% endif %}
-
-    {% if result1.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, Summer RS Grade 1, Summer RS Grade 2, Summer RS Grade 3, Summer RS Grade 4, Summer RS Grade 5, Summer RS Grade 6' %}
-    <div class="col-md-12 col-lg-6 col-xl-4">
-        <div class="mb-3 card">
-            <div class="p-0 card-body">
-                <div class="dropdown-menu-header mt-0 mb-0">
-                    <div class="dropdown-menu-header-inner bg-heavy-rain">
-                        <div class="menu-header-image opacity-1"></div>
-                        <div class="menu-header-content text-dark">
-                            <h5 class="menu-header-title">{{ result1.education_program }} Assessment - Grading</h5>
-                        </div>
-                    </div>
-                </div>
-                <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
-                    <li class="nav-item">
-                        <a role="tab" class="nav-link active show" id="tab-rs-assessment-1" data-toggle="tab" href="#tab-animated-rs-assessment-1" aria-selected="true">
-                            <span>Pre Grading</span>
-                        </a>
-                    </li>
-                </ul>
-                <div class="tab-content">
-                    <div class="tab-pane active show" id="tab-animated-rs-assessment-1" role="tabpanel">
-                        <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
-                            {% if 'Summer RS' in result1.education_program %}
-                                {% if result %}
-                                    <a href="{% url 'mscc:summer_rs_assessment_edit' instance.id result1.education_program 'pre' result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Summer RS Assessment">Edit</a>
-                                {% else %}
-                                    <a href="{% url 'mscc:summer_rs_assessment_add' instance.id result1.education_program %}" data-toggle="tooltip" data-placement="top" data-original-title="Add Summer RS Assessment">Add</a>
-                                {% endif %}
-                            {% endif %}
-                        </div>
-                        <div class="scroll-area-sm" style="height: 200px;">
-                            <div class="scrollbar-container ps ps--active-y">
-                                <div class="p-3">
-                                    <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
-                                        {% if request.user.center.provide_french_language == 'Yes' %}
-                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">French Language Development</h4><p>{{ result.pre_test.french_grade|default:0 }}</p></div>
-                                            </div>
-                                        </div>
-                                        {% else %}
-                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Language Development</h4><p>{{ result.pre_test.english_grade|default:0 }}</p></div>
-                                            </div>
-                                        </div>
-                                        {% endif %}
-                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Language Development</h4><p>{{ result.pre_test.arabic_grade|default:0 }}</p></div>
-                                            </div>
-                                        </div>
-                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mathematics</h4><p>{{ result.pre_test.math_grade|default:0 }}</p></div>
-                                            </div>
-                                        </div>
-                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Science</h4><p>{{ result.pre_test.science_grade|default:0 }}</p></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     {% endif %}
 
     {% service_data 'EducationProgrammeWLAssessment' instance as wl_result %}
