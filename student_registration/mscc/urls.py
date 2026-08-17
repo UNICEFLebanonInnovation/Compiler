@@ -314,6 +314,16 @@ urlpatterns = [
         name='service_education_grading_edit'
     ),
     re_path(
+        r'^services/summer-rs-assessment-add/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/$',
+        view=education_view.SummerRSAssessmentFormView.as_view(),
+        name='summer_rs_assessment_add'
+    ),
+    re_path(
+        r'^services/summer-rs-assessment-edit/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/(?P<pre_post>pre|post|mid)/(?P<pk>[\w.@+-]+)/$',
+        view=education_view.SummerRSAssessmentFormView.as_view(),
+        name='summer_rs_assessment_edit'
+    ),
+    re_path(
         r'^services/wl-bln-assessment-add/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/$',
         view=education_view.WLBLNAssessmentFormView.as_view(),
         name='wl_bln_assessment_add'

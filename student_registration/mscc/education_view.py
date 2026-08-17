@@ -245,6 +245,81 @@ class EducationGradingFormView(LoginRequiredMixin,
         return super(EducationGradingFormView, self).form_valid(form)
 
 
+class SummerRSAssessmentFormView(LoginRequiredMixin,
+                                 GroupRequiredMixin,
+                                 FormView):
+    template_name = 'mscc/summer_rs_assessment_form.html'
+    form_class = SummerRSAssessmentForm
+    success_url = ''
+    group_required = [u"MSCC", u"MSCC_CENTER"]
+
+    def dispatch(self, request, *args, **kwargs):
+        programme_type = self.kwargs.get('programme_type')
+        if programme_type not in SUMMER_RS_PROGRAMMES:
+            raise Http404("Summer RS assessment is only available for Summer RS programmes.")
+        return super(SummerRSAssessmentFormView, self).dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('mscc:child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
+
+    def get_context_data(self, **kwargs):
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        kwargs['registry'] = self.kwargs['registry']
+        kwargs['programme_type'] = self.kwargs['programme_type']
+        kwargs['pre_post'] = self.kwargs.get('pre_post', 'pre')
+        return super(SummerRSAssessmentFormView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        registry = self.kwargs['registry']
+        programme_type = self.kwargs['programme_type']
+        pre_post = self.kwargs.get('pre_post', 'pre')
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+
+        if self.request.method == "POST":
+            return SummerRSAssessmentForm(
+                self.request.POST,
+                instance=instance,
+                registry=registry,
+                programme_type=programme_type,
+                pre_post=pre_post,
+                request=self.request
+            )
+
+        if instance:
+            assessment = EducationProgrammeAssessment.objects.get(id=instance)
+            data = {
+                'pre': assessment.pre_test,
+                'mid': assessment.mid_test,
+                'post': assessment.post_test,
+            }[pre_post]
+            return SummerRSAssessmentForm(
+                data,
+                registry=registry,
+                programme_type=programme_type,
+                pre_post=pre_post,
+                instance=instance,
+                request=self.request
+            )
+
+        return SummerRSAssessmentForm(
+            registry=registry,
+            programme_type=programme_type,
+            pre_post=pre_post,
+            instance=instance,
+            request=self.request
+        )
+
+    def form_valid(self, form):
+        registry = self.kwargs['registry']
+        programme_type = self.kwargs['programme_type']
+        pre_post = self.kwargs.get('pre_post', 'pre')
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        form.save(request=self.request, registry=registry, programme_type=programme_type,
+                  pre_post=pre_post, instance=instance)
+        return super(SummerRSAssessmentFormView, self).form_valid(form)
+
+
 class WLBLNAssessmentFormView(LoginRequiredMixin,
                              GroupRequiredMixin,
                              FormView):
