@@ -340,18 +340,6 @@ class EducationProgrammeAssessmentAdmin(admin.ModelAdmin):
     )
 
 
-class YouthScoringAdmin(admin.ModelAdmin):
-    list_display = (
-        'registration',
-        'programme_type',
-    )
-    search_fields = (
-        'registration__child__first_name',
-        'registration__child__father_name',
-        'registration__child__last_name',
-    )
-
-
 class YouthKitServiceAdmin(admin.ModelAdmin):
     list_display = (
         'registration',
@@ -505,7 +493,6 @@ admin.site.register(HealthNutritionReferral, HealthNutritionReferralAdmin)
 admin.site.register(EducationService, EducationServiceAdmin)
 admin.site.register(EducationRSService, EducationRSServiceAdmin)
 admin.site.register(EducationProgrammeAssessment, EducationProgrammeAssessmentAdmin)
-admin.site.register(YouthScoring, YouthScoringAdmin)
 admin.site.register(YouthKitService, YouthKitServiceAdmin)
 admin.site.register(FollowUpService, FollowUpServiceAdmin)
 admin.site.register(Referral, ReferralAdmin)

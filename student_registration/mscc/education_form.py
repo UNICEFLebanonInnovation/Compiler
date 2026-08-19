@@ -29,7 +29,6 @@ from .models import (
     Packages,
     EducationRSService,
     EducationProgrammeAssessment,
-    YouthScoring,
     EducationProgrammeWLAssessment,
     EducationProgrammeSummerRSAssessment,
     TarlAssessment,
@@ -2881,14 +2880,14 @@ class YouthScoringForm(forms.ModelForm):
 
     def save(self, request=None, instance=None, registry=None, programme_type=None, pre_post=None):
         if not instance:
-            instance = YouthScoring.objects.create(registration_id=registry)
-            instance.pre_test = request.POST
+            instance = EducationProgrammeAssessment.objects.create(registration_id=registry)
+            instance.youth_pre_test = request.POST
         else:
-            instance = YouthScoring.objects.get(id=instance)
+            instance = EducationProgrammeAssessment.objects.get(id=instance)
             if pre_post == "pre":
-                instance.pre_test = request.POST
+                instance.youth_pre_test = request.POST
             if pre_post == "post":
-                instance.post_test = request.POST
+                instance.youth_post_test = request.POST
 
         instance.programme_type = programme_type
         instance.save()
@@ -2946,7 +2945,7 @@ class YouthScoringForm(forms.ModelForm):
         return cleaned_data
 
     class Meta:
-        model = YouthScoring
+        model = EducationProgrammeAssessment
         fields = (
             'programme_type',
         )

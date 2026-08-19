@@ -404,3 +404,21 @@ def grading_improvement(instance, field):
         except ZeroDivisionError:
             return 0.0
     return 0.0
+
+
+@register.simple_tag
+def youth_grading_improvement(instance, field):
+    if not instance:
+        return 0
+    if not instance.youth_pre_test or not instance.youth_post_test:
+        return 0
+    pre_value = instance.youth_pre_test.get(field, 0)
+    post_value = instance.youth_post_test.get(field, 0)
+    if pre_value and post_value:
+        try:
+            return '{}{}'.format(
+                round(((float(post_value) - float(pre_value)) /
+                       float(pre_value)) * 100.0, 2), '%')
+        except ZeroDivisionError:
+            return 0.0
+    return 0.0

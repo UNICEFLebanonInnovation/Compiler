@@ -2349,7 +2349,7 @@
 {% have_youth_programme result1.education_program as result3 %}
 
   {% if result1 and result2 and result1.education_program and result3 %}
-  {% service_data 'YouthScoring' instance as result %}
+  {% service_data 'EducationProgrammeAssessment' instance as result %}
   {% if result1.education_program not in 'PPL, BLN Catch-up, ABLN Catch-up, YBLN Catch-up, CBECE Catch-up' %}
 <div class="col-md-12 col-lg-6 col-xl-4">
 
@@ -2416,28 +2416,28 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Language Development  / 12</h4>
-                                                                           <p> {{result.pre_test.arabic_grade}}</p>
+                                                                           <p> {{result.youth_pre_test.arabic_grade}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Foreign Language Development / 20 </h4>
-                                                                           <p> {{result.pre_test.language_grade}}</p>
+                                                                           <p> {{result.youth_pre_test.language_grade}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mathematics  / 15</h4>
-                                                                           <p> {{result.pre_test.math_grade}}</p>
+                                                                           <p> {{result.youth_pre_test.math_grade}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Life skills Development / 12</h4>
-                                                                           <p> {{result.pre_test.life_skills}}</p>
+                                                                           <p> {{result.youth_pre_test.life_skills}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -2448,28 +2448,28 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Language Development  / 12</h4>
-                                                                           <p> {{result.pre_test.arabic_grade}}</p>
+                                                                           <p> {{result.youth_pre_test.arabic_grade}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Foreign Language Development / 12</h4>
-                                                                           <p> {{result.pre_test.language_grade}}</p>
+                                                                           <p> {{result.youth_pre_test.language_grade}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mathematics  / 21</h4>
-                                                                           <p> {{result.pre_test.math_grade}}</p>
+                                                                           <p> {{result.youth_pre_test.math_grade}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Life skills Development / 12</h4>
-                                                                           <p> {{result.pre_test.life_skills}}</p>
+                                                                           <p> {{result.youth_pre_test.life_skills}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -2481,21 +2481,21 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Development  / 100</h4>
-                                                                           <p> {{result.pre_test.english_development}}</p>
+                                                                           <p> {{result.youth_pre_test.english_development}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Financial Literacy Development / 100</h4>
-                                                                           <p> {{result.pre_test.financial_development}}</p>
+                                                                           <p> {{result.youth_pre_test.financial_development}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">IT Development / 100</h4>
-                                                                           <p> {{result.pre_test.it_development}}</p>
+                                                                           <p> {{result.youth_pre_test.it_development}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -2507,21 +2507,21 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Development  / 100</h4>
-                                                                           <p> {{result.pre_test.english_development}}</p>
+                                                                           <p> {{result.youth_pre_test.english_development}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Financial Literacy Development / 100</h4>
-                                                                           <p> {{result.pre_test.financial_development}}</p>
+                                                                           <p> {{result.youth_pre_test.financial_development}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">IT Development / 100</h4>
-                                                                           <p> {{result.pre_test.it_development}}</p>
+                                                                           <p> {{result.youth_pre_test.it_development}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -2550,17 +2550,17 @@
                                                             <div class="vertical-timeline-item vertical-timeline-element">
                                                                 <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                     <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child Level of participation / Absence</h4>
-                                                                        <p> {{ result.post_test.participation }}</p>
+                                                                        <p> {{ result.youth_post_test.participation }}</p>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                             <div class="vertical-timeline-item vertical-timeline-element">
                                                                 <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                     <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Main barriers affecting attendance/participation, performance, or causing drop-out</h4>
-                                                                        {% if result.post_test.barriers == 'Yes'  %}
-                                                                          <p> {{ result.post_test.barriers }} - {{ result.post_test.barriers_other }}</p>
+                                                                        {% if result.youth_post_test.barriers == 'Yes'  %}
+                                                                          <p> {{ result.youth_post_test.barriers }} - {{ result.youth_post_test.barriers_other }}</p>
                                                                         {% else %}
-                                                                          <p> {{ result.post_test.barriers }}</p>
+                                                                          <p> {{ result.youth_post_test.barriers }}</p>
                                                                         {% endif %}
                                                                     </div>
                                                                 </div>
@@ -2568,44 +2568,44 @@
                                                             <div class="vertical-timeline-item vertical-timeline-element">
                                                                 <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                     <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Undertake the Post tests ?</h4>
-                                                                        <p> {{ result.post_test.post_test_done }}</p>
+                                                                        <p> {{ result.youth_post_test.post_test_done }}</p>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                             <div class="vertical-timeline-item vertical-timeline-element">
                                                                   <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                       <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Did the child fully complete the school year?</h4>
-                                                                          <p> {{ result.post_test.school_year_completed }}</p>
+                                                                          <p> {{ result.youth_post_test.school_year_completed }}</p>
                                                                       </div>
                                                                   </div>
                                                               </div>
-                                                          {% if result.post_test.post_test_done == "Yes" %}
+                                                          {% if result.youth_post_test.post_test_done == "Yes" %}
                                                            {% if result1.education_program  == 'YBLN Level 1'  %}
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Language Development  / 12</h4>
-                                                                           <p> {{result.post_test.arabic_grade}}</p>
+                                                                           <p> {{result.youth_post_test.arabic_grade}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Foreign Language Development / 20</h4>
-                                                                           <p> {{result.post_test.language_grade}}</p>
+                                                                           <p> {{result.youth_post_test.language_grade}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mathematics  / 15</h4>
-                                                                           <p> {{result.post_test.math_grade}}</p>
+                                                                           <p> {{result.youth_post_test.math_grade}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Life skills Development / 12</h4>
-                                                                           <p> {{result.post_test.life_skills}}</p>
+                                                                           <p> {{result.youth_post_test.life_skills}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -2614,28 +2614,28 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Language Development  / 12</h4>
-                                                                           <p> {{result.post_test.arabic_grade}}</p>
+                                                                           <p> {{result.youth_post_test.arabic_grade}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Foreign Language Development  / 12</h4>
-                                                                           <p> {{result.post_test.language_grade}}</p>
+                                                                           <p> {{result.youth_post_test.language_grade}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mathematics  / 21</h4>
-                                                                           <p> {{result.post_test.math_grade}}</p>
+                                                                           <p> {{result.youth_post_test.math_grade}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Life skills Development  / 12</h4>
-                                                                           <p> {{result.post_test.life_skills}}</p>
+                                                                           <p> {{result.youth_post_test.life_skills}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -2646,21 +2646,21 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Development  / 100</h4>
-                                                                           <p> {{result.post_test.english_development}}</p>
+                                                                           <p> {{result.youth_post_test.english_development}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Financial Literacy Development / 100</h4>
-                                                                           <p> {{result.post_test.financial_development}}</p>
+                                                                           <p> {{result.youth_post_test.financial_development}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">IT Development / 100</h4>
-                                                                           <p> {{result.post_test.it_development}}</p>
+                                                                           <p> {{result.youth_post_test.it_development}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -2672,21 +2672,21 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Development  / 100</h4>
-                                                                           <p> {{result.post_test.english_development}}</p>
+                                                                           <p> {{result.youth_post_test.english_development}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Financial Literacy Development / 100</h4>
-                                                                           <p> {{result.post_test.financial_development}}</p>
+                                                                           <p> {{result.youth_post_test.financial_development}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">IT Development / 100</h4>
-                                                                           <p> {{result.post_test.it_development}}</p>
+                                                                           <p> {{result.youth_post_test.it_development}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -2711,7 +2711,7 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Language Development</h4>
-                                                                           <p> {% grading_improvement result 'arabic_grade' as grade %}
+                                                                           <p> {% youth_grading_improvement result 'arabic_grade' as grade %}
                                                                               {{ grade }}
                                                                            </p>
                                                                         </div>
@@ -2720,7 +2720,7 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Foreign Language Development</h4>
-                                                                           <p> {% grading_improvement result 'language_grade' as grade %}
+                                                                           <p> {% youth_grading_improvement result 'language_grade' as grade %}
                                                                               {{ grade }}
                                                                            </p>
                                                                         </div>
@@ -2729,7 +2729,7 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mathematics</h4>
-                                                                           <p> {% grading_improvement result 'math_grade' as grade %}
+                                                                           <p> {% youth_grading_improvement result 'math_grade' as grade %}
                                                                               {{ grade }}
                                                                            </p>
                                                                         </div>
@@ -2738,7 +2738,7 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Life skills Development </h4>
-                                                                           <p> {% grading_improvement result 'life_skills' as grade %}
+                                                                           <p> {% youth_grading_improvement result 'life_skills' as grade %}
                                                                               {{ grade }}
                                                                            </p>
 
@@ -2750,7 +2750,7 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Development</h4>
-                                                                           <p> {% grading_improvement result 'english_development' as grade %}
+                                                                           <p> {% youth_grading_improvement result 'english_development' as grade %}
                                                                               {{ grade }}
                                                                            </p>
                                                                         </div>
@@ -2759,7 +2759,7 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Financial Literacy Development</h4>
-                                                                           <p> {% grading_improvement result 'financial_development' as grade %}
+                                                                           <p> {% youth_grading_improvement result 'financial_development' as grade %}
                                                                               {{ grade }}
                                                                            </p>
                                                                         </div>
@@ -2768,7 +2768,7 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">IT Development</h4>
-                                                                           <p> {% grading_improvement result 'it_development' as grade %}
+                                                                           <p> {% youth_grading_improvement result 'it_development' as grade %}
                                                                               {{ grade }}
                                                                            </p>
                                                                         </div>
