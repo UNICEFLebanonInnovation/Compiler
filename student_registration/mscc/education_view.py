@@ -486,7 +486,7 @@ class YouthScoringFormView(LoginRequiredMixin,
                                     programme_type=programme_type, pre_post=pre_post, request=self.request)
         else:
             if instance:
-                grade_data = EducationProgrammeAssessment.objects.get(id=instance)
+                grade_data = YouthScoring.objects.get(id=instance)
                 if pre_post == 'pre':
                     data = grade_data.pre_test
                 if pre_post == 'post':

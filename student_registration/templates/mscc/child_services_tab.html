@@ -2349,7 +2349,7 @@
 {% have_youth_programme result1.education_program as result3 %}
 
   {% if result1 and result2 and result1.education_program and result3 %}
-  {% service_data 'EducationProgrammeAssessment' instance as result %}
+  {% service_data 'YouthScoring' instance as result %}
   {% if result1.education_program not in 'PPL, BLN Catch-up, ABLN Catch-up, YBLN Catch-up, CBECE Catch-up' %}
 <div class="col-md-12 col-lg-6 col-xl-4">
 

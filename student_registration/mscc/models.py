@@ -1720,6 +1720,30 @@ class EducationProgrammeAssessment(TimeStampedModel):
         verbose_name = "Education Programme Assessment"
         verbose_name_plural = "Education Programme Assessments"
 
+
+class YouthScoring(TimeStampedModel):
+    registration = models.ForeignKey(
+        Registration,
+        blank=False,
+        null=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+    )
+    pre_test = JSONField(default=dict)
+    post_test = JSONField(default=dict)
+    programme_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Youth Programme Type')
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Youth Scoring"
+        verbose_name_plural = "Youth Scorings"
+
+
 class EducationProgrammeWLAssessment(TimeStampedModel):
 
     registration = models.ForeignKey(
