@@ -76,7 +76,7 @@ for grade, language_totals, math_total, math_components, include_science in (
     config = {
         'english_grade': _summer_subject('English', language_totals[0], [('english_reading_comprehension','Reading comprehension',language_totals[0]-20),('english_writing_expression','Writing Expression',20)]),
         'french_grade': _summer_subject('French', language_totals[1], [('french_comprehension_ecrite','Comprehension Ecrite',language_totals[1]-20),('french_production_ecrite','Production Ecrite',20)]),
-        'arabic_grade': _summer_subject('Arabic', language_totals[2], [('arabic_reading_comprehension','الفهم القرائي',language_totals[2]-20),('arabic_writing_expression','التعبير الكتابي',20)]),
+        'arabic_grade': _summer_subject('Arabic', language_totals[2], [('arabic_reading_comprehension','Reading Comprehension',language_totals[2]-20),('arabic_writing_expression','Writing Expression',20)]),
         'math_grade': _summer_subject('Math', math_total, math_components),
     }
     if include_science:
