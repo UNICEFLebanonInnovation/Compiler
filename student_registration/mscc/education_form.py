@@ -249,7 +249,7 @@ WL_BLN_PROGRAMME_CONFIG = {
 }
 
 
-def wl_bln_numeric_field(label, readonly=False):
+def grading_numeric_field(label, readonly=False):
     attrs = {'step': '0.01', 'min': '0'}
     if readonly:
         attrs['readonly'] = 'readonly'
@@ -264,13 +264,13 @@ def wl_bln_numeric_field(label, readonly=False):
     )
 
 
-def wl_bln_json_safe(data):
+def grading_json_safe(data):
     if isinstance(data, Decimal):
         return float(data)
     if isinstance(data, dict):
-        return {key: wl_bln_json_safe(value) for key, value in data.items()}
+        return {key: grading_json_safe(value) for key, value in data.items()}
     if isinstance(data, (list, tuple)):
-        return [wl_bln_json_safe(value) for value in data]
+        return [grading_json_safe(value) for value in data]
     return data
 
 
@@ -2030,12 +2030,74 @@ class EducationGradingForm(forms.ModelForm):
 class SummerRSAssessmentForm(forms.ModelForm):
     programme_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
-    for _subject_config in SUMMER_RS_PROGRAMME_CONFIG.values():
-        for _total_field, _config in _subject_config.items():
-            locals()[_total_field] = wl_bln_numeric_field(_config['label'], readonly=True)
-            for _component_name, _component_label, _maximum in _config['components']:
-                locals()[_component_name] = wl_bln_numeric_field(_component_label)
-    del _subject_config, _total_field, _config, _component_name, _component_label, _maximum
+    english_letter_sound = grading_numeric_field(_('Letter Sound'))
+    english_familiar_words = grading_numeric_field(_('Familiar Words'))
+    english_picture_word_matching = grading_numeric_field(_('Picture word matching'))
+    english_reading_comprehension_text_1 = grading_numeric_field(_('Reading comprehension text 1'))
+    english_reading_comprehension_text_2 = grading_numeric_field(_('Reading comprehension text 2'))
+    english_letter_dictation = grading_numeric_field(_('Letter Dictation'))
+    english_word_dictation = grading_numeric_field(_('Word Dictation'))
+    english_picture_naming = grading_numeric_field(_('Picture Naming'))
+    english_reading_comprehension = grading_numeric_field(_('Reading Comprehension'))
+    english_writing_expression = grading_numeric_field(_('Writing'))
+    english_grade = grading_numeric_field(_('English'), readonly=True)
+
+    french_letter_sound = grading_numeric_field(_('Letter Sound'))
+    french_familiar_words = grading_numeric_field(_('Familiar Words'))
+    french_picture_word_matching = grading_numeric_field(_('Picture word matching'))
+    french_reading_comprehension_text_1 = grading_numeric_field(_('Reading comprehension text 1'))
+    french_reading_comprehension_text_2 = grading_numeric_field(_('Reading comprehension text 2'))
+    french_letter_dictation = grading_numeric_field(_('Letter Dictation'))
+    french_word_dictation = grading_numeric_field(_('Word Dictation'))
+    french_picture_naming = grading_numeric_field(_('Picture Naming'))
+    french_comprehension_ecrite = grading_numeric_field(_('Comprehension Ecrite'))
+    french_production_ecrite = grading_numeric_field(_('Production Ecrite'))
+    french_grade = grading_numeric_field(_('French'), readonly=True)
+
+    arabic_letter_sound = grading_numeric_field(_('Letter Sound'))
+    arabic_alphabet_vowel = grading_numeric_field(_('Alphabet letters with vowel'))
+    arabic_alphabet_long_vowel = grading_numeric_field(_('Alphabet letters with long vowel'))
+    arabic_familiar_words = grading_numeric_field(_('Familiar Words'))
+    arabic_picture_word_matching = grading_numeric_field(_('Picture word matching'))
+    arabic_reading_comprehension_text_1 = grading_numeric_field(_('Reading comprehension text 1'))
+    arabic_reading_comprehension_text_2 = grading_numeric_field(_('Reading comprehension text 2'))
+    arabic_letter_dictation = grading_numeric_field(_('Letter Dictation'))
+    arabic_word_dictation = grading_numeric_field(_('Word Dictation'))
+    arabic_picture_naming = grading_numeric_field(_('Picture Naming'))
+    arabic_reading_comprehension = grading_numeric_field(_('Reading Comprehension'))
+    arabic_writing_expression = grading_numeric_field(_('Writing Expression'))
+    arabic_grade = grading_numeric_field(_('Arabic'), readonly=True)
+
+    math_natural_numbers = grading_numeric_field(_('Natural Numbers'))
+    math_addition_words = grading_numeric_field(_('Addition'))
+    math_subtraction = grading_numeric_field(_('Subtraction'))
+    math_location = grading_numeric_field(_('Location'))
+    math_plane_figures = grading_numeric_field(_('Plane figures'))
+    math_solid_figures = grading_numeric_field(_('Solid figures'))
+    math_length = grading_numeric_field(_('Length'))
+    math_multiplication = grading_numeric_field(_('Multiplication'))
+    math_fractions = grading_numeric_field(_('Fractions'))
+    math_decimals = grading_numeric_field(_('Decimals'))
+    math_division = grading_numeric_field(_('Division'))
+    math_measurement_angles = grading_numeric_field(_('Measurement angles'))
+    math_measurement_length = grading_numeric_field(_('Measurement - Length'))
+    math_measurement_area = grading_numeric_field(_('Measurement - Area'))
+    math_integers = grading_numeric_field(_('Integers'))
+    math_percentage = grading_numeric_field(_('Percentage'))
+    math_algebraic_expressions = grading_numeric_field(_('Algebraic expressions'))
+    math_transformation = grading_numeric_field(_('Transformation'))
+    math_fractions_and_decimals = grading_numeric_field(_('Fractions and decimals'))
+    math_operations = grading_numeric_field(_('Operations'))
+    math_proportionality = grading_numeric_field(_('Proportionality'))
+    math_algebraic_expressions_and_equations = grading_numeric_field(_('Algebraic Expressions and Equations'))
+    math_geometry = grading_numeric_field(_('Geometry'))
+    math_equations_and_inequalities = grading_numeric_field(_('Equations and Inequalities'))
+    math_rational_and_irrational_numbers = grading_numeric_field(_('Rational and Irrational Numbers'))
+    math_linear_functions_and_proportionality = grading_numeric_field(_('Linear Functions and Proportionality'))
+    math_grade = grading_numeric_field(_('Math'), readonly=True)
+
+    science_total_score = grading_numeric_field(_('Total Science scores'))
+    science_grade = grading_numeric_field(_('Science'), readonly=True)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -2227,7 +2289,7 @@ class SummerRSAssessmentForm(forms.ModelForm):
         return cleaned_data
 
     def save(self, request=None, instance=None, registry=None, programme_type=None, pre_post=None):
-        cleaned_data = wl_bln_json_safe(self.cleaned_data.copy())
+        cleaned_data = grading_json_safe(self.cleaned_data.copy())
         if not instance:
             instance = EducationProgrammeSummerRSAssessment.objects.create(registration_id=registry)
         else:
@@ -2252,38 +2314,38 @@ class SummerRSAssessmentForm(forms.ModelForm):
 class WLBLNAssessmentForm(forms.ModelForm):
     programme_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
-    english_letter_sound = wl_bln_numeric_field(_('English - Letter Sound'))
-    english_familiar_words = wl_bln_numeric_field(_('English - Familiar Words'))
-    english_sentence = wl_bln_numeric_field(_('English - Sentence'))
-    english_paragraph = wl_bln_numeric_field(_('English - Paragraph'))
-    english_dictation = wl_bln_numeric_field(_('English - Dictation'))
-    english_reading_comprehension = wl_bln_numeric_field(_('English - Reading Comprehension'))
-    english_grade = wl_bln_numeric_field(_('English Total'), readonly=True)
+    english_letter_sound = grading_numeric_field(_('English - Letter Sound'))
+    english_familiar_words = grading_numeric_field(_('English - Familiar Words'))
+    english_sentence = grading_numeric_field(_('English - Sentence'))
+    english_paragraph = grading_numeric_field(_('English - Paragraph'))
+    english_dictation = grading_numeric_field(_('English - Dictation'))
+    english_reading_comprehension = grading_numeric_field(_('English - Reading Comprehension'))
+    english_grade = grading_numeric_field(_('English Total'), readonly=True)
 
-    french_letter_sound = wl_bln_numeric_field(_('French - Letter Sound'))
-    french_familiar_words = wl_bln_numeric_field(_('French - Familiar Words'))
-    french_sentence = wl_bln_numeric_field(_('French - Sentence'))
-    french_paragraph = wl_bln_numeric_field(_('French - Paragraph'))
-    french_dictation = wl_bln_numeric_field(_('French - Dictation'))
-    french_reading_comprehension = wl_bln_numeric_field(_('French - Reading Comprehension'))
-    french_grade = wl_bln_numeric_field(_('French Total'), readonly=True)
+    french_letter_sound = grading_numeric_field(_('French - Letter Sound'))
+    french_familiar_words = grading_numeric_field(_('French - Familiar Words'))
+    french_sentence = grading_numeric_field(_('French - Sentence'))
+    french_paragraph = grading_numeric_field(_('French - Paragraph'))
+    french_dictation = grading_numeric_field(_('French - Dictation'))
+    french_reading_comprehension = grading_numeric_field(_('French - Reading Comprehension'))
+    french_grade = grading_numeric_field(_('French Total'), readonly=True)
 
-    arabic_letter_sound = wl_bln_numeric_field(_('Arabic - Letter Sound'))
-    arabic_alphabet_vowel = wl_bln_numeric_field(_('Arabic - Alphabet letters with vowel'))
-    arabic_alphabet_long_vowel = wl_bln_numeric_field(_('Arabic - Alphabet letters with long vowel'))
-    arabic_familiar_words = wl_bln_numeric_field(_('Arabic - Familiar Words'))
-    arabic_sentence = wl_bln_numeric_field(_('Arabic - Sentence'))
-    arabic_paragraph = wl_bln_numeric_field(_('Arabic - Paragraph'))
-    arabic_reading_comprehension = wl_bln_numeric_field(_('Arabic - Reading Comprehension'))
-    arabic_dictation = wl_bln_numeric_field(_('Arabic - Dictation'))
-    arabic_grade = wl_bln_numeric_field(_('Arabic Total'), readonly=True)
+    arabic_letter_sound = grading_numeric_field(_('Arabic - Letter Sound'))
+    arabic_alphabet_vowel = grading_numeric_field(_('Arabic - Alphabet letters with vowel'))
+    arabic_alphabet_long_vowel = grading_numeric_field(_('Arabic - Alphabet letters with long vowel'))
+    arabic_familiar_words = grading_numeric_field(_('Arabic - Familiar Words'))
+    arabic_sentence = grading_numeric_field(_('Arabic - Sentence'))
+    arabic_paragraph = grading_numeric_field(_('Arabic - Paragraph'))
+    arabic_reading_comprehension = grading_numeric_field(_('Arabic - Reading Comprehension'))
+    arabic_dictation = grading_numeric_field(_('Arabic - Dictation'))
+    arabic_grade = grading_numeric_field(_('Arabic Total'), readonly=True)
 
-    math_natural_numbers = wl_bln_numeric_field(_('Math - Natural Numbers'))
-    math_addition_words = wl_bln_numeric_field(_('Math - Addition'))
-    math_subtraction = wl_bln_numeric_field(_('Math - Subtraction'))
-    math_multiplication = wl_bln_numeric_field(_('Math - Multiplication'))
-    math_division = wl_bln_numeric_field(_('Math - Division'))
-    math_grade = wl_bln_numeric_field(_('Math Total'), readonly=True)
+    math_natural_numbers = grading_numeric_field(_('Math - Natural Numbers'))
+    math_addition_words = grading_numeric_field(_('Math - Addition'))
+    math_subtraction = grading_numeric_field(_('Math - Subtraction'))
+    math_multiplication = grading_numeric_field(_('Math - Multiplication'))
+    math_division = grading_numeric_field(_('Math - Division'))
+    math_grade = grading_numeric_field(_('Math Total'), readonly=True)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -2472,7 +2534,7 @@ class WLBLNAssessmentForm(forms.ModelForm):
         return cleaned_data
 
     def save(self, request=None, instance=None, registry=None, programme_type=None, pre_post=None):
-        cleaned_data = wl_bln_json_safe(self.cleaned_data.copy())
+        cleaned_data = grading_json_safe(self.cleaned_data.copy())
         if not instance:
             instance = EducationProgrammeWLAssessment.objects.create(registration_id=registry)
         else:
