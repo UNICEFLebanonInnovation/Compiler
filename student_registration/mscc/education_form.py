@@ -83,14 +83,28 @@ for grade, language_totals, math_total, math_components, include_science in (
         config['science_grade'] = _summer_subject('Science',20,[('science_total_score','Total Science scores',20)])
     SUMMER_RS_PROGRAMME_CONFIG['Summer RS Grade {}'.format(grade)] = config
 
-# The supplied assessment specification has no distinct component tables for
-# grades 3 and 4; use the adjacent grade structures until those tables exist.
-SUMMER_RS_PROGRAMME_CONFIG['Summer RS Grade 3'] = SUMMER_RS_PROGRAMME_CONFIG['Summer RS Grade 2']
-SUMMER_RS_PROGRAMME_CONFIG['Summer RS Grade 4'] = SUMMER_RS_PROGRAMME_CONFIG['Summer RS Grade 5']
+SUMMER_RS_PROGRAMME_CONFIG['Summer RS Grade 3'] = {
+    'english_grade': _summer_subject('English', 40, [
+        ('english_letter_sound', 'Letter Sound', 10),
+        ('english_familiar_words', 'Familiar Words', 5),
+        ('english_reading_comprehension', 'Reading Comprehension', 15),
+        ('english_writing_expression', 'Writing', 10),
+    ]),
+}
+SUMMER_RS_PROGRAMME_CONFIG['Summer RS Grade 4'] = {
+    'english_grade': _summer_subject('English', 32, [
+        ('english_reading_comprehension', 'Reading Comprehension', 12),
+        ('english_writing_expression', 'Writing', 20),
+    ]),
+}
 SUMMER_RS_PROGRAMME_CONFIG['YFS Level 1 - Summer RS Grade 9'] = SUMMER_RS_PROGRAMME_CONFIG['Summer RS Grade 9']
 SUMMER_RS_PROGRAMME_CONFIG['YFS Level 2 - Summer RS Grade 9'] = SUMMER_RS_PROGRAMME_CONFIG['Summer RS Grade 9']
 
 SUMMER_RS_PROGRAMMES = frozenset(SUMMER_RS_PROGRAMME_CONFIG)
+SUMMER_RS_ENGLISH_ONLY_PROGRAMMES = frozenset((
+    'Summer RS Grade 3',
+    'Summer RS Grade 4',
+))
 
 
 WL_BLN_PROGRAMME_CONFIG = {
@@ -2038,7 +2052,10 @@ class SummerRSAssessmentForm(forms.ModelForm):
 
         center = getattr(getattr(self.request, 'user', None), 'center', None)
         provide_french_language = getattr(center, 'provide_french_language', None)
-        if provide_french_language == "Yes":
+        # Grades 3 and 4 are always conducted in English, irrespective of the
+        # center's language setting.
+        if (programme_type not in SUMMER_RS_ENGLISH_ONLY_PROGRAMMES and
+                provide_french_language == "Yes"):
             self.programme_config = {
                 field_name: config
                 for field_name, config in self.programme_config.items()
