@@ -410,9 +410,15 @@ def grading_improvement(instance, field):
 def summer_rs_programme_sections(programme, provide_french_language=None):
     """Return the same programme-specific subjects shown by the assessment form."""
     # Imported lazily because education_form imports get_service from this module.
-    from student_registration.mscc.education_form import SUMMER_RS_PROGRAMME_CONFIG
+    from student_registration.mscc.education_form import (
+        SUMMER_RS_ENGLISH_ONLY_PROGRAMMES,
+        SUMMER_RS_PROGRAMME_CONFIG,
+    )
 
     sections = SUMMER_RS_PROGRAMME_CONFIG.get(programme, {})
+    if programme in SUMMER_RS_ENGLISH_ONLY_PROGRAMMES:
+        return list(sections.items())
+
     excluded_prefix = 'english_' if provide_french_language == 'Yes' else 'french_'
     return [
         (total_field, config)
