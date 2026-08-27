@@ -400,8 +400,7 @@ def bridging_export_data(request, **kwargs):
         partner_name = user.partner.name if user.partner else ''
         is_world_learning = bool(user.partner and user.partner.is_world_learning)
 
-        round_id = request.GET.get('round', None)
-
+        round_id = kwargs['round']
         if not is_world_learning:
             vw_bridging_data = 'SELECT * FROM  vw_bridging_data  WHERE id > 0'
         else:
@@ -409,9 +408,8 @@ def bridging_export_data(request, **kwargs):
 
         query_params = []
 
-        if round_id:
-            vw_bridging_data += " AND round_id = %s"
-            query_params.append(round_id)
+        vw_bridging_data += " AND round_id = %s"
+        query_params.append(round_id)
 
         clm_bridging_all = has_group(request.user, 'CLM_BRIDGING_ALL')
         is_staff = request.user.is_staff

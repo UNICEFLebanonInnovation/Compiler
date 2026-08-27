@@ -91,7 +91,7 @@
                                         </span>
                                         <span class="d-inline-block">
                                           {{ request.user.username }}
-                                          {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_CENTER"  %}
+                                          {% if request.user|has_group:"TLS_PARTNER" or request.user|has_group:"TLS_CENTER"  %}
                                           - {{ request.user.partner }}
                                           {% endif %}
                                         </span>
@@ -105,7 +105,7 @@
                                                 <li class="breadcrumb-item">
                                                       TLS List
                                                 </li>
-                                              {% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id %}
+                                              {% if request.user|has_group:"TLS_FULL" and request.user|has_group:"TLS_CENTER" and request.user.center.id %}
 
                                                 <li class="breadcrumb-item">
                                                     {{ request.user.center.governorate }}
@@ -128,7 +128,7 @@
                             </div>
 
                         <div class="page-title-actions mscc-list-actions">
-{% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id and request.user.partner and not request.user.partner.is_world_learning %}
+{% if request.user|has_group:"TLS_FULL" and request.user|has_group:"TLS_CENTER" and request.user.center.id and request.user.partner and not request.user.partner.is_world_learning %}
 
 <a href="{% url 'tls:child_add' %}?type=TLS" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Beneficiary</a>
 
@@ -138,7 +138,7 @@
 </div>
 
 <div class="row">
-{% if request.user|has_group:"MSCC_CENTER" and not request.user.center %}
+{% if request.user|has_group:"TLS_CENTER" and not request.user.center %}
   <div class="alert alert-danger fade show" role="alert"> You don't have a center assigned to your profile please contact the administrator</div>
 {% endif %}
 </div>

@@ -1707,6 +1707,8 @@ class EducationProgrammeAssessment(TimeStampedModel):
     pre_test = JSONField(default=dict)
     mid_test = JSONField(default=dict)
     post_test = JSONField(default=dict)
+    youth_pre_test = JSONField(default=dict)
+    youth_post_test = JSONField(default=dict)
     school_test = JSONField(default=dict)
     programme_type = models.CharField(
         max_length=100,
