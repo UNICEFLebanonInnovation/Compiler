@@ -2610,19 +2610,47 @@ class TarlGradingForm(forms.ModelForm):
 
         super(TarlGradingForm, self).__init__(*args, **kwargs)
 
-        center = getattr(getattr(self.request, 'user', None), 'center', None)
-        provide_french_language = getattr(center, 'provide_french_language', None) == "Yes"
-        self.require_french_language = provide_french_language
+        summer_rs_programmes = [
+            "Summer RS Grade 3",
+            "Summer RS Grade 4",
+            "Summer RS Grade 5",
+            "Summer RS Grade 6",
+        ]
 
-        if not provide_french_language:
+        center = getattr(getattr(self.request, 'user', None), 'center', None)
+        provide_french_language = (
+            getattr(center, 'provide_french_language', None) == "Yes"
+        )
+
+        show_french_language = (
+            provide_french_language
+            or programme_type in summer_rs_programmes
+        )
+
+        self.require_french_language = show_french_language
+
+        if not show_french_language:
             self.fields.pop('french_level_reached', None)
 
-        form_action = reverse('mscc:service_tarl_grading_add',
-                              kwargs={'registry': registry, 'programme_type': programme_type, 'pre_post': pre_post})
+        form_action = reverse(
+            'mscc:service_tarl_grading_add',
+            kwargs={
+                'registry': registry,
+                'programme_type': programme_type,
+                'pre_post': pre_post
+            }
+        )
+
         if instance:
-            form_action = reverse('mscc:service_tarl_grading_edit',
-                                  kwargs={'registry': registry, 'programme_type': programme_type, 'pre_post': pre_post,
-                                          'pk': instance})
+            form_action = reverse(
+                'mscc:service_tarl_grading_edit',
+                kwargs={
+                    'registry': registry,
+                    'programme_type': programme_type,
+                    'pre_post': pre_post,
+                    'pk': instance
+                }
+            )
 
         if programme_type:
             self.fields['programme_type'].initial = programme_type
@@ -2630,11 +2658,12 @@ class TarlGradingForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
+
         tarl_blocks = [
             Div(
                 HTML('<span class="badge-form badge-pill">1</span>'),
                 Div('test_taken', css_class='col-md-4'),
-                css_class='row card-body '
+                css_class='row card-body'
             ),
             Div(
                 HTML('<span class="badge-form badge-pill">2</span>'),
@@ -2643,11 +2672,14 @@ class TarlGradingForm(forms.ModelForm):
             ),
         ]
 
-        if provide_french_language:
+        if show_french_language:
             tarl_blocks.append(
                 Div(
                     HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('french_level_reached', css_class='col-md-4 tarl-dependent'),
+                    Div(
+                        'french_level_reached',
+                        css_class='col-md-4 tarl-dependent'
+                    ),
                     css_class='row card-body'
                 )
             )
@@ -2655,18 +2687,36 @@ class TarlGradingForm(forms.ModelForm):
         tarl_blocks.append(
             Div(
                 HTML('<span class="badge-form badge-pill">4</span>'),
-                Div('math_level_reached', css_class='col-md-4 tarl-dependent'),
-                Div('word_problem_q1', css_class='col-md-3 tarl-dependent tarl-word-problem'),
-                Div('word_problem_q2', css_class='col-md-3 tarl-dependent tarl-word-problem'),
+                Div(
+                    'math_level_reached',
+                    css_class='col-md-4 tarl-dependent'
+                ),
+                Div(
+                    'word_problem_q1',
+                    css_class='col-md-3 tarl-dependent tarl-word-problem'
+                ),
+                Div(
+                    'word_problem_q2',
+                    css_class='col-md-3 tarl-dependent tarl-word-problem'
+                ),
                 css_class='row card-body'
             )
         )
+
         tarl_blocks.append(
             FormActions(
-                Submit('save', 'Save',
-                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                Reset('reset', 'Reset',
-                      css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                Submit(
+                    'save',
+                    'Save',
+                    css_class='btn-shadow btn-wide float-right btn-pill mr-3 '
+                              'btn-hover-shine btn btn-success'
+                ),
+                Reset(
+                    'reset',
+                    'Reset',
+                    css_class='btn-shadow btn-wide float-right btn-pill mr-3 '
+                              'btn-hover-shine btn btn-warning'
+                ),
             )
         )
 

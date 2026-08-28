@@ -1845,7 +1845,8 @@
     </div>
     {% endif %}
 
-    {% if result1.education_program in 'BLN Level 1, BLN Level 2, BLN Level 3' and request.user.center.is_tarl == 'Yes' %}
+      {% if result1.education_program in 'BLN Level 1, BLN Level 2, BLN Level 3' and request.user.center.is_tarl == 'Yes' or result1.education_program in 'Summer RS Grade 3, Summer RS Grade 4, Summer RS Grade 5, Summer RS Grade 6' %}
+
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_data 'TarlAssessment' instance as tarl_result %}
                                 <div class="mb-3 card">
@@ -1866,12 +1867,14 @@
                                                     <span>Pre Grading</span>
                                                 </a>
                                             </li>
+                                          {% if result1.education_program in 'BLN Level 1, BLN Level 2, BLN Level 3' %}
+
                                             <li class="nav-item">
                                                 <a role="tab" class="nav-link" id="tab-tarl-2" data-toggle="tab" href="#tab-animated-tarl-2" aria-selected="true">
                                                     <span>Mid Grading</span>
                                                 </a>
                                             </li>
-
+                                          {% endif %}
                                             <li class="nav-item">
                                                 <a role="tab" class="nav-link" id="tab-tarl-3" data-toggle="tab" href="#tab-animated-tarl-3" aria-selected="true">
                                                     <span>Post Grading</span>

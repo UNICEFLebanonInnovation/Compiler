@@ -400,19 +400,43 @@ class TarlGradingFormView(LoginRequiredMixin,
 
     def dispatch(self, request, *args, **kwargs):
         programme_type = self.kwargs.get('programme_type')
-        allowed_programmes = ["BLN Level 1", "BLN Level 2", "BLN Level 3"]
+
+        tarl_programmes = [
+            "BLN Level 1",
+            "BLN Level 2",
+            "BLN Level 3",
+        ]
+
+        summer_rs_programmes = [
+            "Summer RS Grade 3",
+            "Summer RS Grade 4",
+            "Summer RS Grade 5",
+            "Summer RS Grade 6",
+        ]
+
         center = getattr(getattr(request, 'user', None), 'center', None)
         is_tarl_center = getattr(center, 'is_tarl', None) == "Yes"
+
         pre_post = self.kwargs.get('pre_post', 'pre')
 
-        allowed_periods = ["pre", "mid", "post"]
+        if programme_type in tarl_programmes:
+            programme_allowed = is_tarl_center
+            allowed_periods = ["pre", "mid", "post"]
 
-        if (programme_type not in allowed_programmes or
-                not is_tarl_center or
-                pre_post not in allowed_periods):
+        elif programme_type in summer_rs_programmes:
+            programme_allowed = True
+            allowed_periods = ["pre", "post"]
+
+        else:
+            programme_allowed = False
+            allowed_periods = []
+
+        if not programme_allowed or pre_post not in allowed_periods:
             raise Http404("TARL grading is not available for this request.")
 
-        return super(TarlGradingFormView, self).dispatch(request, *args, **kwargs)
+        return super(TarlGradingFormView, self).dispatch(
+            request, *args, **kwargs
+        )
 
     def get_success_url(self):
         return reverse('mscc:child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
