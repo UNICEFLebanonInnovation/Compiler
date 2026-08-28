@@ -90,20 +90,25 @@ SUMMER_RS_PROGRAMME_CONFIG['Summer RS Grade 3'] = {
         ('english_reading_comprehension', 'Reading Comprehension', 15),
         ('english_writing_expression', 'Writing', 10),
     ]),
+    'french_grade': _summer_subject('French', 40, [
+        ('french_letter_sound', 'Letter Sound', 10),
+        ('french_familiar_words', 'Familiar Words', 5),
+        ('french_comprehension_ecrite', 'Reading Comprehension', 15),
+        ('french_production_ecrite', 'Writing', 10),
+    ]),
 }
 SUMMER_RS_PROGRAMME_CONFIG['Summer RS Grade 4'] = {
     'english_grade': _summer_subject('English', 32, [
         ('english_reading_comprehension', 'Reading Comprehension', 12),
         ('english_writing_expression', 'Writing', 20),
     ]),
+    'french_grade': _summer_subject('French', 32, [
+        ('french_comprehension_ecrite', 'Reading Comprehension', 12),
+        ('french_production_ecrite', 'Writing', 20),
+    ]),
 }
 
 SUMMER_RS_PROGRAMMES = frozenset(SUMMER_RS_PROGRAMME_CONFIG)
-SUMMER_RS_ENGLISH_ONLY_PROGRAMMES = frozenset((
-    'Summer RS Grade 3',
-    'Summer RS Grade 4',
-))
-
 
 WL_BLN_PROGRAMME_CONFIG = {
     "BLN Level 1": {
@@ -2112,10 +2117,7 @@ class SummerRSAssessmentForm(forms.ModelForm):
 
         center = getattr(getattr(self.request, 'user', None), 'center', None)
         provide_french_language = getattr(center, 'provide_french_language', None)
-        # Grades 3 and 4 are always conducted in English, irrespective of the
-        # center's language setting.
-        if (programme_type not in SUMMER_RS_ENGLISH_ONLY_PROGRAMMES and
-                provide_french_language == "Yes"):
+        if provide_french_language == "Yes":
             self.programme_config = {
                 field_name: config
                 for field_name, config in self.programme_config.items()

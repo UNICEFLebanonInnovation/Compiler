@@ -1512,7 +1512,6 @@
     {% endif %}
 
     {% service_data 'EducationProgrammeSummerRSAssessment' instance as summer_result %}
-    {# Summer RS Grades 3 and 4 use their dedicated English-only configurations. #}
     {% if result1.education_program in 'Summer RS Grade 1, Summer RS Grade 2, Summer RS Grade 3, Summer RS Grade 4, Summer RS Grade 5, Summer RS Grade 6, Summer RS Grade 7, Summer RS Grade 8, Summer RS Grade 9' %}
     {% summer_rs_programme_sections result1.education_program request.user.center.provide_french_language as summer_sections %}
     <div class="col-md-12 col-lg-6 col-xl-4">
