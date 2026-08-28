@@ -97,8 +97,6 @@ SUMMER_RS_PROGRAMME_CONFIG['Summer RS Grade 4'] = {
         ('english_writing_expression', 'Writing', 20),
     ]),
 }
-SUMMER_RS_PROGRAMME_CONFIG['YFS Level 1 - Summer RS Grade 9'] = SUMMER_RS_PROGRAMME_CONFIG['Summer RS Grade 9']
-SUMMER_RS_PROGRAMME_CONFIG['YFS Level 2 - Summer RS Grade 9'] = SUMMER_RS_PROGRAMME_CONFIG['Summer RS Grade 9']
 
 SUMMER_RS_PROGRAMMES = frozenset(SUMMER_RS_PROGRAMME_CONFIG)
 SUMMER_RS_ENGLISH_ONLY_PROGRAMMES = frozenset((
