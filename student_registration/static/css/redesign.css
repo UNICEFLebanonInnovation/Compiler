@@ -1706,6 +1706,10 @@ fieldset legend {
 
 .hidden { display: none !important; }
 
+/* Flex/grid children need this to be allowed to shrink below their content
+   width, which is what makes text-truncate work inside a flex row. */
+.min-w-0 { min-width: 0 !important; }
+
 .shadow-soft { box-shadow: var(--shadow-md) !important; }
 
 .rounded-xl { border-radius: var(--radius-xl) !important; }

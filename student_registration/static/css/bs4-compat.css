@@ -276,6 +276,36 @@ select.form-control:focus {
     margin-top: .5rem;
 }
 
+/* Bootstrap 4's `data-toggle="buttons"` radio group (used by the attendance
+   screens) has no Bootstrap 5 equivalent. The label still checks its nested
+   radio natively; these rules restore the selected-state styling, and
+   redesign.js keeps the `.active` class in sync for older browsers. */
+.btn-group-toggle > .btn,
+.btn-group-toggle > label.btn {
+    position: relative;
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+.btn-group-toggle > .btn input[type="radio"],
+.btn-group-toggle > .btn input[type="checkbox"] {
+    position: absolute;
+    clip: rect(0, 0, 0, 0);
+    pointer-events: none;
+}
+
+.btn-group-toggle > label.btn:has(input:checked),
+.btn-group-toggle > label.btn.active {
+    background-color: var(--unicef-blue);
+    border-color: var(--unicef-blue);
+    color: #fff;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, .15);
+}
+
+.btn-group-toggle > label.btn:has(input:focus-visible) {
+    box-shadow: var(--focus-ring);
+}
+
 /* BS4 close button -> BS5 btn-close look, without needing markup changes. */
 button.close,
 .close {
@@ -1044,4 +1074,135 @@ button.close:hover,
 .app-page-title h3[style*="color:#fff"],
 .app-page-title h3[style*="color: #fff"] {
     color: var(--text-primary) !important;
+}
+
+/* ==========================================================================
+   C. Legacy icon fonts -> Bootstrap Icons
+   --------------------------------------------------------------------------
+   The Pe-icon-7-stroke and Linearicons webfonts shipped inside the ArchitectUI
+   bundle, which the redesign no longer loads. Around 60 templates still use
+   those class names (pe-7s-info alone appears ~660 times), so rather than
+   editing every call site the classes are re-pointed at the equivalent
+   Bootstrap Icons glyph. Codepoints are taken verbatim from
+   bootstrap-icons 1.11.3, the version base.html loads.
+   ========================================================================== */
+
+.lnr-apartment,
+.lnr-book,
+.lnr-cloud,
+.lnr-cloud-download,
+.lnr-cog,
+.lnr-download,
+.lnr-exit,
+.lnr-file-empty,
+.lnr-graduation-hat,
+.lnr-hourglass,
+.lnr-inbox,
+.lnr-laptop-phone,
+.lnr-link,
+.lnr-phone,
+.lnr-phone-handset,
+.lnr-picture,
+.lnr-thumbs-down,
+.lnr-thumbs-up,
+.lnr-user,
+.lnr-users,
+.pe-7s-browser,
+.pe-7s-cloud-download,
+.pe-7s-config,
+.pe-7s-culture,
+.pe-7s-delete-user,
+.pe-7s-diskette,
+.pe-7s-display1,
+.pe-7s-filter,
+.pe-7s-graph,
+.pe-7s-graph1,
+.pe-7s-graph2,
+.pe-7s-graph3,
+.pe-7s-home,
+.pe-7s-hourglass,
+.pe-7s-info,
+.pe-7s-map-marker,
+.pe-7s-news-paper,
+.pe-7s-notebook,
+.pe-7s-pen,
+.pe-7s-plugin,
+.pe-7s-plus,
+.pe-7s-refresh,
+.pe-7s-refresh-2,
+.pe-7s-search,
+.pe-7s-server,
+.pe-7s-shield,
+.pe-7s-study,
+.pe-7s-trash,
+.pe-7s-user-female,
+.pe-7s-users,
+.pe-7s-world {
+    font-family: bootstrap-icons !important;
+}
+
+.lnr-apartment::before { content: "\f1dd"; }
+.lnr-book::before { content: "\f194"; }
+.lnr-cloud::before { content: "\f2c1"; }
+.lnr-cloud-download::before { content: "\f29b"; }
+.lnr-cog::before { content: "\f3e5"; }
+.lnr-download::before { content: "\f30a"; }
+.lnr-exit::before { content: "\f1c3"; }
+.lnr-file-empty::before { content: "\f392"; }
+.lnr-graduation-hat::before { content: "\f6fe"; }
+.lnr-hourglass::before { content: "\f41f"; }
+.lnr-inbox::before { content: "\f42d"; }
+.lnr-laptop-phone::before { content: "\f456"; }
+.lnr-link::before { content: "\f470"; }
+.lnr-phone::before { content: "\f5c1"; }
+.lnr-phone-handset::before { content: "\f5b4"; }
+.lnr-picture::before { content: "\f42a"; }
+.lnr-thumbs-down::before { content: "\f405"; }
+.lnr-thumbs-up::before { content: "\f407"; }
+.lnr-user::before { content: "\f4e1"; }
+.lnr-users::before { content: "\f4d0"; }
+.pe-7s-browser::before { content: "\f620"; }
+.pe-7s-cloud-download::before { content: "\f29b"; }
+.pe-7s-config::before { content: "\f56b"; }
+.pe-7s-culture::before { content: "\f62e"; }
+.pe-7s-delete-user::before { content: "\f4d9"; }
+.pe-7s-diskette::before { content: "\f7d8"; }
+.pe-7s-display1::before { content: "\f302"; }
+.pe-7s-filter::before { content: "\f3e1"; }
+.pe-7s-graph::before { content: "\f3f2"; }
+.pe-7s-graph1::before { content: "\f17e"; }
+.pe-7s-graph2::before { content: "\f673"; }
+.pe-7s-graph3::before { content: "\f4e9"; }
+.pe-7s-home::before { content: "\f423"; }
+.pe-7s-hourglass::before { content: "\f41f"; }
+.pe-7s-info::before { content: "\f431"; }
+.pe-7s-map-marker::before { content: "\f3e8"; }
+.pe-7s-news-paper::before { content: "\f4a3"; }
+.pe-7s-notebook::before { content: "\f444"; }
+.pe-7s-pen::before { content: "\f4cb"; }
+.pe-7s-plugin::before { content: "\f77d"; }
+.pe-7s-plus::before { content: "\f64d"; }
+.pe-7s-refresh::before { content: "\f116"; }
+.pe-7s-refresh-2::before { content: "\f130"; }
+.pe-7s-search::before { content: "\f52a"; }
+.pe-7s-server::before { content: "\f411"; }
+.pe-7s-shield::before { content: "\f52f"; }
+.pe-7s-study::before { content: "\f6fe"; }
+.pe-7s-trash::before { content: "\f5de"; }
+.pe-7s-user-female::before { content: "\f4e1"; }
+.pe-7s-users::before { content: "\f4d0"; }
+.pe-7s-world::before { content: "\f3ee"; }
+
+/* Shared glyph rendering for the mapped classes. */
+[class^="pe-7s-"], [class*=" pe-7s-"],
+[class^="lnr-"], [class*=" lnr-"] {
+    display: inline-block;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    vertical-align: -.125em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }

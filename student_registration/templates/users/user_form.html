@@ -1,17 +1,33 @@
-{% extends "youth/base.html" %}
-{% load crispy_forms_tags %}
+{% extends "base.html" %}
+{% load i18n crispy_forms_tags %}
 
-{% block title %}{{ user.name }}{% endblock %}
+{% block project_title %}{% trans "My Info" %}{% endblock %}
+{% block module_name %}{% trans "My Info" %}{% endblock %}
 
 {% block main_content %}
-    <h1>{{ user.username }}</h1>
-    <form class="form-horizontal" method="post" action="{% url 'users:update' %}">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <div class="control-group">
-          <div class="controls">
-            <button type="submit" class="btn">Update</button>
-          </div>
+<div class="page-header">
+    <div class="page-header-titles">
+        <h1 class="page-header-title"><i class="bi bi-pencil-square"></i>{{ user.username }}</h1>
+        <p class="page-header-subtitle">{% trans "Update the details on your account." %}</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-7 col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <form method="post" action="{% url 'users:update' %}">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-3">
+                        <a href="{% url 'users:profile' %}" class="btn btn-outline-secondary">{% trans "Cancel" %}</a>
+                        <button type="submit" class="btn btn-primary fw-semibold">
+                            <i class="bi bi-check2 me-1"></i>{% trans "Update" %}
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </form>
+    </div>
+</div>
 {% endblock main_content %}

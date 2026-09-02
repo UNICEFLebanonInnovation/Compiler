@@ -329,7 +329,47 @@
     }
 
     /* ---------------------------------------------------------------------
-       7. Filter chips
+       7. Legacy radio button groups
+       ---------------------------------------------------------------------
+       Bootstrap 4's data-toggle="buttons" is gone in 5. The attendance screens
+       rely on it for their Attended/Absent and Working day/Day off controls.
+       The nested radio still works natively, so only the `.active` class needs
+       maintaining — CSS :has() covers current browsers, this covers the rest.
+       --------------------------------------------------------------------- */
+
+    function syncButtonGroup(group) {
+        $all('label.btn', group).forEach(function (label) {
+            var input = label.querySelector('input[type="radio"], input[type="checkbox"]');
+            label.classList.toggle('active', !!(input && input.checked));
+        });
+    }
+
+    function initButtonGroups() {
+        $all('.btn-group-toggle').forEach(syncButtonGroup);
+
+        document.addEventListener('change', function (e) {
+            var group = e.target.closest ? e.target.closest('.btn-group-toggle') : null;
+            if (!group) {
+                return;
+            }
+
+            // Radios share a name across groups, so re-sync every group that
+            // could hold a member of the same radio group.
+            if (e.target.type === 'radio' && e.target.name) {
+                $all('input[name="' + CSS.escape(e.target.name) + '"]').forEach(function (input) {
+                    var owner = input.closest('.btn-group-toggle');
+                    if (owner) {
+                        syncButtonGroup(owner);
+                    }
+                });
+            } else {
+                syncButtonGroup(group);
+            }
+        });
+    }
+
+    /* ---------------------------------------------------------------------
+       8. Filter chips
        --------------------------------------------------------------------- */
 
     function initFilterChips() {
@@ -349,7 +389,7 @@
     }
 
     /* ---------------------------------------------------------------------
-       8. Multi-step form wizard
+       9. Multi-step form wizard
        ---------------------------------------------------------------------
        The registration and service forms are laid out as
            <div id="smartwizard(3)">
@@ -503,7 +543,7 @@
     }
 
     /* ---------------------------------------------------------------------
-       9. Public toast helper
+       10. Public toast helper
        --------------------------------------------------------------------- */
 
     function ensureToastHost() {
@@ -555,6 +595,7 @@
         initForms();
         initTables();
         initFilterChips();
+        initButtonGroups();
         initWizards();
 
         // Content injected later (remote modals, AJAX partials) needs the same

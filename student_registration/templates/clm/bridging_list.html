@@ -10,155 +10,64 @@
 
 {% block main_content %}
 
-<style>
-    .clm-bridging-list-page-title {
-        box-sizing: border-box;
-        max-width: calc(100vw - 2rem);
-        overflow-x: hidden;
-    }
-    .clm-bridging-list-title-wrapper {
-        display: grid !important;
-        grid-template-columns: 1fr;
-        align-items: start !important;
-        row-gap: 0.75rem;
-        max-width: 100%;
-    }
-    .clm-bridging-list-title-wrapper > .page-title-heading {
-        min-width: 0;
-    }
-    .clm-bridging-list-title-wrapper .page-title-head {
-        white-space: nowrap;
-    }
-    .clm-bridging-list-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        justify-content: flex-end;
-        width: 100%;
-        max-width: 100%;
-        padding-right: 2rem;
-    }
-    .clm-bridging-list-actions .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 0 !important;
-        max-width: 100%;
-        text-align: center;
-        white-space: normal;
-    }
-    .clm-bridging-list-content {
-        box-sizing: border-box;
-        max-width: calc(100vw - 2rem);
-        margin-left: 0;
-        margin-right: 0;
-        overflow-x: hidden;
-    }
-    .clm-bridging-list-content > [class*="col-"] {
-        padding-left: 0;
-        padding-right: 0;
-    }
-    .clm-bridging-list-content .table-responsive {
-        max-width: 100%;
-        overflow-x: auto;
-    }
-    @media (max-width: 1400px) {
-        .clm-bridging-list-title-wrapper {
-            row-gap: 1rem;
-        }
-        .clm-bridging-list-actions {
-            justify-content: flex-start;
-            padding-right: 0;
-        }
-    }
-    @media (max-width: 767.98px) {
-        .clm-bridging-list-title-wrapper .page-title-head {
-            white-space: normal;
-        }
-        .clm-bridging-list-actions .btn {
-            width: 100%;
-        }
-    }
-</style>
 
-<div class="app-page-title clm-bridging-list-page-title">
-                        <div class="page-title-wrapper clm-bridging-list-title-wrapper">
-                            <div class="page-title-heading">
-                                <div>
-                                    <div class="page-title-head center-elem page-title-heading">
-                                        <span class="d-inline-block pr-2">
-                                            <i class="fa fa-user"></i>
-                                        </span>
-                                        <span class="d-inline-block">
-                                          {{ request.user.username }}
-                                          - {{ request.user.partner }}
-                                        </span>
-                                    </div>
-                                    <div class="page-title-subheading opacity-10">
-                                        <nav class="" aria-label="breadcrumb">
-                                            <ol class="breadcrumb">
-                                                <li class="breadcrumb-item">
-                                                    <a href="">
-                                                        Home
-                                                    </a>
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                  <a href="{% url 'clm:bridging_list' %}">List</a></li>
-                                            </ol>
-                                        </nav>
-                                    </div>
-                                </div>
-                            </div>
-                        <div class="page-title-actions clm-bridging-list-actions">
 
-{% if 'Bridging'|is_allowed_create %}
-{% if not request.user.partner or not request.user.partner.is_world_learning %}
+<div class="page-header">
+    <div class="page-header-titles">
+        <nav aria-label="{% trans 'breadcrumb' %}">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'landing_page' %}">{% trans "Home" %}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{% trans "Registrations" %}</li>
+            </ol>
+        </nav>
+        <h1 class="page-header-title">
+            <i class="bi bi-mortarboard"></i>{% trans "Student Registration" %}
+        </h1>
+        <p class="page-header-subtitle">
+            <i class="bi bi-person-circle me-1"></i>{{ request.user.username }}
+            {% if request.user.partner %}&middot; {{ request.user.partner }}{% endif %}
+        </p>
+    </div>
 
-<a href="{% url 'clm:bridging_add' %}" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Beneficiary</a>
-
-{% endif %}
-{% endif %}
-                        </div>
-                        </div>
+    <div class="page-header-actions">
+        <button class="btn btn-outline-secondary btn-icon" type="button"
+                data-bs-toggle="collapse" data-bs-target="#listFilters"
+                aria-expanded="false" aria-controls="listFilters">
+            <i class="bi bi-funnel"></i>{% trans "Filters" %}
+        </button>
+        {% if 'Bridging'|is_allowed_create %}
+        {% if not request.user.partner or not request.user.partner.is_world_learning %}
+        <a href="{% url 'clm:bridging_add' %}" class="btn btn-primary btn-icon">
+            <i class="bi bi-plus-lg"></i>{% trans "Add New Beneficiary" %}
+        </a>
+        {% endif %}
+        {% endif %}
+    </div>
 </div>
 
-<div class="row clm-bridging-list-content">
-    <div class="col-lg-12">
-<div id="accordion" class="accordion-wrapper mb-3 form-filters">
-    <div class="card">
-        <div id="headingOne" class="card-header">
-            <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block collapsed">
-                <h5 class="m-0 p-0">
-                    <i class="pe-7s-filter text-primary"></i>
-                    Filters</h5>
-            </button>
+
+<div class="collapse mb-3 form-filters" id="listFilters">
+    <div class="card mb-0">
+        <div class="card-header">
+            <span class="card-title"><i class="bi bi-funnel me-2"></i>{% trans "Filters" %}</span>
         </div>
-        <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse" style="">
-            <div class="card-body">
+        <div class="card-body">
             <form action="" method="get" class="form form-inline">
-               {% crispy filter.form 'bootstrap5' %}
-
+                {% crispy filter.form 'bootstrap5' %}
             </form>
-            </div>
         </div>
-    </div>
-</div>
     </div>
 </div>
 
-<div class="row table-list clm-bridging-list-content">
-    <div class="col-lg-12">
-        <div class="card-hover-shadow-2x mb-3 card">
-            <div class="card-body">
-                <div class="mb-2 text-muted">
-                    <span class="breadcrumb-item">Showing {{ table.rows|length }} record{{ table.rows|length|pluralize }}</span>
-                </div>
-                <div class="table-responsive dataTables_wrapper dt-bootstrap5">
-        {% csrf_token %}
-        {% render_table table 'django_tables2/bootstrap.html' %}
-                </div>
-            </div>
+<div class="table-list">
+    <div class="table-container">
+        <div class="table-toolbar">
+            <span class="text-muted small">
+                {% blocktrans count counter=table.rows|length %}{{ counter }} record{% plural %}{{ counter }} records{% endblocktrans %}
+            </span>
         </div>
+        {% csrf_token %}
+        {% render_table table 'django_tables2/bootstrap5.html' %}
     </div>
 </div>
 

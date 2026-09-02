@@ -1,36 +1,27 @@
-{% extends "youth/base.html" %}
+{% extends "base.html" %}
 {% load static i18n %}
 
-{% block title %}User: {{ object.username }}{% endblock %}
+{% block project_title %}{% trans "User" %}{% endblock %}
+{% block module_name %}{% blocktrans with name=object.username %}User: {{ name }}{% endblocktrans %}{% endblock %}
 
 {% block main_content %}
-<div class="container">
-
-  <div class="row">
-    <div class="col-sm-12">
-
-      <h2>{{ object.email }}</h2>
-      {% if object.name %}
-        <p>{{ object.name }}</p>
-      {% endif %}
+<div class="page-header">
+    <div class="page-header-titles">
+        <h1 class="page-header-title"><i class="bi bi-person-badge"></i>{{ object.email }}</h1>
+        {% if object.name %}
+        <p class="page-header-subtitle">{{ object.name }}</p>
+        {% endif %}
     </div>
-  </div>
 
-{% if object == request.user %}
-<!-- Action buttons -->
-<div class="row">
-
-  <div class="col-sm-12 ">
-    <a class="btn btn-primary" href="{% url 'users:update' %}">My Info</a>
-    <a class="btn btn-primary" href="{% url 'account_email' %}">E-Mail</a>
-    <!-- Your Stuff: Custom user template urls -->
-  </div>
-
-</div>
-<!-- End Action buttons -->
-{% endif %}
-
-
+    {% if object == request.user %}
+    <div class="page-header-actions">
+        <a class="btn btn-primary btn-icon" href="{% url 'users:update' %}">
+            <i class="bi bi-pencil"></i>{% trans "My Info" %}
+        </a>
+        <a class="btn btn-outline-primary btn-icon" href="{% url 'account_email' %}">
+            <i class="bi bi-envelope"></i>{% trans "E-Mail" %}
+        </a>
+    </div>
+    {% endif %}
 </div>
 {% endblock main_content %}
-

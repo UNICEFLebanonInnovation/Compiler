@@ -59,13 +59,13 @@
 <div id="accordion" class="accordion-wrapper mb-3 form-filters">
     <div class="card">
         <div id="headingOne" class="card-header">
-            <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block collapsed">
+            <button type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block collapsed">
                 <h5 class="m-0 p-0">
                     <i class="pe-7s-filter text-primary"></i>
                     Filters</h5>
             </button>
         </div>
-        <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse" style="">
+        <div data-bs-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse" style="">
             <div class="card-body">
               <form action="" method="get" class="form form-inline">
                {% crispy filter.form 'bootstrap5' %}
