@@ -48,6 +48,15 @@ at one, per the redesign spec.
    class="nav-link {% if request.resolver_match.app_name == 'mscc' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
     <i class="bi bi-speedometer2"></i> <span>{% trans "Dashboard" %}</span>
 </a>
+
+{% comment %}
+The analytics dashboard had no link anywhere in the app, so the charts were
+only reachable by typing the URL.
+{% endcomment %}
+<a href="{% url 'mscc:dashboard_custom' %}"
+   class="nav-link {% if request.resolver_match.app_name == 'mscc' and request.resolver_match.url_name == 'dashboard_custom' %}active{% endif %}">
+    <i class="bi bi-bar-chart-line"></i> <span>{% trans "Analytics" %}</span>
+</a>
 {% endif %}
 
 {# --------------------------------------------------------------------- TLS #}

@@ -1803,6 +1803,232 @@ fieldset legend {
 }
 
 /* --------------------------------------------------------------------------
+   18b. Charts
+   --------------------------------------------------------------------------
+   Tokens consumed by static/js/dashboard/bma-charts.js. The renderers read
+   these off the container, so a theme switch repaints the charts with no JS
+   involvement.
+
+   The categorical order is fixed and must not be cycled or reordered: it was
+   validated for colour-vision separation against both surfaces (worst
+   adjacent CVD dE 9.1 light / 8.4 dark; normal-vision 19.6 / 19.3). Slot 1 is
+   the UNICEF blue. Single-series charts use --viz-sequential, not slot 1 of a
+   categorical ramp, because their job is magnitude rather than identity.
+   -------------------------------------------------------------------------- */
+
+.viz {
+    --viz-surface: var(--surface-raised);
+    --viz-ink: var(--text-primary);
+    --viz-ink-muted: var(--text-muted);
+    --viz-grid: var(--border-color);
+
+    --viz-sequential: #0097D7;
+
+    --viz-series-1: #0097D7;
+    --viz-series-2: #eb6834;
+    --viz-series-3: #1baf7a;
+    --viz-series-4: #eda100;
+    --viz-series-5: #e87ba4;
+    --viz-series-6: #008300;
+    --viz-series-7: #4a3aa7;
+    --viz-series-8: #e34948;
+
+    position: relative;
+    width: 100%;
+    min-height: 60px;
+}
+
+/* Dark steps are re-chosen for the dark surface, not an automatic flip. */
+:root[data-theme="dark"] .viz {
+    --viz-series-2: #d95926;
+    --viz-series-3: #199e70;
+    --viz-series-4: #c98500;
+    --viz-series-5: #d55181;
+    --viz-series-7: #9085e9;
+    --viz-series-8: #e66767;
+}
+
+.viz svg {
+    display: block;
+    width: 100%;
+    overflow: visible;
+}
+
+.viz .viz-axis text {
+    fill: var(--viz-ink-muted);
+    font-size: 11px;
+}
+
+.viz .viz-axis .domain {
+    stroke: var(--viz-grid);
+}
+
+.viz .viz-axis .tick line {
+    stroke: var(--viz-grid);
+}
+
+/* Gridlines stay recessive — they orient, they do not compete. */
+.viz .viz-grid line {
+    stroke: var(--viz-grid);
+    stroke-opacity: .6;
+    shape-rendering: crispEdges;
+}
+
+.viz .viz-value {
+    fill: var(--viz-ink);
+    font-size: 11px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.viz .viz-bar {
+    transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.viz:hover .viz-bar {
+    opacity: .55;
+}
+
+.viz .viz-bar:hover,
+.viz .viz-bar.is-active {
+    opacity: 1;
+}
+
+.viz-tooltip {
+    position: fixed;
+    z-index: 2100;
+    pointer-events: none;
+    background: var(--surface-inverse);
+    color: #fff;
+    border-radius: var(--radius-sm);
+    padding: .45rem .6rem;
+    font-size: .78rem;
+    line-height: 1.35;
+    box-shadow: var(--shadow-lg);
+    max-width: 260px;
+    opacity: 0;
+    transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.viz-tooltip.is-visible {
+    opacity: 1;
+}
+
+.viz-tooltip .viz-tooltip-name {
+    font-weight: 600;
+    display: block;
+}
+
+.viz-tooltip .viz-tooltip-value {
+    color: rgba(255, 255, 255, .8);
+}
+
+/* Legend — always present from two series up, so identity never rests on
+   colour alone. */
+.viz-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem 1rem;
+    padding: 0 0 .5rem;
+    margin: 0;
+    list-style: none;
+    font-size: .78rem;
+    color: var(--text-secondary);
+}
+
+.viz-legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+}
+
+.viz-legend .viz-swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.viz-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+    min-height: 160px;
+    color: var(--text-muted);
+    font-size: .84rem;
+    text-align: center;
+}
+
+.viz-empty i {
+    font-size: 1.6rem;
+    opacity: .5;
+}
+
+/* Every chart ships an equivalent table for screen readers and for the
+   contrast-relief rule; sighted users can open it from the card header. */
+.viz-table-wrap {
+    max-height: 260px;
+    overflow: auto;
+}
+
+.viz-table {
+    width: 100%;
+    font-size: .8rem;
+    margin: 0;
+}
+
+.viz-table th,
+.viz-table td {
+    padding: .3rem .5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.viz-table td:last-child {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+}
+
+.chart-card .card-body {
+    padding: .85rem 1rem 1rem;
+}
+
+/* A long chart title was wrapping and pushing the table toggle onto its own
+   line; keep the toggle pinned and let the title wrap beside it. */
+.chart-card .card-header {
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: .5rem;
+}
+
+.chart-card .card-header .card-title {
+    min-width: 0;
+    line-height: 1.3;
+}
+
+.chart-card .chart-toggle-table {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.chart-toggle-table {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: .75rem;
+    padding: 0 .25rem;
+}
+
+.chart-toggle-table:hover {
+    color: var(--unicef-blue);
+}
+
+@media print {
+    .viz-tooltip { display: none !important; }
+}
+
+/* --------------------------------------------------------------------------
    19. Utilities
    -------------------------------------------------------------------------- */
 

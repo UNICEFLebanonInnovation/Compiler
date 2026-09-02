@@ -1,331 +1,262 @@
 {% extends "mscc/base.html" %}
 {% load static i18n %}
-{% load static i18n %}
-{% load django_bootstrap5 %}
-{% load util_tags %}
-{% load simple_tags %}
-{% bootstrap_css %}
 
-{% block project_title %}Dashboard{% endblock %}
-{% block module_name %}Makani - Dashboard{% endblock %}
+{% block project_title %}{% trans "Dashboard" %}{% endblock %}
+{% block module_name %}{% trans "Makani — Dashboard" %}{% endblock %}
 
 {% block content %}
 
-<style>
-  .filter-package-type {
-    cursor: pointer;
-  }
-
-</style>
-
-<div class="app-page-title">
-                        <div class="page-title-wrapper">
-                            <div class="page-title-heading">
-                                <div>
-                                    <div class="page-title-head center-elem page-title-heading">
-                                        <span class="d-inline-block pr-2">
-                                            <i class="pe-7s-display1"></i>
-                                        </span>
-                                        <span class="d-inline-block">Dashboard</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
+<div class="page-header">
+    <div class="page-header-titles">
+        <nav aria-label="{% trans 'breadcrumb' %}">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'landing_page' %}">{% trans "Home" %}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{% trans "Dashboard" %}</li>
+            </ol>
+        </nav>
+        <h1 class="page-header-title">
+            <i class="bi bi-speedometer2"></i>{% trans "Makani Dashboard" %}
+        </h1>
+        <p class="page-header-subtitle">
+            {% trans "Registration profile across centers, cycles and partners." %}
+        </p>
+    </div>
+    <div class="page-header-actions">
+        <button type="button" class="btn btn-outline-secondary btn-icon" id="dashboard-reset">
+            <i class="bi bi-arrow-counterclockwise"></i>{% trans "Reset filters" %}
+        </button>
+    </div>
 </div>
 
-<div class="row">
-                        <div class="col-md-6 col-lg-3">
-                            <div class="filter-package-type widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-success border-success card">
-                                <div class="widget-chat-wrapper-outer">
-                                    <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">Total Registration</div>
-                                        <div class="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                                            <div class="widget-chart-flex align-items-center">
-                                                <div>
-                                                    <span class="opacity-10 text-success pr-2">
-                                                        <i class="pe-7s-graph3"></i>
-                                                    </span>
-                                                    {{ total }}
-                                                    <small class="opacity-5 pl-1"></small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-3">
-                            <div class="filter-package-type widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-primary card">
-                                <div class="widget-chat-wrapper-outer">
-                                    <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">Core-Package</div>
-                                        <div class="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                                            <div class="widget-chart-flex align-items-center">
-                                                <div>
-                                                    <span class="opacity-10 text-info pr-2">
-                                                        <i class="pe-7s-graph2"></i>
-                                                    </span>
-                                                    {{ total_corepackage }}
-                                                    <small class="opacity-5 pl-1"></small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-3">
-                            <div class="filter-package-type widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-danger border-danger card">
-                                <div class="widget-chat-wrapper-outer">
-                                    <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">Walk-in</div>
-                                        <div class="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                                            <div class="widget-chart-flex align-items-center">
-                                                <div>
-                                                    <span class="opacity-10 text-danger pr-2">
-                                                        <i class="pe-7s-display1"></i>
-                                                    </span>
-                                                    {{ total_walkin }}
-                                                    <small class="opacity-5 pr-1"></small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-<!--<div class="row">-->
-
-      <!--<div class="col-md-4">-->
-          <!--<div class="main-card mb-3 card">-->
-              <!--<div class="card-body">-->
-                  <!--<h5 class="card-title">Select one or more center</h5>-->
-                  <!--<select multiple="multiple" id="center_filter" class="multiselect-dropdown form-control">-->
-                    <!--{% for item in centers %}-->
-                      <!--<option value="{{ item.id }}">{{ item }}</option>-->
-                    <!--{% endfor %}-->
-                  <!--</select>-->
-              <!--</div>-->
-          <!--</div>-->
-      <!--</div>-->
-      <!--<div class="col-md-4">-->
-          <!--<div class="main-card mb-3 card">-->
-              <!--<div class="card-body">-->
-                  <!--<h5 class="card-title">Select one or more governorate</h5>-->
-                  <!--<select multiple="multiple" id="governorate_filter" class="multiselect-dropdown form-control">-->
-                    <!--{% for item in governorates %}-->
-                      <!--<option value="{{ item.id }}">{{ item }}</option>-->
-                    <!--{% endfor %}-->
-                  <!--</select>-->
-              <!--</div>-->
-          <!--</div>-->
-      <!--</div>-->
-
-      <!--<div class="col-md-4">-->
-          <!--<div class="main-card mb-3 card">-->
-              <!--<div class="card-body">-->
-                  <!--<h5 class="card-title">Select one or more partner</h5>-->
-                  <!--<select multiple="multiple" id="partner_filter" class="multiselect-dropdown form-control">-->
-                    <!--{% for item in partners %}-->
-                      <!--<option value="{{ item.id }}">{{ item }}</option>-->
-                    <!--{% endfor %}-->
-                  <!--</select>-->
-              <!--</div>-->
-          <!--</div>-->
-      <!--</div>-->
-
-<!--</div>-->
-
-<!--<div class="row">-->
-      <!--<div class="col-md-4">-->
-          <!--<div class="main-card mb-3 card">-->
-              <!--<div class="card-body">-->
-                  <!--<h5 class="card-title">Select one or more round</h5>-->
-                  <!--<select multiple="multiple" id="round_filter" class="multiselect-dropdown form-control">-->
-                    <!--{% for item in rounds %}-->
-                      <!--<option value="{{ item.id }}">{{ item }}</option>-->
-                    <!--{% endfor %}-->
-                  <!--</select>-->
-              <!--</div>-->
-          <!--</div>-->
-      <!--</div>-->
-<!--</div>-->
-
-<div class="row">
-
-      <div class="col-md-4">
-          <div class="main-card mb-3 card">
-              <div class="card-header">Children per Nationality</div>
-              <div class="card-body" id="children_per_nationality"></div>
-          </div>
-      </div>
-
-      <div class="col-md-4">
-          <div class="main-card mb-3 card">
-              <div class="card-header">Children per Gender</div>
-              <div class="card-body" id="children_per_gender"></div>
-          </div>
-      </div>
-
-      <div class="col-md-4">
-          <div class="main-card mb-3 card">
-              <div class="card-header">Children per Programme</div>
-              <div class="card-body" id="children_per_programme"></div>
-          </div>
-      </div>
-
-</div>
-
-<div class="row">
-
-      <div class="col-md-4">
-          <div class="main-card mb-3 card">
-              <div class="card-header">Children per Source of Identification</div>
-              <div class="card-body" id="children_per_source"></div>
-          </div>
-      </div>
-
-      <div class="col-md-4">
-          <div class="main-card mb-3 card">
-              <div class="card-header">Children per Family Status</div>
-              <div class="card-body" id="children_per_status"></div>
-          </div>
-      </div>
-
-      <div class="col-md-4">
-          <div class="main-card mb-3 card">
-              <div class="card-header">Cash Support</div>
-              <div class="card-body" id="children_cash_support"></div>
-          </div>
-      </div>
-
-</div>
-
-<div class="row">
-
-      <div class="col-md-4">
-          <div class="main-card mb-3 card">
-              <div class="card-header">Children per Disability Type</div>
-              <div class="card-body" id="children_per_disability"></div>
-          </div>
-      </div>
-
-      <div class="col-md-4">
-          <div class="main-card mb-3 card">
-              <div class="card-header">Children Vulnerability</div>
-              <div class="card-body" id="children_per_vulnerability"></div>
-          </div>
-      </div>
-
-      <div class="col-md-4">
-          <div class="main-card mb-3 card">
-              <div class="card-header">Volunteering</div>
-              <div class="card-body" id="children_volunteering"></div>
-          </div>
-      </div>
-
-</div>
-
-<div class="row">
-
-    <div class="col-md-6">
-        <div class="main-card mb-3 card">
-            <div class="card-header">Children per Round</div>
-            <div class="card-body" id="children_per_round"></div>
+{# ------------------------------------------------------------- KPI row #}
+{% comment %}
+Headline numbers are stat tiles, not one-bar charts. The two package
+tiles double as filters; they refresh from the same endpoint as the
+charts so the totals can never disagree with what is plotted.
+{% endcomment %}
+<div class="row g-3 mb-1" id="dashboard-kpis">
+    <div class="col-6 col-xl-3">
+        <div class="card mb-0 h-100">
+            <div class="metric-card">
+                <span class="metric-icon"><i class="bi bi-clipboard-data"></i></span>
+                <div class="min-w-0">
+                    <div class="metric-value" data-kpi="total">–</div>
+                    <div class="metric-label">{% trans "Registrations" %}</div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="col-md-6">
-        <div class="main-card mb-3 card">
-            <div class="card-header">Children Moved Between Rounds</div>
-            <div class="card-body" id="children_moved_rounds"></div>
+    <div class="col-6 col-xl-3">
+        <div class="card mb-0 h-100">
+            <div class="metric-card">
+                <span class="metric-icon"><i class="bi bi-people"></i></span>
+                <div class="min-w-0">
+                    <div class="metric-value" data-kpi="total_children">–</div>
+                    <div class="metric-label">{% trans "Unique children" %}</div>
+                </div>
+            </div>
         </div>
     </div>
 
+    <div class="col-6 col-xl-3">
+        <button type="button" class="card mb-0 h-100 w-100 text-start border-0 filter-package-type"
+                data-package-type="Core-Package" aria-pressed="false">
+            <div class="metric-card">
+                <span class="metric-icon"><i class="bi bi-box-seam"></i></span>
+                <div class="min-w-0">
+                    <div class="metric-value" data-kpi="total_corepackage">–</div>
+                    <div class="metric-label">{% trans "Core-Package" %}</div>
+                    <div class="metric-trend text-muted">{% trans "Click to filter" %}</div>
+                </div>
+            </div>
+        </button>
+    </div>
+
+    <div class="col-6 col-xl-3">
+        <button type="button" class="card mb-0 h-100 w-100 text-start border-0 filter-package-type"
+                data-package-type="Walk-in" aria-pressed="false">
+            <div class="metric-card">
+                <span class="metric-icon"><i class="bi bi-door-open"></i></span>
+                <div class="min-w-0">
+                    <div class="metric-value" data-kpi="total_walkin">–</div>
+                    <div class="metric-label">{% trans "Walk-in" %}</div>
+                    <div class="metric-trend text-muted">{% trans "Click to filter" %}</div>
+                </div>
+            </div>
+        </button>
+    </div>
 </div>
 
-<div class="row">
-      <div class="col-md-12">
-          <div class="main-card mb-3 card">
-              <div class="card-header">Children moved between rounds</div>
-              <div class="card-body p-0" style="height: 600px; overflow-y: auto;">
-                  <table class="mb-0 table table-striped">
-                      <thead>
-                          <tr>
-                              <th>Child</th>
-                              <th>Rounds</th>
-                              <th>Programme</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          {% for item in moved_children %}
-                          <tr>
-                              <td>{{ item.name }}</td>
-                              <td>{{ item.rounds|join:", " }}</td>
-                              <td>{{ item.programmes|join:", " }}</td>
-                          </tr>
-                          {% empty %}
-                          <tr>
-                              <td colspan="3">No data available</td>
-                          </tr>
-                          {% endfor %}
-                      </tbody>
-                  </table>
-              </div>
-          </div>
-      </div>
+{# --------------------------------------------------------------- Filters #}
+{% comment %}
+One row of controls above the charts. These selects existed in the markup
+but were commented out, so the dashboard shipped with no way to filter at
+all while the JS still tried to read them.
+{% endcomment %}
+<div class="card form-filters mb-3">
+    <div class="card-header">
+        <span class="card-title"><i class="bi bi-funnel" aria-hidden="true"></i>{% trans "Filters" %}</span>
+        <span class="text-muted small" id="dashboard-status" role="status" aria-live="polite"></span>
+    </div>
+    <div class="card-body">
+        <div class="form-inline">
+            <div>
+                <label class="form-label" for="center_filter">{% trans "Centers" %}</label>
+                <select multiple size="4" id="center_filter" class="form-select">
+                    {% for item in centers %}<option value="{{ item.id }}">{{ item }}</option>{% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="form-label" for="governorate_filter">{% trans "Governorates" %}</label>
+                <select multiple size="4" id="governorate_filter" class="form-select">
+                    {% for item in governorates %}<option value="{{ item.id }}">{{ item }}</option>{% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="form-label" for="partner_filter">{% trans "Partners" %}</label>
+                <select multiple size="4" id="partner_filter" class="form-select">
+                    {% for item in partners %}<option value="{{ item.id }}">{{ item }}</option>{% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="form-label" for="round_filter">{% trans "Cycles" %}</label>
+                <select multiple size="4" id="round_filter" class="form-select">
+                    {% for item in rounds %}<option value="{{ item.id }}">{{ item }}</option>{% endfor %}
+                </select>
+            </div>
+        </div>
+        <p class="form-text mb-0 mt-2">
+            {% trans "Hold Ctrl (or Cmd) to select more than one value. Charts update automatically." %}
+        </p>
+    </div>
+</div>
+
+{# ---------------------------------------------------------------- Charts #}
+{% comment %}
+Each of these is one series of counts per category, so they are sorted
+bars in a single hue rather than pies: the reader's job is comparing
+magnitude, and a hue per slice would spend colour on nothing.
+{% endcomment %}
+<div class="row g-3">
+    {% for chart in charts %}
+    <div class="col-12 col-lg-6 col-xxl-4">
+        <div class="card chart-card mb-0 h-100">
+            <div class="card-header">
+                <span class="card-title">{{ chart.title }}</span>
+                <button type="button" class="chart-toggle-table" aria-pressed="false"
+                        title="{% trans 'Show as table' %}" aria-label="{% trans 'Show as table' %}">
+                    <i class="bi bi-table"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="viz" id="{{ chart.id }}" data-viz-label="{{ chart.title }}"></div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% comment %}
+Cycles are an ordered sequence, so they keep their order (columns) rather
+than being sorted by magnitude.
+{% endcomment %}
+<div class="row g-3 mt-0">
+    <div class="col-12 col-xl-6">
+        <div class="card chart-card mb-0 h-100">
+            <div class="card-header">
+                <span class="card-title">{% trans "Children per cycle" %}</span>
+                <button type="button" class="chart-toggle-table" aria-pressed="false"
+                        title="{% trans 'Show as table' %}" aria-label="{% trans 'Show as table' %}">
+                    <i class="bi bi-table"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="viz" id="children_per_round" data-viz-label="{% trans 'Children per cycle' %}"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-xl-6">
+        <div class="card chart-card mb-0 h-100">
+            <div class="card-header">
+                <span class="card-title">{% trans "Returning vs. new children per cycle" %}</span>
+                <button type="button" class="chart-toggle-table" aria-pressed="false"
+                        title="{% trans 'Show as table' %}" aria-label="{% trans 'Show as table' %}">
+                    <i class="bi bi-table"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="viz" id="children_moved_rounds"
+                     data-viz-label="{% trans 'Returning versus new children per cycle' %}"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mt-0">
+    <div class="col-12">
+        <div class="card mb-0">
+            <div class="card-header">
+                <span class="card-title">
+                    <i class="bi bi-arrow-left-right me-2"></i>{% trans "Children enrolled in more than one cycle" %}
+                </span>
+                <span class="badge rounded-pill text-bg-light border">{{ moved_children|length }}</span>
+            </div>
+            <div class="table-responsive" style="max-height: 420px;">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">{% trans "Child" %}</th>
+                            <th scope="col">{% trans "Cycles" %}</th>
+                            <th scope="col">{% trans "Programme" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in moved_children %}
+                        <tr>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.rounds|join:", " }}</td>
+                            <td>{{ item.programmes|join:", " }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3">
+                                <div class="empty-state py-4">
+                                    <i class="bi bi-inbox empty-state-icon" aria-hidden="true"></i>
+                                    <p class="empty-state-title">{% trans "No children span multiple cycles" %}</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% endblock content %}
 
 {% block extra_js %}
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/heatmap.js"></script>
-<script src="https://code.highcharts.com/modules/data.js"></script>
-<script src="https://code.highcharts.com/modules/drilldown.js"></script>
-<script src="https://code.highcharts.com/modules/series-label.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/export-data.js"></script>
-<script src="https://code.highcharts.com/modules/accessibility.js"></script>
-
-<script type="text/javascript" src="{% static 'js/Highcharts.chart.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/mscc/dashboard.js' %}"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="{% static 'js/dashboard/bma-charts.js' %}?v=1"></script>
 <script>
-  <!--call ajax to get data-->
-  <!--create chart-->
-  <!--update chart on change / click-->
-  <!--add loader-->
-
-  function load_data(url, params) {
-
-        return $.ajax({
-            type: "GET",
-            url: url,
-            data: params,
-            cache: false,
-            async: true,
-            dataType: 'json',
-            success: function (response) {
-                console.log('ok');
-                return response;
-            },
-            error: function(response) {
-                console.log(response);
-            }
-        });
-
-  }
-
-  $(function(){
-      $.getJSON("{% url 'mscc:dashboard_data' %}", getFilters(), function(data){
-          initDashboardCharts(data);
-      });
-  });
+  window.msccDashboardConfig = {
+    dataUrl: "{% url 'mscc:dashboard_data' %}",
+    charts: [
+      {% for chart in charts %}
+      { id: "{{ chart.id|escapejs }}", title: "{{ chart.title|escapejs }}" }{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ],
+    labels: {
+      empty: "{% trans 'No data for the current filters.' %}",
+      loading: "{% trans 'Loading…' %}",
+      failed: "{% trans 'Could not load dashboard data.' %}",
+      returning: "{% trans 'Returning' %}",
+      newChildren: "{% trans 'New' %}"
+    }
+  };
 </script>
-
-
+<script src="{% static 'js/dashboard/mscc-dashboard.js' %}?v=1"></script>
 {% endblock %}
