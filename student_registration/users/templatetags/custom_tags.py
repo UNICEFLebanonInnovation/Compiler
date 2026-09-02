@@ -67,6 +67,56 @@ def get_list_parameters(request):
 
 
 @register.simple_tag
+def active_filters(filterset):
+    """Return the filters currently applied, ready to render as chips.
+
+    The list FilterSets deliberately blank out field labels and lean on
+    placeholders (see ``PlaceholderFilterSet``), so a human-readable name has
+    to be recovered per field: the placeholder for text inputs, the empty
+    choice for selects, and a prettified field name as a last resort.
+
+    Each entry is ``{'name', 'label', 'value'}`` where ``value`` is the
+    display text of the selection rather than the submitted key.
+    """
+    applied = []
+    form = getattr(filterset, 'form', None)
+    if form is None:
+        return applied
+
+    data = getattr(form, 'data', None)
+    if not data:
+        return applied
+
+    for name, field in form.fields.items():
+        try:
+            value = data.get(name)
+        except (AttributeError, TypeError):
+            continue
+
+        if value in (None, '', []):
+            continue
+
+        choices = list(getattr(field, 'choices', None) or [])
+
+        label = field.widget.attrs.get('placeholder') or field.label
+        if not label and choices and str(choices[0][0]) == '':
+            # Selects carry their name in the empty option ("Governorate").
+            label = choices[0][1]
+        if not label:
+            label = name.replace('__', ' ').replace('_', ' ').strip().title()
+
+        display = value
+        for key, text in choices:
+            if str(key) == str(value):
+                display = text
+                break
+
+        applied.append({'name': name, 'label': label, 'value': display})
+
+    return applied
+
+
+@register.simple_tag
 def check_field_value(record, field):
     try:
         if record.new_fields and field in record.new_fields:

@@ -192,10 +192,18 @@
        --------------------------------------------------------------------- */
 
     function applyTheme(theme) {
+        var root = document.documentElement;
+
         if (theme === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
+            root.setAttribute('data-theme', 'dark');
+            // Bootstrap 5.3 keys its own dark palette off `data-bs-theme`.
+            // Setting it too means its components (form-select chevrons,
+            // dropdowns, close buttons, modals) darken natively instead of
+            // needing a per-component override here.
+            root.setAttribute('data-bs-theme', 'dark');
         } else {
-            document.documentElement.removeAttribute('data-theme');
+            root.removeAttribute('data-theme');
+            root.removeAttribute('data-bs-theme');
         }
 
         $all('[data-theme-toggle] i').forEach(function (icon) {
@@ -372,7 +380,41 @@
        8. Filter chips
        --------------------------------------------------------------------- */
 
+    /* The FilterSets blank out every field label and rely on placeholders and
+       empty select options instead (see PlaceholderFilterSet). That leaves the
+       controls with no accessible name at all, so mirror the visible text into
+       aria-label — a placeholder is not a label, and it disappears on input. */
+    function labelFilterControls() {
+        $all('.form-inline select, .form-inline input, .form-inline textarea').forEach(function (el) {
+            if (el.type === 'hidden' || el.type === 'submit' || el.type === 'button') {
+                return;
+            }
+            if (el.getAttribute('aria-label') || (el.labels && el.labels.length)) {
+                return;
+            }
+
+            var text = el.getAttribute('placeholder');
+
+            if (!text && el.tagName === 'SELECT' && el.options.length) {
+                var first = el.options[0];
+                if (first.value === '') {
+                    text = first.textContent.trim();
+                }
+            }
+
+            if (!text && el.name) {
+                text = el.name.replace(/__/g, ' ').replace(/_/g, ' ').trim();
+            }
+
+            if (text) {
+                el.setAttribute('aria-label', text);
+            }
+        });
+    }
+
     function initFilterChips() {
+        labelFilterControls();
+
         document.addEventListener('click', function (e) {
             var chip = e.target.closest ? e.target.closest('[data-remove-filter]') : null;
             if (!chip) {
@@ -625,6 +667,7 @@
     // user does not get a white flash while the rest of the script loads.
     if (read(STORAGE_THEME) === 'dark') {
         document.documentElement.setAttribute('data-theme', 'dark');
+        document.documentElement.setAttribute('data-bs-theme', 'dark');
     }
 
     window.BMA = window.BMA || {};

@@ -653,6 +653,11 @@ hr {
     letter-spacing: .06em;
     font-weight: 600;
     margin-top: .2rem;
+    /* Uppercase + letter-spacing makes two-word labels wrap awkwardly in a
+       narrow tile; keep them on one line and elide instead. */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .metric-trend {
@@ -1277,30 +1282,119 @@ fieldset legend {
    12. Filters & chips
    -------------------------------------------------------------------------- */
 
-#active-filters .badge,
+/* Applied filters, shown above the list so a narrowed result set is never
+   unexplained — and so the user can drop one filter without reopening the
+   whole panel. */
+.active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: .85rem;
+}
+
+.active-filters-label {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.active-filters-clear {
+    font-size: .8rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    /* Pushed to the end of whichever row it lands on, so it reads as the
+       row's trailing action rather than an orphaned link when the chips wrap. */
+    margin-inline-start: auto;
+    white-space: nowrap;
+}
+
+.active-filters-clear:hover {
+    color: var(--status-danger);
+}
+
 .filter-chip {
     font-weight: 500;
     font-size: .8rem;
     border-radius: var(--radius-pill);
-    border: 1px solid var(--border-color) !important;
-    background: var(--surface-sunken);
+    border: 1px solid var(--border-color);
+    background: var(--surface-raised);
     color: var(--text-secondary);
     display: inline-flex;
     align-items: center;
-    gap: .4rem;
-    padding: .3rem .7rem;
+    gap: .35rem;
+    padding: .28rem .4rem .28rem .7rem;
+    box-shadow: var(--shadow-xs);
+    max-width: 320px;
 }
 
-#active-filters .btn-close,
+.filter-chip-label {
+    color: var(--text-muted);
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.filter-chip-value {
+    color: var(--text-primary);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .filter-chip .btn-close {
-    filter: none;
-    opacity: .6;
-    font-size: .62rem;
+    /* No `filter: none` here — Bootstrap inverts this glyph under
+       data-bs-theme="dark", and overriding it would leave a dark × on a
+       dark chip. */
+    opacity: .45;
+    font-size: .58rem;
+    padding: .35rem;
+    margin-inline-start: .1rem;
+    border-radius: 50%;
+    flex-shrink: 0;
 }
 
-#active-filters .btn-close:hover,
 .filter-chip .btn-close:hover {
     opacity: 1;
+    background-color: var(--surface-sunken);
+}
+
+/* The filter card header doubles as the collapse toggle. */
+.filter-panel-toggle {
+    width: 100%;
+    background: transparent;
+    border: none;
+    text-align: start;
+    cursor: pointer;
+}
+
+.filter-panel-toggle:hover {
+    background: var(--surface-hover);
+}
+
+.filter-panel-toggle .card-title {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.filter-panel-caret {
+    transition: transform var(--duration-base) var(--ease-out);
+    color: var(--text-muted);
+}
+
+.filter-panel-toggle[aria-expanded="true"] .filter-panel-caret {
+    transform: rotate(180deg);
 }
 
 .offcanvas {

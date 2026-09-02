@@ -56,18 +56,7 @@
 </div>
 {% endif %}
 
-<div class="collapse mb-3 form-filters" id="listFilters">
-    <div class="card mb-0">
-        <div class="card-header">
-            <span class="card-title"><i class="bi bi-funnel me-2"></i>{% trans "Filters" %}</span>
-        </div>
-        <div class="card-body">
-            <form action="" method="get" class="form form-inline">
-                {% crispy filter.form 'bootstrap5' %}
-            </form>
-        </div>
-    </div>
-</div>
+{% include "_list_filters.html" %}
 
 <div class="table-list">
     <div class="table-container">

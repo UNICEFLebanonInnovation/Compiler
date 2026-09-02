@@ -183,6 +183,13 @@ select.form-control {
     background-position: left .7rem center;
 }
 
+/* The chevron is a baked-in SVG, so it needs a lighter stroke on dark
+   surfaces; Bootstrap's own `.form-select` handles this via data-bs-theme. */
+:root[data-theme="dark"] .custom-select,
+:root[data-theme="dark"] select.form-control {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23b6c2d4' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+}
+
 .custom-select:focus,
 select.form-control:focus {
     border-color: var(--unicef-blue);
@@ -207,39 +214,77 @@ select.form-control:focus {
     width: 100%;
 }
 
-/* Bootstrap 5 dropped `.form-inline`, which the django-filter search panels
-   still set on their crispy helpers. Reproduce it as a wrapping flex row so
-   filter fields line up instead of stacking full-width. */
+/* Bootstrap 5 dropped `.form-inline`, which every search panel still sets —
+   the crispy filter helpers via `form_class`, the django-bootstrap5 ones in
+   their own markup.
+
+   A wrapping flex row leaves ragged columns once a filterset has 15+ fields,
+   so these panels use a real grid: every control lands in a fixed column and
+   reads down as well as across. */
 .form-inline {
-    display: flex;
-    flex-flow: row wrap;
-    align-items: flex-end;
-    gap: .75rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: .75rem 1rem;
+    align-items: end;
 }
 
 .form-inline > .mb-3,
 .form-inline > .form-group,
+.form-inline > div:not(.buttonHolder):not([class]),
 .form-inline .form-group {
     margin-bottom: 0 !important;
-    flex: 0 1 220px;
-    min-width: 180px;
+    min-width: 0;
 }
 
 .form-inline .form-control,
 .form-inline .form-select,
-.form-inline .custom-select {
-    width: 100%;
+.form-inline .custom-select,
+.form-inline .select2-container {
+    width: 100% !important;
 }
 
-.form-inline .btn {
-    flex: 0 0 auto;
+/* Actions get their own full-width row so Filter/Export/Reset are always in
+   the same place rather than wherever the field count happens to leave them. */
+.form-inline .buttonHolder,
+.form-inline > .btn,
+.form-inline > div:has(> .btn) {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: .5rem;
+    margin: .25rem 0 0;
+    padding-top: .9rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.form-inline .buttonHolder .btn,
+.form-inline .buttonHolder input[type="submit"] {
+    margin: 0;
+}
+
+/* Export sits next to the primary Filter action; as a solid green button it
+   outshouted it. Same affordance, quieter weight. */
+.form-inline .btn-success.download-report-async,
+.form-inline .btn-warning[type="link"],
+.form-inline a.btn-warning {
+    background-color: transparent;
+    border-color: var(--border-strong);
+    color: var(--text-secondary);
+}
+
+.form-inline .btn-success.download-report-async:hover,
+.form-inline .btn-warning[type="link"]:hover,
+.form-inline a.btn-warning:hover {
+    background-color: var(--surface-sunken);
+    border-color: var(--unicef-blue);
+    color: var(--unicef-dark-blue);
 }
 
 @media (max-width: 575.98px) {
-    .form-inline > .mb-3,
-    .form-inline > .form-group,
-    .form-inline .form-group {
-        flex: 1 1 100%;
+    .form-inline {
+        grid-template-columns: 1fr;
     }
 }
 
