@@ -525,11 +525,19 @@ hr {
 .breadcrumb {
     font-size: .8rem;
     margin-bottom: .35rem;
+    /* Bootstrap hard-codes these greys, which read as almost invisible on the
+       dark surface; bind them to the theme tokens instead. */
+    --bs-breadcrumb-divider-color: var(--text-muted);
+    --bs-breadcrumb-item-active-color: var(--text-secondary);
 }
 
 .breadcrumb-item + .breadcrumb-item::before {
     content: '\203A';
     color: var(--text-muted);
+}
+
+.breadcrumb-item.active {
+    color: var(--text-secondary);
 }
 
 /* --------------------------------------------------------------------------

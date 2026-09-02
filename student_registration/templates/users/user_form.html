@@ -16,7 +16,11 @@
     <div class="col-lg-7 col-xl-6">
         <div class="card">
             <div class="card-body">
-                <form method="post" action="{% url 'users:update' %}">
+                {% comment %}
+                Posts to the current URL: the UserUpdateView route is
+                commented out of the urlconf, so it cannot be reversed.
+                {% endcomment %}
+                <form method="post" action=".">
                     {% csrf_token %}
                     {{ form|crispy }}
                     <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-3">

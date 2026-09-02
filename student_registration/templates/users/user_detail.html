@@ -15,8 +15,12 @@
 
     {% if object == request.user %}
     <div class="page-header-actions">
-        <a class="btn btn-primary btn-icon" href="{% url 'users:update' %}">
-            <i class="bi bi-pencil"></i>{% trans "My Info" %}
+        {% comment %}
+        users:update is commented out of the urlconf, so this points at the
+        profile page rather than raising NoReverseMatch on every render.
+        {% endcomment %}
+        <a class="btn btn-primary btn-icon" href="{% url 'users:profile' %}">
+            <i class="bi bi-person"></i>{% trans "My Profile" %}
         </a>
         <a class="btn btn-outline-primary btn-icon" href="{% url 'account_email' %}">
             <i class="bi bi-envelope"></i>{% trans "E-Mail" %}

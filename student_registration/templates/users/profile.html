@@ -54,7 +54,7 @@
         {% endif %}
         <div class="profile-meta-item">
             <div class="label">{% trans "Date Joined" %}</div>
-            <div class="value">{{ user.date_joined|date:"d M Y" }}</div>
+            <div class="value">{{ user.date_joined|date:"d M Y"|default:"—" }}</div>
         </div>
         <div class="profile-meta-item">
             <div class="label">{% trans "Last Login" %}</div>

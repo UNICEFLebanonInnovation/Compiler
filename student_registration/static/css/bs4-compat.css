@@ -902,6 +902,40 @@ button.close:hover,
     color: var(--text-muted);
 }
 
+/* Container variants used alongside .vertical-timeline. */
+.vertical-time-icons,
+.vertical-timeline--one-column {
+    position: relative;
+}
+
+/* The child profile timelines wrap their glyph in a `.timeline-icon` circle
+   inside the positioned dot. */
+.vertical-timeline-item .vertical-timeline-element-icon .timeline-icon,
+.timeline-icon {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .72rem;
+    line-height: 1;
+}
+
+.vertical-timeline-item .vertical-timeline-element-icon .badge-dot {
+    width: 9px;
+    height: 9px;
+}
+
+.badge-dot-xl { width: 13px; height: 13px; }
+
+/* `.bounce-in` was an entrance animation from the removed vendor bundle. The
+   elements it decorated must stay visible, so give it a quiet fade instead of
+   leaving it undefined. */
+.bounce-in {
+    animation: rdFadeUp var(--duration-slow) var(--ease-out) both;
+}
+
 .vertical-timeline--animate .vertical-timeline-item {
     animation: rdFadeUp var(--duration-slow) var(--ease-out) both;
 }
@@ -1051,6 +1085,99 @@ button.close:hover,
 .swal2-success { color: var(--status-success); border-color: var(--status-success); }
 .swal2-info    { color: var(--unicef-blue);    border-color: var(--unicef-blue); }
 
+/* --- Remaining legacy utilities ---------------------------------------- */
+/* Bootstrap 3 float helpers, still used by the enrolment and image screens. */
+.pull-left  { float: inline-start !important; }
+.pull-right { float: inline-end !important; }
+
+.uppercase {
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    font-weight: 600;
+    font-size: .74rem;
+    color: var(--text-muted);
+}
+
+.right-align { text-align: end !important; }
+.nopadding  { padding: 0 !important; }
+.padding-44 { padding: 1.25rem !important; }
+
+.inner-content,
+.inner-section {
+    padding: 0;
+    background: transparent;
+}
+
+.inline-form,
+.flex-panel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .75rem;
+}
+
+.widget-title {
+    font-size: .74rem;
+    font-weight: 600;
+    letter-spacing: .06em;
+    color: var(--text-muted);
+}
+
+.widget-numbers-sm {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+}
+
+.header-icon {
+    margin-inline-end: .5rem;
+    color: var(--unicef-blue);
+}
+
+.menu-header-image,
+.menu-header-content {
+    position: relative;
+}
+
+.tabs-animated-shadow,
+.tabs-shadow-bordered {
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Vendor loaders that came with the removed bundle. Rendered as a simple
+   spinner so anything still using them shows activity rather than nothing. */
+.loader-wrapper,
+.loader {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ball-spin-fade-loader {
+    width: 34px;
+    height: 34px;
+    border: 3px solid var(--border-color);
+    border-top-color: var(--unicef-blue);
+    border-radius: 50%;
+    animation: rdSpin .8s linear infinite;
+}
+
+@keyframes rdSpin {
+    to { transform: rotate(360deg); }
+}
+
+/* Hover.css effects from the old theme: no-ops that keep the elements
+   interactive without the vendor stylesheet. */
+[class^="hvr-"], [class*=" hvr-"] {
+    transition: transform var(--duration-fast) var(--ease-out),
+                box-shadow var(--duration-fast) var(--ease-out);
+}
+
+[class^="hvr-"]:hover, [class*=" hvr-"]:hover {
+    transform: translateY(-1px);
+}
+
 /* --- Misc legacy hooks -------------------------------------------------- */
 .app-inner-layout__wrapper,
 .app-main__inner {
@@ -1192,6 +1319,64 @@ button.close:hover,
 .pe-7s-user-female::before { content: "\f4e1"; }
 .pe-7s-users::before { content: "\f4d0"; }
 .pe-7s-world::before { content: "\f3ee"; }
+
+
+/* Ionicons and the Bootstrap 2 / Glyphicon era classes that a handful of
+   action columns and the staff screens still use. Same treatment: re-point at
+   the Bootstrap Icons equivalent instead of editing every call site. */
+.glyphicon-folder-open,
+.glyphicon-saved,
+.glyphicon-trash,
+.icon-delete-sign,
+.icon-edit-sign,
+.icon-export-sign,
+.icon-plus-sign,
+.icon-synch-sign,
+.icon-trash,
+.icon-validation-sign,
+.ion-android-add-circle,
+.ion-android-apps,
+.ion-android-cancel,
+.ion-android-checkmark-circle,
+.ion-android-contact,
+.ion-android-create,
+.ion-android-delete,
+.ion-android-notifications,
+.ion-android-people,
+.glyphicon {
+    font-family: bootstrap-icons !important;
+    font-style: normal;
+    font-weight: normal !important;
+    line-height: 1;
+    display: inline-block;
+    vertical-align: -.125em;
+}
+
+.glyphicon-folder-open::before { content: "\f3d8"; }
+.glyphicon-saved::before { content: "\f26b"; }
+.glyphicon-trash::before { content: "\f5de"; }
+.icon-delete-sign::before { content: "\f623"; }
+.icon-edit-sign::before { content: "\f4ca"; }
+.icon-export-sign::before { content: "\f1c5"; }
+.icon-plus-sign::before { content: "\f4fa"; }
+.icon-synch-sign::before { content: "\f130"; }
+.icon-trash::before { content: "\f5de"; }
+.icon-validation-sign::before { content: "\f270"; }
+.ion-android-add-circle::before { content: "\f4fa"; }
+.ion-android-apps::before { content: "\f3f9"; }
+.ion-android-cancel::before { content: "\f623"; }
+.ion-android-checkmark-circle::before { content: "\f26b"; }
+.ion-android-contact::before { content: "\f4d7"; }
+.ion-android-create::before { content: "\f4ca"; }
+.ion-android-delete::before { content: "\f5de"; }
+.ion-android-notifications::before { content: "\f18a"; }
+.ion-android-people::before { content: "\f4d0"; }
+
+/* `.icon-white` used to invert a glyph against a coloured button; the buttons
+   now carry their own colour, so it just inherits. */
+.icon-white {
+    color: inherit;
+}
 
 /* Shared glyph rendering for the mapped classes. */
 [class^="pe-7s-"], [class*=" pe-7s-"],

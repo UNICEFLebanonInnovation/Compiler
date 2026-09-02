@@ -12,9 +12,11 @@ scroll container sized for high-density data, and compact pagination.
 {% block table-wrapper %}
 <div class="table-responsive">
     {% block table %}
-    {# The literal class comes first on purpose: tables that declare their own
-       Meta.attrs class (table-bordered/striped, from the old theme) would
-       otherwise keep it, and HTML uses the first of two class attributes. #}
+    {% comment %}
+    The literal class comes first on purpose: tables that declare their own
+    Meta.attrs class (table-bordered/striped, from the old theme) would
+    otherwise keep it, and HTML uses the first of two class attributes.
+    {% endcomment %}
     <table class="table table-hover align-middle mb-0" {{ table.attrs.as_html }}>
         {% block table.thead %}
         {% if table.show_header %}
