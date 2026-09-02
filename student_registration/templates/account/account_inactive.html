@@ -1,12 +1,14 @@
 {% extends "account/base.html" %}
-
 {% load i18n %}
 
 {% block head_title %}{% trans "Account Inactive" %}{% endblock %}
+{% block auth_title %}{% trans "Account Inactive" %}{% endblock %}
+{% block auth_subtitle %}{% trans "This account is not currently active." %}{% endblock %}
 
 {% block inner %}
-<h1>{% trans "Account Inactive" %}</h1>
-
-<p>{% trans "This account is inactive." %}</p>
+<div class="text-center">
+    <i class="bi bi-person-slash text-warning" style="font-size: 3rem;"></i>
+    <p class="text-muted mt-3">{% trans "This account is inactive." %}</p>
+    <a href="{% url 'account_login' %}" class="btn btn-outline-primary mt-2">{% trans "Back to sign in" %}</a>
+</div>
 {% endblock %}
-

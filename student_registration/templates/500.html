@@ -1,13 +1,23 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Server Error{% endblock %}
+{% block project_title %}{% trans "Server Error" %}{% endblock %}
+{% block module_name %}{% trans "Server Error" %}{% endblock %}
 
 {% block content %}
-<h1>Ooops!!! 500</h1>
-
-<h3>Looks like something went wrong!</h3>
-
-<p>We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.</p>
+<div class="card">
+    <div class="empty-state">
+        <i class="bi bi-exclamation-octagon empty-state-icon text-danger" aria-hidden="true"></i>
+        <h1 class="empty-state-title h4">{% trans "Something went wrong" %}</h1>
+        <p class="empty-state-description">
+            {% trans "We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing." %}
+        </p>
+        <div class="d-flex gap-2 justify-content-center">
+            <button type="button" class="btn btn-primary" onclick="window.location.reload();">
+                <i class="bi bi-arrow-clockwise me-2"></i>{% trans "Refresh" %}
+            </button>
+            <a href="/" class="btn btn-outline-secondary">{% trans "Back to home" %}</a>
+        </div>
+    </div>
+</div>
 {% endblock content %}
-
-

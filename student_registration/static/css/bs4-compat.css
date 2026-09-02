@@ -1,0 +1,1047 @@
+/* ==========================================================================
+   BMA Compiler — Legacy compatibility layer
+
+   The application shell now runs on Bootstrap 5, but ~300 page templates were
+   authored against Bootstrap 4 and the ArchitectUI theme. Rather than rewrite
+   every one of them (and risk breaking operational forms), this file re-homes
+   the legacy class vocabulary onto the new design system so untouched pages
+   inherit the redesign automatically.
+
+   Two groups:
+     A. Bootstrap 4 utilities that Bootstrap 5 renamed or dropped.
+     B. ArchitectUI component classes still used by page templates.
+
+   Load this AFTER redesign.css.
+   ========================================================================== */
+
+/* ==========================================================================
+   A. Bootstrap 4 -> Bootstrap 5 utility aliases
+   ========================================================================== */
+
+/* --- Directional spacing: ml-*/mr-* became ms-*/me-* -------------------- */
+.ml-0 { margin-inline-start: 0 !important; }
+.ml-1 { margin-inline-start: .25rem !important; }
+.ml-2 { margin-inline-start: .5rem !important; }
+.ml-3 { margin-inline-start: 1rem !important; }
+.ml-4 { margin-inline-start: 1.5rem !important; }
+.ml-5 { margin-inline-start: 3rem !important; }
+.ml-auto { margin-inline-start: auto !important; }
+
+.mr-0 { margin-inline-end: 0 !important; }
+.mr-1 { margin-inline-end: .25rem !important; }
+.mr-2 { margin-inline-end: .5rem !important; }
+.mr-3 { margin-inline-end: 1rem !important; }
+.mr-4 { margin-inline-end: 1.5rem !important; }
+.mr-5 { margin-inline-end: 3rem !important; }
+.mr-auto { margin-inline-end: auto !important; }
+
+.pl-0 { padding-inline-start: 0 !important; }
+.pl-1 { padding-inline-start: .25rem !important; }
+.pl-2 { padding-inline-start: .5rem !important; }
+.pl-3 { padding-inline-start: 1rem !important; }
+.pl-4 { padding-inline-start: 1.5rem !important; }
+.pl-5 { padding-inline-start: 3rem !important; }
+
+.pr-0 { padding-inline-end: 0 !important; }
+.pr-1 { padding-inline-end: .25rem !important; }
+.pr-2 { padding-inline-end: .5rem !important; }
+.pr-3 { padding-inline-end: 1rem !important; }
+.pr-4 { padding-inline-end: 1.5rem !important; }
+.pr-5 { padding-inline-end: 3rem !important; }
+
+/* Responsive variants that appear in the legacy templates. */
+@media (min-width: 576px) {
+    .ml-sm-0 { margin-inline-start: 0 !important; }
+    .ml-sm-auto { margin-inline-start: auto !important; }
+    .mr-sm-0 { margin-inline-end: 0 !important; }
+    .mr-sm-2 { margin-inline-end: .5rem !important; }
+    .mr-sm-auto { margin-inline-end: auto !important; }
+    .pl-sm-0 { padding-inline-start: 0 !important; }
+    .pr-sm-0 { padding-inline-end: 0 !important; }
+}
+
+@media (min-width: 768px) {
+    .ml-md-0 { margin-inline-start: 0 !important; }
+    .ml-md-3 { margin-inline-start: 1rem !important; }
+    .ml-md-auto { margin-inline-start: auto !important; }
+    .mr-md-0 { margin-inline-end: 0 !important; }
+    .mr-md-2 { margin-inline-end: .5rem !important; }
+    .mr-md-3 { margin-inline-end: 1rem !important; }
+    .mr-md-auto { margin-inline-end: auto !important; }
+    .pl-md-0 { padding-inline-start: 0 !important; }
+    .pr-md-0 { padding-inline-end: 0 !important; }
+    .text-md-right { text-align: end !important; }
+    .text-md-left { text-align: start !important; }
+}
+
+@media (min-width: 992px) {
+    .ml-lg-0 { margin-inline-start: 0 !important; }
+    .ml-lg-auto { margin-inline-start: auto !important; }
+    .mr-lg-0 { margin-inline-end: 0 !important; }
+    .mr-lg-auto { margin-inline-end: auto !important; }
+    .pl-lg-0 { padding-inline-start: 0 !important; }
+    .pr-lg-0 { padding-inline-end: 0 !important; }
+}
+
+/* --- Text & float direction -------------------------------------------- */
+.text-left  { text-align: start !important; }
+.text-right { text-align: end !important; }
+
+.float-left  { float: inline-start !important; }
+.float-right { float: inline-end !important; }
+.float-none  { float: none !important; }
+
+/* --- Typography -------------------------------------------------------- */
+.font-weight-light    { font-weight: 300 !important; }
+.font-weight-normal   { font-weight: 400 !important; }
+.font-weight-medium   { font-weight: 500 !important; }
+.font-weight-semibold { font-weight: 600 !important; }
+.font-weight-bold     { font-weight: 700 !important; }
+.font-italic          { font-style: italic !important; }
+
+.text-monospace {
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+}
+
+/* --- Screen-reader helper ---------------------------------------------- */
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    clip: auto !important;
+    white-space: normal !important;
+}
+
+/* --- Grid helpers ------------------------------------------------------ */
+.no-gutters {
+    margin-inline: 0;
+}
+
+.no-gutters > [class*="col-"] {
+    padding-inline: 0;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-inline: -5px;
+}
+
+.form-row > [class*="col-"] {
+    padding-inline: 5px;
+}
+
+/* --- Forms ------------------------------------------------------------- */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.control-label {
+    font-weight: 500;
+    font-size: .84rem;
+    margin-bottom: .35rem;
+    display: inline-block;
+    color: var(--text-secondary);
+}
+
+/* Bootstrap 3/4 select + file inputs mapped to the BS5 look. */
+.custom-select,
+select.form-control {
+    display: block;
+    width: 100%;
+    padding: .45rem 2rem .45rem .7rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    color: var(--text-primary);
+    background-color: var(--surface-raised);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23718096' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right .7rem center;
+    background-size: 14px 11px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    appearance: none;
+}
+
+[dir="rtl"] .custom-select,
+[dir="rtl"] select.form-control {
+    padding: .45rem .7rem .45rem 2rem;
+    background-position: left .7rem center;
+}
+
+.custom-select:focus,
+select.form-control:focus {
+    border-color: var(--unicef-blue);
+    box-shadow: var(--focus-ring);
+    outline: none;
+}
+
+.custom-control {
+    position: relative;
+    display: block;
+    min-height: 1.5rem;
+    padding-inline-start: 1.6rem;
+}
+
+.custom-control-label {
+    font-size: .875rem;
+    color: var(--text-secondary);
+}
+
+.custom-file,
+.custom-file-input {
+    width: 100%;
+}
+
+/* Bootstrap 5 dropped `.form-inline`, which the django-filter search panels
+   still set on their crispy helpers. Reproduce it as a wrapping flex row so
+   filter fields line up instead of stacking full-width. */
+.form-inline {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-end;
+    gap: .75rem;
+}
+
+.form-inline > .mb-3,
+.form-inline > .form-group,
+.form-inline .form-group {
+    margin-bottom: 0 !important;
+    flex: 0 1 220px;
+    min-width: 180px;
+}
+
+.form-inline .form-control,
+.form-inline .form-select,
+.form-inline .custom-select {
+    width: 100%;
+}
+
+.form-inline .btn {
+    flex: 0 0 auto;
+}
+
+@media (max-width: 575.98px) {
+    .form-inline > .mb-3,
+    .form-inline > .form-group,
+    .form-inline .form-group {
+        flex: 1 1 100%;
+    }
+}
+
+/* --- Input groups ------------------------------------------------------ */
+.input-group-append,
+.input-group-prepend {
+    display: flex;
+}
+
+.input-group-append .input-group-text,
+.input-group-prepend .input-group-text,
+.input-group-append .btn,
+.input-group-prepend .btn {
+    border-radius: 0;
+}
+
+.input-group > .input-group-prepend:first-child > :first-child {
+    border-start-start-radius: var(--radius-sm);
+    border-end-start-radius: var(--radius-sm);
+}
+
+.input-group > .input-group-append:last-child > :last-child {
+    border-start-end-radius: var(--radius-sm);
+    border-end-end-radius: var(--radius-sm);
+}
+
+/* --- Buttons ----------------------------------------------------------- */
+.btn-block {
+    display: block;
+    width: 100%;
+}
+
+.btn-block + .btn-block {
+    margin-top: .5rem;
+}
+
+/* BS4 close button -> BS5 btn-close look, without needing markup changes. */
+button.close,
+.close {
+    background: transparent;
+    border: 0;
+    font-size: 1.4rem;
+    line-height: 1;
+    color: var(--text-muted);
+    opacity: .7;
+    padding: .25rem .4rem;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+}
+
+button.close:hover,
+.close:hover {
+    opacity: 1;
+    color: var(--text-primary);
+    background: var(--surface-sunken);
+}
+
+/* --- Badges ------------------------------------------------------------ */
+/* BS5 dropped the contextual badge colours and the pill modifier name. */
+.badge-primary   { background-color: var(--unicef-blue) !important; color: #fff !important; }
+.badge-secondary { background-color: #6c757d !important; color: #fff !important; }
+.badge-success   { background-color: var(--status-success) !important; color: #fff !important; }
+.badge-danger    { background-color: var(--status-danger) !important; color: #fff !important; }
+.badge-warning   { background-color: var(--status-warning) !important; color: #fff !important; }
+.badge-info      { background-color: var(--unicef-blue) !important; color: #fff !important; }
+.badge-light     { background-color: var(--surface-sunken) !important; color: var(--text-primary) !important; }
+.badge-dark      { background-color: var(--surface-inverse) !important; color: #fff !important; }
+
+.badge-pill {
+    border-radius: var(--radius-pill) !important;
+}
+
+[class*="badge-"]:not(.badge) {
+    display: inline-block;
+    padding: .3em .55em;
+    font-size: .74em;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: var(--radius-sm);
+}
+
+/* --- Media object (dropped in BS5) ------------------------------------- */
+.media {
+    display: flex;
+    align-items: flex-start;
+}
+
+.media-body {
+    flex: 1;
+    min-width: 0;
+}
+
+/* --- Jumbotron / card-deck (dropped in BS5) ---------------------------- */
+.jumbotron {
+    padding: 2rem;
+    background: var(--surface-sunken);
+    border-radius: var(--radius-lg);
+    margin-bottom: 1.5rem;
+}
+
+.card-deck {
+    display: flex;
+    flex-flow: row wrap;
+    gap: 1rem;
+}
+
+.card-deck > .card {
+    flex: 1 0 0%;
+    margin-bottom: 0;
+}
+
+/* ==========================================================================
+   B. ArchitectUI component classes
+   ========================================================================== */
+
+/* --- Page title block (used by ~90 templates) -------------------------- */
+.app-page-title {
+    background: var(--surface-raised);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 1.05rem 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.app-page-title .page-title-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.app-page-title .page-title-heading {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    font-size: 1.28rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -.015em;
+    min-width: 0;
+}
+
+.app-page-title .page-title-heading h1,
+.app-page-title .page-title-heading h2,
+.app-page-title .page-title-heading h3,
+.app-page-title .page-title-heading h4,
+.app-page-title .page-title-heading h5 {
+    margin-bottom: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
+}
+
+.app-page-title .page-title-subheading {
+    font-size: .82rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-top: .2rem;
+}
+
+.app-page-title .page-title-head i,
+.app-page-title .page-title-heading > i {
+    color: var(--unicef-blue);
+    font-size: 1.4rem;
+}
+
+.app-page-title .page-title-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem;
+    margin-inline-start: auto;
+}
+
+.app-page-title .page-title-actions .btn {
+    margin: 0;
+}
+
+.center-elem {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+/* --- Cards ------------------------------------------------------------- */
+.main-card {
+    background: var(--surface-raised);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.card-shadow,
+.card-shadow-primary,
+.card-shadow-info,
+.card-shadow-success,
+.card-shadow-danger,
+.card-shadow-warning {
+    box-shadow: var(--shadow-md) !important;
+}
+
+.card-border {
+    border: 1px solid var(--border-color) !important;
+}
+
+.card-header-tab {
+    border-bottom: 1px solid var(--border-color);
+    padding: .8rem 1.15rem;
+}
+
+.card-header-tab .card-header-title {
+    font-size: .95rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.card-title {
+    font-size: .98rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.card-hover-shadow {
+    transition: box-shadow var(--duration-base) var(--ease-out),
+                transform var(--duration-base) var(--ease-out);
+}
+
+.card-hover-shadow:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+/* --- Widgets / stat blocks --------------------------------------------- */
+.widget-chart {
+    padding: 1.25rem;
+    text-align: center;
+    position: relative;
+    background: var(--surface-raised);
+    border-radius: var(--radius-lg);
+}
+
+.widget-chart-hover {
+    transition: background-color var(--duration-base) var(--ease-out),
+                transform var(--duration-base) var(--ease-out),
+                box-shadow var(--duration-base) var(--ease-out);
+}
+
+.widget-chart-hover:hover {
+    background: var(--unicef-light-blue);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.widget-numbers {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: .5rem 0 .15rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.widget-numbers a {
+    color: var(--unicef-dark-blue);
+}
+
+.widget-numbers a:hover {
+    color: var(--unicef-blue);
+}
+
+.widget-heading {
+    font-weight: 600;
+    font-size: .9rem;
+    color: var(--text-primary);
+}
+
+.widget-subheading {
+    font-size: .8rem;
+    color: var(--text-muted);
+}
+
+.widget-description {
+    font-size: .82rem;
+    color: var(--text-muted);
+    margin-top: .35rem;
+}
+
+.widget-content {
+    padding: .85rem;
+}
+
+.widget-content-wrapper {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    flex: 1;
+}
+
+.widget-content-left { min-width: 0; }
+.widget-content-right { margin-inline-start: auto; }
+
+/* --- Icon wrappers ----------------------------------------------------- */
+.icon-wrapper {
+    position: relative;
+    width: 52px;
+    height: 52px;
+    margin: 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    border-radius: var(--radius-md);
+}
+
+.icon-wrapper.rounded-circle {
+    border-radius: 50% !important;
+}
+
+.icon-wrapper-bg {
+    position: absolute;
+    inset: 0;
+    opacity: .14;
+    border-radius: inherit;
+}
+
+.icon-wrapper i {
+    position: relative;
+    z-index: 1;
+}
+
+.icon-wrapper-alt {
+    width: 38px;
+    height: 38px;
+    font-size: 1.1rem;
+}
+
+/* Gradient icon text used by the legacy gadget menu. */
+.icon-gradient {
+    background: linear-gradient(135deg, var(--unicef-blue), var(--unicef-dark-blue));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.btn-icon-vertical {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    padding: 1.15rem .75rem;
+    text-align: center;
+    font-size: .84rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    border-radius: var(--radius-md);
+    transition: background-color var(--duration-fast) var(--ease-out),
+                color var(--duration-fast) var(--ease-out);
+}
+
+.btn-icon-vertical:hover {
+    background: var(--unicef-light-blue);
+    color: var(--unicef-dark-blue);
+}
+
+.btn-icon-wrapper {
+    font-size: 1.6rem;
+    display: block;
+}
+
+.btn-icon-lg { font-size: 1.9rem; }
+
+/* --- Grid menu --------------------------------------------------------- */
+.grid-menu {
+    padding: .5rem;
+}
+
+.grid-menu > .row > [class*="col-"] {
+    padding: .35rem;
+}
+
+.grid-menu-2col > .row > [class*="col-"],
+.grid-menu-3col > .row > [class*="col-"] {
+    display: flex;
+}
+
+.grid-menu-2col > .row > [class*="col-"] > *,
+.grid-menu-3col > .row > [class*="col-"] > * {
+    width: 100%;
+}
+
+/* --- Dividers ---------------------------------------------------------- */
+.divider {
+    height: 1px;
+    background: var(--border-color);
+    border: 0;
+    margin: 1.15rem 0;
+}
+
+.nav-item-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: .4rem 0;
+    list-style: none;
+}
+
+.nav-item-header {
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: .55rem .8rem .3rem;
+    list-style: none;
+}
+
+/* --- Badge dots -------------------------------------------------------- */
+.badge-dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    padding: 0;
+    border-radius: 50%;
+    text-indent: -9999px;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+.badge-dot-sm { width: 7px; height: 7px; }
+.badge-dot-lg { width: 11px; height: 11px; }
+
+/* --- Scroll areas ------------------------------------------------------ */
+.scroll-area,
+.scroll-area-sm,
+.scroll-area-xs,
+.scroll-area-md,
+.scroll-area-lg,
+.scrollbar-container {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.scroll-area-xs { max-height: 150px; }
+.scroll-area-sm { max-height: 250px; }
+.scroll-area-md { max-height: 350px; }
+.scroll-area-lg { max-height: 500px; }
+
+/* --- Tabs -------------------------------------------------------------- */
+.body-tabs,
+.tabs-animated {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.body-tabs .nav-link,
+.tabs-animated .nav-link {
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    color: var(--text-muted);
+    font-weight: 500;
+    padding: .6rem .9rem;
+}
+
+.body-tabs .nav-link.active,
+.tabs-animated .nav-link.active {
+    color: var(--unicef-dark-blue);
+    border-bottom-color: var(--unicef-blue);
+    background: transparent;
+    font-weight: 600;
+}
+
+.tabs-animated .nav-link .tab-subheading {
+    font-size: .72rem;
+    color: var(--text-muted);
+    display: block;
+}
+
+/* --- Forms wizard (52 templates) --------------------------------------- */
+.forms-wizard {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.75rem;
+    counter-reset: wizard-step;
+    position: relative;
+}
+
+.forms-wizard li {
+    flex: 1;
+    position: relative;
+    text-align: center;
+    padding: 0 .5rem;
+    min-width: 0;
+}
+
+.forms-wizard li em {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--surface-raised);
+    border: 2px solid var(--border-color);
+    color: var(--text-muted);
+    font-style: normal;
+    font-weight: 600;
+    font-size: .85rem;
+    margin-bottom: .45rem;
+    position: relative;
+    z-index: 1;
+    transition: all var(--duration-base) var(--ease-out);
+}
+
+.forms-wizard li span {
+    display: block;
+    font-size: .78rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.forms-wizard li::before {
+    content: '';
+    position: absolute;
+    top: 19px;
+    inset-inline-start: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--border-color);
+    z-index: 0;
+}
+
+.forms-wizard li:first-child::before {
+    inset-inline-start: 50%;
+    width: 50%;
+}
+
+.forms-wizard li:last-child::before {
+    width: 50%;
+}
+
+.forms-wizard li.form-wizard-step-doing em,
+.forms-wizard li.active em {
+    border-color: var(--unicef-blue);
+    background: var(--unicef-blue);
+    color: #fff;
+    box-shadow: 0 0 0 4px rgba(var(--unicef-blue-rgb), .16);
+}
+
+.forms-wizard li.form-wizard-step-doing span,
+.forms-wizard li.active span {
+    color: var(--unicef-dark-blue);
+    font-weight: 600;
+}
+
+.forms-wizard li.form-wizard-step-done em {
+    border-color: var(--unicef-blue);
+    background: var(--unicef-light-blue);
+    color: var(--unicef-blue);
+}
+
+/* --- Vertical timeline (13 templates) ---------------------------------- */
+.vertical-timeline {
+    position: relative;
+    padding: .5rem 0;
+    margin: 0;
+    list-style: none;
+}
+
+.vertical-timeline::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 17px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border-color);
+}
+
+.vertical-timeline-item {
+    position: relative;
+    margin: 0 0 1.25rem;
+    padding-inline-start: 3rem;
+}
+
+.vertical-timeline-item .vertical-timeline-element-icon {
+    position: absolute;
+    inset-inline-start: 6px;
+    top: 2px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--surface-raised);
+    border: 2px solid var(--unicef-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .7rem;
+    color: var(--unicef-blue);
+    box-shadow: 0 0 0 3px var(--surface-body);
+}
+
+.vertical-timeline-item .vertical-timeline-element-content {
+    background: var(--surface-raised);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: .85rem 1rem;
+    box-shadow: var(--shadow-xs);
+}
+
+.vertical-timeline-element-content .timeline-title {
+    font-weight: 600;
+    font-size: .9rem;
+    margin-bottom: .2rem;
+}
+
+.vertical-timeline-element-date {
+    font-size: .74rem;
+    color: var(--text-muted);
+}
+
+.vertical-timeline--animate .vertical-timeline-item {
+    animation: rdFadeUp var(--duration-slow) var(--ease-out) both;
+}
+
+@keyframes rdFadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Dropdown mega menu / menu headers --------------------------------- */
+.dropdown-menu-header {
+    margin: -.35rem -.35rem .35rem;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    overflow: hidden;
+}
+
+.dropdown-menu-header-inner {
+    padding: 1rem 1.15rem;
+    background: linear-gradient(135deg, var(--unicef-dark-blue), var(--unicef-blue));
+    color: #fff;
+}
+
+.dropdown-menu-header-inner .menu-header-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    color: #fff;
+}
+
+.dropdown-menu-header-inner .menu-header-subtitle {
+    font-size: .78rem;
+    opacity: .85;
+    margin: .15rem 0 0;
+    color: #fff;
+}
+
+.dropdown-menu-lg { min-width: 320px; }
+.dropdown-menu-xl { min-width: 380px; }
+
+.rm-pointers::before,
+.rm-pointers::after {
+    display: none !important;
+}
+
+/* --- Loaders ----------------------------------------------------------- */
+.ball-grid-pulse {
+    display: grid;
+    grid-template-columns: repeat(3, 12px);
+    gap: 5px;
+}
+
+.ball-grid-pulse > div {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--unicef-blue) !important;
+    animation: rdBallPulse 1.1s ease-in-out infinite;
+}
+
+.ball-grid-pulse > div:nth-child(2) { animation-delay: .1s; }
+.ball-grid-pulse > div:nth-child(3) { animation-delay: .2s; }
+.ball-grid-pulse > div:nth-child(4) { animation-delay: .3s; }
+.ball-grid-pulse > div:nth-child(5) { animation-delay: .4s; }
+.ball-grid-pulse > div:nth-child(6) { animation-delay: .5s; }
+.ball-grid-pulse > div:nth-child(7) { animation-delay: .6s; }
+.ball-grid-pulse > div:nth-child(8) { animation-delay: .7s; }
+.ball-grid-pulse > div:nth-child(9) { animation-delay: .8s; }
+
+@keyframes rdBallPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: .35; transform: scale(.6); }
+}
+
+/* --- Legacy ArchitectUI background utilities --------------------------- */
+.bg-night-sky   { background: linear-gradient(135deg, #1e3c72, #2a5298) !important; }
+.bg-deep-blue   { background: linear-gradient(135deg, var(--unicef-dark-blue), var(--unicef-blue)) !important; }
+.bg-plum-plate  { background: linear-gradient(135deg, #667eea, #764ba2) !important; }
+.bg-night-fade  { background: linear-gradient(135deg, #a1c4fd, #c2e9fb) !important; }
+.bg-arielle-smile { background: linear-gradient(135deg, #13547a, #80d0c7) !important; }
+.bg-happy-green { background: linear-gradient(135deg, #00b09b, #96c93d) !important; }
+.bg-grow-early  { background: linear-gradient(135deg, #0ba360, #3cba92) !important; }
+.bg-love-kiss   { background: linear-gradient(135deg, #ff0844, #ffb199) !important; }
+.bg-premium-dark { background: linear-gradient(135deg, #434343, #000) !important; }
+
+.opacity-1 { opacity: .1 !important; }
+.opacity-2 { opacity: .2 !important; }
+.opacity-4 { opacity: .4 !important; }
+.opacity-5 { opacity: .5 !important; }
+.opacity-6 { opacity: .6 !important; }
+.opacity-8 { opacity: .8 !important; }
+
+/* --- SweetAlert-style modal bodies used by the global modals ------------ */
+.swal2-popup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1.5rem;
+    width: 100%;
+}
+
+.swal2-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: .5rem 0;
+}
+
+.swal2-content {
+    color: var(--text-secondary);
+    font-size: .9rem;
+    margin-bottom: 1.25rem;
+}
+
+.swal2-actions {
+    display: flex;
+    gap: .5rem;
+    justify-content: center;
+}
+
+.swal2-styled {
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: .5rem 1.5rem;
+    font-weight: 600;
+    color: #fff;
+    background: var(--unicef-blue);
+}
+
+.swal2-styled:hover {
+    background: var(--unicef-dark-blue);
+}
+
+.swal2-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    border: 3px solid;
+}
+
+.swal2-icon-text { line-height: 1; }
+.swal2-warning { color: var(--status-warning); border-color: var(--status-warning); }
+.swal2-error   { color: var(--status-danger);  border-color: var(--status-danger); }
+.swal2-success { color: var(--status-success); border-color: var(--status-success); }
+.swal2-info    { color: var(--unicef-blue);    border-color: var(--unicef-blue); }
+
+/* --- Misc legacy hooks -------------------------------------------------- */
+.app-inner-layout__wrapper,
+.app-main__inner {
+    padding: 0;
+}
+
+.hamburger,
+.close-sidebar-btn,
+.mobile-toggle-nav,
+.mobile-toggle-header-nav {
+    background: transparent;
+    border: 0;
+}
+
+.landing-page-empty-cell {
+    min-height: 1px;
+}
+
+/* Legacy pages sometimes set an explicit white text colour against the old
+   dark header. Those headers are gone, so keep such text readable. */
+.app-page-title h3[style*="color:#fff"],
+.app-page-title h3[style*="color: #fff"] {
+    color: var(--text-primary) !important;
+}

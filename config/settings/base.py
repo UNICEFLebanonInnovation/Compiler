@@ -65,8 +65,10 @@ DJANGO_APPS = [
 ]
 THIRD_PARTY_APPS = [
     "crispy_forms",
+    # bootstrap3 stays installed as a fallback for any form still asking for
+    # that pack explicitly; bootstrap5 is the default for the redesign.
     "crispy_bootstrap3",
-    # "crispy_bootstrap5",
+    "crispy_bootstrap5",
     # "crispy_bootstrap4",
     'allauth',  # registration
     'allauth.account',  # registration
@@ -261,8 +263,12 @@ TEMPLATES = [
 
 # See: http://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs
 CRISPY_ALLOWED_TEMPLATE_PACKS = ["bootstrap3", "bootstrap5"]
-# CRISPY_TEMPLATE_PACK = "bootstrap5"
-CRISPY_TEMPLATE_PACK = "bootstrap3"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+# django-tables2 renders through the redesigned Bootstrap 5 shell by default.
+# The legacy paths (django_tables2/bootstrap.html, bootstrap4.html) are aliased
+# to the same template, so tables that name one explicitly match as well.
+DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap5.html"
 
 # STATIC FILE CONFIGURATION
 # ------------------------------------------------------------------------------

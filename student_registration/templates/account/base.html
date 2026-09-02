@@ -1,10 +1,40 @@
 {% extends "base.html" %}
-{% block title %}{% block head_title %}{% endblock head_title %}{% endblock title %}
+{% load static i18n %}
+
+{% comment %}
+Shared shell for every allauth page.
+
+Anonymous visitors get a focused, full-viewport card (base.html renders no
+sidebar or topbar when the user is not signed in). Signed-in visitors — e.g.
+someone changing their password — get the same card centred inside the normal
+application chrome, so the two states share one layout.
+{% endcomment %}
+
+{% block project_title %}{% block head_title %}{% trans "Account" %}{% endblock head_title %}{% endblock %}
+{% block module_name %}{% trans "Account" %}{% endblock %}
 
 {% block content %}
-<div class="row">
-  <div class="col-md-3 offset-md-3">
-    {% block inner %}{% endblock %}
-  </div>
+<div class="{% if not request.user.is_authenticated %}auth-shell{% else %}d-flex justify-content-center py-3{% endif %}">
+    <div class="auth-card">
+
+        {% block auth_logo %}
+        <img src="{% static 'images/clm_plus_logo.png' %}" alt="{% trans 'BMA logo' %}" class="auth-logo">
+        {% endblock auth_logo %}
+
+        {% block auth_heading %}
+        <h1 class="auth-title">{% block auth_title %}{% trans "Account" %}{% endblock auth_title %}</h1>
+        <p class="auth-subtitle">
+            {% block auth_subtitle %}{% trans "MEHE Beneficiary Monitoring &amp; Assessment" %}{% endblock auth_subtitle %}
+        </p>
+        {% endblock auth_heading %}
+
+        {% block inner %}{% endblock inner %}
+
+        {% block auth_footer %}
+        <p class="auth-footer-note">
+            {% trans "&copy; MEHE BMA — Beneficiary Monitoring &amp; Assessment" %}
+        </p>
+        {% endblock auth_footer %}
+    </div>
 </div>
-{% endblock %}
+{% endblock content %}
