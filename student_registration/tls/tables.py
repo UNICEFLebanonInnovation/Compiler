@@ -73,8 +73,6 @@ class TLSMainTable(CommonTable):
         orderable=False,
         template_name='django_tables2/tls/action_column.html'
     )
-    type_column = tables.TemplateColumn(verbose_name=_('Type'), orderable=False,
-                                        template_name='django_tables2/mscc/type_column.html')
     outreached = tables.TemplateColumn(verbose_name=_('Outreach Child?'), orderable=False,
                                        template_name='django_tables2/mscc/outreached_column.html')
 
@@ -91,7 +89,6 @@ class TLSMainTable(CommonTable):
         model = Registration
         fields = (
             'action_column',
-            'type_column',
             'outreached',
             'absence_column',
             'center',
@@ -124,8 +121,6 @@ class FullTable(CommonTable):
         orderable=False,
         template_name='django_tables2/tls/action_column.html'
     )
-    type_column = tables.TemplateColumn(verbose_name=_('Type'), orderable=False,
-                                        template_name='django_tables2/mscc/type_column.html')
     outreached = tables.TemplateColumn(verbose_name=_('Outreach Child?'), orderable=False,
                                        template_name='django_tables2/mscc/outreached_column.html')
     absence_column = tables.TemplateColumn(verbose_name=_('Total Absence'), orderable=False,
@@ -139,7 +134,6 @@ class FullTable(CommonTable):
         model = Registration
         fields = (
             'action_column',
-            'type_column',
             'outreached',
             'absence_column',
             'center',
@@ -173,8 +167,6 @@ class PartnerTable(CommonTable):
         orderable=False,
         template_name='django_tables2/tls/action_column.html'
     )
-    type_column = tables.TemplateColumn(verbose_name=_('Type'), orderable=False,
-                                        template_name='django_tables2/mscc/type_column.html')
     outreached = tables.TemplateColumn(verbose_name=_('Outreach Child?'), orderable=False,
                                        template_name='django_tables2/mscc/outreached_column.html')
     absence_column = tables.TemplateColumn(verbose_name=_('Total Absence'), orderable=False,
@@ -188,7 +180,6 @@ class PartnerTable(CommonTable):
         model = Registration
         fields = (
             'action_column',
-            'type_column',
             'outreached',
             'absence_column',
             'center',
@@ -226,7 +217,6 @@ class YouthMainTable(CommonTable):
         model = Registration
         fields = (
             'action_column',
-            # 'child.number',
             'child.unicef_id',
             'child.first_name',
             'child.father_name',

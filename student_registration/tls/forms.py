@@ -176,7 +176,7 @@ class MainForm(forms.ModelForm):
         widget=forms.TextInput, required=False
     )
     source_of_identification = forms.ChoiceField(
-        label=_("Source of referral of the child to Makani"),
+        label=_("Source of referral of the child to TLS"),
         widget=forms.Select,
         required=True,
         choices=Registration.IDENTIFICATION_SOURCE,
