@@ -836,6 +836,14 @@ class EducationServiceForm(forms.ModelForm):
             form_action = reverse('mscc:service_education_edit',
                                   kwargs={'registry': registry, 'package_type': package_type, 'pk': instance})
 
+        # Registrations created by the new-round do not become usable until this form is completed.
+        cancel_new_round = self.request and self.request.GET.get('new_round') == '1'
+        if cancel_new_round:
+            form_action = '{}?new_round=1'.format(form_action)
+            cancel_url = reverse('mscc:child_registration_cancel', kwargs={'pk': registry})
+        else:
+            cancel_url = reverse('mscc:list')
+
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
@@ -873,8 +881,8 @@ class EducationServiceForm(forms.ModelForm):
                 Submit('save', 'Save',
                        css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                 HTML(
-                    '<a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="/mscc/child-registration-cancel/{}/">Cancel</a>'.format(
-                        registry)
+                    '<a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="{}">Cancel</a>'.format(
+                        cancel_url)
                 ),
 
             ),

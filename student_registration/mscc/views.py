@@ -471,7 +471,11 @@ class NewRoundRedirectView(LoginRequiredMixin, RedirectView):
             new_registration.save()
 
             generate_services(new_registration.child.age, new_registration, self.request.user)
-            return reverse('mscc:service_education_add', kwargs={'registry': new_registration.id, 'package_type': package_type})
+            education_url = reverse(
+                'mscc:service_education_add',
+                kwargs={'registry': new_registration.id, 'package_type': package_type},
+            )
+            return '{}?new_round=1'.format(education_url)
 
         return reverse('mscc:new_round', kwargs={'registry': registry})
 
@@ -627,7 +631,8 @@ def main_registration_cancel_view(request, pk):
         try:
             registration = Registration.objects.get(id=pk)
             registration.deleted = True
-            registration.save()
+            registration.deleted_by = request.user
+            registration.save(update_fields=['deleted', 'deleted_by'])
             return redirect('mscc:list')
         except Registration.DoesNotExist:
             result = {"isSuccessful": False}
