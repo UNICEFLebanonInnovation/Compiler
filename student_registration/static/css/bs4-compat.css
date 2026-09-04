@@ -883,7 +883,35 @@ button.close:hover,
 .forms-wizard li.form-wizard-step-done em {
     border-color: var(--unicef-blue);
     background: var(--unicef-light-blue);
-    color: var(--unicef-blue);
+    color: var(--unicef-dark-blue);
+}
+
+/* A step with unanswered required fields (set by redesign.js). */
+.forms-wizard li.has-error em {
+    border-color: var(--status-danger);
+    color: var(--status-danger);
+}
+
+.forms-wizard li.has-error span {
+    color: var(--status-danger);
+}
+
+/* Element-qualified to outrank `.forms-wizard li.has-error span` above. */
+.forms-wizard li span.wizard-step-errors {
+    position: absolute;
+    top: -6px;
+    inset-inline-start: calc(50% + 8px);
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: var(--radius-pill);
+    background: var(--status-danger);
+    color: #fff;
+    font-size: .8125rem;
+    font-weight: 700;
+    line-height: 20px;
+    text-align: center;
+    z-index: 2;
 }
 
 /* --- Vertical timeline (13 templates) ---------------------------------- */

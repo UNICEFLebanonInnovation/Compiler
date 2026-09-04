@@ -278,6 +278,18 @@
             }
         }
 
+        // Mobile keyboards: phone fields get the dial pad and numeric fields
+        // the number pad. With 200+ form fields, the name is the reliable cue.
+        $all('input[type="text"]:not([inputmode]), input[type="tel"]:not([inputmode])').forEach(function (input) {
+            if (/phone|mobile|whatsapp|\btel\b/i.test((input.name || '') + ' ' + (input.id || ''))) {
+                input.setAttribute('inputmode', 'tel');
+            }
+        });
+        $all('input[type="number"]:not([inputmode])').forEach(function (input) {
+            var step = input.getAttribute('step') || '';
+            input.setAttribute('inputmode', step === 'any' || step.indexOf('.') !== -1 ? 'decimal' : 'numeric');
+        });
+
         // Password visibility toggles on the auth screens.
         $all('[data-password-toggle]').forEach(function (btn) {
             btn.addEventListener('click', function () {
@@ -598,6 +610,285 @@
     }
 
     /* ---------------------------------------------------------------------
+       9b. Form errors — a message at the field and a summary that links to it
+
+       The module scripts (mscc.js, tls.js, youth.js, general.js) validate a
+       step by adding .error-field to each empty required control and then
+       opening #formErrorModal, which only says "check the mandatory
+       fields". The modal's show event is intercepted here whenever fields
+       are marked, and the errors are rendered where the user can act on
+       them instead: a message under each field, a summary above the form
+       that links to each one, and a count on the wizard step that holds
+       them. The modal still opens for callers that mark no field.
+       --------------------------------------------------------------------- */
+
+    var ERROR_MARK = '.error-field, .is-invalid';
+    var ERROR_TEXT = {
+        required: 'This field is required',
+        one: 'One answer is missing',
+        many: '{n} answers are missing',
+        hint: 'Fill in the fields listed here, then press Continue or Save again.',
+        step: 'Step {n}'
+    };
+
+    function isControl(el) {
+        return /^(INPUT|SELECT|TEXTAREA)$/.test(el.tagName) && el.type !== 'hidden';
+    }
+
+    function fieldName(field) {
+        var text = '';
+        if (field.labels && field.labels.length) {
+            text = field.labels[0].textContent;
+        }
+        if (!text && field.id) {
+            var label = document.querySelector('label[for="' + field.id + '"]');
+            text = label ? label.textContent : '';
+        }
+        if (!text) {
+            text = field.getAttribute('aria-label') || field.getAttribute('placeholder') || field.name || '';
+        }
+        return text.replace(/\*/g, '').replace(/\s+/g, ' ').trim();
+    }
+
+    function errorAnchor(field) {
+        var anchor = field.closest('.input-group') || field;
+        var next = anchor.nextElementSibling;
+        // Enhanced selects render their visible widget as the next sibling.
+        if (next && (next.classList.contains('select2') || next.classList.contains('combobox-container'))) {
+            anchor = next;
+        }
+        return anchor;
+    }
+
+    function errorNoteId(field) {
+        return (field.id || field.name || 'field') + '-error';
+    }
+
+    function markField(field, message) {
+        field.classList.add('is-invalid');
+        field.setAttribute('aria-invalid', 'true');
+
+        var id = errorNoteId(field);
+        var note = document.getElementById(id);
+        if (!note) {
+            note = document.createElement('div');
+            note.id = id;
+            note.className = 'field-error-message';
+            var anchor = errorAnchor(field);
+            anchor.parentNode.insertBefore(note, anchor.nextSibling);
+        }
+        note.innerHTML = '<i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i> ';
+        note.appendChild(document.createTextNode(message || ERROR_TEXT.required));
+
+        var described = (field.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+        if (described.indexOf(id) === -1) {
+            described.push(id);
+            field.setAttribute('aria-describedby', described.join(' '));
+        }
+    }
+
+    function clearField(field) {
+        field.classList.remove('is-invalid', 'error-field');
+        field.removeAttribute('aria-invalid');
+
+        var id = errorNoteId(field);
+        var note = document.getElementById(id);
+        if (note) {
+            note.remove();
+        }
+        var described = (field.getAttribute('aria-describedby') || '').split(/\s+/).filter(function (d) {
+            return d && d !== id;
+        });
+        if (described.length) {
+            field.setAttribute('aria-describedby', described.join(' '));
+        } else {
+            field.removeAttribute('aria-describedby');
+        }
+    }
+
+    function stepOf(field) {
+        var wizard = activeWizard();
+        var step = field.closest('[id^="step-"]');
+        return wizard && step ? wizard.steps.indexOf(step) : -1;
+    }
+
+    function decorateSteps(fields) {
+        var wizard = activeWizard();
+        if (!wizard) {
+            return;
+        }
+        wizard.navItems.forEach(function (item, i) {
+            var count = fields.filter(function (f) { return stepOf(f) === i; }).length;
+            var badge = item.querySelector('.wizard-step-errors');
+            item.classList.toggle('has-error', count > 0);
+            if (!count) {
+                if (badge) {
+                    badge.remove();
+                }
+                return;
+            }
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'wizard-step-errors';
+                item.appendChild(badge);
+            }
+            badge.textContent = count;
+            badge.setAttribute('title', count + ' missing');
+        });
+    }
+
+    function summaryElement(form, create) {
+        var summary = document.getElementById('form-error-summary') ||
+            (form && form.querySelector('.form-error-summary'));
+        if (summary || !create) {
+            return summary;
+        }
+
+        summary = document.createElement('div');
+        summary.id = 'form-error-summary';
+        summary.className = 'form-error-summary';
+        summary.setAttribute('role', 'alert');
+        summary.setAttribute('tabindex', '-1');
+        summary.innerHTML =
+            '<h2 class="form-error-summary-title">' +
+            '<i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i> <span></span></h2>' +
+            '<p class="form-error-summary-hint"></p>' +
+            '<ul class="form-error-summary-list"></ul>';
+
+        var wizard = activeWizard();
+        if (wizard && wizard.content.parentNode) {
+            // Above the steps, so it stays in view whichever step is open.
+            wizard.content.parentNode.insertBefore(summary, wizard.content);
+        } else {
+            form.insertBefore(summary, form.firstChild);
+        }
+        return summary;
+    }
+
+    function renderSummary(form, fields, options) {
+        var summary = summaryElement(form, true);
+        var wizard = activeWizard();
+
+        summary.querySelector('.form-error-summary-title span').textContent =
+            fields.length === 1 ? ERROR_TEXT.one : ERROR_TEXT.many.replace('{n}', fields.length);
+        summary.querySelector('.form-error-summary-hint').textContent = ERROR_TEXT.hint;
+
+        var list = summary.querySelector('.form-error-summary-list');
+        list.innerHTML = '';
+        fields.forEach(function (field) {
+            var item = document.createElement('li');
+            var link = document.createElement('a');
+            link.href = '#' + field.id;
+            link.textContent = fieldName(field) || field.name;
+            item.appendChild(link);
+
+            var step = stepOf(field);
+            if (wizard && wizard.steps.length > 1 && step >= 0) {
+                var where = document.createElement('span');
+                where.className = 'form-error-summary-step';
+                where.textContent = ' · ' + ERROR_TEXT.step.replace('{n}', step + 1);
+                item.appendChild(where);
+            }
+            list.appendChild(item);
+        });
+
+        if (!options || options.focus !== false) {
+            summary.focus();
+        }
+    }
+
+    function showFormErrors(scope, options) {
+        var fields = $all(ERROR_MARK, scope || document).filter(isControl);
+        if (!fields.length) {
+            return false;
+        }
+        var form = fields[0].closest('form') || document.body;
+        fields.forEach(function (field) {
+            markField(field);
+        });
+        decorateSteps(fields);
+        renderSummary(form, fields, options);
+        return true;
+    }
+
+    function refreshFormErrors(form) {
+        var fields = $all(ERROR_MARK, form).filter(isControl);
+        var summary = summaryElement(form, false);
+        decorateSteps(fields);
+        if (!fields.length) {
+            if (summary) {
+                summary.remove();
+            }
+        } else if (summary) {
+            renderSummary(form, fields, { focus: false });
+        }
+    }
+
+    function initFormErrors() {
+        document.addEventListener('show.bs.modal', function (e) {
+            if (e.target && e.target.id === 'formErrorModal' && showFormErrors(document)) {
+                e.preventDefault();
+            }
+        });
+
+        // A summary link opens the step that holds the field, then focuses it.
+        document.addEventListener('click', function (e) {
+            var link = e.target.closest ? e.target.closest('.form-error-summary a[href^="#"]') : null;
+            if (!link) {
+                return;
+            }
+            var target = document.getElementById(link.getAttribute('href').slice(1));
+            if (!target) {
+                return;
+            }
+            e.preventDefault();
+
+            var wizard = activeWizard();
+            var step = stepOf(target);
+            if (wizard && step >= 0 && step !== wizard.index) {
+                wizard.go(step, { scroll: false });
+            }
+
+            var focusTarget = target;
+            if (target.classList.contains('select2-hidden-accessible') && target.nextElementSibling) {
+                focusTarget = target.nextElementSibling.querySelector('.select2-selection') || target;
+            }
+            errorAnchor(target).scrollIntoView({ behavior: 'smooth', block: 'center' });
+            focusTarget.focus({ preventScroll: true });
+        });
+
+        // Filling a field clears its message; the summary and counts follow.
+        ['input', 'change'].forEach(function (type) {
+            document.addEventListener(type, function (e) {
+                var field = e.target;
+                if (!field || !isControl(field) || field.value === '' || field.value == null) {
+                    return;
+                }
+                if (!field.classList.contains('is-invalid') && !field.classList.contains('error-field')) {
+                    return;
+                }
+                clearField(field);
+                refreshFormErrors(field.closest('form') || document.body);
+            });
+        });
+
+        // Server-rendered errors: the fields are already marked and the
+        // summary already listed; add the step counts, open the step that
+        // holds the first problem, and move focus so it is announced.
+        var summary = document.getElementById('form-error-summary');
+        if (summary) {
+            var invalid = $all('.is-invalid').filter(isControl);
+            decorateSteps(invalid);
+            var wizard = activeWizard();
+            var first = invalid.length ? stepOf(invalid[0]) : -1;
+            if (wizard && first > 0) {
+                wizard.go(first, { scroll: false });
+            }
+            summary.focus();
+        }
+    }
+
+    /* ---------------------------------------------------------------------
        10. Public toast helper
        --------------------------------------------------------------------- */
 
@@ -652,6 +943,7 @@
         initFilterChips();
         initButtonGroups();
         initWizards();
+        initFormErrors();
 
         // Content injected later (remote modals, AJAX partials) needs the same
         // treatment; a scoped observer is cheaper than re-scanning on a timer.
@@ -687,4 +979,10 @@
     window.BMA.toast = toast;
     window.BMA.upgradeAttributes = upgradeAttributes;
     window.BMA.initComponents = initComponents;
+    window.BMA.formErrors = {
+        show: showFormErrors,
+        refresh: refreshFormErrors,
+        mark: markField,
+        clear: clearField
+    };
 })();

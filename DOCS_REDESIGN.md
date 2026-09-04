@@ -29,8 +29,10 @@ radius, elevation or motion there and it propagates everywhere.
 | Token group | Notes |
 |---|---|
 | Brand | `--unicef-blue #0097D7`, `--unicef-dark-blue #004F71`, `--unicef-light-blue #E1F5FE` |
+| Action | `--brand-action #0077B0` — every surface that carries white text (filled buttons, active pager, checked controls, current wizard step). UNICEF blue itself is 3.28:1 with white and stays an accent. |
 | Surfaces | `--surface-body / -raised / -sunken / -hover` |
-| Text | `--text-primary / -secondary / -muted` |
+| Text | `--text-primary / -secondary / -muted` (muted is 5.45:1 on white) |
+| Focus | `--focus-ring` is a two-tone ring (surface gap + `--focus-ring-color`) so it reads on white, cards and filled buttons |
 | Radius | `--radius-xs` → `--radius-xl`, `--radius-pill` |
 | Elevation | `--shadow-xs` → `--shadow-xl` |
 | Motion | `--duration-fast/base/slow`, `--ease-out`, `--ease-in-out` |
@@ -43,14 +45,25 @@ hardcoded greys (breadcrumbs) are re-bound to tokens.
 
 **Reduced motion.** `prefers-reduced-motion` collapses every duration to ~0.
 
+**Type scale.** 16px body with a 13px (`.8125rem`) floor on every secondary
+size; `small`/`.small` and `.badge` carry the same floor. Tables sit at 14px
+for column density. Section titles, table headers, chips and legends are
+sentence case — no `text-transform: uppercase` anywhere in the system, since
+all-caps at small sizes is the hardest text for low-literacy readers.
+
+**Targets.** Topbar actions are 44px; form controls, buttons and pager links
+40px, rising to 44px under `(pointer: coarse)`; small icon controls (chip ×,
+chart/table toggle, Clear all) get an invisible 44px hit area via `::before`.
+
 ## 3. Components
 
 Provided by `redesign.css`: `.page-header`, `.card` / `.card-interactive`,
 `.metric-card` + `.metric-icon/value/label/trend`, `.quick-action-tile`,
 `.stepper` and `.wizard-progress`, `.table-container` + `.table-toolbar`,
-`.filter-chip`, `.status-pill`, `.empty-state`, `.skeleton`, `.timeline`,
-`.profile-header`, `.auth-shell` / `.auth-card`, `.form-section`,
-`.form-actions-sticky`.
+`.filter-chip`, `.filter-group` (dashboard checkbox filters), `.status-pill`,
+`.empty-state`, `.skeleton`, `.timeline`, `.profile-header`, `.auth-shell` /
+`.auth-card`, `.form-section`, `.form-actions-sticky`, `.form-error-summary` +
+`.field-error-message` (validation).
 
 Tables are the workhorse: sticky headers, sort affordances on every orderable
 column, hover row tracking, a scroll container sized for wide grids, and
@@ -93,6 +106,40 @@ contract — the per-module scripts (`mscc.js`, `tls.js`, `youth.js`) validate o
 `#next-btn22` and call `preventDefault()` to block, and the driver only advances
 on a click that survived that.
 
+Forms that carry both `#next-page` (the module script's validating button)
+and `#next-btn22` show only the first; the driver hides the second and still
+uses it as the advance target. Both are labelled "Continue".
+
+**Form errors.** The module scripts validate a step by adding `.error-field`
+to each empty required control and opening `#formErrorModal`. `redesign.js`
+intercepts that modal's `show.bs.modal` whenever fields are marked and renders
+the errors in place instead: a message under each field (`aria-describedby`
+wired), a summary above the form that links to each field and opens the step
+that holds it, and a count on the wizard step. The modal still opens for
+callers that mark no field. Server-side errors render the same summary from
+`base.html` (`form.errors`). Public API: `BMA.formErrors.show / refresh /
+mark / clear`.
+
+**Filter labels.** Every module's `PlaceholderFilterSet` used to blank the
+field label and use the placeholder or empty `<option>` as the field's name.
+`student_registration/filter_labels.py` restores a visible label on every
+control (the empty option becomes "All"); it is the one place to change how
+filter forms are labelled.
+
+**Dashboard filters.** `mscc/_dashboard_filter_group.html` renders one
+dimension as a checkbox `<fieldset>` (search box above eight values, count in
+the legend). `mscc-dashboard.js` reads checked values; parameter names are
+unchanged, so `DashboardDataView` needed no change.
+
+**Language.** `USE_I18N` is on with `en` and `ar`. The topbar and the sign-in
+card post to `set_language`; `student_registration.language_middleware`
+activates only the language the user chose (cookie) and otherwise the default,
+deliberately ignoring `Accept-Language` while the Arabic catalogue is partial
+(~67 % translated). Swap it for Django's `LocaleMiddleware` once translations
+are complete. `static/locale/ar/LC_MESSAGES/django.mo` is committed because
+the Docker image has no `gettext`; re-run `compilemessages` (or `polib`) after
+editing the `.po`.
+
 **Attendance toggles.** `data-toggle="buttons"` has no Bootstrap 5 equivalent.
 The nested radio still works natively; the selected-state styling is restored
 with CSS `:has()` plus a small class-sync handler for older browsers.
@@ -111,8 +158,14 @@ that name an old path — or name none at all — get the same treatment.
 | `static/css/redesign.css` | Tokens + component library |
 | `static/css/bs4-compat.css` | Legacy class + icon compatibility |
 | `static/css/base.css` | Older page-specific rules (kept, de-conflicted) |
-| `static/js/redesign.js` | Attribute shim, shell, wizard, tables, theme |
-| `templates/base.html` | Application shell |
+| `static/js/redesign.js` | Attribute shim, shell, wizard, form errors, tables, theme |
+| `static/js/dashboard/` | D3 chart plugin and the dashboard controllers |
+| `static/locale/ar/` | Arabic catalogue (`.po` source, compiled `.mo`) |
+| `filter_labels.py` | Visible labels for the list-page filter forms |
+| `language_middleware.py` | Interface language from the user's choice only |
+| `templates/base.html` | Application shell, error summary, language menu |
 | `templates/_sidebar_links.html` | Primary navigation |
+| `templates/_list_filters.html` | Shared filter panel + active-filter chips |
+| `templates/mscc/_dashboard_filter_group.html` | Checkbox filter group |
 | `templates/django_tables2/bootstrap5.html` | Shared table shell |
 | `templates/account/base.html` | Auth card shell |

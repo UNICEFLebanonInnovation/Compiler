@@ -153,6 +153,32 @@
                     </div>
                 </div>
 
+                <!-- Language -->
+                {% get_available_languages as AVAILABLE_LANGUAGES %}
+                {% get_current_language as CURRENT_LANGUAGE %}
+                {% if AVAILABLE_LANGUAGES|length > 1 %}
+                <div class="dropdown">
+                    <button class="topbar-action" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                            aria-label="{% trans 'Change language' %}" title="{% trans 'Change language' %}">
+                        <i class="bi bi-translate"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <div class="dropdown-header">{% trans "Language" %}</div>
+                        {% for code, name in AVAILABLE_LANGUAGES %}
+                        <form action="{% url 'set_language' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button type="submit" name="language" value="{{ code }}" lang="{{ code }}"
+                                    class="dropdown-item{% if code == CURRENT_LANGUAGE %} active{% endif %}"
+                                    {% if code == CURRENT_LANGUAGE %}aria-current="true"{% endif %}>
+                                {{ name }}
+                            </button>
+                        </form>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
                 <!-- Theme -->
                 <button class="topbar-action" type="button" data-theme-toggle
                         aria-label="{% trans 'Toggle colour theme' %}"
@@ -200,9 +226,24 @@
             {% endif %}
 
             {% if form and form.errors %}
-            <div class="alert alert-danger d-flex align-items-start gap-2" role="alert">
-                <i class="bi bi-exclamation-triangle-fill mt-1"></i>
-                <div>{% trans "Please review and check the error messages." %}</div>
+            {# Error summary: names every problem and links to the field (redesign.js opens the wizard step that holds it). #}
+            <div class="form-error-summary" role="alert" tabindex="-1" id="form-error-summary">
+                <h2 class="form-error-summary-title">
+                    <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>
+                    <span>{% trans "Some answers need attention" %}</span>
+                </h2>
+                <p class="form-error-summary-hint">{% trans "Fix the fields listed here, then save again." %}</p>
+                <ul class="form-error-summary-list">
+                    {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                    {% for field in form.visible_fields %}{% for error in field.errors %}
+                    <li><a href="#{{ field.id_for_label }}">{{ field.label }}</a>: {{ error }}</li>
+                    {% endfor %}{% endfor %}
+                    {% for field in form.hidden_fields %}{% for error in field.errors %}
+                    <li>{{ field.label }}: {{ error }}</li>
+                    {% endfor %}{% endfor %}
+                </ul>
             </div>
             {% endif %}
 
@@ -291,8 +332,8 @@
         <div class="modal-content">
             <div class="modal-body p-4 p-md-5 text-center">
                 <i class="bi bi-exclamation-circle text-danger display-4 mb-3 d-block"></i>
-                <h4 class="fw-bold mb-2">{% trans "Verification Required" %}</h4>
-                <div id="swal2-content" class="text-muted mb-4">{% trans "Please check the form mandatory fields." %}</div>
+                <h4 class="fw-bold mb-2">{% trans "Some answers are missing" %}</h4>
+                <div id="swal2-content" class="text-muted mb-4">{% trans "Please fill in the highlighted fields, then try again." %}</div>
                 <button type="button" class="btn btn-danger px-5 fw-semibold" data-bs-dismiss="modal">{% trans "OK" %}</button>
             </div>
         </div>

@@ -85,6 +85,8 @@ api.register(r'locations', LocationViewSet, basename='locations')
 
 urlpatterns = [
     re_path(r'^$', home, name="home"),
+    # Language switcher (the topbar posts to `set_language`).
+    re_path(r'^i18n/', include('django.conf.urls.i18n')),
     # re_path(r'^$', TemplateView.as_view(template_name='pages/home.html'), name='home'),
     re_path(r'^about/$', TemplateView.as_view(template_name='pages/about.html'), name='about'),
     re_path(r'^login-redirect/$', LoginRedirectView.as_view(), name='login-redirect'),

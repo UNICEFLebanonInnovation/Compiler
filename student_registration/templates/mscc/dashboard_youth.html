@@ -91,28 +91,13 @@
         <span class="text-muted small" id="dashboard-status" role="status" aria-live="polite"></span>
     </div>
     <div class="card-body">
-        <div class="form-inline">
-            <div>
-                <label class="form-label" for="center_filter">{% trans "Centers" %}</label>
-                <select multiple size="4" id="center_filter" class="form-select">
-                    {% for item in centers %}<option value="{{ item.id }}">{{ item }}</option>{% endfor %}
-                </select>
-            </div>
-            <div>
-                <label class="form-label" for="governorate_filter">{% trans "Governorates" %}</label>
-                <select multiple size="4" id="governorate_filter" class="form-select">
-                    {% for item in governorates %}<option value="{{ item.id }}">{{ item }}</option>{% endfor %}
-                </select>
-            </div>
-            <div>
-                <label class="form-label" for="partner_filter">{% trans "Partners" %}</label>
-                <select multiple size="4" id="partner_filter" class="form-select">
-                    {% for item in partners %}<option value="{{ item.id }}">{{ item }}</option>{% endfor %}
-                </select>
-            </div>
+        <div class="filter-groups">
+            {% include "mscc/_dashboard_filter_group.html" with id="center_filter" param="centers" label=_("Centers") items=centers %}
+            {% include "mscc/_dashboard_filter_group.html" with id="governorate_filter" param="governorates" label=_("Governorates") items=governorates %}
+            {% include "mscc/_dashboard_filter_group.html" with id="partner_filter" param="partners" label=_("Partners") items=partners %}
         </div>
         <p class="form-text mb-0 mt-2">
-            {% trans "Hold Ctrl (or Cmd) to select more than one value. Charts update automatically." %}
+            {% trans "Tick one or more values. The charts update on their own." %}
         </p>
     </div>
 </div>
@@ -154,7 +139,8 @@
       loading: "{% trans 'Loading…' %}",
       failed: "{% trans 'Could not load dashboard data.' %}",
       returning: "{% trans 'Returning' %}",
-      newChildren: "{% trans 'New' %}"
+      newChildren: "{% trans 'New' %}",
+      selected: "{% trans '{n} selected' %}"
     }
   };
 </script>

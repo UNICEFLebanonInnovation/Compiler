@@ -31,6 +31,21 @@ application chrome, so the two states share one layout.
         {% block inner %}{% endblock inner %}
 
         {% block auth_footer %}
+        {% get_available_languages as AVAILABLE_LANGUAGES %}
+        {% get_current_language as CURRENT_LANGUAGE %}
+        {% if AVAILABLE_LANGUAGES|length > 1 %}
+        <nav class="auth-language" aria-label="{% trans 'Language' %}">
+            {% for code, name in AVAILABLE_LANGUAGES %}
+            <form action="{% url 'set_language' %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <button type="submit" name="language" value="{{ code }}" lang="{{ code }}"
+                        class="btn btn-link auth-language-link{% if code == CURRENT_LANGUAGE %} is-current{% endif %}"
+                        {% if code == CURRENT_LANGUAGE %}aria-current="true"{% endif %}>{{ name }}</button>
+            </form>
+            {% endfor %}
+        </nav>
+        {% endif %}
         <p class="auth-footer-note">
             {% trans "&copy; MEHE BMA — Beneficiary Monitoring &amp; Assessment" %}
         </p>

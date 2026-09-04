@@ -120,7 +120,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     # "whitenoise.middleware.WhiteNoiseMiddleware",
     # "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.locale.LocaleMiddleware",
+    "student_registration.language_middleware.ChosenLanguageMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "allauth.account.middleware.AccountMiddleware",
@@ -217,7 +217,16 @@ TIME_ZONE = 'Asia/Beirut'
 SITE_ID = 1
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#use-i18n
-USE_I18N = False
+# Translation is on; the interface language follows the user's choice from
+# the topbar (see student_registration.language_middleware), defaulting to
+# English. The Arabic catalogue lives in static/locale/ar; run
+# `manage.py compilemessages` after editing the .po file.
+USE_I18N = True
+LANGUAGE_CODE = 'en'
+LANGUAGES = [
+    ('en', 'English'),
+    ('ar', 'العربية'),
+]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#use-l10n
 USE_L10N = False

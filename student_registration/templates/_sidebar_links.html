@@ -13,8 +13,15 @@ at one, per the redesign spec.
 
 <a href="{% url 'landing_page' %}"
    class="nav-link {% if request.resolver_match.url_name == 'landing_page' or request.resolver_match.url_name == 'home' %}active{% endif %}">
-    <i class="bi bi-grid-1x2"></i> <span>{% trans "All Modules" %}</span>
+    <i class="bi bi-house-door"></i> <span>{% trans "Home" %}</span>
 </a>
+
+{% comment %}
+Link labels carry the module name ("Makani registrations", not "Student
+Registration" five times over): screen-reader users navigating by link list,
+and anyone scanning the sidebar, can tell the entries apart without reading
+the section heading above them.
+{% endcomment %}
 
 {# ------------------------------------------------------------------ Makani #}
 {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
@@ -22,31 +29,31 @@ at one, per the redesign spec.
 
 <a href="{% url 'mscc:list' %}"
    class="nav-link {% if request.resolver_match.app_name == 'mscc' and request.resolver_match.url_name != 'attendance' and request.resolver_match.url_name != 'dashboard' %}active{% endif %}">
-    <i class="bi bi-person-plus"></i> <span>{% trans "Student Registration" %}</span>
+    <i class="bi bi-person-plus"></i> <span>{% trans "Makani registrations" %}</span>
 </a>
 
 {% if not request.user.partner or not request.user.partner.is_world_learning %}
 <a href="{% url 'mscc:attendance' %}"
    class="nav-link {% if request.resolver_match.app_name == 'mscc' and request.resolver_match.url_name == 'attendance' %}active{% endif %}">
-    <i class="bi bi-calendar-check"></i> <span>{% trans "Student Attendance" %}</span>
+    <i class="bi bi-calendar-check"></i> <span>{% trans "Makani attendance" %}</span>
 </a>
 {% endif %}
 
 {% if request.user|has_group:"MSCC_CENTER" and request.user.center_id %}
 <a href="{% url 'locations:center_profile' request.user.center_id %}"
    class="nav-link {% if request.resolver_match.app_name == 'locations' %}active{% endif %}">
-    <i class="bi bi-building"></i> <span>{% trans "Center" %}</span>
+    <i class="bi bi-building"></i> <span>{% trans "My Makani center" %}</span>
 </a>
 {% else %}
 <a href="{% url 'locations:center_list' %}?is_tls=No"
    class="nav-link {% if request.resolver_match.app_name == 'locations' %}active{% endif %}">
-    <i class="bi bi-building"></i> <span>{% trans "Centers" %}</span>
+    <i class="bi bi-building"></i> <span>{% trans "Makani centers" %}</span>
 </a>
 {% endif %}
 
 <a href="{% url 'mscc:dashboard' %}"
    class="nav-link {% if request.resolver_match.app_name == 'mscc' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-    <i class="bi bi-speedometer2"></i> <span>{% trans "Dashboard" %}</span>
+    <i class="bi bi-speedometer2"></i> <span>{% trans "Makani dashboard" %}</span>
 </a>
 
 {% comment %}
@@ -55,7 +62,7 @@ only reachable by typing the URL.
 {% endcomment %}
 <a href="{% url 'mscc:dashboard_custom' %}"
    class="nav-link {% if request.resolver_match.app_name == 'mscc' and request.resolver_match.url_name == 'dashboard_custom' %}active{% endif %}">
-    <i class="bi bi-bar-chart-line"></i> <span>{% trans "Analytics" %}</span>
+    <i class="bi bi-bar-chart-line"></i> <span>{% trans "Makani analytics" %}</span>
 </a>
 {% endif %}
 
@@ -65,16 +72,16 @@ only reachable by typing the URL.
 
 <a href="{% url 'tls:list' %}"
    class="nav-link {% if request.resolver_match.app_name == 'tls' %}active{% endif %}">
-    <i class="bi bi-person-plus"></i> <span>{% trans "Student Registration" %}</span>
+    <i class="bi bi-person-plus"></i> <span>{% trans "TLS registrations" %}</span>
 </a>
 
 {% if request.user|has_group:"TLS_CENTER" and request.user.center_id %}
 <a href="{% url 'locations:center_profile' request.user.center_id %}" class="nav-link">
-    <i class="bi bi-building"></i> <span>{% trans "Center" %}</span>
+    <i class="bi bi-building"></i> <span>{% trans "My TLS center" %}</span>
 </a>
 {% else %}
 <a href="{% url 'locations:center_list' %}?is_tls=Yes" class="nav-link">
-    <i class="bi bi-building"></i> <span>{% trans "Center" %}</span>
+    <i class="bi bi-building"></i> <span>{% trans "TLS centers" %}</span>
 </a>
 {% endif %}
 {% endif %}
@@ -87,13 +94,13 @@ only reachable by typing the URL.
 
 <a href="{% url 'clm:bridging_list' %}"
    class="nav-link {% if request.resolver_match.app_name == 'clm' and 'bridging' in request.resolver_match.url_name and 'attendance' not in request.resolver_match.url_name %}active{% endif %}">
-    <i class="bi bi-person-plus"></i> <span>{% trans "Student Registration" %}</span>
+    <i class="bi bi-person-plus"></i> <span>{% trans "Dirasa registrations" %}</span>
 </a>
 
 {% if not request.user.partner or not request.user.partner.is_world_learning %}
 <a href="{% url 'clm:attendance' %}"
    class="nav-link {% if request.resolver_match.app_name == 'clm' and 'attendance' in request.resolver_match.url_name %}active{% endif %}">
-    <i class="bi bi-calendar-check"></i> <span>{% trans "Student Attendance" %}</span>
+    <i class="bi bi-calendar-check"></i> <span>{% trans "Dirasa attendance" %}</span>
 </a>
 {% endif %}
 
@@ -109,7 +116,7 @@ only reachable by typing the URL.
 
 <a href="{% url 'clm:dashboard' %}"
    class="nav-link {% if request.resolver_match.app_name == 'clm' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-    <i class="bi bi-speedometer2"></i> <span>{% trans "Dashboard" %}</span>
+    <i class="bi bi-speedometer2"></i> <span>{% trans "Dirasa dashboard" %}</span>
 </a>
 {% endif %}
 
@@ -119,7 +126,7 @@ only reachable by typing the URL.
 
 <a href="{% url 'clm:inclusion_list' %}"
    class="nav-link {% if request.resolver_match.app_name == 'clm' and 'inclusion' in request.resolver_match.url_name %}active{% endif %}">
-    <i class="bi bi-universal-access"></i> <span>{% trans "Student Registration" %}</span>
+    <i class="bi bi-universal-access"></i> <span>{% trans "Inclusion registrations" %}</span>
 </a>
 {% endif %}
 
@@ -129,18 +136,20 @@ only reachable by typing the URL.
 
 <a href="{% url 'youth:list' %}"
    class="nav-link {% if request.resolver_match.app_name == 'youth' and request.resolver_match.url_name != 'pd_list' %}active{% endif %}">
-    <i class="bi bi-person-plus"></i> <span>{% trans "Student Registration" %}</span>
+    <i class="bi bi-person-plus"></i> <span>{% trans "Youth registrations" %}</span>
 </a>
 
 <a href="{% url 'youth:pd_list' %}"
    class="nav-link {% if request.resolver_match.app_name == 'youth' and request.resolver_match.url_name == 'pd_list' %}active{% endif %}">
-    <i class="bi bi-journal-text"></i> <span>{% trans "Programme Document" %}</span>
+    <i class="bi bi-journal-text"></i> <span>{% trans "Youth programme documents" %}</span>
 </a>
 
 <a href="https://app.powerbi.com/links/GqLX-KzJAM?ctid=77410195-14e1-4fb8-904b-ab1892023667&amp;pbi_source=linkShare"
-   class="nav-link" target="_blank" rel="noopener noreferrer">
-    <i class="bi bi-bar-chart"></i> <span>{% trans "Dashboard" %}</span>
-    <i class="bi bi-box-arrow-up-right ms-auto small opacity-50"></i>
+   class="nav-link" target="_blank" rel="noopener noreferrer"
+   title="{% trans 'Opens Power BI in a new tab' %}">
+    <i class="bi bi-bar-chart"></i> <span>{% trans "Youth dashboard" %}</span>
+    <i class="bi bi-box-arrow-up-right ms-auto small opacity-75" aria-hidden="true"></i>
+    <span class="visually-hidden">{% trans "(opens in a new tab)" %}</span>
 </a>
 {% endif %}
 

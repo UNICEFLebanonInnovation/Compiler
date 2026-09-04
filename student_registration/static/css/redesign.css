@@ -902,6 +902,80 @@ small,
     font-weight: 700;
 }
 
+/* Inline errors (redesign.js "Form errors"). The module scripts mark empty
+   required controls with .error-field; the message and the summary make
+   that mark legible without relying on the red border alone. */
+.error-field,
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: var(--status-danger) !important;
+    border-width: 2px;
+    background-image: none;
+}
+
+.error-field:focus,
+.is-invalid:focus {
+    --focus-ring-color: var(--status-danger);
+}
+
+.field-error-message {
+    display: flex;
+    align-items: flex-start;
+    gap: .35rem;
+    margin-top: .35rem;
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--status-danger);
+}
+
+.form-error-summary {
+    border: 2px solid var(--status-danger);
+    border-radius: var(--radius-md);
+    background: var(--surface-raised);
+    padding: 1rem 1.15rem;
+    margin-bottom: 1.25rem;
+}
+
+.form-error-summary:focus {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+.form-error-summary-title {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--status-danger);
+    margin: 0 0 .25rem;
+}
+
+.form-error-summary-hint {
+    margin: 0 0 .6rem;
+    color: var(--text-secondary);
+}
+
+.form-error-summary-list {
+    margin: 0;
+    padding-inline-start: 1.25rem;
+}
+
+.form-error-summary-list li {
+    margin-bottom: .3rem;
+}
+
+.form-error-summary-list a {
+    color: var(--status-danger);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.form-error-summary-step {
+    color: var(--text-muted);
+}
+
 /* Fieldsets — the "logical section" pattern from the redesign spec. */
 .form-section {
     border: 1px solid var(--border-color);
@@ -1452,6 +1526,71 @@ fieldset legend {
     transform: rotate(180deg);
 }
 
+/* Dashboard filters: one checkbox group per dimension (see
+   mscc/_dashboard_filter_group.html). */
+.filter-groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+}
+
+.filter-group {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.filter-group-legend {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: .5rem;
+    width: 100%;
+    float: none;
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border: 0;
+    padding: 0;
+    margin-bottom: .35rem;
+}
+
+.filter-group-count {
+    font-size: .8125rem;
+    font-weight: 600;
+    color: var(--unicef-dark-blue);
+    white-space: nowrap;
+}
+
+.filter-group-options {
+    max-height: 190px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: .4rem .65rem;
+    background: var(--surface-raised);
+}
+
+.filter-group-options .form-check {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    min-height: 1.9rem;
+    margin: 0;
+    padding: 0;
+}
+
+.filter-group-options .form-check-input {
+    flex-shrink: 0;
+    margin: 0;
+}
+
+.filter-group-options .form-check-label {
+    cursor: pointer;
+    overflow-wrap: anywhere;
+}
+
 .offcanvas {
     background: var(--surface-raised);
     color: var(--text-primary);
@@ -1846,6 +1985,26 @@ fieldset legend {
 
 .password-toggle-btn:hover {
     color: var(--unicef-blue);
+}
+
+.auth-language {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: .25rem;
+    margin-top: 1.25rem;
+}
+
+.auth-language-link {
+    font-size: .9375rem;
+    text-decoration: none;
+    padding: .35rem .6rem;
+}
+
+.auth-language-link.is-current {
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
 .auth-footer-note {

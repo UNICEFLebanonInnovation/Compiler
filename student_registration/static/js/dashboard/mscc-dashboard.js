@@ -45,6 +45,24 @@
         }
     }
 
+    // Each filter is a <fieldset> of checkboxes (see _dashboard_filter_group.html).
+    function checkedValues(node) {
+        return Array.prototype.slice.call(node.querySelectorAll('input[type="checkbox"]:checked'))
+            .map(function (box) { return box.value; })
+            .filter(Boolean);
+    }
+
+    function syncCounts() {
+        FILTERS.forEach(function (filter) {
+            var node = el(filter.id);
+            var count = node ? checkedValues(node).length : 0;
+            var badge = document.querySelector('[data-count-for="' + filter.id + '"]');
+            if (badge) {
+                badge.textContent = count ? (config.labels && config.labels.selected || '{n} selected').replace('{n}', count) : '';
+            }
+        });
+    }
+
     function collectFilters() {
         var params = {};
 
@@ -53,9 +71,7 @@
             if (!node) {
                 return;
             }
-            var values = Array.prototype.slice.call(node.selectedOptions || [])
-                .map(function (opt) { return opt.value; })
-                .filter(Boolean);
+            var values = checkedValues(node);
             if (values.length) {
                 params[filter.param] = values;
             }
@@ -139,8 +155,28 @@
     function init() {
         FILTERS.forEach(function (filter) {
             var node = el(filter.id);
-            if (node) {
-                node.addEventListener('change', load);
+            if (!node) {
+                return;
+            }
+            node.addEventListener('change', function (e) {
+                if (e.target && e.target.type === 'checkbox') {
+                    syncCounts();
+                    load();
+                }
+            });
+
+            // Long lists get a search box that hides the values that do not
+            // match; ticked values stay visible so a choice is never lost.
+            var search = node.querySelector('.filter-group-search');
+            if (search) {
+                search.addEventListener('input', function () {
+                    var query = search.value.trim().toLowerCase();
+                    Array.prototype.forEach.call(node.querySelectorAll('.form-check'), function (row) {
+                        var box = row.querySelector('input');
+                        var text = row.textContent.toLowerCase();
+                        row.hidden = Boolean(query) && !box.checked && text.indexOf(query) === -1;
+                    });
+                });
             }
         });
 
@@ -164,13 +200,21 @@
                 FILTERS.forEach(function (filter) {
                     var node = el(filter.id);
                     if (node) {
-                        Array.prototype.forEach.call(node.options, function (opt) {
-                            opt.selected = false;
+                        Array.prototype.forEach.call(node.querySelectorAll('input[type="checkbox"]'), function (box) {
+                            box.checked = false;
                         });
+                        Array.prototype.forEach.call(node.querySelectorAll('.form-check'), function (row) {
+                            row.hidden = false;
+                        });
+                        var search = node.querySelector('.filter-group-search');
+                        if (search) {
+                            search.value = '';
+                        }
                     }
                 });
                 packageTypes = [];
                 syncPackageButtons();
+                syncCounts();
                 load();
             });
         }
