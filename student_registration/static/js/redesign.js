@@ -470,6 +470,19 @@
         this.prevBtn = scope.querySelector('#prev-btn22') || document.getElementById('prev-btn22');
         this.progress = null;
 
+        // Several forms carry two "next" buttons: #next-page runs the module
+        // script's per-step validation and then triggers #next-btn22, which
+        // is the one this driver advances on. Showing both meant two
+        // identical-looking buttons side by side, so only one is visible;
+        // the hidden one is still reachable programmatically.
+        this.nextPage = scope.querySelector('#next-page') || document.getElementById('next-page');
+        if (this.nextPage && this.nextBtn) {
+            this.nextBtn.classList.add('d-none');
+            this.nextBtn.setAttribute('aria-hidden', 'true');
+            this.nextBtn.tabIndex = -1;
+        }
+        this.visibleNext = this.nextPage || this.nextBtn;
+
         if (this.steps.length > 1) {
             var bar = document.createElement('div');
             bar.className = 'wizard-progress';
@@ -508,8 +521,8 @@
         if (this.prevBtn) {
             this.prevBtn.classList.toggle('d-none', index === 0);
         }
-        if (this.nextBtn) {
-            this.nextBtn.classList.toggle('d-none', index >= this.steps.length - 1);
+        if (this.visibleNext) {
+            this.visibleNext.classList.toggle('d-none', index >= this.steps.length - 1);
         }
 
         if (!options || options.scroll !== false) {
@@ -545,8 +558,8 @@
                     // through the Next button so per-step validation still runs.
                     if (i <= wizard.index) {
                         wizard.go(i);
-                    } else if (wizard.nextBtn && i === wizard.index + 1) {
-                        wizard.nextBtn.click();
+                    } else if (wizard.visibleNext && i === wizard.index + 1) {
+                        wizard.visibleNext.click();
                     }
                 });
             });

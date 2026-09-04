@@ -22,6 +22,14 @@
     --unicef-light-blue: #E1F5FE;
     --unicef-blue-rgb: 0, 151, 215;
 
+    /* Action colour. UNICEF blue stays the brand accent for icons, charts
+       and highlights, but white text on it measures 3.28:1, under the 4.5:1
+       AA floor. Anything that carries text — filled buttons, the active
+       pager item, checked controls, the current wizard step — uses this
+       darker step instead (4.92:1 with white). */
+    --brand-action: #0077B0;
+    --brand-action-rgb: 0, 119, 176;
+
     /* Semantic surfaces */
     --surface-body: #f4f7fa;
     --surface-raised: #ffffff;
@@ -32,7 +40,10 @@
     /* Text */
     --text-primary: #1a202c;
     --text-secondary: #4a5568;
-    --text-muted: #718096;
+    /* 5.45:1 on white and 4.84:1 on the sunken surface. The previous
+       #718096 measured 4.02:1, which fails AA for the 13px labels that use
+       it most. */
+    --text-muted: #5b6b7f;
     --text-on-brand: #ffffff;
 
     /* Lines */
@@ -46,8 +57,8 @@
     --status-info: #0097D7;
 
     /* Bootstrap variable bridges */
-    --bs-primary: var(--unicef-blue);
-    --bs-primary-rgb: var(--unicef-blue-rgb);
+    --bs-primary: var(--brand-action);
+    --bs-primary-rgb: var(--brand-action-rgb);
     --bs-link-color: var(--unicef-dark-blue);
     --bs-link-hover-color: var(--unicef-blue);
     --bs-body-font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -80,8 +91,11 @@
     --duration-base: .25s;
     --duration-slow: .4s;
 
-    /* Focus */
-    --focus-ring: 0 0 0 3px rgba(var(--unicef-blue-rgb), .35);
+    /* Focus. A two-tone ring (surface gap, then a solid 4.9:1 colour) stays
+       visible on white, on the sunken surface and on a filled button; the
+       previous 35%-alpha ring blended to 2.3:1 against white. */
+    --focus-ring-color: var(--brand-action);
+    --focus-ring: 0 0 0 2px var(--surface-raised), 0 0 0 4px var(--focus-ring-color);
 }
 
 @media (max-width: 1400px) {
@@ -110,6 +124,7 @@
     --border-color: #2b3a51;
     --border-strong: #3b4b66;
     --unicef-light-blue: rgba(0, 151, 215, .16);
+    --focus-ring-color: #5ec8f5;
     --shadow-xs: 0 1px 2px rgba(0, 0, 0, .4);
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, .45);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, .5);
@@ -147,7 +162,9 @@ html {
 
 body {
     font-family: var(--bs-body-font-family);
-    font-size: 14px;
+    /* 16px base with a 13px (.8125rem) floor on every secondary size; the
+       tables opt down to 14px because column count matters more there. */
+    font-size: 16px;
     line-height: 1.55;
     background-color: var(--surface-body);
     color: var(--text-primary);
@@ -185,6 +202,17 @@ hr {
 
 .text-muted {
     color: var(--text-muted) !important;
+}
+
+/* Bootstrap sizes small text and badges relative to their parent, which
+   inside a 14px table or dropdown lands at 10-12px. Hold the 13px floor. */
+small,
+.small {
+    font-size: max(.875em, .8125rem);
+}
+
+.badge {
+    font-size: max(.75em, .8125rem);
 }
 
 /* Global focus treatment — visible for keyboards, quiet for pointers. */
@@ -345,7 +373,7 @@ hr {
 }
 
 .topbar-action {
-    --size: 38px;
+    --size: 44px;
     width: var(--size);
     height: var(--size);
     display: inline-flex;
@@ -392,10 +420,9 @@ hr {
 
 .nav-section-title {
     padding: 1.15rem 1.35rem .4rem;
-    font-size: .68rem;
+    font-size: .8125rem;
     font-weight: 700;
-    letter-spacing: .09em;
-    text-transform: uppercase;
+    letter-spacing: .01em;
     color: var(--text-muted);
     white-space: nowrap;
 }
@@ -408,7 +435,7 @@ hr {
     align-items: center;
     border-radius: var(--radius-sm);
     margin: .12rem .7rem;
-    font-size: .875rem;
+    font-size: .9375rem;
     font-weight: 500;
     white-space: nowrap;
     position: relative;
@@ -469,7 +496,7 @@ hr {
 
 .sidebar .nav-link .nav-badge {
     margin-inline-start: auto;
-    font-size: .68rem;
+    font-size: .8125rem;
     font-weight: 600;
     padding: .15em .5em;
     border-radius: var(--radius-pill);
@@ -523,7 +550,7 @@ hr {
 }
 
 .breadcrumb {
-    font-size: .8rem;
+    font-size: .8125rem;
     margin-bottom: .35rem;
     /* Bootstrap hard-codes these greys, which read as almost invisible on the
        dark surface; bind them to the theme tokens instead. */
@@ -599,10 +626,9 @@ hr {
     align-items: center;
     gap: .75rem;
     margin: 1.75rem 0 1rem;
-    font-size: .72rem;
+    font-size: .875rem;
     font-weight: 700;
-    letter-spacing: .09em;
-    text-transform: uppercase;
+    letter-spacing: .01em;
     color: var(--text-muted);
 }
 
@@ -647,21 +673,17 @@ hr {
 }
 
 .metric-label {
-    font-size: .74rem;
+    font-size: .8125rem;
     color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: .06em;
     font-weight: 600;
     margin-top: .2rem;
-    /* Uppercase + letter-spacing makes two-word labels wrap awkwardly in a
-       narrow tile; keep them on one line and elide instead. */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.35;
+    /* Sentence case wraps cleanly, so a long label is allowed a second
+       line rather than being cut off with an ellipsis. */
 }
 
 .metric-trend {
-    font-size: .78rem;
+    font-size: .8125rem;
     font-weight: 600;
     display: inline-flex;
     align-items: center;
@@ -710,7 +732,7 @@ hr {
 }
 
 .quick-action-tile .tile-description {
-    font-size: .8rem;
+    font-size: .8125rem;
     color: var(--text-muted);
     margin-top: .25rem;
 }
@@ -741,21 +763,22 @@ hr {
 }
 
 .btn-primary {
-    --bs-btn-bg: var(--unicef-blue);
-    --bs-btn-border-color: var(--unicef-blue);
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--brand-action);
+    --bs-btn-border-color: var(--brand-action);
     --bs-btn-hover-bg: var(--unicef-dark-blue);
     --bs-btn-hover-border-color: var(--unicef-dark-blue);
     --bs-btn-active-bg: var(--unicef-dark-blue);
     --bs-btn-active-border-color: var(--unicef-dark-blue);
-    --bs-btn-disabled-bg: var(--unicef-blue);
-    --bs-btn-disabled-border-color: var(--unicef-blue);
+    --bs-btn-disabled-bg: var(--brand-action);
+    --bs-btn-disabled-border-color: var(--brand-action);
 }
 
 .btn-outline-primary {
     --bs-btn-color: var(--unicef-dark-blue);
-    --bs-btn-border-color: var(--unicef-blue);
-    --bs-btn-hover-bg: var(--unicef-blue);
-    --bs-btn-hover-border-color: var(--unicef-blue);
+    --bs-btn-border-color: var(--brand-action);
+    --bs-btn-hover-bg: var(--brand-action);
+    --bs-btn-hover-border-color: var(--brand-action);
     --bs-btn-active-bg: var(--unicef-dark-blue);
     --bs-btn-active-border-color: var(--unicef-dark-blue);
 }
@@ -792,7 +815,7 @@ hr {
 
 .form-label {
     font-weight: 500;
-    font-size: .84rem;
+    font-size: .875rem;
     margin-bottom: .35rem;
     color: var(--text-secondary);
 }
@@ -804,14 +827,17 @@ hr {
     color: var(--text-primary);
     border-radius: var(--radius-sm);
     padding: .45rem .7rem;
-    font-size: .875rem;
+    font-size: .9375rem;
+    min-height: 2.5rem;
     transition: border-color var(--duration-fast) var(--ease-out),
                 box-shadow var(--duration-fast) var(--ease-out);
 }
 
 .form-control::placeholder {
+    /* Full opacity: several filter panels still rely on the placeholder as
+       the field's only name, and at 75% it blended to 3.25:1. */
     color: var(--text-muted);
-    opacity: .75;
+    opacity: 1;
 }
 
 .form-control:focus,
@@ -830,18 +856,18 @@ hr {
 }
 
 .form-text {
-    font-size: .76rem;
+    font-size: .8125rem;
     color: var(--text-muted);
 }
 
 .form-check-input:checked {
-    background-color: var(--unicef-blue);
-    border-color: var(--unicef-blue);
+    background-color: var(--brand-action);
+    border-color: var(--brand-action);
 }
 
 .form-check-input:focus {
     box-shadow: var(--focus-ring);
-    border-color: var(--unicef-blue);
+    border-color: var(--brand-action);
 }
 
 .input-group-text {
@@ -860,7 +886,7 @@ hr {
 /* Validation */
 .is-invalid + .invalid-feedback,
 .invalid-feedback {
-    font-size: .78rem;
+    font-size: .875rem;
     margin-top: .25rem;
     font-weight: 500;
 }
@@ -887,10 +913,9 @@ hr {
 
 .form-section > legend,
 .form-section-title {
-    font-size: .78rem;
+    font-size: .875rem;
     font-weight: 700;
-    letter-spacing: .07em;
-    text-transform: uppercase;
+    letter-spacing: .01em;
     color: var(--unicef-dark-blue);
     padding: 0 .4rem;
     width: auto;
@@ -973,16 +998,16 @@ fieldset legend {
 }
 
 .step.active .step-icon {
-    border-color: var(--unicef-blue);
-    background: var(--unicef-blue);
+    border-color: var(--brand-action);
+    background: var(--brand-action);
     color: #fff;
-    box-shadow: 0 0 0 5px rgba(var(--unicef-blue-rgb), .16);
+    box-shadow: 0 0 0 5px rgba(var(--brand-action-rgb), .16);
 }
 
 .step.completed .step-icon {
     border-color: var(--unicef-blue);
     background: var(--unicef-light-blue);
-    color: var(--unicef-blue);
+    color: var(--unicef-dark-blue);
 }
 
 .step.error .step-icon {
@@ -1099,9 +1124,8 @@ fieldset legend {
     background-color: var(--surface-sunken) !important;
     color: var(--text-primary);
     font-weight: 700;
-    text-transform: uppercase;
-    font-size: .7rem;
-    letter-spacing: .05em;
+    font-size: .8125rem;
+    letter-spacing: .01em;
     padding: .8rem .7rem;
     border-top: none !important;
     border-bottom: 2px solid var(--border-strong) !important;
@@ -1152,12 +1176,12 @@ fieldset legend {
 /* Compact density for very wide operational grids. */
 .table-compact tbody td {
     padding: .4rem .5rem;
-    font-size: .8rem;
+    font-size: .8125rem;
 }
 
 .table-compact thead th {
     padding: .55rem .5rem;
-    font-size: .64rem;
+    font-size: .8125rem;
 }
 
 /* Legacy base.css forces some tables to a fixed 1500px; keep them fluid but
@@ -1171,12 +1195,12 @@ fieldset legend {
     padding: .38em .7em;
     font-weight: 600;
     border-radius: var(--radius-sm);
-    font-size: .72rem;
+    font-size: .8125rem;
 }
 
 .table-actions-dropdown .btn-actions {
     padding: .22rem .5rem;
-    font-size: .78rem;
+    font-size: .8125rem;
     font-weight: 500;
     border-radius: var(--radius-sm);
     display: inline-flex;
@@ -1259,11 +1283,16 @@ fieldset legend {
     padding: .42rem .8rem;
     border-radius: var(--radius-sm) !important;
     font-weight: 500;
-    font-size: .85rem;
+    font-size: .875rem;
+    min-height: 2.5rem;
+    min-width: 2.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .page-item.active .page-link {
-    background-color: var(--unicef-blue);
+    background-color: var(--brand-action);
     color: #fff;
 }
 
@@ -1297,15 +1326,14 @@ fieldset legend {
     display: inline-flex;
     align-items: center;
     gap: .4rem;
-    font-size: .72rem;
+    font-size: .8125rem;
     font-weight: 700;
-    letter-spacing: .06em;
-    text-transform: uppercase;
+    letter-spacing: .01em;
     color: var(--text-muted);
 }
 
 .active-filters-clear {
-    font-size: .8rem;
+    font-size: .875rem;
     font-weight: 500;
     color: var(--text-muted);
     text-decoration: underline;
@@ -1314,6 +1342,34 @@ fieldset legend {
        row's trailing action rather than an orphaned link when the chips wrap. */
     margin-inline-start: auto;
     white-space: nowrap;
+    position: relative;
+}
+
+/* Invisible 44px hit area around small text and icon controls. The visible
+   box stays the same size, so the layout does not change. */
+.active-filters-clear::before,
+.filter-chip .btn-close::before,
+.chart-toggle-table::before {
+    content: '';
+    position: absolute;
+    inset: -12px -8px;
+}
+
+/* The chip's × is a 22px square, so it needs 11px on every side. */
+.filter-chip .btn-close::before {
+    inset: -11px;
+}
+
+.chart-toggle-table::before {
+    inset: -8px -10px;
+}
+
+/* Breadcrumb links are inline text, but a little vertical padding lifts
+   them to the 24px minimum without moving the line. */
+.breadcrumb a {
+    display: inline-block;
+    padding-block: .3rem;
+    margin-block: -.3rem;
 }
 
 .active-filters-clear:hover {
@@ -1322,7 +1378,7 @@ fieldset legend {
 
 .filter-chip {
     font-weight: 500;
-    font-size: .8rem;
+    font-size: .8125rem;
     border-radius: var(--radius-pill);
     border: 1px solid var(--border-color);
     background: var(--surface-raised);
@@ -1330,17 +1386,15 @@ fieldset legend {
     display: inline-flex;
     align-items: center;
     gap: .35rem;
-    padding: .28rem .4rem .28rem .7rem;
+    padding: .3rem .4rem .3rem .75rem;
     box-shadow: var(--shadow-xs);
     max-width: 320px;
 }
 
 .filter-chip-label {
     color: var(--text-muted);
-    font-size: .72rem;
-    text-transform: uppercase;
-    letter-spacing: .04em;
-    font-weight: 700;
+    font-size: .8125rem;
+    font-weight: 600;
     flex-shrink: 0;
 }
 
@@ -1356,12 +1410,13 @@ fieldset legend {
     /* No `filter: none` here — Bootstrap inverts this glyph under
        data-bs-theme="dark", and overriding it would leave a dark × on a
        dark chip. */
-    opacity: .45;
-    font-size: .58rem;
+    opacity: .55;
+    font-size: .7rem;
     padding: .35rem;
     margin-inline-start: .1rem;
     border-radius: 50%;
     flex-shrink: 0;
+    position: relative;
 }
 
 .filter-chip .btn-close:hover {
@@ -1424,7 +1479,7 @@ fieldset legend {
     display: inline-flex;
     align-items: center;
     gap: .38rem;
-    font-size: .74rem;
+    font-size: .8125rem;
     font-weight: 600;
     padding: .25rem .6rem;
     border-radius: var(--radius-pill);
@@ -1563,16 +1618,15 @@ fieldset legend {
 }
 
 .dropdown-header {
-    font-size: .68rem;
+    font-size: .8125rem;
     font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
+    letter-spacing: .01em;
     color: var(--text-muted);
 }
 
 .tooltip-inner {
     border-radius: var(--radius-sm);
-    font-size: .78rem;
+    font-size: .8125rem;
     padding: .35rem .6rem;
 }
 
@@ -1624,7 +1678,7 @@ fieldset legend {
 }
 
 .nav-pills .nav-link.active {
-    background-color: var(--unicef-blue);
+    background-color: var(--brand-action);
 }
 
 .timeline {
@@ -1673,7 +1727,7 @@ fieldset legend {
 }
 
 .timeline-meta {
-    font-size: .76rem;
+    font-size: .8125rem;
     color: var(--text-muted);
 }
 
@@ -1682,7 +1736,9 @@ fieldset legend {
    -------------------------------------------------------------------------- */
 
 .profile-header {
-    background: linear-gradient(135deg, var(--unicef-dark-blue), var(--unicef-blue));
+    /* Ends on the action blue rather than the brand blue so the white text
+       at the light end of the gradient still clears 4.5:1. */
+    background: linear-gradient(135deg, var(--unicef-dark-blue), var(--brand-action));
     color: #fff;
     border-radius: var(--radius-lg);
     padding: 1.5rem;
@@ -1705,11 +1761,8 @@ fieldset legend {
 }
 
 .profile-header .profile-meta-item .label {
-    font-size: .68rem;
-    text-transform: uppercase;
-    letter-spacing: .07em;
-    opacity: .78;
-    font-weight: 600;
+    font-size: .8125rem;
+    font-weight: 500;
 }
 
 .profile-header .profile-meta-item .value {
@@ -1797,7 +1850,7 @@ fieldset legend {
 
 .auth-footer-note {
     text-align: center;
-    font-size: .78rem;
+    font-size: .8125rem;
     color: var(--text-muted);
     margin-top: 1.5rem;
 }
@@ -1856,7 +1909,7 @@ fieldset legend {
 
 .viz .viz-axis text {
     fill: var(--viz-ink-muted);
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .viz .viz-axis .domain {
@@ -1876,7 +1929,7 @@ fieldset legend {
 
 .viz .viz-value {
     fill: var(--viz-ink);
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
 }
@@ -1902,7 +1955,7 @@ fieldset legend {
     color: #fff;
     border-radius: var(--radius-sm);
     padding: .45rem .6rem;
-    font-size: .78rem;
+    font-size: .8125rem;
     line-height: 1.35;
     box-shadow: var(--shadow-lg);
     max-width: 260px;
@@ -1932,7 +1985,7 @@ fieldset legend {
     padding: 0 0 .5rem;
     margin: 0;
     list-style: none;
-    font-size: .78rem;
+    font-size: .8125rem;
     color: var(--text-secondary);
 }
 
@@ -1975,7 +2028,7 @@ fieldset legend {
 
 .viz-table {
     width: 100%;
-    font-size: .8rem;
+    font-size: .8125rem;
     margin: 0;
 }
 
@@ -2016,8 +2069,9 @@ fieldset legend {
     background: none;
     border: none;
     color: var(--text-muted);
-    font-size: .75rem;
-    padding: 0 .25rem;
+    font-size: .8125rem;
+    padding: .25rem .4rem;
+    position: relative;
 }
 
 .chart-toggle-table:hover {
@@ -2096,14 +2150,38 @@ fieldset legend {
     }
 }
 
+/* Touch: every control reaches the 44px target size. Pointer users keep the
+   denser boxes above, which already clear the 24px AA minimum. */
+@media (pointer: coarse) {
+    .form-control,
+    .form-select,
+    .btn:not(.btn-sm),
+    .page-link,
+    .dropdown-item,
+    .form-check-input {
+        min-height: 2.75rem;
+    }
+
+    .form-check-input {
+        min-height: 0;
+        width: 1.35em;
+        height: 1.35em;
+    }
+
+    .sidebar .nav-link,
+    .offcanvas .nav-link {
+        padding-block: .8rem;
+    }
+}
+
 @media (max-width: 1440px) {
     .table {
-        font-size: .82rem;
+        font-size: .8125rem;
     }
 
     .table thead th {
         padding: .55rem .45rem;
-        font-size: .65rem;
+        font-size: .8125rem;
     }
 
     .table tbody td {

@@ -92,7 +92,8 @@
                 <i class="bi bi-list"></i>
             </button>
 
-            <h1 class="topbar-title ms-2 me-auto">{% block module_name %}{% endblock %}</h1>
+            {# Not a heading: the page's own <h1> lives in the page header, and two h1s per page confused screen-reader users. #}
+            <div class="topbar-title ms-2 me-auto">{% block module_name %}{% endblock %}</div>
 
             <div class="d-flex align-items-center gap-1">
 
@@ -172,7 +173,7 @@
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li class="px-3 py-2 border-bottom mb-1">
                             <div class="fw-semibold small">{{ request.user.get_full_name|default:request.user.username }}</div>
-                            <div class="text-muted" style="font-size: .75rem;">{{ request.user.name }}</div>
+                            <div class="text-muted small">{{ request.user.name }}</div>
                         </li>
                         <li><a class="dropdown-item" href="{% url 'users:profile' %}"><i class="bi bi-person me-2"></i>{% trans "Profile" %}</a></li>
                         {% if request.user.is_superuser %}

@@ -600,7 +600,7 @@ button.close:hover,
 }
 
 .widget-subheading {
-    font-size: .8rem;
+    font-size: .8125rem;
     color: var(--text-muted);
 }
 
@@ -730,10 +730,9 @@ button.close:hover,
 }
 
 .nav-item-header {
-    font-size: .68rem;
+    font-size: .8125rem;
     font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
+    letter-spacing: .01em;
     color: var(--text-muted);
     padding: .55rem .8rem .3rem;
     list-style: none;
@@ -795,7 +794,7 @@ button.close:hover,
 }
 
 .tabs-animated .nav-link .tab-subheading {
-    font-size: .72rem;
+    font-size: .8125rem;
     color: var(--text-muted);
     display: block;
 }
@@ -840,7 +839,7 @@ button.close:hover,
 
 .forms-wizard li span {
     display: block;
-    font-size: .78rem;
+    font-size: .8125rem;
     color: var(--text-muted);
     font-weight: 500;
     overflow: hidden;
@@ -943,7 +942,7 @@ button.close:hover,
 }
 
 .vertical-timeline-element-date {
-    font-size: .74rem;
+    font-size: .8125rem;
     color: var(--text-muted);
 }
 
@@ -1011,7 +1010,7 @@ button.close:hover,
 }
 
 .dropdown-menu-header-inner .menu-header-subtitle {
-    font-size: .78rem;
+    font-size: .8125rem;
     opacity: .85;
     margin: .15rem 0 0;
     color: #fff;
@@ -1135,11 +1134,12 @@ button.close:hover,
 .pull-left  { float: inline-start !important; }
 .pull-right { float: inline-end !important; }
 
+/* Legacy utility; keeps its promise but at a size that stays legible. */
 .uppercase {
     text-transform: uppercase;
-    letter-spacing: .06em;
+    letter-spacing: .04em;
     font-weight: 600;
-    font-size: .74rem;
+    font-size: .8125rem;
     color: var(--text-muted);
 }
 
@@ -1162,9 +1162,9 @@ button.close:hover,
 }
 
 .widget-title {
-    font-size: .74rem;
+    font-size: .8125rem;
     font-weight: 600;
-    letter-spacing: .06em;
+    letter-spacing: .01em;
     color: var(--text-muted);
 }
 
