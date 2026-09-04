@@ -976,6 +976,65 @@ small,
     color: var(--text-muted);
 }
 
+/* "(optional)" after the label of any wizard field that is not required.
+   Required is signalled by crispy's .requiredField on the label or a
+   `required` attribute on the control that follows it. Browsers without
+   :has() ignore the rule, which fails safe (no marker). */
+.form-wizard-content label.form-label:not(.requiredField):not(:has(+ [required])):not(:has(+ .input-group [required])):not(:has(+ .select-search [required]))::after,
+.form-wizard-content label.control-label:not(.requiredField):not(:has(+ [required])):not(:has(+ .input-group [required])):not(:has(+ .select-search [required]))::after {
+    content: " (optional)";
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.form-required-note {
+    color: var(--text-secondary);
+    font-size: .875rem;
+    margin: -.75rem 0 1rem;
+}
+
+/* Unsaved-answers banner (redesign.js "Data safety"). */
+.draft-banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .75rem 1rem;
+    padding: .85rem 1rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid var(--status-warning);
+    border-inline-start-width: 4px;
+    border-radius: var(--radius-md);
+    background: var(--surface-raised);
+}
+
+.draft-banner-icon {
+    font-size: 1.4rem;
+    color: var(--status-warning);
+}
+
+.draft-banner-text {
+    flex: 1 1 240px;
+    display: flex;
+    flex-direction: column;
+    gap: .1rem;
+}
+
+.draft-banner-actions {
+    display: flex;
+    gap: .5rem;
+}
+
+/* Long selects get a filter box above them (redesign.js "Long selects"). */
+.select-search {
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+}
+
+.select-search-input {
+    font-size: .875rem;
+}
+
 /* Fieldsets — the "logical section" pattern from the redesign spec. */
 .form-section {
     border: 1px solid var(--border-color);
@@ -1092,6 +1151,18 @@ fieldset legend {
 
 .step.error .small {
     color: var(--status-danger) !important;
+}
+
+/* base.css pins every wizard step to 400px, a size that only worked while
+   SmartWizard wrapped the steps in a scrolling container. Without that
+   container a taller step spilled over the Continue/Previous row, so steps
+   are allowed their natural height. */
+.form-wizard-content [id^="step-"] {
+    /* !important: the legacy rule targets the ids directly and would
+       otherwise outrank this attribute selector. */
+    height: auto !important;
+    min-height: 0;
+    overflow: visible;
 }
 
 .wizard-progress {
@@ -1263,6 +1334,92 @@ fieldset legend {
 .table-responsive table.w-100 {
     width: 100% !important;
     min-width: 960px;
+}
+
+/* Wide grids: redesign.js adds .has-scroll when a table overflows its
+   container, and the first column (the record's name or ID) stays in view
+   while the rest scrolls. */
+@media (min-width: 768px) {
+    .table-responsive.has-scroll .table-stackable th:first-child,
+    .table-responsive.has-scroll .table-stackable td:first-child {
+        position: sticky;
+        inset-inline-start: 0;
+        z-index: 5;
+        box-shadow: 1px 0 0 var(--border-color);
+    }
+
+    .table-responsive.has-scroll .table-stackable th:first-child {
+        z-index: 25;
+    }
+}
+
+/* Phones: one card per row, each cell labelled from data-label (set in
+   django_tables2/bootstrap5.html), instead of a 1000px sideways scroll. */
+@media (max-width: 767.98px) {
+    .table-responsive .table-stackable,
+    .table-responsive table.table-stackable.w-100 {
+        min-width: 0 !important;
+    }
+
+    .table-stackable thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+    }
+
+    .table-stackable,
+    .table-stackable tbody,
+    .table-stackable tr,
+    .table-stackable td {
+        display: block;
+        width: 100%;
+    }
+
+    .table-stackable tr {
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        margin: .75rem;
+        width: auto;
+        background: var(--surface-raised);
+        box-shadow: var(--shadow-xs);
+        overflow: hidden;
+    }
+
+    .table-stackable td {
+        display: grid;
+        grid-template-columns: minmax(6.5rem, 38%) 1fr;
+        gap: .75rem;
+        padding: .55rem .85rem;
+        text-align: start;
+        white-space: normal;
+    }
+
+    .table-stackable tbody tr:last-child td {
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .table-stackable td:last-child {
+        border-bottom: 0 !important;
+    }
+
+    .table-stackable td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        font-size: .8125rem;
+        color: var(--text-muted);
+    }
+
+    .table-stackable td[colspan],
+    .table-stackable td:not([data-label]) {
+        display: block;
+    }
+
+    .table-stackable td[colspan]::before,
+    .table-stackable td:not([data-label])::before {
+        content: none;
+    }
 }
 
 .badge-table {

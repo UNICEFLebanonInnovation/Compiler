@@ -140,6 +140,37 @@ are complete. `static/locale/ar/LC_MESSAGES/django.mo` is committed because
 the Docker image has no `gettext`; re-run `compilemessages` (or `polib`) after
 editing the `.po`.
 
+**Drafts and data safety.** Answers on the wizard forms (any POST form that
+contains `[id^="step-"]`, or one marked `data-draft`) are saved to
+`localStorage` as the user types, minus passwords, files and the CSRF token,
+keyed by path. On return a banner offers to bring them back; a submit that no
+script prevented clears them; leaving the page with unsaved answers asks
+first, and so does any Reset button (the wizard's `#reset-btn22` had no
+handler at all and now resets after the same question). Opt a form out with
+`data-no-draft`. API: `BMA.drafts.save / load / clear`.
+
+**Required and optional.** Wizard forms open with "All fields are required
+unless marked (optional)", and CSS appends "(optional)" to any wizard label
+that is neither `.requiredField` nor followed by a `required` control.
+
+**Long selects.** A wizard `<select>` with twelve or more options (or any
+select carrying `data-searchable`) gets a "type to shorten the list" box
+above it; the select keeps its id, name, value and change events.
+
+**Button colours.** `btn-info` now carries the primary look. Cancel, Reset,
+Close and Back buttons coloured `btn-warning`/`btn-info` are switched to
+`btn-outline-secondary` at load; attendance state toggles keep their colours.
+
+**Tables on phones.** `django_tables2/bootstrap5.html` marks tables
+`table-stackable` and puts each column header in `data-label`. Below 768px a
+row becomes a card with a label beside each value; from 768px up, a table
+that overflows its container gets `.has-scroll` from `redesign.js` and its
+first column stays pinned (skipped when that column holds a dropdown).
+
+**Wizard step height.** `base.css` pins `#step-1..4` to 400px, which only
+worked inside SmartWizard's scrolling container; `redesign.css` lets steps
+take their natural height.
+
 **Attendance toggles.** `data-toggle="buttons"` has no Bootstrap 5 equivalent.
 The nested radio still works natively; the selected-state styling is restored
 with CSS `:has()` plus a small class-sync handler for older browsers.

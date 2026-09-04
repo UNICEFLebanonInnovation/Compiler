@@ -264,6 +264,37 @@ select.form-control:focus {
     margin: 0;
 }
 
+/* One colour per meaning. btn-info was used for ordinary actions (Edit,
+   View, "Back to section list") and read as a third kind of primary; it now
+   carries the primary look. Cancel / Reset / Back buttons that were coloured
+   btn-warning or btn-info are switched to btn-outline-secondary by
+   redesign.js, since a warning colour on "Cancel" reads as a hazard. */
+.btn-info {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--brand-action);
+    --bs-btn-border-color: var(--brand-action);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--unicef-dark-blue);
+    --bs-btn-hover-border-color: var(--unicef-dark-blue);
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--unicef-dark-blue);
+    --bs-btn-active-border-color: var(--unicef-dark-blue);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: var(--brand-action);
+    --bs-btn-disabled-border-color: var(--brand-action);
+}
+
+.btn-outline-info {
+    --bs-btn-color: var(--unicef-dark-blue);
+    --bs-btn-border-color: var(--brand-action);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--brand-action);
+    --bs-btn-hover-border-color: var(--brand-action);
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--unicef-dark-blue);
+    --bs-btn-active-border-color: var(--unicef-dark-blue);
+}
+
 /* Export sits next to the primary Filter action; as a solid green button it
    outshouted it. Same affordance, quieter weight. */
 .form-inline .btn-success.download-report-async,
