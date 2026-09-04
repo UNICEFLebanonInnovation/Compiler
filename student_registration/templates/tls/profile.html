@@ -7,26 +7,17 @@
 {% block project_title %}TLS Child Profile{% endblock %}
 
 {% block content %}
-<div class="app-page-title">
-  <div class="page-title-wrapper">
-    <div class="page-title-heading">
-      <div>
-        <div class="page-title-head center-elem page-title-heading">
-          <span class="d-inline-block pr-2"><i class="fa fa-child"></i></span>
-          <span class="d-inline-block">TLS Child Profile - {{ instance.child.full_name }}</span>
-        </div>
-        <div class="page-title-subheading opacity-10">
-          <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a>Home</a></li>
-              <li class="breadcrumb-item"><a href="{% url 'tls:list' %}">TLS List</a></li>
-              <li class="active breadcrumb-item" aria-current="page">Child Info.</li>
-            </ol>
-          </nav>
-        </div>
-      </div>
+<div class="page-header">
+    <div class="page-header-titles">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a>Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'tls:list' %}">TLS List</a></li>
+            <li class="active breadcrumb-item" aria-current="page">Child Info.</li>
+          </ol>
+        </nav>
+        <h1 class="page-header-title"><i class="fa fa-child"></i> TLS Child Profile - {{ instance.child.full_name }}</h1>
     </div>
-  </div>
 </div>
 
 <div class="row">

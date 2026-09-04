@@ -15,37 +15,23 @@
 
 {% block content %}
 
-<div class="app-page-title">
-      <div class="page-title-wrapper">
-          <div class="page-title-heading">
-              <div>
-                  <div class="page-title-head center-elem page-title-heading">
-                      <span class="d-inline-block pr-2">
-                          <i class="fa fa-id-card"></i>
-                      </span>
-                      <span class="d-inline-block">
-                        Education
-                      </span>
-                  </div>
-                  <div class="page-title-subheading opacity-10">
-                      <nav class="" aria-label="breadcrumb">
-                          <ol class="breadcrumb">
-                              <li class="breadcrumb-item">
-                                  <a href="{% url 'mscc:list' %}">Home</a>
-                              </li>
-                              <li class="breadcrumb-item">
-                                    <a href="{% url 'mscc:child_profile' registry %}?current_tab=services">{% get_child_fullname  registry %}</a>
-                              </li>
-                               <li class="breadcrumb-item">
-                                     Education Situation
-                              </li>
-                          </ol>
-                      </nav>
-                  </div>
-              </div>
-          </div>
-          <div class="page-title-actions"></div>
-      </div>
+<div class="page-header">
+    <div class="page-header-titles">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'mscc:list' %}">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                      <a href="{% url 'mscc:child_profile' registry %}?current_tab=services">{% get_child_fullname  registry %}</a>
+                </li>
+                 <li class="breadcrumb-item">
+                       Education Situation
+                </li>
+            </ol>
+        </nav>
+        <h1 class="page-header-title"><i class="fa fa-id-card"></i> Education</h1>
+    </div>
 </div>
 
         <!--{{ form.errors }}-->

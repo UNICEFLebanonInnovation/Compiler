@@ -10,47 +10,36 @@
 
 {% block main_content %}
 
-<div class="app-page-title">
-                        <div class="page-title-wrapper">
-                            <div class="page-title-heading">
-                                <div>
-                                    <div class="page-title-head center-elem page-title-heading">
-                                        <span class="d-inline-block pr-2">
-                                            <i class="fa fa-user"></i>
-                                        </span>
-                                        <span class="d-inline-block">
-                                          {{ request.user.username }}
-                                          - {{ request.user.partner }}
-                                        </span>
-                                    </div>
-                                    <div class="page-title-subheading opacity-10">
-                                        <nav class="" aria-label="breadcrumb">
-                                            <ol class="breadcrumb">
-                                                <li class="breadcrumb-item">
-                                                    <a href="/">
-                                                        Home
-                                                    </a>
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    <a href="{% url 'clm:bridging_page' %}">
-                                                        Dirasa
-                                                    </a>
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                  <a href="{% url 'schools:school_list' %}">Schools</a></li>
-                                                <li class="breadcrumb-item">
-                                                  <a href="{% url 'schools:community_initiative_list' school_id %}">Community Initiative List</a></li>
-                                            </ol>
-                                        </nav>
-                                    </div>
-                                </div>
-                            </div>
-                        <div class="page-title-actions">
-                          {% if not request.user.partner or not request.user.partner.is_world_learning %}
-                          <a href="{% url 'schools:community_initiative_add' school_id %}" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Community Initiative</a>
-                          {% endif %}
-                        </div>
-                        </div>
+<div class="page-header">
+    <div class="page-header-titles">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                    <a href="/">
+                        Home
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'clm:bridging_page' %}">
+                        Dirasa
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                  <a href="{% url 'schools:school_list' %}">Schools</a></li>
+                <li class="breadcrumb-item">
+                  <a href="{% url 'schools:community_initiative_list' school_id %}">Community Initiative List</a></li>
+            </ol>
+        </nav>
+        <h1 class="page-header-title"><i class="bi bi-people"></i>{% trans "Community initiatives" %}</h1>
+        <p class="page-header-subtitle">
+            <i class="bi bi-person-circle me-1"></i>{{ request.user.username }}{% if request.user.partner %} &middot; {{ request.user.partner }}{% endif %}
+        </p>
+    </div>
+    <div class="page-header-actions">
+        {% if not request.user.partner or not request.user.partner.is_world_learning %}
+        <a href="{% url 'schools:community_initiative_add' school_id %}" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Community Initiative</a>
+        {% endif %}
+    </div>
 </div>
 
 <div class="row">

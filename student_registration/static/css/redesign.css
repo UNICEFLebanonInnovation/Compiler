@@ -1024,6 +1024,40 @@ small,
     gap: .5rem;
 }
 
+/* Idle-logout countdown (redesign.js "Session timer"). Fixed to the bottom
+   edge so it is seen wherever the user is on a long form. */
+.session-banner {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 2100;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .75rem 1.25rem;
+    padding: .9rem var(--content-gutter);
+    background: var(--surface-raised);
+    color: var(--text-primary);
+    border-top: 4px solid var(--status-warning);
+    box-shadow: var(--shadow-xl);
+}
+
+.session-banner-icon {
+    font-size: 1.5rem;
+    color: var(--status-warning);
+}
+
+.session-banner-text {
+    flex: 1 1 260px;
+    display: flex;
+    flex-direction: column;
+    gap: .1rem;
+}
+
+.session-banner-text strong {
+    font-variant-numeric: tabular-nums;
+}
+
 /* Long selects get a filter box above them (redesign.js "Long selects"). */
 .select-search {
     display: flex;

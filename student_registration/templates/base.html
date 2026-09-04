@@ -50,7 +50,10 @@
     </script>
 </head>
 
-<body>
+{# data-idle-minutes: AutoLogout's cutoff, so redesign.js can warn before it and keep a busy user signed in. #}
+<body data-idle-minutes="{% idle_logout_minutes %}"
+      data-ping-url="{% url 'session_ping' %}"
+      data-login-url="{% url 'account_login' %}">
 <a class="skip-to-content" href="#main-content">{% trans "Skip to content" %}</a>
 
 <div class="app-wrapper">

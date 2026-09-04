@@ -9,45 +9,22 @@
 
 {% block content %}
 
-<div class="app-page-title">
-                        <div class="page-title-wrapper">
-                            <div class="page-title-heading">
-                                <div>
-                                    <div class="page-title-head center-elem page-title-heading">
-                                        <span class="d-inline-block pr-2">
-                                            <i class="fa fa-child"></i>
-                                        </span>
-                                        <span class="d-inline-block">Child Profile - {{ instance.child.full_name }}</span>
-                                    </div>
-                                    <div class="page-title-subheading opacity-10">
-                                        <nav class="" aria-label="breadcrumb">
-                                            <ol class="breadcrumb">
-                                                <li class="breadcrumb-item">
-                                                    <a>Home</a>
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    <a href="{% url 'mscc:list' %}">List</a>
-                                                </li>
-                                                <li class="active breadcrumb-item" aria-current="page">
-                                                    Child Profile and Provided Services
-                                                </li>
-                                            </ol>
-                                        </nav>
-                                    </div>
-                                </div>
-                            </div>
-
-      {% if request.user|has_group:"MSCC_FULL" and request.user.partner and not request.user.partner.is_world_learning %}
-                        <div class="page-title-actions">
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#newRoundModal" class="mr-3 btn-icon btn btn-success"><i class="fa fa-plus btn-icon-wrapper"> </i>Register in a new Round</a>
-
-                                <!--<button type="button" data-bs-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-primary" data-original-title="Package Type">-->
-                                    <!--{{ instance.type }}-->
-                                <!--</button>-->
-                            </div>
+<div class="page-header">
+    <div class="page-header-titles">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'landing_page' %}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'mscc:list' %}">List</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Child Profile and Provided Services</li>
+            </ol>
+        </nav>
+        <h1 class="page-header-title"><i class="fa fa-child"></i>Child Profile - {{ instance.child.full_name }}</h1>
+    </div>
+    {% if request.user|has_group:"MSCC_FULL" and request.user.partner and not request.user.partner.is_world_learning %}
+    <div class="page-header-actions">
+        <a href="#" data-bs-toggle="modal" data-bs-target="#newRoundModal" class="btn-icon btn btn-success"><i class="fa fa-plus btn-icon-wrapper"> </i>Register in a new Round</a>
+    </div>
     {% endif %}
-
-                        </div>
 </div>
 
 

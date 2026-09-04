@@ -171,6 +171,23 @@ first column stays pinned (skipped when that column holds a dropdown).
 worked inside SmartWizard's scrolling container; `redesign.css` lets steps
 take their natural height.
 
+**Page headers.** Every page now uses the one `.page-header` shape
+(`.page-header-titles` with breadcrumb nav, `h1.page-header-title` and an
+optional `p.page-header-subtitle`, then `.page-header-actions`). The 79
+ArchitectUI `.app-page-title` blocks were rewritten mechanically; the ten
+list pages whose title was the signed-in user's name got a real title
+("Schools", "Teachers") with the user line moved to the subtitle. Each page
+has exactly one h1. `.app-page-title` styling stays in the compatibility
+layer for anything added later from an old copy.
+
+**Idle logout.** `AutoLogout` (production: 30 minutes without a request)
+used to end a session silently. `base.html` passes the cutoff and the URLs
+for `session_ping` and sign-in on the body element; `redesign.js` pings
+while the user is active so a long form never times out mid-way, shows a
+countdown banner with "Stay signed in" for the last two minutes, and on
+expiry goes to the sign-in page with `next=` set. The ping is excluded from
+the user-activity log. Set `AUTO_LOGOUT_DELAY = 0` to turn the timer off.
+
 **Attendance toggles.** `data-toggle="buttons"` has no Bootstrap 5 equivalent.
 The nested radio still works natively; the selected-state styling is restored
 with CSS `:has()` plus a small class-sync handler for older browsers.

@@ -14,48 +14,34 @@
 
 {% block main_content %}
 
-<div class="app-page-title">
-      <div class="page-title-wrapper">
-          <div class="page-title-heading">
-              <div>
-                  <div class="page-title-head center-elem page-title-heading">
-                      <span class="d-inline-block pr-2">
-                          <i class="fa fa-id-card"></i>
-                      </span>
-                      <span class="d-inline-block">
-                        Club
-                      </span>
-                  </div>
-                  <div class="page-title-subheading opacity-10">
-                      <nav class="" aria-label="breadcrumb">
-                          <ol class="breadcrumb">
-                                                <li class="breadcrumb-item">
-                                                    <a href="/">
-                                                        Home
-                                                    </a>
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    <a href="{% url 'clm:bridging_page' %}">
-                                                        Dirasa
-                                                    </a>
-                                                </li>
-                              <li class="breadcrumb-item">
-                                    <a href="{% url 'schools:school_list' %}">School List</a>
-                              </li>
-                              <li class="breadcrumb-item">
-                                    <a href="{% url 'schools:club_list' school_id %}">Club List</a>
-                              </li>
-                               <li class="breadcrumb-item">
-                                 Club
-                              </li>
+<div class="page-header">
+    <div class="page-header-titles">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                                  <li class="breadcrumb-item">
+                                      <a href="/">
+                                          Home
+                                      </a>
+                                  </li>
+                                  <li class="breadcrumb-item">
+                                      <a href="{% url 'clm:bridging_page' %}">
+                                          Dirasa
+                                      </a>
+                                  </li>
+                <li class="breadcrumb-item">
+                      <a href="{% url 'schools:school_list' %}">School List</a>
+                </li>
+                <li class="breadcrumb-item">
+                      <a href="{% url 'schools:club_list' school_id %}">Club List</a>
+                </li>
+                 <li class="breadcrumb-item">
+                   Club
+                </li>
 
-                          </ol>
-                      </nav>
-                  </div>
-              </div>
-          </div>
-          <div class="page-title-actions"></div>
-      </div>
+            </ol>
+        </nav>
+        <h1 class="page-header-title"><i class="fa fa-id-card"></i> Club</h1>
+    </div>
 </div>
 
         <!--{{ form.errors }}-->

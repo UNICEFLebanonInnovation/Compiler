@@ -57,6 +57,16 @@ def allow_admin_login():
 
 
 @register.simple_tag
+def idle_logout_minutes():
+    """Minutes of inactivity after which AutoLogout ends the session (0 = never).
+
+    base.html hands this to redesign.js, which warns two minutes before and
+    keeps the session alive while the user is typing.
+    """
+    return getattr(settings, 'AUTO_LOGOUT_DELAY', 0) or 0
+
+
+@register.simple_tag
 def get_list_parameters(request):
 
     url_parameters = '?fake=true'

@@ -1158,7 +1158,7 @@
         });
 
         window.addEventListener('beforeunload', function (e) {
-            if (dirty && !submitting) {
+            if (dirty && !submitting && !suppressLeaveGuard) {
                 e.preventDefault();
                 e.returnValue = '';
             }
@@ -1291,6 +1291,131 @@
     }
 
     /* ---------------------------------------------------------------------
+       9f. Session timer — warn before the idle logout, keep a busy user in
+
+       AutoLogout (middleware.py) ends the session after AUTO_LOGOUT_DELAY
+       minutes without a request, and typing into a long form makes none.
+       base.html hands the cutoff and two URLs to the body element. While
+       the user is active a keep-alive ping refreshes the server's clock;
+       when they go quiet, a banner counts down the last two minutes with a
+       "Stay signed in" button. When the server has already signed them
+       out, the page goes to the sign-in screen with a way back; their
+       draft is waiting on return.
+       --------------------------------------------------------------------- */
+
+    var SESSION_TEXT = {
+        title: 'You will be signed out in {time}',
+        hint: 'Nothing has been sent to the server for a while. Anything you typed is kept on this device.',
+        stay: 'Stay signed in'
+    };
+    var suppressLeaveGuard = false;
+
+    function initSessionTimer() {
+        var body = document.body;
+        var minutes = parseFloat(body.getAttribute('data-idle-minutes') || '0');
+        var pingUrl = body.getAttribute('data-ping-url');
+        var loginUrl = body.getAttribute('data-login-url') || '/accounts/login/';
+        if (!minutes || minutes <= 0 || !pingUrl || !document.querySelector('.topbar')) {
+            return;
+        }
+
+        var limit = minutes * 60 * 1000;
+        var warnBefore = Math.min(2 * 60 * 1000, limit / 2);
+        var activePingEvery = Math.min(5 * 60 * 1000, limit / 3);
+        var activeWindow = Math.min(60 * 1000, limit / 3);
+        var lastRequest = Date.now();
+        var lastActivity = Date.now();
+        var pinging = false;
+        var banner = null;
+
+        function signedOut() {
+            suppressLeaveGuard = true;
+            var next = encodeURIComponent(location.pathname + location.search);
+            window.location.href = loginUrl + (loginUrl.indexOf('?') === -1 ? '?' : '&') + 'next=' + next;
+        }
+
+        function ping() {
+            if (pinging) {
+                return;
+            }
+            pinging = true;
+            fetch(pingUrl, { credentials: 'same-origin', cache: 'no-store', redirect: 'manual' })
+                .then(function (res) {
+                    if (res.ok) {
+                        lastRequest = Date.now();
+                        hideBanner();
+                    } else {
+                        // A redirect to the sign-in page (opaque here) or an
+                        // error: the server no longer has this session.
+                        signedOut();
+                    }
+                })
+                .catch(function () {
+                    // Offline: leave the clock alone and try again later.
+                })
+                .then(function () {
+                    pinging = false;
+                });
+        }
+
+        function format(ms) {
+            var s = Math.max(0, Math.ceil(ms / 1000));
+            return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2);
+        }
+
+        function showBanner() {
+            if (banner) {
+                return;
+            }
+            banner = document.createElement('div');
+            banner.className = 'session-banner';
+            banner.setAttribute('role', 'alert');
+            banner.innerHTML =
+                '<i class="bi bi-hourglass-split session-banner-icon" aria-hidden="true"></i>' +
+                '<div class="session-banner-text"><strong></strong><span></span></div>' +
+                '<button type="button" class="btn btn-primary" data-session-stay></button>';
+            banner.querySelector('span').textContent = SESSION_TEXT.hint;
+            var stay = banner.querySelector('[data-session-stay]');
+            stay.textContent = SESSION_TEXT.stay;
+            stay.addEventListener('click', ping);
+            document.body.appendChild(banner);
+            stay.focus();
+        }
+
+        function hideBanner() {
+            if (banner) {
+                banner.remove();
+                banner = null;
+            }
+        }
+
+        function check() {
+            var left = limit - (Date.now() - lastRequest);
+            if (left <= 0) {
+                signedOut();
+                return;
+            }
+            if (left <= warnBefore) {
+                showBanner();
+                banner.querySelector('strong').textContent = SESSION_TEXT.title.replace('{time}', format(left));
+                return;
+            }
+            // Active within the last minute but quiet towards the server:
+            // refresh its clock so a long form never times out mid-way.
+            if (Date.now() - lastActivity < activeWindow && Date.now() - lastRequest > activePingEvery) {
+                ping();
+            }
+        }
+
+        ['keydown', 'pointerdown', 'input', 'change'].forEach(function (type) {
+            document.addEventListener(type, function () {
+                lastActivity = Date.now();
+            }, { passive: true });
+        });
+        setInterval(check, 1000);
+    }
+
+    /* ---------------------------------------------------------------------
        10. Public toast helper
        --------------------------------------------------------------------- */
 
@@ -1349,6 +1474,7 @@
         initDrafts();
         initSelectFilters();
         initButtonSemantics();
+        initSessionTimer();
 
         // Content injected later (remote modals, AJAX partials) needs the same
         // treatment; a scoped observer is cheaper than re-scanning on a timer.
