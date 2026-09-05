@@ -1,0 +1,2664 @@
+/* ==========================================================================
+   BMA Compiler — Design System
+   Bootstrap 5.3 overrides + component library.
+
+   Mirrors the BMA-NFE redesign language (UNICEF palette, Inter type, sidebar
+   shell, high-density operational tables) and extends it with tokenised
+   theming, an elevation/radius/motion scale and accessible focus handling.
+
+   Load order:  bootstrap(.rtl).min.css -> base.css -> redesign.css -> bs4-compat.css
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* --------------------------------------------------------------------------
+   1. Design tokens
+   -------------------------------------------------------------------------- */
+
+:root {
+    /* Brand — UNICEF */
+    --unicef-blue: #0097D7;
+    --unicef-dark-blue: #004F71;
+    --unicef-light-blue: #E1F5FE;
+    --unicef-blue-rgb: 0, 151, 215;
+
+    /* Action colour. UNICEF blue stays the brand accent for icons, charts
+       and highlights, but white text on it measures 3.28:1, under the 4.5:1
+       AA floor. Anything that carries text — filled buttons, the active
+       pager item, checked controls, the current wizard step — uses this
+       darker step instead (4.92:1 with white). */
+    --brand-action: #0077B0;
+    --brand-action-rgb: 0, 119, 176;
+
+    /* Semantic surfaces */
+    --surface-body: #f4f7fa;
+    --surface-raised: #ffffff;
+    --surface-sunken: #eef2f7;
+    --surface-inverse: #0f172a;
+    --surface-hover: #f7fafc;
+
+    /* Text */
+    --text-primary: #1a202c;
+    --text-secondary: #4a5568;
+    /* 5.45:1 on white and 4.84:1 on the sunken surface. The previous
+       #718096 measured 4.02:1, which fails AA for the 13px labels that use
+       it most. */
+    --text-muted: #5b6b7f;
+    --text-on-brand: #ffffff;
+
+    /* Lines */
+    --border-color: #e2e8f0;
+    --border-strong: #cbd5e1;
+
+    /* Status */
+    --status-success: #1e9e59;
+    --status-warning: #d98314;
+    --status-danger: #dc3545;
+    --status-info: #0097D7;
+
+    /* Bootstrap variable bridges */
+    --bs-primary: var(--brand-action);
+    --bs-primary-rgb: var(--brand-action-rgb);
+    --bs-link-color: var(--unicef-dark-blue);
+    --bs-link-hover-color: var(--unicef-blue);
+    --bs-body-font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+    /* Layout */
+    --sidebar-width: 290px;
+    --sidebar-collapsed-width: 84px;
+    --header-height: 62px;
+    --content-gutter: 1.5rem;
+
+    /* Radius scale */
+    --radius-xs: 4px;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+    --radius-pill: 999px;
+
+    /* Elevation scale */
+    --shadow-xs: 0 1px 2px rgba(15, 23, 42, .06);
+    --shadow-sm: 0 1px 3px rgba(15, 23, 42, .08), 0 1px 2px rgba(15, 23, 42, .04);
+    --shadow-md: 0 4px 12px rgba(15, 23, 42, .08), 0 2px 4px rgba(15, 23, 42, .04);
+    --shadow-lg: 0 12px 28px rgba(15, 23, 42, .12), 0 4px 8px rgba(15, 23, 42, .06);
+    --shadow-xl: 0 24px 48px rgba(15, 23, 42, .18);
+
+    /* Motion */
+    --ease-out: cubic-bezier(.16, 1, .3, 1);
+    --ease-in-out: cubic-bezier(.4, 0, .2, 1);
+    --duration-fast: .15s;
+    --duration-base: .25s;
+    --duration-slow: .4s;
+
+    /* Focus. A two-tone ring (surface gap, then a solid 4.9:1 colour) stays
+       visible on white, on the sunken surface and on a filled button; the
+       previous 35%-alpha ring blended to 2.3:1 against white. */
+    --focus-ring-color: var(--brand-action);
+    --focus-ring: 0 0 0 2px var(--surface-raised), 0 0 0 4px var(--focus-ring-color);
+}
+
+@media (max-width: 1400px) {
+    :root {
+        --sidebar-width: 262px;
+        --content-gutter: 1.25rem;
+    }
+}
+
+@media (max-width: 1200px) {
+    :root {
+        --header-height: 56px;
+        --content-gutter: 1rem;
+    }
+}
+
+/* Dark theme — opt-in via the topbar toggle (data-theme="dark" on <html>). */
+:root[data-theme="dark"] {
+    --surface-body: #0f172a;
+    --surface-raised: #1a2436;
+    --surface-sunken: #131c2b;
+    --surface-hover: #223047;
+    --text-primary: #e8eef7;
+    --text-secondary: #b6c2d4;
+    --text-muted: #8a98ad;
+    --border-color: #2b3a51;
+    --border-strong: #3b4b66;
+    --unicef-light-blue: rgba(0, 151, 215, .16);
+    --focus-ring-color: #5ec8f5;
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, .4);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, .45);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, .5);
+    --shadow-lg: 0 12px 28px rgba(0, 0, 0, .55);
+    --shadow-xl: 0 24px 48px rgba(0, 0, 0, .6);
+    color-scheme: dark;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --duration-fast: .001s;
+        --duration-base: .001s;
+        --duration-slow: .001s;
+    }
+
+    *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   2. Base
+   -------------------------------------------------------------------------- */
+
+* {
+    scrollbar-width: thin;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--bs-body-font-family);
+    /* 16px base with a 13px (.8125rem) floor on every secondary size; the
+       tables opt down to 14px because column count matters more there. */
+    font-size: 16px;
+    line-height: 1.55;
+    background-color: var(--surface-body);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -.011em;
+}
+
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.3rem; }
+h4 { font-size: 1.12rem; }
+h5 { font-size: 1rem; }
+h6 { font-size: .9rem; }
+
+a {
+    color: var(--bs-link-color);
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-out);
+}
+
+a:hover {
+    color: var(--bs-link-hover-color);
+}
+
+hr {
+    border-color: var(--border-color);
+    opacity: 1;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* Bootstrap sizes small text and badges relative to their parent, which
+   inside a 14px table or dropdown lands at 10-12px. Hold the 13px floor. */
+small,
+.small {
+    font-size: max(.875em, .8125rem);
+}
+
+.badge {
+    font-size: max(.75em, .8125rem);
+}
+
+/* Global focus treatment — visible for keyboards, quiet for pointers. */
+:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+    border-radius: var(--radius-xs);
+}
+
+.btn:focus-visible,
+.form-control:focus-visible,
+.form-select:focus-visible,
+.page-link:focus-visible,
+.nav-link:focus-visible,
+.dropdown-item:focus-visible {
+    box-shadow: var(--focus-ring);
+}
+
+::selection {
+    background: rgba(var(--unicef-blue-rgb), .2);
+}
+
+/* --------------------------------------------------------------------------
+   3. App shell
+   -------------------------------------------------------------------------- */
+
+.app-wrapper {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--surface-body);
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    background: var(--surface-raised);
+    border-inline-end: 1px solid var(--border-color);
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: width var(--duration-base) var(--ease-out),
+                min-width var(--duration-base) var(--ease-out);
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .75rem;
+    min-height: var(--header-height);
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.sidebar-brand img {
+    max-height: 46px;
+    width: auto;
+    transition: max-height var(--duration-base) var(--ease-out);
+}
+
+.sidebar-nav {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: .75rem 0 2rem;
+    overscroll-behavior: contain;
+}
+
+.sidebar-footer {
+    flex-shrink: 0;
+    border-top: 1px solid var(--border-color);
+    padding: .75rem;
+}
+
+/* Collapsed (icon-rail) state */
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+    min-width: var(--sidebar-collapsed-width);
+}
+
+.sidebar.collapsed .nav-link span,
+.sidebar.collapsed .nav-section-title span,
+.sidebar.collapsed .sidebar-footer .label {
+    display: none !important;
+}
+
+.sidebar.collapsed .nav-link {
+    justify-content: center;
+    padding: .7rem 0;
+    margin: .2rem .6rem;
+}
+
+.sidebar.collapsed .nav-link i {
+    margin-inline-end: 0;
+    font-size: 1.2rem;
+}
+
+.sidebar.collapsed .nav-section-title {
+    text-align: center;
+    padding-inline: 0;
+}
+
+.sidebar.collapsed .nav-section-title::after {
+    content: '';
+    display: block;
+    width: 22px;
+    height: 2px;
+    margin: .35rem auto 0;
+    background: var(--border-strong);
+    border-radius: 2px;
+}
+
+.sidebar.collapsed .sidebar-brand img {
+    max-height: 30px;
+}
+
+.main-content {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+.page-body {
+    flex: 1 1 auto;
+    padding: var(--content-gutter);
+}
+
+/* Topbar */
+.topbar {
+    min-height: var(--header-height);
+    background: var(--surface-raised);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding-inline: var(--content-gutter);
+    position: sticky;
+    top: 0;
+    z-index: 1040;
+    backdrop-filter: saturate(180%) blur(6px);
+}
+
+.topbar .topbar-title {
+    font-size: 1.02rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.topbar-action {
+    --size: 44px;
+    width: var(--size);
+    height: var(--size);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    position: relative;
+    transition: background-color var(--duration-fast) var(--ease-out),
+                color var(--duration-fast) var(--ease-out);
+}
+
+.topbar-action:hover {
+    background: var(--surface-sunken);
+    color: var(--unicef-blue);
+}
+
+.topbar .dropdown-menu {
+    z-index: 1200;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--surface-raised);
+}
+
+.topbar .export-history-dropdown .dropdown-menu {
+    z-index: 1300;
+}
+
+.app-footer-bar {
+    padding: 1rem var(--content-gutter);
+    background: var(--surface-raised);
+    border-top: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: .8125rem;
+}
+
+/* --------------------------------------------------------------------------
+   4. Sidebar navigation
+   -------------------------------------------------------------------------- */
+
+.nav-section-title {
+    padding: 1.15rem 1.35rem .4rem;
+    font-size: .8125rem;
+    font-weight: 700;
+    letter-spacing: .01em;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.sidebar .nav-link,
+.offcanvas .nav-link {
+    color: var(--text-secondary);
+    padding: .62rem 1rem;
+    display: flex;
+    align-items: center;
+    border-radius: var(--radius-sm);
+    margin: .12rem .7rem;
+    font-size: .9375rem;
+    font-weight: 500;
+    white-space: nowrap;
+    position: relative;
+    transition: background-color var(--duration-fast) var(--ease-out),
+                color var(--duration-fast) var(--ease-out);
+}
+
+.sidebar .nav-link i,
+.offcanvas .nav-link i {
+    width: 22px;
+    margin-inline-end: 11px;
+    font-size: 1.02rem;
+    flex-shrink: 0;
+    text-align: center;
+    color: var(--text-muted);
+    transition: color var(--duration-fast) var(--ease-out);
+}
+
+.sidebar .nav-link:hover,
+.offcanvas .nav-link:hover {
+    background-color: var(--surface-sunken);
+    color: var(--text-primary);
+}
+
+.sidebar .nav-link:hover i,
+.offcanvas .nav-link:hover i {
+    color: var(--unicef-blue);
+}
+
+.sidebar .nav-link.active,
+.offcanvas .nav-link.active {
+    background-color: var(--unicef-light-blue);
+    color: var(--unicef-dark-blue);
+    font-weight: 600;
+}
+
+:root[data-theme="dark"] .sidebar .nav-link.active,
+:root[data-theme="dark"] .offcanvas .nav-link.active {
+    color: #7fd4f7;
+}
+
+.sidebar .nav-link.active i,
+.offcanvas .nav-link.active i {
+    color: var(--unicef-blue);
+}
+
+.sidebar .nav-link.active::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: -.7rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 60%;
+    background: var(--unicef-blue);
+    border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
+}
+
+.sidebar .nav-link .nav-badge {
+    margin-inline-start: auto;
+    font-size: .8125rem;
+    font-weight: 600;
+    padding: .15em .5em;
+    border-radius: var(--radius-pill);
+    background: var(--surface-sunken);
+    color: var(--text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   5. Page header
+   -------------------------------------------------------------------------- */
+
+.page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.page-header-titles {
+    min-width: 0;
+}
+
+.page-header h1,
+.page-header .page-header-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    letter-spacing: -.015em;
+}
+
+.page-header .page-header-title i {
+    color: var(--unicef-blue);
+}
+
+.page-header-subtitle {
+    color: var(--text-muted);
+    font-size: .85rem;
+    margin: .2rem 0 0;
+}
+
+.page-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    align-items: center;
+}
+
+.breadcrumb {
+    font-size: .8125rem;
+    margin-bottom: .35rem;
+    /* Bootstrap hard-codes these greys, which read as almost invisible on the
+       dark surface; bind them to the theme tokens instead. */
+    --bs-breadcrumb-divider-color: var(--text-muted);
+    --bs-breadcrumb-item-active-color: var(--text-secondary);
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: '\203A';
+    color: var(--text-muted);
+}
+
+.breadcrumb-item.active {
+    color: var(--text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   6. Cards & surfaces
+   -------------------------------------------------------------------------- */
+
+.card {
+    background-color: var(--surface-raised);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.25rem;
+}
+
+.card-header {
+    background-color: transparent;
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+    padding: .95rem 1.15rem;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    flex-wrap: wrap;
+}
+
+.card-header .card-title {
+    margin: 0;
+    font-size: .98rem;
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 1.15rem;
+}
+
+.card-footer {
+    background-color: transparent;
+    border-top: 1px solid var(--border-color);
+    padding: .85rem 1.15rem;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg) !important;
+}
+
+.card-interactive {
+    transition: transform var(--duration-base) var(--ease-out),
+                box-shadow var(--duration-base) var(--ease-out),
+                border-color var(--duration-base) var(--ease-out);
+}
+
+.card-interactive:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(var(--unicef-blue-rgb), .4);
+}
+
+.section-divider {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin: 1.75rem 0 1rem;
+    font-size: .875rem;
+    font-weight: 700;
+    letter-spacing: .01em;
+    color: var(--text-muted);
+}
+
+.section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-color);
+}
+
+/* --------------------------------------------------------------------------
+   7. Metric & action tiles
+   -------------------------------------------------------------------------- */
+
+.metric-card {
+    padding: 1.25rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.metric-icon {
+    --size: 46px;
+    width: var(--size);
+    height: var(--size);
+    flex-shrink: 0;
+    border-radius: var(--radius-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    background: var(--unicef-light-blue);
+    color: var(--unicef-blue);
+}
+
+.metric-value {
+    font-size: 1.7rem;
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+}
+
+.metric-label {
+    font-size: .8125rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-top: .2rem;
+    line-height: 1.35;
+    /* Sentence case wraps cleanly, so a long label is allowed a second
+       line rather than being cut off with an ellipsis. */
+}
+
+.metric-trend {
+    font-size: .8125rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+    margin-top: .35rem;
+}
+
+.metric-trend.up { color: var(--status-success); }
+.metric-trend.down { color: var(--status-danger); }
+
+.quick-action-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1.75rem 1.25rem;
+    text-decoration: none;
+    color: var(--text-primary);
+    background: var(--surface-raised);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    height: 100%;
+    box-shadow: var(--shadow-xs);
+    transition: transform var(--duration-base) var(--ease-out),
+                box-shadow var(--duration-base) var(--ease-out),
+                border-color var(--duration-base) var(--ease-out);
+}
+
+.quick-action-tile:hover {
+    color: var(--unicef-dark-blue);
+    border-color: var(--unicef-blue);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+}
+
+.quick-action-tile i {
+    font-size: 2rem;
+    color: var(--unicef-blue);
+    margin-bottom: .85rem;
+}
+
+.quick-action-tile .tile-title {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.quick-action-tile .tile-description {
+    font-size: .8125rem;
+    color: var(--text-muted);
+    margin-top: .25rem;
+}
+
+.quick-action-tile.disabled {
+    opacity: .55;
+    pointer-events: none;
+    background: var(--surface-sunken);
+}
+
+/* --------------------------------------------------------------------------
+   8. Buttons
+   -------------------------------------------------------------------------- */
+
+.btn {
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    padding: .45rem .95rem;
+    transition: background-color var(--duration-fast) var(--ease-out),
+                border-color var(--duration-fast) var(--ease-out),
+                color var(--duration-fast) var(--ease-out),
+                box-shadow var(--duration-fast) var(--ease-out),
+                transform var(--duration-fast) var(--ease-out);
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--brand-action);
+    --bs-btn-border-color: var(--brand-action);
+    --bs-btn-hover-bg: var(--unicef-dark-blue);
+    --bs-btn-hover-border-color: var(--unicef-dark-blue);
+    --bs-btn-active-bg: var(--unicef-dark-blue);
+    --bs-btn-active-border-color: var(--unicef-dark-blue);
+    --bs-btn-disabled-bg: var(--brand-action);
+    --bs-btn-disabled-border-color: var(--brand-action);
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--unicef-dark-blue);
+    --bs-btn-border-color: var(--brand-action);
+    --bs-btn-hover-bg: var(--brand-action);
+    --bs-btn-hover-border-color: var(--brand-action);
+    --bs-btn-active-bg: var(--unicef-dark-blue);
+    --bs-btn-active-border-color: var(--unicef-dark-blue);
+}
+
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+}
+
+.btn-soft {
+    background: var(--surface-sunken);
+    border: 1px solid transparent;
+    color: var(--text-secondary);
+}
+
+.btn-soft:hover {
+    background: var(--unicef-light-blue);
+    color: var(--unicef-dark-blue);
+}
+
+.bg-light-blue {
+    background-color: var(--unicef-light-blue) !important;
+}
+
+.text-brand {
+    color: var(--unicef-blue) !important;
+}
+
+/* --------------------------------------------------------------------------
+   9. Forms
+   -------------------------------------------------------------------------- */
+
+.form-label {
+    font-weight: 500;
+    font-size: .875rem;
+    margin-bottom: .35rem;
+    color: var(--text-secondary);
+}
+
+.form-control,
+.form-select {
+    background-color: var(--surface-raised);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+    border-radius: var(--radius-sm);
+    padding: .45rem .7rem;
+    font-size: .9375rem;
+    min-height: 2.5rem;
+    transition: border-color var(--duration-fast) var(--ease-out),
+                box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.form-control::placeholder {
+    /* Full opacity: several filter panels still rely on the placeholder as
+       the field's only name, and at 75% it blended to 3.25:1. */
+    color: var(--text-muted);
+    opacity: 1;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--unicef-blue);
+    box-shadow: var(--focus-ring);
+    background-color: var(--surface-raised);
+    color: var(--text-primary);
+}
+
+.form-control:disabled,
+.form-control[readonly],
+.form-select:disabled {
+    background-color: var(--surface-sunken);
+    opacity: 1;
+}
+
+.form-text {
+    font-size: .8125rem;
+    color: var(--text-muted);
+}
+
+.form-check-input:checked {
+    background-color: var(--brand-action);
+    border-color: var(--brand-action);
+}
+
+.form-check-input:focus {
+    box-shadow: var(--focus-ring);
+    border-color: var(--brand-action);
+}
+
+.input-group-text {
+    background-color: var(--surface-sunken);
+    border-color: var(--border-color);
+    color: var(--text-muted);
+    font-size: .85rem;
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+    color: var(--unicef-blue);
+    opacity: .85;
+}
+
+/* Validation */
+.is-invalid + .invalid-feedback,
+.invalid-feedback {
+    font-size: .875rem;
+    margin-top: .25rem;
+    font-weight: 500;
+}
+
+.has-error .form-label,
+.has-error .control-label {
+    color: var(--status-danger);
+}
+
+.asteriskField {
+    color: var(--status-danger);
+    margin-inline-start: 4px;
+    font-weight: 700;
+}
+
+/* Inline errors (redesign.js "Form errors"). The module scripts mark empty
+   required controls with .error-field; the message and the summary make
+   that mark legible without relying on the red border alone. */
+.error-field,
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: var(--status-danger) !important;
+    border-width: 2px;
+    background-image: none;
+}
+
+.error-field:focus,
+.is-invalid:focus {
+    --focus-ring-color: var(--status-danger);
+}
+
+.field-error-message {
+    display: flex;
+    align-items: flex-start;
+    gap: .35rem;
+    margin-top: .35rem;
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--status-danger);
+}
+
+.form-error-summary {
+    border: 2px solid var(--status-danger);
+    border-radius: var(--radius-md);
+    background: var(--surface-raised);
+    padding: 1rem 1.15rem;
+    margin-bottom: 1.25rem;
+}
+
+.form-error-summary:focus {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+.form-error-summary-title {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--status-danger);
+    margin: 0 0 .25rem;
+}
+
+.form-error-summary-hint {
+    margin: 0 0 .6rem;
+    color: var(--text-secondary);
+}
+
+.form-error-summary-list {
+    margin: 0;
+    padding-inline-start: 1.25rem;
+}
+
+.form-error-summary-list li {
+    margin-bottom: .3rem;
+}
+
+.form-error-summary-list a {
+    color: var(--status-danger);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.form-error-summary-step {
+    color: var(--text-muted);
+}
+
+/* "(optional)" after the label of any wizard field that is not required.
+   Required is signalled by crispy's .requiredField on the label or a
+   `required` attribute on the control that follows it. Browsers without
+   :has() ignore the rule, which fails safe (no marker). */
+.form-wizard-content label.form-label:not(.requiredField):not(:has(+ [required])):not(:has(+ .input-group [required])):not(:has(+ .select-search [required]))::after,
+.form-wizard-content label.control-label:not(.requiredField):not(:has(+ [required])):not(:has(+ .input-group [required])):not(:has(+ .select-search [required]))::after {
+    content: " (optional)";
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.form-required-note {
+    color: var(--text-secondary);
+    font-size: .875rem;
+    margin: -.75rem 0 1rem;
+}
+
+/* Unsaved-answers banner (redesign.js "Data safety"). */
+.draft-banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .75rem 1rem;
+    padding: .85rem 1rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid var(--status-warning);
+    border-inline-start-width: 4px;
+    border-radius: var(--radius-md);
+    background: var(--surface-raised);
+}
+
+.draft-banner-icon {
+    font-size: 1.4rem;
+    color: var(--status-warning);
+}
+
+.draft-banner-text {
+    flex: 1 1 240px;
+    display: flex;
+    flex-direction: column;
+    gap: .1rem;
+}
+
+.draft-banner-actions {
+    display: flex;
+    gap: .5rem;
+}
+
+/* Idle-logout countdown (redesign.js "Session timer"). Fixed to the bottom
+   edge so it is seen wherever the user is on a long form. */
+.session-banner {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 2100;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .75rem 1.25rem;
+    padding: .9rem var(--content-gutter);
+    background: var(--surface-raised);
+    color: var(--text-primary);
+    border-top: 4px solid var(--status-warning);
+    box-shadow: var(--shadow-xl);
+}
+
+.session-banner-icon {
+    font-size: 1.5rem;
+    color: var(--status-warning);
+}
+
+.session-banner-text {
+    flex: 1 1 260px;
+    display: flex;
+    flex-direction: column;
+    gap: .1rem;
+}
+
+.session-banner-text strong {
+    font-variant-numeric: tabular-nums;
+}
+
+/* Long selects get a filter box above them (redesign.js "Long selects"). */
+.select-search {
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+}
+
+.select-search-input {
+    font-size: .875rem;
+}
+
+/* Fieldsets — the "logical section" pattern from the redesign spec. */
+.form-section {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.15rem;
+    margin-bottom: 1.25rem;
+    background: var(--surface-raised);
+}
+
+.form-section > legend,
+.form-section-title {
+    font-size: .875rem;
+    font-weight: 700;
+    letter-spacing: .01em;
+    color: var(--unicef-dark-blue);
+    padding: 0 .4rem;
+    width: auto;
+    float: none;
+    margin-bottom: .85rem;
+}
+
+fieldset legend {
+    font-size: .95rem;
+    font-weight: 600;
+    color: var(--unicef-dark-blue);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: .5rem;
+    margin-bottom: 1rem;
+    width: 100%;
+    float: none;
+}
+
+/* Sticky form action bar so Save is always reachable on long forms. */
+.form-actions-sticky {
+    position: sticky;
+    bottom: 0;
+    z-index: 20;
+    background: var(--surface-raised);
+    border-top: 1px solid var(--border-color);
+    padding: .85rem 1.15rem;
+    margin: 1.5rem -1.15rem -1.15rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: .5rem;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    box-shadow: 0 -4px 12px rgba(15, 23, 42, .05);
+}
+
+/* --------------------------------------------------------------------------
+   10. Wizard / stepper
+   -------------------------------------------------------------------------- */
+
+.stepper {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding: 0;
+    list-style: none;
+    position: relative;
+}
+
+.stepper::before {
+    content: '';
+    position: absolute;
+    top: 23px;
+    inset-inline: 0;
+    height: 2px;
+    background: var(--border-color);
+    z-index: 0;
+}
+
+.step {
+    position: relative;
+    z-index: 1;
+    background: var(--surface-body);
+    padding: 0 10px;
+    text-align: center;
+    flex: 1;
+}
+
+.step-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: var(--surface-raised);
+    border: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 8px;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: all var(--duration-base) var(--ease-out);
+}
+
+.step.active .step-icon {
+    border-color: var(--brand-action);
+    background: var(--brand-action);
+    color: #fff;
+    box-shadow: 0 0 0 5px rgba(var(--brand-action-rgb), .16);
+}
+
+.step.completed .step-icon {
+    border-color: var(--unicef-blue);
+    background: var(--unicef-light-blue);
+    color: var(--unicef-dark-blue);
+}
+
+.step.error .step-icon {
+    border-color: var(--status-danger);
+    color: var(--status-danger);
+    background-color: #fff1f2;
+}
+
+.step.error .small {
+    color: var(--status-danger) !important;
+}
+
+/* base.css pins every wizard step to 400px, a size that only worked while
+   SmartWizard wrapped the steps in a scrolling container. Without that
+   container a taller step spilled over the Continue/Previous row, so steps
+   are allowed their natural height. */
+.form-wizard-content [id^="step-"] {
+    /* !important: the legacy rule targets the ids directly and would
+       otherwise outrank this attribute selector. */
+    height: auto !important;
+    min-height: 0;
+    overflow: visible;
+}
+
+/* Previous / Continue row the driver adds when a multi-step form has none. */
+.wizard-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .75rem;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.wizard-actions #next-btn22 {
+    margin-inline-start: auto;
+}
+
+.wizard-progress {
+    height: 4px;
+    background-color: var(--border-color);
+    margin-bottom: 2rem;
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+}
+
+.wizard-progress-bar {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, var(--unicef-blue), var(--unicef-dark-blue));
+    transition: width var(--duration-slow) var(--ease-out);
+}
+
+.step-content {
+    transition: opacity var(--duration-slow) var(--ease-in-out),
+                transform var(--duration-slow) var(--ease-in-out);
+}
+
+.step-content.d-none {
+    display: none !important;
+    opacity: 0;
+}
+
+.step-content:not(.d-none) {
+    opacity: 1;
+    transform: translateX(0);
+    animation: rdSlideIn var(--duration-slow) var(--ease-out);
+}
+
+@keyframes rdSlideIn {
+    from { opacity: 0; transform: translateX(24px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+[dir="rtl"] .step-content:not(.d-none) {
+    animation-name: rdSlideInRtl;
+}
+
+@keyframes rdSlideInRtl {
+    from { opacity: 0; transform: translateX(-24px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+.summary-card {
+    background: var(--surface-raised);
+    border-inline-start: 4px solid var(--unicef-blue);
+    transition: box-shadow var(--duration-base) var(--ease-out);
+}
+
+.summary-card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+/* --------------------------------------------------------------------------
+   11. Data tables
+   -------------------------------------------------------------------------- */
+
+.table-container {
+    background: var(--surface-raised);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.25rem;
+}
+
+.table-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    padding: .85rem 1.15rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table-responsive {
+    max-height: 620px;
+    overflow: auto;
+    position: relative;
+}
+
+@media (min-height: 1000px) {
+    .table-responsive {
+        max-height: 760px;
+    }
+}
+
+.table {
+    margin-bottom: 0;
+    font-size: .875rem;
+    border-collapse: separate !important;
+    border-spacing: 0;
+    width: 100% !important;
+    color: var(--text-primary);
+    --bs-table-bg: transparent;
+}
+
+.table thead th {
+    background-color: var(--surface-sunken) !important;
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: .8125rem;
+    letter-spacing: .01em;
+    padding: .8rem .7rem;
+    border-top: none !important;
+    border-bottom: 2px solid var(--border-strong) !important;
+    white-space: nowrap;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 20;
+    box-shadow: 0 2px 4px rgba(15, 23, 42, .06);
+}
+
+.table thead th a {
+    color: inherit;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+    width: 100%;
+}
+
+.table thead th a:hover {
+    color: var(--unicef-blue);
+}
+
+.table tbody td {
+    padding: .62rem .7rem;
+    vertical-align: middle;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--surface-raised);
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-hover tbody tr:hover td {
+    background-color: var(--surface-hover);
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > td {
+    background-color: color-mix(in srgb, var(--surface-sunken) 45%, var(--surface-raised));
+}
+
+.table-striped.table-hover > tbody > tr:hover > td {
+    background-color: var(--surface-hover);
+}
+
+/* Compact density for very wide operational grids. */
+.table-compact tbody td {
+    padding: .4rem .5rem;
+    font-size: .8125rem;
+}
+
+.table-compact thead th {
+    padding: .55rem .5rem;
+    font-size: .8125rem;
+}
+
+/* Legacy base.css forces some tables to a fixed 1500px; keep them fluid but
+   still horizontally scrollable when the column count demands it. */
+.table-responsive table.w-100 {
+    width: 100% !important;
+    min-width: 960px;
+}
+
+/* Row action menus inside the scrolling container are positioned with
+   Popper's fixed strategy (set by redesign.js) so they can escape the
+   container's overflow clip. base.css pins them with
+   `position: absolute !important`, which would defeat that. */
+.table-responsive .dropdown-menu.show {
+    position: fixed !important;
+}
+
+/* Wide grids: redesign.js adds .has-scroll when a table overflows its
+   container, and the first column (the record's name or ID) stays in view
+   while the rest scrolls. */
+@media (min-width: 768px) {
+    .table-responsive.has-scroll .table-stackable th:first-child,
+    .table-responsive.has-scroll .table-stackable td:first-child {
+        position: sticky;
+        inset-inline-start: 0;
+        z-index: 5;
+        box-shadow: 1px 0 0 var(--border-color);
+    }
+
+    .table-responsive.has-scroll .table-stackable th:first-child {
+        z-index: 25;
+    }
+}
+
+/* Phones: one card per row, each cell labelled from data-label (set in
+   django_tables2/bootstrap5.html), instead of a 1000px sideways scroll. */
+@media (max-width: 767.98px) {
+    .table-responsive .table-stackable,
+    .table-responsive table.table-stackable.w-100 {
+        min-width: 0 !important;
+    }
+
+    .table-stackable thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+    }
+
+    .table-stackable,
+    .table-stackable tbody,
+    .table-stackable tr,
+    .table-stackable td {
+        display: block;
+        width: 100%;
+    }
+
+    .table-stackable tr {
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        margin: .75rem;
+        width: auto;
+        background: var(--surface-raised);
+        box-shadow: var(--shadow-xs);
+        overflow: hidden;
+    }
+
+    .table-stackable td {
+        display: grid;
+        grid-template-columns: minmax(6.5rem, 38%) 1fr;
+        gap: .75rem;
+        padding: .55rem .85rem;
+        text-align: start;
+        white-space: normal;
+    }
+
+    .table-stackable tbody tr:last-child td {
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .table-stackable td:last-child {
+        border-bottom: 0 !important;
+    }
+
+    .table-stackable td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        font-size: .8125rem;
+        color: var(--text-muted);
+    }
+
+    .table-stackable td[colspan],
+    .table-stackable td:not([data-label]) {
+        display: block;
+    }
+
+    .table-stackable td[colspan]::before,
+    .table-stackable td:not([data-label])::before {
+        content: none;
+    }
+}
+
+.badge-table {
+    padding: .38em .7em;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    font-size: .8125rem;
+}
+
+.table-actions-dropdown .btn-actions {
+    padding: .22rem .5rem;
+    font-size: .8125rem;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+    white-space: nowrap;
+}
+
+.table-actions-dropdown .dropdown-menu {
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: .4rem;
+    min-width: 210px;
+    background: var(--surface-raised);
+}
+
+.table-actions-dropdown .dropdown-item {
+    border-radius: var(--radius-sm);
+    padding: .45rem .7rem;
+    font-size: .85rem;
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    color: var(--text-secondary);
+}
+
+.table-actions-dropdown .dropdown-item:hover {
+    background-color: var(--surface-hover);
+    color: var(--unicef-blue);
+}
+
+.table-actions-dropdown .dropdown-item i {
+    font-size: 1rem;
+    width: 18px;
+    text-align: center;
+}
+
+.table-actions-dropdown .dropdown-divider {
+    margin: .4rem -.4rem;
+}
+
+/* Scrollbars inside scroll regions */
+.table-responsive::-webkit-scrollbar,
+.sidebar-nav::-webkit-scrollbar,
+.scroll-region::-webkit-scrollbar {
+    height: 9px;
+    width: 9px;
+}
+
+.table-responsive::-webkit-scrollbar-track,
+.sidebar-nav::-webkit-scrollbar-track,
+.scroll-region::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.table-responsive::-webkit-scrollbar-thumb,
+.sidebar-nav::-webkit-scrollbar-thumb,
+.scroll-region::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: var(--radius-pill);
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover,
+.sidebar-nav::-webkit-scrollbar-thumb:hover,
+.scroll-region::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+/* Pagination */
+.pagination {
+    gap: .25rem;
+    margin-bottom: 0;
+}
+
+.page-link {
+    border: none;
+    color: var(--text-secondary);
+    background-color: transparent;
+    padding: .42rem .8rem;
+    border-radius: var(--radius-sm) !important;
+    font-weight: 500;
+    font-size: .875rem;
+    min-height: 2.5rem;
+    min-width: 2.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.page-item.active .page-link {
+    background-color: var(--brand-action);
+    color: #fff;
+}
+
+.page-link:hover {
+    background-color: var(--surface-sunken);
+    color: var(--unicef-blue);
+}
+
+.page-item.disabled .page-link {
+    background-color: transparent;
+    color: var(--text-muted);
+    opacity: .6;
+}
+
+/* --------------------------------------------------------------------------
+   12. Filters & chips
+   -------------------------------------------------------------------------- */
+
+/* Applied filters, shown above the list so a narrowed result set is never
+   unexplained — and so the user can drop one filter without reopening the
+   whole panel. */
+.active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: .85rem;
+}
+
+.active-filters-label {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    font-size: .8125rem;
+    font-weight: 700;
+    letter-spacing: .01em;
+    color: var(--text-muted);
+}
+
+.active-filters-clear {
+    font-size: .875rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    /* Pushed to the end of whichever row it lands on, so it reads as the
+       row's trailing action rather than an orphaned link when the chips wrap. */
+    margin-inline-start: auto;
+    white-space: nowrap;
+    position: relative;
+}
+
+/* Invisible 44px hit area around small text and icon controls. The visible
+   box stays the same size, so the layout does not change. */
+.active-filters-clear::before,
+.filter-chip .btn-close::before,
+.chart-toggle-table::before {
+    content: '';
+    position: absolute;
+    inset: -12px -8px;
+}
+
+/* The chip's × is a 22px square, so it needs 11px on every side. */
+.filter-chip .btn-close::before {
+    inset: -11px;
+}
+
+.chart-toggle-table::before {
+    inset: -8px -10px;
+}
+
+/* Breadcrumb links are inline text, but a little vertical padding lifts
+   them to the 24px minimum without moving the line. */
+.breadcrumb a {
+    display: inline-block;
+    padding-block: .3rem;
+    margin-block: -.3rem;
+}
+
+.active-filters-clear:hover {
+    color: var(--status-danger);
+}
+
+.filter-chip {
+    font-weight: 500;
+    font-size: .8125rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-color);
+    background: var(--surface-raised);
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .3rem .4rem .3rem .75rem;
+    box-shadow: var(--shadow-xs);
+    max-width: 320px;
+}
+
+.filter-chip-label {
+    color: var(--text-muted);
+    font-size: .8125rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.filter-chip-value {
+    color: var(--text-primary);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.filter-chip .btn-close {
+    /* No `filter: none` here — Bootstrap inverts this glyph under
+       data-bs-theme="dark", and overriding it would leave a dark × on a
+       dark chip. */
+    opacity: .55;
+    font-size: .7rem;
+    padding: .35rem;
+    margin-inline-start: .1rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.filter-chip .btn-close:hover {
+    opacity: 1;
+    background-color: var(--surface-sunken);
+}
+
+/* The filter bar: the one row that stays in the page flow. The Filters
+   button opens the drawer; the applied filters sit beside it as chips. */
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem .85rem;
+    margin-bottom: 1rem;
+}
+
+.filter-bar .active-filters {
+    flex: 1 1 320px;
+    margin-bottom: 0;
+}
+
+.filter-bar-open .badge {
+    margin-inline-start: .15rem;
+}
+
+.filter-bar-hint {
+    font-size: .875rem;
+}
+
+/* The drawer itself: slides in from the end edge and sits over the page,
+   so the results begin right under the page header. Bootstrap's offcanvas
+   handles focus, Escape and the backdrop. */
+.filter-drawer {
+    --bs-offcanvas-width: min(28rem, 100vw);
+    --bs-offcanvas-bg: var(--surface-raised);
+    --bs-offcanvas-color: var(--text-primary);
+    --bs-offcanvas-border-color: var(--border-color);
+    box-shadow: var(--shadow-xl);
+}
+
+.filter-drawer .offcanvas-title {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.filter-drawer .offcanvas-body {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1.25rem 0;
+}
+
+/* One field per row inside the drawer, whatever the page-wide grid says. */
+.filter-drawer .form-inline {
+    grid-template-columns: 1fr;
+    gap: .35rem;
+}
+
+.filter-drawer .form-inline > .mb-3 {
+    margin-bottom: .5rem !important;
+}
+
+/* The action row stays reachable at the bottom while the list of fields
+   scrolls above it. */
+.filter-drawer .buttonHolder,
+.filter-drawer .filter-drawer-actions {
+    position: sticky;
+    bottom: 0;
+    margin: auto -1.25rem 0;
+    padding: .85rem 1.25rem;
+    background: var(--surface-raised);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: .5rem;
+}
+
+.filter-drawer .buttonHolder {
+    grid-column: 1 / -1;
+}
+
+.filter-drawer .filter-groups {
+    grid-template-columns: 1fr;
+}
+
+.filter-drawer .filter-group-options {
+    max-height: 240px;
+}
+
+/* Dashboard filters: one checkbox group per dimension (see
+   mscc/_dashboard_filter_group.html). */
+.filter-groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+}
+
+.filter-group {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.filter-group-legend {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: .5rem;
+    width: 100%;
+    float: none;
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border: 0;
+    padding: 0;
+    margin-bottom: .35rem;
+}
+
+.filter-group-count {
+    font-size: .8125rem;
+    font-weight: 600;
+    color: var(--unicef-dark-blue);
+    white-space: nowrap;
+}
+
+.filter-group-options {
+    max-height: 190px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: .4rem .65rem;
+    background: var(--surface-raised);
+}
+
+.filter-group-options .form-check {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    min-height: 1.9rem;
+    margin: 0;
+    padding: 0;
+}
+
+.filter-group-options .form-check-input {
+    flex-shrink: 0;
+    margin: 0;
+}
+
+.filter-group-options .form-check-label {
+    cursor: pointer;
+    overflow-wrap: anywhere;
+}
+
+.offcanvas {
+    background: var(--surface-raised);
+    color: var(--text-primary);
+}
+
+.offcanvas-body .form-label {
+    margin-top: .5rem;
+}
+
+.offcanvas-header {
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* --------------------------------------------------------------------------
+   13. Badges, alerts, status
+   -------------------------------------------------------------------------- */
+
+.badge {
+    font-weight: 600;
+    letter-spacing: .01em;
+    border-radius: var(--radius-sm);
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .38rem;
+    font-size: .8125rem;
+    font-weight: 600;
+    padding: .25rem .6rem;
+    border-radius: var(--radius-pill);
+    background: var(--surface-sunken);
+    color: var(--text-secondary);
+}
+
+.status-pill::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.status-pill.is-success { background: rgba(30, 158, 89, .12); color: var(--status-success); }
+.status-pill.is-warning { background: rgba(217, 131, 20, .12); color: var(--status-warning); }
+.status-pill.is-danger  { background: rgba(220, 53, 69, .12);  color: var(--status-danger); }
+.status-pill.is-info    { background: rgba(var(--unicef-blue-rgb), .12); color: var(--unicef-dark-blue); }
+
+.alert {
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    padding: .85rem 1rem;
+    font-size: .875rem;
+}
+
+.alert-dismissible .btn-close {
+    padding: 1rem;
+}
+
+/* --------------------------------------------------------------------------
+   14. Empty & loading states
+   -------------------------------------------------------------------------- */
+
+.empty-state {
+    padding: 3.5rem 2rem;
+    text-align: center;
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    color: var(--border-strong);
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.empty-state-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: .4rem;
+}
+
+.empty-state-description {
+    color: var(--text-muted);
+    max-width: 340px;
+    margin: 0 auto 1.25rem;
+    font-size: .875rem;
+}
+
+#loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: color-mix(in srgb, var(--surface-body) 78%, transparent);
+    backdrop-filter: blur(3px);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+}
+
+.skeleton {
+    background: linear-gradient(90deg,
+        var(--surface-sunken) 25%,
+        color-mix(in srgb, var(--surface-sunken) 60%, var(--surface-raised)) 50%,
+        var(--surface-sunken) 75%);
+    background-size: 200% 100%;
+    animation: rdShimmer 1.4s ease-in-out infinite;
+    border-radius: var(--radius-xs);
+}
+
+@keyframes rdShimmer {
+    from { background-position: 200% 0; }
+    to   { background-position: -200% 0; }
+}
+
+/* --------------------------------------------------------------------------
+   15. Modals, dropdowns, tooltips
+   -------------------------------------------------------------------------- */
+
+.modal-content {
+    border: none;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    background: var(--surface-raised);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 1.25rem;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border-color);
+    padding: .85rem 1.25rem;
+}
+
+.dropdown-menu {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    padding: .35rem;
+    font-size: .875rem;
+    background: var(--surface-raised);
+    color: var(--text-primary);
+}
+
+.dropdown-item {
+    border-radius: var(--radius-sm);
+    padding: .48rem .7rem;
+    color: var(--text-secondary);
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background: var(--surface-hover);
+    color: var(--unicef-dark-blue);
+}
+
+.dropdown-item.active,
+.dropdown-item:active {
+    background: var(--unicef-light-blue);
+    color: var(--unicef-dark-blue);
+}
+
+.dropdown-header {
+    font-size: .8125rem;
+    font-weight: 700;
+    letter-spacing: .01em;
+    color: var(--text-muted);
+}
+
+.tooltip-inner {
+    border-radius: var(--radius-sm);
+    font-size: .8125rem;
+    padding: .35rem .6rem;
+}
+
+/* Notification list inside the topbar bell */
+.notification-item {
+    padding: .8rem 1rem;
+    border-inline-start: 3px solid transparent;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--surface-raised);
+    color: var(--text-secondary);
+    display: block;
+}
+
+.notification-item:last-child { border-bottom: none; }
+.notification-item:hover { background: var(--surface-hover); }
+.notification-item.is-done { border-inline-start-color: var(--status-success); }
+.notification-item.is-failed { border-inline-start-color: var(--status-danger); }
+.notification-item.is-pending { border-inline-start-color: var(--status-warning); }
+
+/* --------------------------------------------------------------------------
+   16. Tabs & timeline
+   -------------------------------------------------------------------------- */
+
+.nav-tabs {
+    border-bottom: 1px solid var(--border-color);
+    gap: .25rem;
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    color: var(--text-muted);
+    font-weight: 500;
+    padding: .6rem .9rem;
+}
+
+.nav-tabs .nav-link:hover {
+    color: var(--unicef-blue);
+    border-bottom-color: var(--border-strong);
+    background: transparent;
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--unicef-dark-blue);
+    background: transparent;
+    border-bottom-color: var(--unicef-blue);
+    font-weight: 600;
+}
+
+.nav-pills .nav-link.active {
+    background-color: var(--brand-action);
+}
+
+.timeline {
+    position: relative;
+    padding-inline-start: 1.75rem;
+    list-style: none;
+    margin: 0;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 7px;
+    top: .35rem;
+    bottom: .35rem;
+    width: 2px;
+    background: var(--border-color);
+}
+
+.timeline-item {
+    position: relative;
+    padding-bottom: 1.35rem;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: -1.75rem;
+    top: .3rem;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--surface-raised);
+    border: 3px solid var(--unicef-blue);
+    box-shadow: 0 0 0 3px var(--surface-body);
+}
+
+.timeline-item.is-muted::before {
+    border-color: var(--border-strong);
+}
+
+.timeline-title {
+    font-weight: 600;
+    font-size: .9rem;
+    margin-bottom: .1rem;
+}
+
+.timeline-meta {
+    font-size: .8125rem;
+    color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   17. Profile header mini-dashboard
+   -------------------------------------------------------------------------- */
+
+.profile-header {
+    /* Ends on the action blue rather than the brand blue so the white text
+       at the light end of the gradient still clears 4.5:1. */
+    background: linear-gradient(135deg, var(--unicef-dark-blue), var(--brand-action));
+    color: #fff;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    box-shadow: var(--shadow-md);
+}
+
+.profile-header h1,
+.profile-header h2,
+.profile-header h3,
+.profile-header h4 {
+    color: #fff;
+}
+
+.profile-header .profile-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.profile-header .profile-meta-item .label {
+    font-size: .8125rem;
+    font-weight: 500;
+}
+
+.profile-header .profile-meta-item .value {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.profile-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   18. Auth pages
+   -------------------------------------------------------------------------- */
+
+.auth-shell {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background:
+        radial-gradient(1000px 500px at 12% -10%, rgba(var(--unicef-blue-rgb), .18), transparent 60%),
+        radial-gradient(900px 460px at 105% 108%, rgba(0, 79, 113, .16), transparent 62%),
+        var(--surface-body);
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 440px;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    padding: 2.25rem;
+}
+
+.auth-card .auth-logo {
+    display: block;
+    max-width: 190px;
+    height: auto;
+    margin: 0 auto 1.25rem;
+}
+
+.auth-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--unicef-dark-blue);
+    margin-bottom: .25rem;
+}
+
+.auth-subtitle {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: .84rem;
+    margin-bottom: 1.75rem;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    top: 50%;
+    inset-inline-end: .75rem;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    padding: 0;
+    line-height: 1;
+    z-index: 5;
+}
+
+.password-toggle-btn:hover {
+    color: var(--unicef-blue);
+}
+
+.auth-language {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: .25rem;
+    margin-top: 1.25rem;
+}
+
+.auth-language-link {
+    font-size: .9375rem;
+    text-decoration: none;
+    padding: .35rem .6rem;
+}
+
+.auth-language-link.is-current {
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.auth-footer-note {
+    text-align: center;
+    font-size: .8125rem;
+    color: var(--text-muted);
+    margin-top: 1.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   18b. Charts
+   --------------------------------------------------------------------------
+   Tokens consumed by static/js/dashboard/bma-charts.js. The renderers read
+   these off the container, so a theme switch repaints the charts with no JS
+   involvement.
+
+   The categorical order is fixed and must not be cycled or reordered: it was
+   validated for colour-vision separation against both surfaces (worst
+   adjacent CVD dE 9.1 light / 8.4 dark; normal-vision 19.6 / 19.3). Slot 1 is
+   the UNICEF blue. Single-series charts use --viz-sequential, not slot 1 of a
+   categorical ramp, because their job is magnitude rather than identity.
+   -------------------------------------------------------------------------- */
+
+.viz {
+    --viz-surface: var(--surface-raised);
+    --viz-ink: var(--text-primary);
+    --viz-ink-muted: var(--text-muted);
+    --viz-grid: var(--border-color);
+
+    --viz-sequential: #0097D7;
+
+    --viz-series-1: #0097D7;
+    --viz-series-2: #eb6834;
+    --viz-series-3: #1baf7a;
+    --viz-series-4: #eda100;
+    --viz-series-5: #e87ba4;
+    --viz-series-6: #008300;
+    --viz-series-7: #4a3aa7;
+    --viz-series-8: #e34948;
+
+    position: relative;
+    width: 100%;
+    min-height: 60px;
+}
+
+/* Dark steps are re-chosen for the dark surface, not an automatic flip. */
+:root[data-theme="dark"] .viz {
+    --viz-series-2: #d95926;
+    --viz-series-3: #199e70;
+    --viz-series-4: #c98500;
+    --viz-series-5: #d55181;
+    --viz-series-7: #9085e9;
+    --viz-series-8: #e66767;
+}
+
+.viz svg {
+    display: block;
+    width: 100%;
+    overflow: visible;
+}
+
+.viz .viz-axis text {
+    fill: var(--viz-ink-muted);
+    font-size: 12px;
+}
+
+.viz .viz-axis .domain {
+    stroke: var(--viz-grid);
+}
+
+.viz .viz-axis .tick line {
+    stroke: var(--viz-grid);
+}
+
+/* Gridlines stay recessive — they orient, they do not compete. */
+.viz .viz-grid line {
+    stroke: var(--viz-grid);
+    stroke-opacity: .6;
+    shape-rendering: crispEdges;
+}
+
+.viz .viz-value {
+    fill: var(--viz-ink);
+    font-size: 12px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.viz .viz-bar {
+    transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.viz:hover .viz-bar {
+    opacity: .55;
+}
+
+.viz .viz-bar:hover,
+.viz .viz-bar.is-active {
+    opacity: 1;
+}
+
+.viz-tooltip {
+    position: fixed;
+    z-index: 2100;
+    pointer-events: none;
+    background: var(--surface-inverse);
+    color: #fff;
+    border-radius: var(--radius-sm);
+    padding: .45rem .6rem;
+    font-size: .8125rem;
+    line-height: 1.35;
+    box-shadow: var(--shadow-lg);
+    max-width: 260px;
+    opacity: 0;
+    transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.viz-tooltip.is-visible {
+    opacity: 1;
+}
+
+.viz-tooltip .viz-tooltip-name {
+    font-weight: 600;
+    display: block;
+}
+
+.viz-tooltip .viz-tooltip-value {
+    color: rgba(255, 255, 255, .8);
+}
+
+/* Legend — always present from two series up, so identity never rests on
+   colour alone. */
+.viz-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem 1rem;
+    padding: 0 0 .5rem;
+    margin: 0;
+    list-style: none;
+    font-size: .8125rem;
+    color: var(--text-secondary);
+}
+
+.viz-legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+}
+
+.viz-legend .viz-swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.viz-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+    min-height: 160px;
+    color: var(--text-muted);
+    font-size: .84rem;
+    text-align: center;
+}
+
+.viz-empty i {
+    font-size: 1.6rem;
+    opacity: .5;
+}
+
+/* Every chart ships an equivalent table for screen readers and for the
+   contrast-relief rule; sighted users can open it from the card header. */
+.viz-table-wrap {
+    max-height: 260px;
+    overflow: auto;
+}
+
+.viz-table {
+    width: 100%;
+    font-size: .8125rem;
+    margin: 0;
+}
+
+.viz-table th,
+.viz-table td {
+    padding: .3rem .5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.viz-table td:last-child {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+}
+
+.chart-card .card-body {
+    padding: .85rem 1rem 1rem;
+}
+
+/* A long chart title was wrapping and pushing the table toggle onto its own
+   line; keep the toggle pinned and let the title wrap beside it. */
+.chart-card .card-header {
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: .5rem;
+}
+
+.chart-card .card-header .card-title {
+    min-width: 0;
+    line-height: 1.3;
+}
+
+.chart-card .chart-toggle-table {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.chart-toggle-table {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: .8125rem;
+    padding: .25rem .4rem;
+    position: relative;
+}
+
+.chart-toggle-table:hover {
+    color: var(--unicef-blue);
+}
+
+@media print {
+    .viz-tooltip { display: none !important; }
+}
+
+/* --------------------------------------------------------------------------
+   19. Utilities
+   -------------------------------------------------------------------------- */
+
+.hidden { display: none !important; }
+
+/* Flex/grid children need this to be allowed to shrink below their content
+   width, which is what makes text-truncate work inside a flex row. */
+.min-w-0 { min-width: 0 !important; }
+
+.shadow-soft { box-shadow: var(--shadow-md) !important; }
+
+.rounded-xl { border-radius: var(--radius-xl) !important; }
+
+.scroll-region {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.text-truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.surface {
+    background: var(--surface-raised);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+}
+
+/* Skip link for keyboard users. */
+.skip-to-content {
+    position: absolute;
+    inset-inline-start: -9999px;
+    top: 0;
+    z-index: 3000;
+    padding: .6rem 1rem;
+    background: var(--unicef-dark-blue);
+    color: #fff;
+    border-radius: 0 0 var(--radius-sm) 0;
+}
+
+.skip-to-content:focus {
+    inset-inline-start: 0;
+    color: #fff;
+}
+
+/* Logical-property fallbacks for the handful of hardcoded directional
+   utilities that Bootstrap's RTL build does not flip. */
+[dir="rtl"] .me-2 { margin-left: .5rem !important; margin-right: 0 !important; }
+[dir="rtl"] .ms-2 { margin-right: .5rem !important; margin-left: 0 !important; }
+
+/* --------------------------------------------------------------------------
+   20. Responsive & print
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 991.98px) {
+    .sidebar {
+        display: none !important;
+    }
+
+    .page-body {
+        padding: 1rem;
+    }
+}
+
+/* Touch: every control reaches the 44px target size. Pointer users keep the
+   denser boxes above, which already clear the 24px AA minimum. */
+@media (pointer: coarse) {
+    .form-control,
+    .form-select,
+    .btn:not(.btn-sm),
+    .page-link,
+    .dropdown-item,
+    .form-check-input {
+        min-height: 2.75rem;
+    }
+
+    .form-check-input {
+        min-height: 0;
+        width: 1.35em;
+        height: 1.35em;
+    }
+
+    .sidebar .nav-link,
+    .offcanvas .nav-link {
+        padding-block: .8rem;
+    }
+}
+
+@media (max-width: 1440px) {
+    .table {
+        font-size: .8125rem;
+    }
+
+    .table thead th {
+        padding: .55rem .45rem;
+        font-size: .8125rem;
+    }
+
+    .table tbody td {
+        padding: .48rem .45rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+}
+
+@media print {
+    .sidebar,
+    .topbar,
+    .offcanvas,
+    .app-footer-bar,
+    .page-header-actions,
+    .table-toolbar,
+    .pagination,
+    #loading-overlay,
+    .no-print {
+        display: none !important;
+    }
+
+    .app-wrapper,
+    .main-content {
+        display: block;
+    }
+
+    .page-body {
+        padding: 0;
+    }
+
+    .card,
+    .table-container {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+        break-inside: avoid;
+    }
+
+    .table-responsive {
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    body {
+        background: #fff;
+    }
+}

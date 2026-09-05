@@ -23,6 +23,7 @@ from .models import (
     GeneralQuestionnaire,
     Outreach,
     Bridging)
+from student_registration.filter_labels import label_filter_fields
 
 
 class CommonFilter(FilterSet):
@@ -174,7 +175,7 @@ class OutreachFilter(CommonFilter):
 
 
 class PlaceholderFilterSet(FilterSet):
-    """Base FilterSet that hides labels and uses placeholders."""
+    """Base FilterSet with the shared toolbar (Filter, Export) and a visible label on every control."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -191,11 +192,8 @@ class PlaceholderFilterSet(FilterSet):
                          HTML('<a href="javascript:void(0);"  title="Download" class="btn btn-success download-report" onclick="checkRoundBeforeExport(event)">Export</a>')
             )
         )
-        for name, field in self.form.fields.items():
-            label = field.label or name.replace('_', ' ').title()
-            field.label = ''
-            if isinstance(field.widget, (forms.TextInput, forms.NumberInput)):
-                field.widget.attrs.setdefault('placeholder', label)
+        # Visible labels for every control; see student_registration/filter_labels.py.
+        label_filter_fields(self.form)
 
 
 class BridgingFullFilter(PlaceholderFilterSet):

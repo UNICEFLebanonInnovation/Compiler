@@ -1,0 +1,64 @@
+{% load i18n custom_tags crispy_forms_tags %}
+
+{% comment %}
+Shared search panel for every list page.
+
+Expects a django-filter `filter` in the context.
+
+The filters live in a drawer that slides in from the end (right in LTR, left
+in RTL) and sits over the page, so the results start right under the page
+header instead of below a form of eighteen boxes. What stays in the flow is a
+single slim bar: the button that opens the drawer, the filters currently
+applied as removable chips, and Clear all.
+
+The crispy form is rendered directly; the helper sets form_tag=True, so
+wrapping it in another <form> would nest two forms and lose the inner one.
+{% endcomment %}
+
+{% active_filters filter as applied_filters %}
+
+<div class="filter-bar" id="filter-bar">
+    <button class="btn btn-outline-secondary btn-icon filter-bar-open" type="button"
+            data-bs-toggle="offcanvas" data-bs-target="#listFilters" aria-controls="listFilters">
+        <i class="bi bi-funnel" aria-hidden="true"></i>{% trans "Filters" %}
+        {% if applied_filters %}
+        <span class="badge rounded-pill text-bg-primary">{{ applied_filters|length }}</span>
+        {% endif %}
+    </button>
+
+    {% if applied_filters %}
+    <div class="active-filters" id="active-filters">
+        <span class="active-filters-label">
+            <i class="bi bi-funnel-fill" aria-hidden="true"></i>{% trans "Filtered by" %}
+        </span>
+
+        {% for entry in applied_filters %}
+        <span class="filter-chip">
+            <span class="filter-chip-label">{{ entry.label }}</span>
+            <span class="filter-chip-value">{{ entry.value }}</span>
+            <button type="button" class="btn-close" data-remove-filter="{{ entry.name }}"
+                    aria-label="{% blocktrans with name=entry.label %}Remove {{ name }} filter{% endblocktrans %}"></button>
+        </span>
+        {% endfor %}
+
+        <a href="{{ request.path }}" class="active-filters-clear">{% trans "Clear all" %}</a>
+    </div>
+    {% else %}
+    <span class="filter-bar-hint text-muted">{% trans "Showing everything. Use Filters to narrow the list." %}</span>
+    {% endif %}
+</div>
+
+<div class="offcanvas offcanvas-end filter-drawer" tabindex="-1" id="listFilters" aria-labelledby="listFiltersLabel">
+    <div class="offcanvas-header">
+        <h2 class="offcanvas-title" id="listFiltersLabel">
+            <i class="bi bi-funnel" aria-hidden="true"></i>{% trans "Filters" %}
+            {% if applied_filters %}
+            <span class="badge rounded-pill text-bg-primary">{{ applied_filters|length }}</span>
+            {% endif %}
+        </h2>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{% trans 'Close' %}"></button>
+    </div>
+    <div class="offcanvas-body">
+        {% crispy filter.form 'bootstrap5' %}
+    </div>
+</div>

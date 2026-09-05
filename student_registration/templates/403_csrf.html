@@ -1,9 +1,23 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Forbidden (403){% endblock %}
+{% block project_title %}{% trans "Forbidden" %}{% endblock %}
+{% block module_name %}{% trans "Forbidden (403)" %}{% endblock %}
 
 {% block content %}
-<h1>Forbidden (403)</h1>
-
-<p>CSRF verification failed. Request aborted.</p>
+<div class="card">
+    <div class="empty-state">
+        <i class="bi bi-shield-exclamation empty-state-icon text-danger" aria-hidden="true"></i>
+        <h1 class="empty-state-title h4">{% trans "Forbidden (403)" %}</h1>
+        <p class="empty-state-description">
+            {% trans "CSRF verification failed and the request was aborted. This usually means the page was open for too long — reload and try again." %}
+        </p>
+        <div class="d-flex gap-2 justify-content-center">
+            <button type="button" class="btn btn-primary" onclick="window.location.reload();">
+                <i class="bi bi-arrow-clockwise me-2"></i>{% trans "Reload page" %}
+            </button>
+            <a href="/" class="btn btn-outline-secondary">{% trans "Back to home" %}</a>
+        </div>
+    </div>
+</div>
 {% endblock content %}

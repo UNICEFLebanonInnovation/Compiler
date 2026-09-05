@@ -18,6 +18,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, Http
 from django.db.models import Count, F
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db import connection
+from django.utils.translation import gettext_lazy as _
 import csv
 import io
 import zipfile
@@ -181,6 +182,22 @@ class DashboardView(LoginRequiredMixin,
         return {}
 
 
+# The single-series count charts shared by the Makani and Youth dashboards.
+# Each id matches a key returned by DashboardDataView and a container in the
+# template, so adding a metric means adding it in these two places only.
+DASHBOARD_CHARTS = [
+    {'id': 'children_per_nationality', 'title': _('Children per nationality')},
+    {'id': 'children_per_gender', 'title': _('Children per gender')},
+    {'id': 'children_per_programme', 'title': _('Children per package type')},
+    {'id': 'children_per_source', 'title': _('Children per source of identification')},
+    {'id': 'children_per_status', 'title': _('Children per family status')},
+    {'id': 'children_cash_support', 'title': _('Cash support programmes')},
+    {'id': 'children_per_disability', 'title': _('Children per disability type')},
+    {'id': 'children_per_vulnerability', 'title': _('Children per vulnerability')},
+    {'id': 'children_volunteering', 'title': _('Volunteering')},
+]
+
+
 class DashboardCustomView(LoginRequiredMixin,
                     TemplateView):
     template_name = 'mscc/dashboard_d3.html'
@@ -221,9 +238,10 @@ class DashboardCustomView(LoginRequiredMixin,
         ]
 
         return {
-            'total': instances.count(),
-            'total_corepackage': instances.filter(type='Core-Package').count(),
-            'total_walkin': instances.filter(type='Walk-in').count(),
+            # Headline counts are no longer rendered here: they come back with
+            # every data request instead, so they always match the filters the
+            # charts were drawn from.
+            'charts': DASHBOARD_CHARTS,
             'centers': centers,
             'governorates': governorates,
             'partners': partners,
@@ -240,17 +258,18 @@ class DashboardYouthView(LoginRequiredMixin,
         from student_registration.locations.models import Center, Location
         from student_registration.clm.models import PartnerOrganization
 
-        instances = Registration.objects.all()
         centers = Center.objects.all()
         governorates = Location.objects.filter(type_id=1)
         partners = PartnerOrganization.objects.all()
 
         return {
-            'total': instances.count(),
-            'total_corepackage': instances.filter(type='Core-Package').count(),
+            # Counts come from the data endpoint, which excludes soft-deleted
+            # registrations — this view used to count them, so its totals
+            # disagreed with every chart on the page.
+            'charts': DASHBOARD_CHARTS,
             'centers': centers,
             'governorates': governorates,
-            'partners': partners
+            'partners': partners,
         }
 
 
@@ -281,6 +300,12 @@ class DashboardDataView(LoginRequiredMixin, View):
         if partners:
             qs = qs.filter(partner_id__in=partners)
 
+        # The dashboard exposes package-type tiles as filters, but the value was
+        # never read here, so clicking one changed nothing.
+        package_types = request.GET.getlist('types')
+        if package_types:
+            qs = qs.filter(type__in=package_types)
+
         def aggregate(queryset, field):
             results = queryset.values(field).annotate(total=Count('id')).order_by(field)
             data = []
@@ -292,7 +317,19 @@ class DashboardDataView(LoginRequiredMixin, View):
         pss_qs = PSSService.objects.filter(registration__in=qs)
         ys_qs = YouthKitService.objects.filter(registration__in=qs)
 
+        # Headline counts are returned with the series so the KPI tiles track
+        # the same filters as the charts. They used to be rendered once from
+        # the view context and never refreshed, which left unfiltered totals
+        # sitting above filtered charts.
+        totals = {
+            'total': qs.count(),
+            'total_corepackage': qs.filter(type='Core-Package').count(),
+            'total_walkin': qs.filter(type='Walk-in').count(),
+            'total_children': qs.values('child').distinct().count(),
+        }
+
         data = {
+            'totals': totals,
             'children_per_gender': aggregate(qs, 'child__gender'),
             'children_per_status': aggregate(qs, 'child__marital_status'),
             'children_per_programme': aggregate(qs, 'type'),

@@ -9,45 +9,22 @@
 
 {% block content %}
 
-<div class="app-page-title">
-                        <div class="page-title-wrapper">
-                            <div class="page-title-heading">
-                                <div>
-                                    <div class="page-title-head center-elem page-title-heading">
-                                        <span class="d-inline-block pr-2">
-                                            <i class="fa fa-child"></i>
-                                        </span>
-                                        <span class="d-inline-block">Child Profile - {{ instance.child.full_name }}</span>
-                                    </div>
-                                    <div class="page-title-subheading opacity-10">
-                                        <nav class="" aria-label="breadcrumb">
-                                            <ol class="breadcrumb">
-                                                <li class="breadcrumb-item">
-                                                    <a>Home</a>
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    <a href="{% url 'mscc:list' %}">List</a>
-                                                </li>
-                                                <li class="active breadcrumb-item" aria-current="page">
-                                                    Child Profile and Provided Services
-                                                </li>
-                                            </ol>
-                                        </nav>
-                                    </div>
-                                </div>
-                            </div>
-
-      {% if request.user|has_group:"MSCC_FULL" and request.user.partner and not request.user.partner.is_world_learning %}
-                        <div class="page-title-actions">
-                                <a href="#" data-toggle="modal" data-target="#newRoundModal" class="mr-3 btn-icon btn btn-success"><i class="fa fa-plus btn-icon-wrapper"> </i>Register in a new Round</a>
-
-                                <!--<button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-primary" data-original-title="Package Type">-->
-                                    <!--{{ instance.type }}-->
-                                <!--</button>-->
-                            </div>
+<div class="page-header">
+    <div class="page-header-titles">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'landing_page' %}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'mscc:list' %}">List</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Child Profile and Provided Services</li>
+            </ol>
+        </nav>
+        <h1 class="page-header-title"><i class="fa fa-child"></i>Child Profile - {{ instance.child.full_name }}</h1>
+    </div>
+    {% if request.user|has_group:"MSCC_FULL" and request.user.partner and not request.user.partner.is_world_learning %}
+    <div class="page-header-actions">
+        <a href="#" data-bs-toggle="modal" data-bs-target="#newRoundModal" class="btn-icon btn btn-success"><i class="fa fa-plus btn-icon-wrapper"> </i>Register in a new Round</a>
+    </div>
     {% endif %}
-
-                        </div>
 </div>
 
 
@@ -58,7 +35,7 @@
                                         <div class="tabs-lg-alternate card-header">
                                             <ul class="nav nav-justified">
                                                 <li class="nav-item">
-                                                    <a data-toggle="tab" href="#tab-eg9-0" class="nav-link show{% if current_tab == 'info' %} active{% endif %}">
+                                                    <a data-bs-toggle="tab" href="#tab-eg9-0" class="nav-link show{% if current_tab == 'info' %} active{% endif %}">
                                                         <div class="widget-number">Child Info.</div>
                                                         <!--<div class="tab-subheading">-->
                                                                 <!--<span class="pr-2 opactiy-6">-->
@@ -68,13 +45,13 @@
                                                         <!--</div>-->
                                                     </a></li>
                                                 <li class="nav-item">
-                                                    <a data-toggle="tab" href="#tab-eg9-1" class="nav-link show{% if current_tab == 'services' %} active{% endif %}">
+                                                    <a data-bs-toggle="tab" href="#tab-eg9-1" class="nav-link show{% if current_tab == 'services' %} active{% endif %}">
                                                         <div class="widget-number">{{ instance.type }}</div>
                                                         <!--<div class="tab-subheading">Products</div>-->
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a data-toggle="tab" href="#tab-eg9-2" class="nav-link show{% if current_tab == 'attendance' %} active{% endif %}">
+                                                    <a data-bs-toggle="tab" href="#tab-eg9-2" class="nav-link show{% if current_tab == 'attendance' %} active{% endif %}">
                                                         <div class="widget-number text-danger">Attendances</div>
                                                         <!--<div class="tab-subheading">-->
                                                             <!--<span class="pr-2 opactiy-6">-->
@@ -118,7 +95,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="newRoundModalLabel">Register the Child in a new Round</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -143,7 +120,7 @@
       </div>
       <div class="modal-footer">
         <a id="new-round-confirm" href="{% url 'mscc:new_round_redirect' %}?registry={{ instance.id }}&new_round_confirmation=confirmed&registrationType=Core-Package" class="btn btn-success">Confirm</a>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
       </div>
     </div>
   </div>
