@@ -1323,6 +1323,8 @@ button.close:hover,
 .lnr-cloud,
 .lnr-cloud-download,
 .lnr-cog,
+.lnr-cross,
+.lnr-warning,
 .lnr-download,
 .lnr-exit,
 .lnr-file-empty,
@@ -1377,6 +1379,8 @@ button.close:hover,
 .lnr-cloud::before { content: "\f2c1"; }
 .lnr-cloud-download::before { content: "\f29b"; }
 .lnr-cog::before { content: "\f3e5"; }
+.lnr-cross::before { content: "\f62a"; }
+.lnr-warning::before { content: "\f33b"; }
 .lnr-download::before { content: "\f30a"; }
 .lnr-exit::before { content: "\f1c3"; }
 .lnr-file-empty::before { content: "\f392"; }
@@ -1456,8 +1460,14 @@ button.close:hover,
     vertical-align: -.125em;
 }
 
+.glyphicon-arrow-left::before { content: "\f12f"; }
+.glyphicon-arrow-right::before { content: "\f138"; }
+.glyphicon-calendar::before { content: "\f1f6"; }
 .glyphicon-folder-open::before { content: "\f3d8"; }
+.glyphicon-remove::before { content: "\f62a"; }
 .glyphicon-saved::before { content: "\f26b"; }
+.glyphicon-th::before { content: "\f3f9"; }
+.glyphicon-time::before { content: "\f293"; }
 .glyphicon-trash::before { content: "\f5de"; }
 .icon-delete-sign::before { content: "\f623"; }
 .icon-edit-sign::before { content: "\f4ca"; }

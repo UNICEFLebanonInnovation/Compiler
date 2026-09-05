@@ -334,6 +334,17 @@
             wrapper.appendChild(table);
         });
 
+        // Row action menus live inside a scrolling container (overflow: auto
+        // with a max-height), which clips an absolutely positioned menu at
+        // the container's edge: on the last rows only the first item or two
+        // could be reached. Positioning the menu with Popper's fixed strategy
+        // lets it escape the container.
+        $all('.table-responsive [data-bs-toggle="dropdown"]').forEach(function (toggle) {
+            if (!toggle.hasAttribute('data-bs-popper-config')) {
+                toggle.setAttribute('data-bs-popper-config', '{"strategy":"fixed"}');
+            }
+        });
+
         // Wide grids: flag the scroll containers that actually overflow, so
         // the CSS can pin the first column. Skipped when that column holds a
         // dropdown, which a sticky cell's stacking context would trap.
@@ -514,6 +525,32 @@
         }
         this.visibleNext = this.nextPage || this.nextBtn;
 
+        // SmartWizard drew its own Previous / Next toolbar, so several
+        // multi-step forms (the TLS registration among them) carry no
+        // buttons of their own in the template. Without them the steps were
+        // unreachable. The driver supplies the pair, with the ids the module
+        // scripts validate on, right under the steps.
+        if (this.steps.length > 1 && !this.visibleNext) {
+            var actions = document.createElement('div');
+            actions.className = 'wizard-actions';
+            if (!this.prevBtn) {
+                this.prevBtn = document.createElement('button');
+                this.prevBtn.type = 'button';
+                this.prevBtn.id = 'prev-btn22';
+                this.prevBtn.className = 'btn btn-outline-secondary btn-icon';
+                this.prevBtn.innerHTML = '<i class="bi bi-arrow-left" aria-hidden="true"></i>Previous';
+                actions.appendChild(this.prevBtn);
+            }
+            this.nextBtn = document.createElement('button');
+            this.nextBtn.type = 'button';
+            this.nextBtn.id = 'next-btn22';
+            this.nextBtn.className = 'btn btn-primary btn-icon';
+            this.nextBtn.innerHTML = 'Continue<i class="bi bi-arrow-right" aria-hidden="true"></i>';
+            actions.appendChild(this.nextBtn);
+            this.visibleNext = this.nextBtn;
+            content.parentNode.insertBefore(actions, content.nextSibling);
+        }
+
         if (this.steps.length > 1) {
             var bar = document.createElement('div');
             bar.className = 'wizard-progress';
@@ -609,9 +646,12 @@
             return;
         }
 
-        // Registered on `load` so this runs after the module scripts' jQuery
-        // handlers, letting us honour a preventDefault() from their validation.
-        window.addEventListener('load', function () {
+        // Registered one task later than boot so it lands after the module
+        // scripts' jQuery handlers (jQuery dispatches ready via setTimeout),
+        // letting us honour a preventDefault() from their validation. It used
+        // to wait for window `load`, which a slow third-party script could
+        // hold back for many seconds, leaving Continue dead meanwhile.
+        setTimeout(function () {
             document.addEventListener('click', function (e) {
                 if (!e.target.closest) {
                     return;
@@ -1457,10 +1497,58 @@
     }
 
     /* ---------------------------------------------------------------------
+       Bootstrap's jQuery interface for every jQuery on the page
+
+       Bootstrap 5 attaches $.fn.modal, .dropdown, .collapse … to the jQuery
+       present when its bundle loads. 115 page templates then load
+       jquery-1.12.3 again for their own scripts, which replaces $ with a copy
+       that has none of those methods: the module scripts' calls to
+       $('#formErrorModal').modal('show') threw, and their validation and
+       step handling stopped at that line. The interface is re-attached to
+       whichever jQuery is current, at DOMContentLoaded and again at load.
+       Methods another library already defined (jQuery UI's button and
+       tooltip) are left alone.
+       --------------------------------------------------------------------- */
+
+    var BS_PLUGINS = {
+        alert: 'Alert', button: 'Button', collapse: 'Collapse', dropdown: 'Dropdown',
+        modal: 'Modal', offcanvas: 'Offcanvas', popover: 'Popover', tab: 'Tab',
+        toast: 'Toast', tooltip: 'Tooltip'
+    };
+
+    function bridgeJQueryPlugins() {
+        var $ = window.jQuery;
+        if (!$ || !$.fn || typeof window.bootstrap === 'undefined' || $.bmaBootstrapBridged) {
+            return;
+        }
+        Object.keys(BS_PLUGINS).forEach(function (name) {
+            var Component = window.bootstrap[BS_PLUGINS[name]];
+            if (!Component || typeof $.fn[name] === 'function') {
+                return;
+            }
+            $.fn[name] = function (config) {
+                return this.each(function () {
+                    var data = Component.getOrCreateInstance(this, typeof config === 'object' ? config : {});
+                    if (typeof config !== 'string') {
+                        return;
+                    }
+                    if (typeof data[config] === 'undefined' || config.charAt(0) === '_' || config === 'constructor') {
+                        throw new TypeError('No method named "' + config + '"');
+                    }
+                    data[config]();
+                });
+            };
+        });
+        $.bmaBootstrapBridged = true;
+    }
+
+    /* ---------------------------------------------------------------------
        Boot
        --------------------------------------------------------------------- */
 
     function boot() {
+        bridgeJQueryPlugins();
+        window.addEventListener('load', bridgeJQueryPlugins);
         upgradeAttributes(document);
         initComponents(document);
         initSidebar();

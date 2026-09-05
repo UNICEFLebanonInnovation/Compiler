@@ -1199,6 +1199,21 @@ fieldset legend {
     overflow: visible;
 }
 
+/* Previous / Continue row the driver adds when a multi-step form has none. */
+.wizard-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .75rem;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.wizard-actions #next-btn22 {
+    margin-inline-start: auto;
+}
+
 .wizard-progress {
     height: 4px;
     background-color: var(--border-color);
@@ -1368,6 +1383,14 @@ fieldset legend {
 .table-responsive table.w-100 {
     width: 100% !important;
     min-width: 960px;
+}
+
+/* Row action menus inside the scrolling container are positioned with
+   Popper's fixed strategy (set by redesign.js) so they can escape the
+   container's overflow clip. base.css pins them with
+   `position: absolute !important`, which would defeat that. */
+.table-responsive .dropdown-menu.show {
+    position: fixed !important;
 }
 
 /* Wide grids: redesign.js adds .has-scroll when a table overflows its

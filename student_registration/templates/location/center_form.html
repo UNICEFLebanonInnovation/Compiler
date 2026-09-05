@@ -79,8 +79,8 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/location/center.js' %}?v=11"></script>
     <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
     <script>
-      var url_districts = "{% url 'clm:load_districts' %}";
-      var url_cadasters = "{% url 'clm:load_cadasters' %}";
+      var url_districts = "{% url 'locations:load_districts' %}";
+      var url_cadasters = "{% url 'locations:load_cadasters' %}";
 
       $("#id_governorate").change(function () {
           load_districts(url_districts);

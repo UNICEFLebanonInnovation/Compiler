@@ -49,8 +49,8 @@
     <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
 
     <script>
-      var url = "{% url 'clm:load_districts' %}";
-      var url_cadasters = "{% url 'clm:load_cadasters' %}";
+      var url = "{% url 'locations:load_districts' %}";
+      var url_cadasters = "{% url 'locations:load_cadasters' %}";
 
       $("#id_governorate").change(function () {
           load_districts(url);

@@ -108,7 +108,28 @@ on a click that survived that.
 
 Forms that carry both `#next-page` (the module script's validating button)
 and `#next-btn22` show only the first; the driver hides the second and still
-uses it as the advance target. Both are labelled "Continue".
+uses it as the advance target. Both are labelled "Continue". A multi-step
+form with no buttons at all (SmartWizard used to draw its own toolbar; the
+TLS and Makani `main_form.html` templates relied on it) gets a Previous /
+Continue row from the driver, with the same ids so the module validation
+still applies. The driver's click listener is registered one task after
+DOMContentLoaded, not on window `load`, so a slow third-party script cannot
+leave Continue dead.
+
+**Two jQueries.** 115 page templates load `jquery-1.12.3.min.js` again in
+their own script block, after the shell's jQuery 3.7 and the Bootstrap
+bundle. That replaces `$` with a copy that has no Bootstrap methods, so the
+module scripts' `$('#formErrorModal').modal('show')` threw and validation
+died there. `redesign.js` re-attaches Bootstrap 5's jQuery interface to
+whichever jQuery is current (`bridgeJQueryPlugins`, at DOMContentLoaded and
+at load), leaving jQuery UI's `button` and `tooltip` alone. The page scripts'
+`$(window).load(fn)` (a jQuery 1.x form) became `$(window).on('load', fn)`
+so they run under either version.
+
+**Row action menus.** Dropdown toggles inside `.table-responsive` get
+Popper's `fixed` strategy (`data-bs-popper-config`, set in `initTables`) so
+the menu can escape the container's overflow clip; `redesign.css` overrides
+the legacy `position: absolute !important` in base.css for those menus.
 
 **Form errors.** The module scripts validate a step by adding `.error-field`
 to each empty required control and opening `#formErrorModal`. `redesign.js`

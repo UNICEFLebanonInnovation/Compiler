@@ -103,8 +103,8 @@
 
     <script>
       window.youthLoadSubProgramsUrl = "{% url 'youth:load_sub_programs' %}";
-      window.youthLoadDistrictsUrl = "{% url 'youth:load_districts' %}";
-      window.youthLoadCadastersUrl = "{% url 'youth:load_cadasters' %}";
+      window.youthLoadDistrictsUrl = "{% url 'locations:load_districts' %}";
+      window.youthLoadCadastersUrl = "{% url 'locations:load_cadasters' %}";
       window.youthBulkEnrollProgramsUrl = "{% url 'youth:program_enrolled_programs_add_bulk' %}";
     </script>
     <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
