@@ -126,6 +126,19 @@ field label and use the placeholder or empty `<option>` as the field's name.
 control (the empty option becomes "All"); it is the one place to change how
 filter forms are labelled.
 
+**Filter drawer.** Filters no longer sit above the results. Every list page
+and both dashboards keep one slim row in the flow, the filter bar (a
+Filters button with the applied count, the applied filters as removable
+chips, Clear all), and the form itself lives in a Bootstrap offcanvas
+drawer (`.filter-drawer`, `offcanvas-end`, 28rem, fixed over the page) that
+the button opens. Inside the drawer the form is one field per row and the
+action row is sticky at the bottom. `_list_filters.html` renders both for
+the crispy-based list pages; the eighteen older lists (schools, CLM, ALP,
+enrolments, staff) carry the same markup inline around their own
+django-bootstrap5 form, now in the vertical layout so labels are visible;
+the dashboards' drawer has no backdrop and leaves the page scrollable so the
+charts can be watched while values are ticked.
+
 **Dashboard filters.** `mscc/_dashboard_filter_group.html` renders one
 dimension as a checkbox `<fieldset>` (search box above eight values, count in
 the legend). `mscc-dashboard.js` reads checked values; parameter names are

@@ -35,11 +35,6 @@
     </div>
 
     <div class="page-header-actions">
-        <button class="btn btn-outline-secondary btn-icon" type="button"
-                data-bs-toggle="collapse" data-bs-target="#listFilters"
-                aria-expanded="false" aria-controls="listFilters">
-            <i class="bi bi-funnel"></i>{% trans "Filters" %}
-        </button>
         {% if request.user|has_group:"TLS_FULL" and request.user|has_group:"TLS_CENTER" and request.user.center.id and request.user.partner and not request.user.partner.is_world_learning %}
         <a href="{% url 'tls:child_add' %}?type=TLS" class="btn btn-primary btn-icon">
             <i class="bi bi-plus-lg"></i>{% trans "Add New Beneficiary" %}

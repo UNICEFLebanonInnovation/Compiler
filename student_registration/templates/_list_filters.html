@@ -5,57 +5,60 @@ Shared search panel for every list page.
 
 Expects a django-filter `filter` in the context.
 
-Three things the previous per-page markup did not do:
-  * shows which filters are currently applied, as removable chips, so a
-    narrowed list is never unexplained;
-  * opens itself when filters are applied, instead of hiding them behind a
-    collapsed panel;
-  * renders the crispy form directly. The old markup wrapped it in a <form>
-    of its own while the crispy helper sets form_tag=True, producing nested
-    <form> elements that the HTML parser silently discarded.
+The filters live in a drawer that slides in from the end (right in LTR, left
+in RTL) and sits over the page, so the results start right under the page
+header instead of below a form of eighteen boxes. What stays in the flow is a
+single slim bar: the button that opens the drawer, the filters currently
+applied as removable chips, and Clear all.
 
-The collapse target keeps the id `listFilters` so the "Filters" button in a
-page header toggles the same panel as the card header here.
+The crispy form is rendered directly; the helper sets form_tag=True, so
+wrapping it in another <form> would nest two forms and lose the inner one.
 {% endcomment %}
 
 {% active_filters filter as applied_filters %}
 
-{% if applied_filters %}
-<div class="active-filters" id="active-filters">
-    <span class="active-filters-label">
-        <i class="bi bi-funnel-fill" aria-hidden="true"></i>{% trans "Filtered by" %}
-    </span>
+<div class="filter-bar" id="filter-bar">
+    <button class="btn btn-outline-secondary btn-icon filter-bar-open" type="button"
+            data-bs-toggle="offcanvas" data-bs-target="#listFilters" aria-controls="listFilters">
+        <i class="bi bi-funnel" aria-hidden="true"></i>{% trans "Filters" %}
+        {% if applied_filters %}
+        <span class="badge rounded-pill text-bg-primary">{{ applied_filters|length }}</span>
+        {% endif %}
+    </button>
 
-    {% for entry in applied_filters %}
-    <span class="filter-chip">
-        <span class="filter-chip-label">{{ entry.label }}</span>
-        <span class="filter-chip-value">{{ entry.value }}</span>
-        <button type="button" class="btn-close" data-remove-filter="{{ entry.name }}"
-                aria-label="{% blocktrans with name=entry.label %}Remove {{ name }} filter{% endblocktrans %}"></button>
-    </span>
-    {% endfor %}
+    {% if applied_filters %}
+    <div class="active-filters" id="active-filters">
+        <span class="active-filters-label">
+            <i class="bi bi-funnel-fill" aria-hidden="true"></i>{% trans "Filtered by" %}
+        </span>
 
-    <a href="{{ request.path }}" class="active-filters-clear">{% trans "Clear all" %}</a>
+        {% for entry in applied_filters %}
+        <span class="filter-chip">
+            <span class="filter-chip-label">{{ entry.label }}</span>
+            <span class="filter-chip-value">{{ entry.value }}</span>
+            <button type="button" class="btn-close" data-remove-filter="{{ entry.name }}"
+                    aria-label="{% blocktrans with name=entry.label %}Remove {{ name }} filter{% endblocktrans %}"></button>
+        </span>
+        {% endfor %}
+
+        <a href="{{ request.path }}" class="active-filters-clear">{% trans "Clear all" %}</a>
+    </div>
+    {% else %}
+    <span class="filter-bar-hint text-muted">{% trans "Showing everything. Use Filters to narrow the list." %}</span>
+    {% endif %}
 </div>
-{% endif %}
 
-<div class="card form-filters mb-3">
-    <button class="card-header filter-panel-toggle" type="button"
-            data-bs-toggle="collapse" data-bs-target="#listFilters"
-            aria-expanded="{% if applied_filters %}true{% else %}false{% endif %}"
-            aria-controls="listFilters">
-        <span class="card-title">
+<div class="offcanvas offcanvas-end filter-drawer" tabindex="-1" id="listFilters" aria-labelledby="listFiltersLabel">
+    <div class="offcanvas-header">
+        <h2 class="offcanvas-title" id="listFiltersLabel">
             <i class="bi bi-funnel" aria-hidden="true"></i>{% trans "Filters" %}
             {% if applied_filters %}
             <span class="badge rounded-pill text-bg-primary">{{ applied_filters|length }}</span>
             {% endif %}
-        </span>
-        <i class="bi bi-chevron-down filter-panel-caret" aria-hidden="true"></i>
-    </button>
-
-    <div class="collapse{% if applied_filters %} show{% endif %}" id="listFilters">
-        <div class="card-body">
-            {% crispy filter.form 'bootstrap5' %}
-        </div>
+        </h2>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{% trans 'Close' %}"></button>
+    </div>
+    <div class="offcanvas-body">
+        {% crispy filter.form 'bootstrap5' %}
     </div>
 </div>

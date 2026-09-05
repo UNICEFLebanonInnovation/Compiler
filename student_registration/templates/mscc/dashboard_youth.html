@@ -1,4 +1,5 @@
 {% extends "mscc/base.html" %}
+{% load custom_tags %}
 {% load static i18n %}
 
 {% block project_title %}{% trans "Youth Dashboard" %}{% endblock %}
@@ -25,6 +26,10 @@
         <a href="{% url 'mscc:attendance_heatmap' %}" class="btn btn-outline-primary btn-icon">
             <i class="bi bi-calendar3"></i>{% trans "Attendance heat-map" %}
         </a>
+        <button type="button" class="btn btn-primary btn-icon" data-bs-toggle="offcanvas"
+                data-bs-target="#dashboardFilters" aria-controls="dashboardFilters">
+            <i class="bi bi-funnel"></i>{% trans "Filters" %}
+        </button>
         <button type="button" class="btn btn-outline-secondary btn-icon" id="dashboard-reset">
             <i class="bi bi-arrow-counterclockwise"></i>{% trans "Reset filters" %}
         </button>
@@ -85,12 +90,16 @@
     </div>
 </div>
 
-<div class="card form-filters mb-3">
-    <div class="card-header">
-        <span class="card-title"><i class="bi bi-funnel" aria-hidden="true"></i>{% trans "Filters" %}</span>
+<div class="offcanvas offcanvas-end filter-drawer" tabindex="-1" id="dashboardFilters"
+     aria-labelledby="dashboardFiltersLabel" data-bs-scroll="true" data-bs-backdrop="false">
+    <div class="offcanvas-header">
+        <h2 class="offcanvas-title" id="dashboardFiltersLabel">
+            <i class="bi bi-funnel" aria-hidden="true"></i>{% trans "Filters" %}
+        </h2>
         <span class="text-muted small" id="dashboard-status" role="status" aria-live="polite"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{% trans 'Close' %}"></button>
     </div>
-    <div class="card-body">
+    <div class="offcanvas-body">
         <div class="filter-groups">
             {% include "mscc/_dashboard_filter_group.html" with id="center_filter" param="centers" label=_("Centers") items=centers %}
             {% include "mscc/_dashboard_filter_group.html" with id="governorate_filter" param="governorates" label=_("Governorates") items=governorates %}

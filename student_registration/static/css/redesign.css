@@ -1689,32 +1689,90 @@ fieldset legend {
     background-color: var(--surface-sunken);
 }
 
-/* The filter card header doubles as the collapse toggle. */
-.filter-panel-toggle {
-    width: 100%;
-    background: transparent;
-    border: none;
-    text-align: start;
-    cursor: pointer;
+/* The filter bar: the one row that stays in the page flow. The Filters
+   button opens the drawer; the applied filters sit beside it as chips. */
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem .85rem;
+    margin-bottom: 1rem;
 }
 
-.filter-panel-toggle:hover {
-    background: var(--surface-hover);
+.filter-bar .active-filters {
+    flex: 1 1 320px;
+    margin-bottom: 0;
 }
 
-.filter-panel-toggle .card-title {
+.filter-bar-open .badge {
+    margin-inline-start: .15rem;
+}
+
+.filter-bar-hint {
+    font-size: .875rem;
+}
+
+/* The drawer itself: slides in from the end edge and sits over the page,
+   so the results begin right under the page header. Bootstrap's offcanvas
+   handles focus, Escape and the backdrop. */
+.filter-drawer {
+    --bs-offcanvas-width: min(28rem, 100vw);
+    --bs-offcanvas-bg: var(--surface-raised);
+    --bs-offcanvas-color: var(--text-primary);
+    --bs-offcanvas-border-color: var(--border-color);
+    box-shadow: var(--shadow-xl);
+}
+
+.filter-drawer .offcanvas-title {
     display: inline-flex;
     align-items: center;
     gap: .5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
 }
 
-.filter-panel-caret {
-    transition: transform var(--duration-base) var(--ease-out);
-    color: var(--text-muted);
+.filter-drawer .offcanvas-body {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1.25rem 0;
 }
 
-.filter-panel-toggle[aria-expanded="true"] .filter-panel-caret {
-    transform: rotate(180deg);
+/* One field per row inside the drawer, whatever the page-wide grid says. */
+.filter-drawer .form-inline {
+    grid-template-columns: 1fr;
+    gap: .35rem;
+}
+
+.filter-drawer .form-inline > .mb-3 {
+    margin-bottom: .5rem !important;
+}
+
+/* The action row stays reachable at the bottom while the list of fields
+   scrolls above it. */
+.filter-drawer .buttonHolder,
+.filter-drawer .filter-drawer-actions {
+    position: sticky;
+    bottom: 0;
+    margin: auto -1.25rem 0;
+    padding: .85rem 1.25rem;
+    background: var(--surface-raised);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: .5rem;
+}
+
+.filter-drawer .buttonHolder {
+    grid-column: 1 / -1;
+}
+
+.filter-drawer .filter-groups {
+    grid-template-columns: 1fr;
+}
+
+.filter-drawer .filter-group-options {
+    max-height: 240px;
 }
 
 /* Dashboard filters: one checkbox group per dimension (see

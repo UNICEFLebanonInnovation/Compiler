@@ -30,11 +30,6 @@
     </div>
 
     <div class="page-header-actions">
-        <button class="btn btn-outline-secondary btn-icon" type="button"
-                data-bs-toggle="collapse" data-bs-target="#listFilters"
-                aria-expanded="false" aria-controls="listFilters">
-            <i class="bi bi-funnel"></i>{% trans "Filters" %}
-        </button>
         {% if 'Bridging'|is_allowed_create %}
         {% if not request.user.partner or not request.user.partner.is_world_learning %}
         <a href="{% url 'clm:bridging_add' %}" class="btn btn-primary btn-icon">
