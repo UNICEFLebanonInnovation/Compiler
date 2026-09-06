@@ -222,9 +222,39 @@ countdown banner with "Stay signed in" for the last two minutes, and on
 expiry goes to the sign-in page with `next=` set. The ping is excluded from
 the user-activity log. Set `AUTO_LOGOUT_DELAY = 0` to turn the timer off.
 
-**Attendance toggles.** `data-toggle="buttons"` has no Bootstrap 5 equivalent.
-The nested radio still works natively; the selected-state styling is restored
-with CSS `:has()` plus a small class-sync handler for older browsers.
+**Attendance screens.** `mscc/attendance.html` and `clm/attendance.html`
+used a select dressed as a button prepended to a blank, disabled text input
+for each control; they are now labelled `.form-select` fields stacked in the
+card. `data-toggle="buttons"` has no Bootstrap 5 equivalent: the nested radio
+still works natively and the selected-state styling is restored with CSS
+`:has()` plus a small class-sync handler for older browsers. The legacy
+scripts only toggle `.hidden` on the closing-reason select, so
+`.close-reason-field:has(> select.hidden)` hides its label with it.
+`data-toggle="datepicker"` inputs (initialised by the old ArchitectUI bundle)
+get jQuery UI's datepicker from `redesign.js`, and `html.bma-datepicker`
+styles the calendar with the tokens on pages that do not load the legacy
+jQuery UI theme.
+
+**Wizard wrapper.** 50 templates wrap the whole wizard in
+`<div id="smartwizard3" class="forms-wizard">` as well as using the class on
+the step `<ul>`. The flex stepper layout is scoped to `ul.forms-wizard`;
+`div.forms-wizard` is a plain block, otherwise the error summary, the
+required-fields note and the step content lay out side by side as columns.
+
+**Gradient icons.** `.icon-gradient` with a `.bg-*` class (card headers in
+13 templates) painted a solid gradient square: the `.bg-*` shorthand resets
+`background-clip`. `.icon-gradient[class*="bg-"]` clips the brand gradient to
+the glyph again.
+
+**Profile tabs.** `base.css` sizes `.tabs-lg-alternate .widget-number` at
+2rem / weight 200 (the child, youth, TLS and centre profiles); the
+compatibility layer brings the tabs down to the body size with an underline
+for the active tab.
+
+**Asset versions.** `base.html` pins `redesign.css`, `bs4-compat.css` and
+`redesign.js` with a `?v=` query string. Bump it whenever those files change,
+or browsers keep the cached copy and the deployed pages look different from
+the repository.
 
 **Forms.** crispy-forms renders through the `bootstrap5` pack. `bootstrap3`
 stays installed for anything that asks for it explicitly.

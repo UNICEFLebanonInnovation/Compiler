@@ -831,7 +831,11 @@ button.close:hover,
 }
 
 /* --- Forms wizard (52 templates) --------------------------------------- */
-.forms-wizard {
+/* Most templates wrap the whole wizard in `<div id="smartwizard3"
+   class="forms-wizard">` as well as using the class on the step `<ul>`.
+   The flex layout belongs to the list only: on the wrapper it would lay the
+   stepper, the error summary and the step content out side by side. */
+ul.forms-wizard {
     display: flex;
     flex-wrap: wrap;
     list-style: none;
@@ -839,6 +843,15 @@ button.close:hover,
     margin: 0 0 1.75rem;
     counter-reset: wizard-step;
     position: relative;
+}
+
+div.forms-wizard {
+    display: block;
+    width: 100%;
+}
+
+div.forms-wizard > * {
+    width: 100%;
 }
 
 .forms-wizard li {
@@ -1504,4 +1517,107 @@ button.close:hover,
     vertical-align: -.125em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- Screenshot review fixes ------------------------------------------- */
+
+/* Legacy gradient icons: `.bg-*` sets the background shorthand with
+   !important, which resets background-clip and paints a solid square
+   behind the glyph. Keep the gradient on the glyph, in brand colours. */
+.icon-gradient[class*="bg-"] {
+    background-image: linear-gradient(135deg, var(--unicef-blue), var(--unicef-dark-blue)) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent;
+    color: transparent !important;
+}
+
+.card-header .header-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+    vertical-align: -.2em;
+}
+
+/* Profile tabs (.tabs-lg-alternate): base.css sizes the labels at
+   2rem / weight 200 and the flex card header pushed them apart. */
+.tabs-lg-alternate.card-header {
+    display: block;
+    padding: 0 .5rem;
+}
+
+.tabs-lg-alternate.card-header > .nav {
+    flex-wrap: wrap;
+    gap: .25rem;
+}
+
+.tabs-lg-alternate.card-header > .nav .nav-link {
+    padding: .85rem .75rem !important;
+    min-height: 2.75rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+    background: transparent;
+}
+
+.tabs-lg-alternate.card-header > .nav .nav-link:hover {
+    color: var(--unicef-dark-blue);
+    background: var(--unicef-light-blue);
+}
+
+.tabs-lg-alternate.card-header > .nav .nav-link:focus-visible {
+    outline: 0;
+    box-shadow: var(--focus-ring);
+}
+
+.tabs-lg-alternate.card-header > .nav .nav-link.active {
+    color: var(--unicef-dark-blue);
+    border-bottom-color: var(--unicef-blue);
+    font-weight: 600;
+}
+
+.tabs-lg-alternate.card-header .widget-number {
+    font-size: 1rem;
+    font-weight: inherit;
+    line-height: 1.3;
+}
+
+/* Colour is reserved for meaning; a tab label is not a warning. */
+.tabs-lg-alternate.card-header .widget-number.text-danger {
+    color: inherit !important;
+}
+
+.tabs-lg-alternate.card-header .tab-subheading {
+    font-size: .8125rem;
+    color: var(--text-muted);
+}
+
+/* Numbered question pills in the crispy layouts (base.css hard-codes the
+   old #3f6ad8 blue). */
+.badge-pill[class*="badge-form"],
+[class*="badge-form"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-color: var(--unicef-blue);
+    background-color: var(--surface-raised);
+    color: var(--brand-action);
+    font-weight: 600;
+    font-size: .8125rem;
+    line-height: 1;
+}
+
+/* Attendance screens: the legacy scripts only toggle `.hidden` on the
+   closing-reason select, so its label goes with it. */
+.close-reason-field:has(> select.hidden) {
+    display: none;
+}
+
+.attendance-controls .btn-group-toggle > label.btn {
+    flex: 1 1 0;
+    min-height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }

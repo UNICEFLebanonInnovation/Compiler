@@ -138,9 +138,18 @@
             const radioButtons = document.querySelectorAll("input[name='registrationType']");
             let isSubmitting = false;
 
+            // The "new round" modal is only rendered for some users.
+            if (!confirmButton || !radioButtons.length) {
+                return;
+            }
+
             const updateHref = () => {
-                const selectedType = document.querySelector("input[name='registrationType']:checked").value;
-                confirmButton.href = "{% url 'mscc:new_round_redirect' %}?registry={{ instance.id }}&new_round_confirmation=confirmed&registrationType=" + selectedType;
+                let checked = document.querySelector("input[name='registrationType']:checked");
+                if (!checked) {
+                    radioButtons[0].checked = true;
+                    checked = radioButtons[0];
+                }
+                confirmButton.href = "{% url 'mscc:new_round_redirect' %}?registry={{ instance.id }}&new_round_confirmation=confirmed&registrationType=" + checked.value;
             };
 
             const submitNewRound = (event) => {

@@ -1350,6 +1350,45 @@
     };
     var suppressLeaveGuard = false;
 
+    /* ---------------------------------------------------------------------
+       Date pickers
+       The old ArchitectUI bundle initialised `[data-toggle="datepicker"]`
+       (the attendance screens). The shell loads jQuery UI, so those inputs
+       get its datepicker; the calendar icon beside the field opens it too.
+       Pages that do not load the legacy jQuery UI theme get the calendar
+       styled from `redesign.css` (html.bma-datepicker).
+       --------------------------------------------------------------------- */
+
+    function initDatepickers() {
+        var $j = window.jQuery;
+        if (!$j || !$j.fn || typeof $j.fn.datepicker !== 'function') {
+            return;
+        }
+        if (!document.querySelector('link[href*="jquery-ui"]')) {
+            document.documentElement.classList.add('bma-datepicker');
+        }
+        $all('input[data-toggle="datepicker"]').forEach(function (input) {
+            if (input.dataset.bmaDatepicker) {
+                return;
+            }
+            input.dataset.bmaDatepicker = '1';
+            // Keep whatever format the server rendered; ISO otherwise.
+            var format = /^\d{1,2}\/\d{1,2}\/\d{4}/.test(input.value) ? 'mm/dd/yy' : 'yy-mm-dd';
+            $j(input).datepicker({ dateFormat: format });
+            var group = input.closest('.input-group');
+            var trigger = group && group.querySelector('.datepicker-trigger');
+            if (trigger) {
+                trigger.style.cursor = 'pointer';
+                trigger.setAttribute('role', 'button');
+                trigger.setAttribute('aria-label', 'Open calendar');
+                trigger.addEventListener('click', function () {
+                    input.focus();
+                    $j(input).datepicker('show');
+                });
+            }
+        });
+    }
+
     function initSessionTimer() {
         var body = document.body;
         var minutes = parseFloat(body.getAttribute('data-idle-minutes') || '0');
@@ -1562,6 +1601,7 @@
         initDrafts();
         initSelectFilters();
         initButtonSemantics();
+        initDatepickers();
         initSessionTimer();
 
         // Content injected later (remote modals, AJAX partials) needs the same
