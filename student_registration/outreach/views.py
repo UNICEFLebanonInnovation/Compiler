@@ -29,24 +29,31 @@ MAX_CHUNKS = 5
 
 
 def outreach_import_data(request):
+    print("outreach_import_data: started")
     last_loaded_identifier = OutreachCaregiver.objects.filter(form_id='aLkUps4YnMc43ATvTr9JB3').aggregate(Max('u_id'))['u_id__max']
     if last_loaded_identifier is None:
         last_loaded_identifier = 0
     # last_loaded_identifier = 0
     last_loaded_identifier_str = str(last_loaded_identifier)
+    print("outreach_import_data: last_loaded_identifier_str = {}".format(last_loaded_identifier_str))
     url = "https://eu.kobotoolbox.org/api/v2/assets/aLkUps4YnMc43ATvTr9JB3/data.json?sort=%7B%22_id%22%3A+1%7D&query=%7B%22_id%22%3A+%7B%22%24gt%22%3A+" + last_loaded_identifier_str + "%7D%7D"
     headers = CaseInsensitiveDict()
     headers["Authorization"] = "Token 96d9b5c22e092b684544167a136fba0b62df4c25"
     try:
+        print("outreach_import_data: requesting data from KoboToolbox")
         resp = requests.get(url, headers=headers)
+        print("outreach_import_data: KoboToolbox response status = {}".format(resp.status_code))
         resp.raise_for_status()
         data = json.loads(resp.text)
+        print("outreach_import_data: received {} records".format(len(data.get("results", []))))
     except Exception as ex:
+        print("outreach_import_data: failed while fetching data: {}".format(ex))
         logger.exception("Failed to fetch outreach data")
         return HttpResponse("Error fetching data", status=500)
 
     for record in data["results"]:
         try:
+            print("outreach_import_data: importing record _id = {}".format(record.get("_id")))
             caregiver = OutreachCaregiver()
             caregiver.u_id = record["_id"]
             caregiver.form_id = record["_xform_id_string"]
@@ -86,10 +93,12 @@ def outreach_import_data(request):
             record_value(caregiver, "interview_comment", record, "child_notes")
             record_value(caregiver, "submission_status", record, "_status")
             caregiver.save()
+            print("outreach_import_data: caregiver saved for record _id = {}".format(record.get("_id")))
 
             # caregiver_id = caregiver.id
             if "DC" in record:
                 try:
+                    print("outreach_import_data: importing {} children for record _id = {}".format(len(record["DC"]), record.get("_id")))
                     for student in record["DC"]:
                         st = OutreachChild()
                         st.outreach_caregiver = caregiver
@@ -129,11 +138,15 @@ def outreach_import_data(request):
                         record_value(st, "child_referral", student, "DC/child_referral")
                         record_value(st, "child_notes", student, "DC/child_notes")
                         st.save()
+                        print("outreach_import_data: children saved for record _id = {}".format(record.get("_id")))
                 except Exception as student_error:
+                    print("outreach_import_data: child import failed for record _id = {}: {}".format(record.get("_id"), student_error))
                     pass
 
         except Exception as record_error:
+            print("outreach_import_data: caregiver import failed for record _id = {}: {}".format(record.get("_id"), record_error))
             pass
+    print("outreach_import_data: finished")
     return HttpResponse("records saved successfully")
 
 
