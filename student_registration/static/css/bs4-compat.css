@@ -1088,6 +1088,35 @@ div.forms-wizard > * {
     color: #fff;
 }
 
+/* ArchitectUI's avatar dimensions used to come from the removed vendor
+   bundle. Without them, the intrinsic dimensions of the fallback profile
+   image make it fill the entire card header. Keep the legacy size names
+   available and ensure the image is cropped inside their fixed frame. */
+.avatar-icon-wrapper {
+    display: inline-block;
+    flex: 0 0 auto;
+}
+
+.avatar-icon {
+    width: 44px;
+    height: 44px;
+    overflow: hidden;
+    border: 3px solid #fff;
+    border-radius: 50%;
+}
+
+.avatar-icon-xl .avatar-icon {
+    width: 64px;
+    height: 64px;
+}
+
+.avatar-icon img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .dropdown-menu-lg { min-width: 320px; }
 .dropdown-menu-xl { min-width: 380px; }
 
