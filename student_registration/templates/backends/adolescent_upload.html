@@ -15,41 +15,27 @@
 {% block content %}
 
 <section>
-    <div class="app-page-title">
-      <div class="page-title-wrapper">
-          <div class="page-title-heading">
-              <div>
-                  <div class="page-title-head center-elem page-title-heading">
-                      <span class="d-inline-block pr-2">
-                          <i class="fa fa-upload"></i>
-                      </span>
-                      <span class="d-inline-block">
-                          Upload Adolescent Data
-                      </span>
-                  </div>
-                  <div class="page-title-subheading opacity-10">
-                      <nav aria-label="breadcrumb">
-                          <ol class="breadcrumb">
-                              <li class="breadcrumb-item">
-                                  <a href="/">
-                                      Home
-                                  </a>
-                              </li>
+    <div class="page-header">
+    <div class="page-header-titles">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                    <a href="/">
+                        Home
+                    </a>
+                </li>
 
-                              <li class="breadcrumb-item">
-                                  <a href="{% url 'youth:list' %}">
-                                      List
-                                  </a>
-                              </li>
-                              <li class="breadcrumb-item">Bulk import</li>
-                          </ol>
-                      </nav>
-                  </div>
-              </div>
-          </div>
-          <div class="page-title-actions"></div>
-      </div>
-  </div>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'youth:list' %}">
+                        List
+                    </a>
+                </li>
+                <li class="breadcrumb-item">Bulk import</li>
+            </ol>
+        </nav>
+        <h1 class="page-header-title"><i class="fa fa-upload"></i> Upload Adolescent Data</h1>
+    </div>
+</div>
 
     <div class="main-card mb-3 card">
         <div class="card-body">
@@ -58,7 +44,7 @@
                 {% if 'import' in message.tags %}
                   <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     {{ message }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
                   </div>

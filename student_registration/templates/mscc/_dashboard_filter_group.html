@@ -1,0 +1,32 @@
+{% load i18n %}
+{% comment %}
+One dashboard filter as a group of checkboxes.
+
+Replaces the <select multiple> controls: a list box that needs Ctrl-click to
+pick a second value is invisible to most users and unusable on touch. Every
+value is a labelled checkbox, long lists get a search box to shorten them,
+and the legend shows how many are ticked.
+
+Context: id, param, label, items (objects with .id and a str()).
+{% endcomment %}
+<fieldset class="filter-group" id="{{ id }}" data-param="{{ param }}">
+    <legend class="filter-group-legend">
+        <span>{{ label }}</span>
+        <span class="filter-group-count" data-count-for="{{ id }}" aria-live="polite"></span>
+    </legend>
+    {% if items|length > 8 %}
+    <label class="visually-hidden" for="{{ id }}_search">{% blocktrans %}Search {{ label }}{% endblocktrans %}</label>
+    <input type="search" id="{{ id }}_search" class="form-control form-control-sm filter-group-search mb-2"
+           placeholder="{% trans 'Type to shorten the list' %}" autocomplete="off">
+    {% endif %}
+    <div class="filter-group-options">
+        {% for item in items %}
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="{{ id }}_{{ item.id }}" value="{{ item.id }}">
+            <label class="form-check-label" for="{{ id }}_{{ item.id }}">{{ item }}</label>
+        </div>
+        {% empty %}
+        <p class="text-muted mb-0">{% trans "No values available" %}</p>
+        {% endfor %}
+    </div>
+</fieldset>

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load custom_tags %}
 {% load static i18n %}
 {% load render_table from django_tables2 %}
 {% load django_bootstrap5 %}
@@ -29,9 +30,43 @@
       <li class="breadcrumb-item active">{{ request.user }}</li>
     </ol>
 
-    <div class="pb-5 pr-5 list-filter" style="margin: 10px;">
+    {% active_filters filter as applied_filters %}
+<div class="filter-bar" id="filter-bar">
+    <button class="btn btn-outline-secondary btn-icon filter-bar-open" type="button"
+            data-bs-toggle="offcanvas" data-bs-target="#listFilters" aria-controls="listFilters">
+        <i class="bi bi-funnel" aria-hidden="true"></i>{% trans "Filters" %}
+        {% if applied_filters %}<span class="badge rounded-pill text-bg-primary">{{ applied_filters|length }}</span>{% endif %}
+    </button>
+    {% if applied_filters %}
+    <div class="active-filters" id="active-filters">
+        <span class="active-filters-label"><i class="bi bi-funnel-fill" aria-hidden="true"></i>{% trans "Filtered by" %}</span>
+        {% for entry in applied_filters %}
+        <span class="filter-chip">
+            <span class="filter-chip-label">{{ entry.label }}</span>
+            <span class="filter-chip-value">{{ entry.value }}</span>
+            <button type="button" class="btn-close" data-remove-filter="{{ entry.name }}"
+                    aria-label="{% blocktrans with name=entry.label %}Remove {{ name }} filter{% endblocktrans %}"></button>
+        </span>
+        {% endfor %}
+        <a href="{{ request.path }}" class="active-filters-clear">{% trans "Clear all" %}</a>
+    </div>
+    {% else %}
+    <span class="filter-bar-hint text-muted">{% trans "Showing everything. Use Filters to narrow the list." %}</span>
+    {% endif %}
+</div>
+
+<div class="offcanvas offcanvas-end filter-drawer" tabindex="-1" id="listFilters" aria-labelledby="listFiltersLabel">
+    <div class="offcanvas-header">
+        <h2 class="offcanvas-title" id="listFiltersLabel">
+            <i class="bi bi-funnel" aria-hidden="true"></i>{% trans "Filters" %}
+            {% if applied_filters %}<span class="badge rounded-pill text-bg-primary">{{ applied_filters|length }}</span>{% endif %}
+        </h2>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{% trans 'Close' %}"></button>
+    </div>
+    <div class="offcanvas-body">
         <form action="" method="get" class="form form-inline">
-            {% bootstrap_form filter.form layout='inline' %}
+            {% bootstrap_form filter.form %}
+                        <div class="filter-drawer-actions">
             <div class="">
               <button class="btn btn-primary">
                 <i class="icon-validation-sign icon-white"></i>
@@ -55,8 +90,10 @@
               <a href="{% url 'clm:cbece_dashboard' %}" class="btn btn-primary" role="button" aria-pressed="true">Dashboard</a>
 
             </div>
+                        </div>
         </form>
     </div>
+</div>
     <div class="" style="overflow: auto; margin: 10px;">
         {% csrf_token %}
         {% render_table table 'django_tables2/bootstrap.html' %}

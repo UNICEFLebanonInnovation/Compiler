@@ -1,143 +1,208 @@
 {% extends "base.html" %}
 {% load static i18n %}
-{% load util_tags %}
+{% load custom_tags %}
 
-{% block module_name %}{% endblock %}
+{% block project_title %}{% trans "Home" %}{% endblock %}
+{% block module_name %}{% trans "Home" %}{% endblock %}
 
 {% block main_content %}
 
-<!--<div class="app-page-title">-->
-                        <!--<div class="page-title-wrapper">-->
-                            <!--<div class="page-title-heading">-->
-                                <!--<div>-->
-                                    <!--<div class="page-title-head center-elem page-title-heading">-->
-                                        <!--<span class="d-inline-block pr-2">-->
-                                            <!--<i class="pe-7s-display1"></i>-->
-                                        <!--</span>-->
-                                        <!--<span class="d-inline-block">Dirasa</span>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
+<div class="page-header">
+    <div class="page-header-titles">
+        <h1 class="page-header-title">
+            <i class="bi bi-grid-1x2"></i>
+            {% blocktrans with name=request.user.first_name %}Welcome, {{ name }}{% endblocktrans %}
+        </h1>
+        <p class="page-header-subtitle">
+            {% trans "Choose a module to continue. Only the modules your account has access to are active." %}
+        </p>
+    </div>
+</div>
 
-                        <!--</div>-->
-<!--</div>-->
+<div class="row g-3">
 
-<div class="row">
-                            <div class="col-lg-12 col-xl-12">
-                                <div class="main-card mb-3 card">
-                                    <div class="grid-menu grid-menu-2col">
-                                        <div class="no-gutters row">
-                                            <div class="col-sm-6">
-                                                <div class="widget-chart widget-chart-hover">
-                                                    <div class="icon-wrapper rounded-circle">
-                                                        <div class="icon-wrapper-bg bg-info"></div>
-                                                        <i class="lnr-laptop-phone text-info"></i>
-                                                    </div>
-                                                    <div class="widget-numbers">
-                                                        {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
-                                                            <a href="{% url 'mscc:list' %}">Makani</a>
-                                                        {% else %}
-                                                            <span class="text-muted">Makani</span>
-                                                        {% endif %}
-                                                    </div>
-                                                    <div class="widget-subheading"></div>
-                                                    <div class="widget-description text-info">
-                                                        <i class="fa fa-arrow-right"></i>
-                                                        {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
-                                                            <a href="{% url 'mscc:dashboard' %}">Dashboard</a>
-                                                        {% else %}
-                                                            <span class="text-muted">Dashboard</span>
-                                                        {% endif %}
-                                                        <span class="pl-1"></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="widget-chart widget-chart-hover">
-                                                    <div class="icon-wrapper rounded-circle">
-                                                        <div class="icon-wrapper-bg bg-warning"></div>
-                                                        <i class="lnr-book text-warning"></i>
-                                                    </div>
-                                                    <div class="widget-numbers">
-                                                        {% if request.user|has_group:"TLS" or request.user|has_group:"TLS_PARTNER" or request.user|has_group:"TLS_UNICEF" or request.user|has_group:"TLS_CENTER" %}
-                                                            <a href="{% url 'tls:list' %}">TLS</a>
-                                                        {% else %}
-                                                            <span class="text-muted">TLS</span>
-                                                        {% endif %}
-                                                    </div>
-                                                    <div class="widget-subheading"></div>
-                                                    <div class="widget-description text-info">
-                                                        <span class="pl-1"></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="widget-chart widget-chart-hover">
-                                                    <div class="icon-wrapper rounded-circle">
-                                                        <div class="icon-wrapper-bg bg-primary"></div>
-                                                        <i class="lnr-cog text-primary"></i></div>
-                                                  <div class="widget-numbers">
-                                                     {% if request.user|has_group:"CLM_Bridging" %}
-                                                    <a href="{% url 'clm:bridging_page' %}">Dirasa {% if request.user.partner.is_Kayany %} - Kayany {% endif %}</a>
-                                                     {% else %}
-                                                     <span class="text-muted">Dirasa {% if request.user.partner.is_Kayany %} - Kayany {% endif %}</span>
-                                                    {% endif %}
-                                                  </div>
-                                                    <div class="widget-subheading"></div>
-                                                    <div class="widget-description text-success">
-                                                        <i class="fa fa-arrow-right"></i>
-                                                        {% if request.user|has_group:"CLM_Bridging" %}
-                                                            <a href="{% url 'clm:dashboard' %}">Dashboard</a>
-                                                        {% else %}
-                                                            <span class="text-muted">Dashboard</span>
-                                                        {% endif %}
-                                                        <span class="pl-1"> </span></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="widget-chart widget-chart-hover">
-                                                    <div class="icon-wrapper rounded-circle">
-                                                        <div class="icon-wrapper-bg bg-danger"></div>
-                                                        <i class="lnr-apartment text-danger"></i>
-                                                    </div>
-                                                  <div class="widget-numbers">
-                                                        {% if request.user|has_group:"CLM_Inclusion" %}
-                                                            <a href="{% url 'clm:inclusion_list' %}">Disability Specialized</a>
-                                                        {% else %}
-                                                            <span class="text-muted">Disability Specialized</span>
-                                                        {% endif %}
-                                                  </div>
-                                                    <div class="widget-subheading"></div>
-                                                    <div class="widget-description text-primary"><span class="pr-1"></span>
-                                                        <!--<i class="fa fa-angle-up"></i>-->
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="widget-chart widget-chart-hover br-br">
-                                                    <div class="icon-wrapper rounded-circle">
-                                                        <div class="icon-wrapper-bg bg-success"></div>
-                                                        <i class="lnr-graduation-hat"></i></div>
-                                                    <div class="widget-numbers">
-                                                          {% if request.user|has_group:"YOUTH" or request.user|has_group:"YOUTH_PARTNER" or request.user|has_group:"YOUTH_UNICEF" %}
-                                                              <a href="{% url 'youth:list' %}">Youth</a>
-                                                          {% else %}
-                                                              <span class="text-muted">Youth</span>
-                                                          {% endif %}
-                                                    </div>
-                                                    <div class="widget-subheading"></div>
-                                                    <div class="widget-description text-warning"><span class="pr-1"></span>
-                                                        <!--<i class="fa fa-arrow-left"></i>-->
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6" aria-hidden="true">
-                                                <div class="widget-chart landing-page-empty-cell"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+    {# ---------------------------------------------------------- Makani #}
+    <div class="col-sm-6 col-xl-4">
+        {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
+        <a class="quick-action-tile" href="{% url 'mscc:list' %}">
+            <i class="bi bi-people-fill"></i>
+            <span class="tile-title">{% trans "Makani" %}</span>
+            <span class="tile-description">{% trans "Registration, attendance and centers" %}</span>
+            <span class="mt-3 small fw-semibold text-brand">
+                {% trans "Open module" %} <i class="bi bi-arrow-right"></i>
+            </span>
+        </a>
+        {% else %}
+        <div class="quick-action-tile disabled">
+            <i class="bi bi-people-fill"></i>
+            <span class="tile-title">{% trans "Makani" %}</span>
+            <span class="tile-description">{% trans "No access" %}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    {# ------------------------------------------------------------- TLS #}
+    <div class="col-sm-6 col-xl-4">
+        {% if request.user|has_group:"TLS" or request.user|has_group:"TLS_PARTNER" or request.user|has_group:"TLS_UNICEF" or request.user|has_group:"TLS_CENTER" %}
+        <a class="quick-action-tile" href="{% url 'tls:list' %}">
+            <i class="bi bi-house-heart"></i>
+            <span class="tile-title">{% trans "TLS" %}</span>
+            <span class="tile-description">{% trans "Temporary learning spaces" %}</span>
+            <span class="mt-3 small fw-semibold text-brand">
+                {% trans "Open module" %} <i class="bi bi-arrow-right"></i>
+            </span>
+        </a>
+        {% else %}
+        <div class="quick-action-tile disabled">
+            <i class="bi bi-house-heart"></i>
+            <span class="tile-title">{% trans "TLS" %}</span>
+            <span class="tile-description">{% trans "No access" %}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    {# ---------------------------------------------------------- Dirasa #}
+    <div class="col-sm-6 col-xl-4">
+        {% if request.user|has_group:"CLM_Bridging" %}
+        <a class="quick-action-tile" href="{% url 'clm:bridging_page' %}">
+            <i class="bi bi-mortarboard"></i>
+            <span class="tile-title">
+                {% trans "Dirasa" %}{% if request.user.partner.is_Kayany %} — {% trans "Kayany" %}{% endif %}
+            </span>
+            <span class="tile-description">{% trans "Bridging programme and schools" %}</span>
+            <span class="mt-3 small fw-semibold text-brand">
+                {% trans "Open module" %} <i class="bi bi-arrow-right"></i>
+            </span>
+        </a>
+        {% else %}
+        <div class="quick-action-tile disabled">
+            <i class="bi bi-mortarboard"></i>
+            <span class="tile-title">
+                {% trans "Dirasa" %}{% if request.user.partner.is_Kayany %} — {% trans "Kayany" %}{% endif %}
+            </span>
+            <span class="tile-description">{% trans "No access" %}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    {# ------------------------------------------ Disability Specialized #}
+    <div class="col-sm-6 col-xl-4">
+        {% if request.user|has_group:"CLM_Inclusion" %}
+        <a class="quick-action-tile" href="{% url 'clm:inclusion_list' %}">
+            <i class="bi bi-universal-access-circle"></i>
+            <span class="tile-title">{% trans "Disability Specialized" %}</span>
+            <span class="tile-description">{% trans "Inclusion registrations and referrals" %}</span>
+            <span class="mt-3 small fw-semibold text-brand">
+                {% trans "Open module" %} <i class="bi bi-arrow-right"></i>
+            </span>
+        </a>
+        {% else %}
+        <div class="quick-action-tile disabled">
+            <i class="bi bi-universal-access-circle"></i>
+            <span class="tile-title">{% trans "Disability Specialized" %}</span>
+            <span class="tile-description">{% trans "No access" %}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    {# ----------------------------------------------------------- Youth #}
+    <div class="col-sm-6 col-xl-4">
+        {% if request.user|has_group:"YOUTH" or request.user|has_group:"YOUTH_PARTNER" or request.user|has_group:"YOUTH_UNICEF" %}
+        <a class="quick-action-tile" href="{% url 'youth:list' %}">
+            <i class="bi bi-person-badge"></i>
+            <span class="tile-title">{% trans "Youth" %}</span>
+            <span class="tile-description">{% trans "Youth registration and programmes" %}</span>
+            <span class="mt-3 small fw-semibold text-brand">
+                {% trans "Open module" %} <i class="bi bi-arrow-right"></i>
+            </span>
+        </a>
+        {% else %}
+        <div class="quick-action-tile disabled">
+            <i class="bi bi-person-badge"></i>
+            <span class="tile-title">{% trans "Youth" %}</span>
+            <span class="tile-description">{% trans "No access" %}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    {# ------------------------------------------------------- Analytics #}
+    <div class="col-sm-6 col-xl-4">
+        {% if request.user|has_group:"CHARTER_BETA" %}
+        <a class="quick-action-tile" href="{% url 'dashboard:pivot_dashboard' %}">
+            <i class="bi bi-graph-up-arrow"></i>
+            <span class="tile-title">{% trans "Analytics" %}</span>
+            <span class="tile-description">{% trans "Pivot builder, maps and wellbeing" %}</span>
+            <span class="mt-3 small fw-semibold text-brand">
+                {% trans "Open module" %} <i class="bi bi-arrow-right"></i>
+            </span>
+        </a>
+        {% else %}
+        <div class="quick-action-tile disabled">
+            <i class="bi bi-graph-up-arrow"></i>
+            <span class="tile-title">{% trans "Analytics" %}</span>
+            <span class="tile-description">{% trans "No access" %}</span>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"CLM_Bridging" or request.user|has_group:"CHARTER_BETA" %}
+<div class="section-divider">{% trans "Dashboards" %}</div>
+
+<div class="row g-3">
+    {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
+    <div class="col-sm-6 col-xl-3">
+        <a class="card card-interactive text-decoration-none h-100 mb-0" href="{% url 'mscc:dashboard' %}">
+            <div class="metric-card">
+                <span class="metric-icon"><i class="bi bi-speedometer2"></i></span>
+                <div>
+                    <div class="fw-semibold">{% trans "Makani Dashboard" %}</div>
+                    <div class="metric-label">{% trans "Registration overview" %}</div>
+                </div>
+            </div>
+        </a>
+    </div>
+    {% endif %}
+
+    {% if request.user|has_group:"CLM_Bridging" %}
+    <div class="col-sm-6 col-xl-3">
+        <a class="card card-interactive text-decoration-none h-100 mb-0" href="{% url 'clm:dashboard' %}">
+            <div class="metric-card">
+                <span class="metric-icon"><i class="bi bi-speedometer2"></i></span>
+                <div>
+                    <div class="fw-semibold">{% trans "Dirasa Dashboard" %}</div>
+                    <div class="metric-label">{% trans "Bridging overview" %}</div>
+                </div>
+            </div>
+        </a>
+    </div>
+    {% endif %}
+
+    {% if request.user|has_group:"CHARTER_BETA" %}
+    <div class="col-sm-6 col-xl-3">
+        <a class="card card-interactive text-decoration-none h-100 mb-0" href="{% url 'dashboard:centers_map' %}">
+            <div class="metric-card">
+                <span class="metric-icon"><i class="bi bi-geo-alt"></i></span>
+                <div>
+                    <div class="fw-semibold">{% trans "Centers Map" %}</div>
+                    <div class="metric-label">{% trans "Geographic coverage" %}</div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <a class="card card-interactive text-decoration-none h-100 mb-0" href="{% url 'dashboard:wellbeing_dashboard' %}">
+            <div class="metric-card">
+                <span class="metric-icon"><i class="bi bi-heart-pulse"></i></span>
+                <div>
+                    <div class="fw-semibold">{% trans "Wellbeing" %}</div>
+                    <div class="metric-label">{% trans "Learning outcomes" %}</div>
+                </div>
+            </div>
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
 
 {% endblock %}

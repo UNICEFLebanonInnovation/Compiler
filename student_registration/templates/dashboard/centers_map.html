@@ -19,15 +19,10 @@
 {% endblock %}
 
 {% block content %}
-<div class="app-page-title">
-    <div class="page-title-wrapper">
-        <div class="page-title-heading">
-            <div class="page-title-icon"><i class="pe-7s-map-marker icon-gradient bg-plum-plate"></i></div>
-            <div>
-                {% trans "Centers Geographic Overview" %}
-                <div class="page-title-subheading">{% trans "Visualizing center locations and registration density across Lebanon." %}</div>
-            </div>
-        </div>
+<div class="page-header">
+    <div class="page-header-titles">
+        <h1 class="page-header-title"><i class="bi bi-geo-alt"></i>{% trans "Centers Geographic Overview" %}</h1>
+        <p class="page-header-subtitle">{% trans "Visualizing center locations and registration density across Lebanon." %}</p>
     </div>
 </div>
 

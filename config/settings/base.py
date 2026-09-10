@@ -65,8 +65,10 @@ DJANGO_APPS = [
 ]
 THIRD_PARTY_APPS = [
     "crispy_forms",
+    # bootstrap3 stays installed as a fallback for any form still asking for
+    # that pack explicitly; bootstrap5 is the default for the redesign.
     "crispy_bootstrap3",
-    # "crispy_bootstrap5",
+    "crispy_bootstrap5",
     # "crispy_bootstrap4",
     'allauth',  # registration
     'allauth.account',  # registration
@@ -118,7 +120,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     # "whitenoise.middleware.WhiteNoiseMiddleware",
     # "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.locale.LocaleMiddleware",
+    "student_registration.language_middleware.ChosenLanguageMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "allauth.account.middleware.AccountMiddleware",
@@ -215,7 +217,16 @@ TIME_ZONE = 'Asia/Beirut'
 SITE_ID = 1
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#use-i18n
-USE_I18N = False
+# Translation is on; the interface language follows the user's choice from
+# the topbar (see student_registration.language_middleware), defaulting to
+# English. The Arabic catalogue lives in static/locale/ar; run
+# `manage.py compilemessages` after editing the .po file.
+USE_I18N = True
+LANGUAGE_CODE = 'en'
+LANGUAGES = [
+    ('en', 'English'),
+    ('ar', 'العربية'),
+]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#use-l10n
 USE_L10N = False
@@ -261,8 +272,12 @@ TEMPLATES = [
 
 # See: http://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs
 CRISPY_ALLOWED_TEMPLATE_PACKS = ["bootstrap3", "bootstrap5"]
-# CRISPY_TEMPLATE_PACK = "bootstrap5"
-CRISPY_TEMPLATE_PACK = "bootstrap3"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+# django-tables2 renders through the redesigned Bootstrap 5 shell by default.
+# The legacy paths (django_tables2/bootstrap.html, bootstrap4.html) are aliased
+# to the same template, so tables that name one explicitly match as well.
+DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap5.html"
 
 # STATIC FILE CONFIGURATION
 # ------------------------------------------------------------------------------

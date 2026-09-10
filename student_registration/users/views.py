@@ -183,3 +183,17 @@ def save_fcm_token(request):
         token_obj.save(update_fields=["user"])
     WebPushToken.objects.filter(user=request.user).exclude(pk=token_obj.pk).delete()
     return JsonResponse({'status': 'ok'})
+
+
+@login_required
+def session_ping(request):
+    """Keep-alive for redesign.js.
+
+    AutoLogout ends a session after AUTO_LOGOUT_DELAY minutes without a
+    request, and filling in a long form makes none. The page pings this
+    while the user is active and offers "Stay signed in" before the cutoff;
+    any authenticated request resets the middleware's clock. An expired
+    session gets the usual redirect to the sign-in page, which the script
+    treats as "signed out".
+    """
+    return HttpResponse(status=204)

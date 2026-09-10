@@ -6,40 +6,24 @@
 {% block project_title %}Attendance Export{% endblock %}
 
 {% block content %}
-<div class="app-page-title">
-                        <div class="page-title-wrapper">
-                            <div class="page-title-heading">
-                                <div>
-                                    <div class="page-title-head center-elem page-title-heading">
-                                        <span class="d-inline-block pr-2">
-                                            <i class="fa fa-child"></i>
-                                        </span>
-                                        <span class="d-inline-block">
-                                          Dirasa Daily Attendance
-                                        </span>
-                                    </div>
-                                    <div class="page-title-subheading opacity-10">
-                                        <nav class="" aria-label="breadcrumb">
-                                            <ol class="breadcrumb">
-                                                <li class="breadcrumb-item">
-                                                    <a href="/">
-                                                        Home
-                                                    </a>
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    <a href="{% url 'clm:bridging_page' %}">
-                                                        Dirasa
-                                                    </a>
-                                                </li>
-                                            </ol>
-                                        </nav>
-                                    </div>
-                                </div>
-                            </div>
-                        <div class="page-title-actions"></div>
-
-
-                        </div>
+<div class="page-header">
+    <div class="page-header-titles">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                    <a href="/">
+                        Home
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'clm:bridging_page' %}">
+                        Dirasa
+                    </a>
+                </li>
+            </ol>
+        </nav>
+        <h1 class="page-header-title"><i class="fa fa-child"></i> Dirasa Daily Attendance</h1>
+    </div>
 </div>
 
 <section class="container-fluid" data-section="home">

@@ -28,7 +28,7 @@
         <section class="inline-form inner-section light bg-color01">
             <div class="container-fluid nopadding">
                 {{ form.errors }}
-                {% crispy form 'bootstrap3' %}
+                {% crispy form 'bootstrap5' %}
             </div>
         </section>
 {#        {% endif %}#}
@@ -46,8 +46,8 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/registrations.js' %}"></script>
 
     <script>
-      var url = "{% url 'clm:load_districts' %}";
-      var url_cadasters = "{% url 'clm:load_cadasters' %}";
+      var url = "{% url 'locations:load_districts' %}";
+      var url_cadasters = "{% url 'locations:load_cadasters' %}";
 
       $("#id_governorate").change(function () {
           load_districts(url);

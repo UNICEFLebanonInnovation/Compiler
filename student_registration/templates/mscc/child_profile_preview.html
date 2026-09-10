@@ -10,7 +10,7 @@
                                         <!--<div class="tabs-lg-alternate card-header">-->
                                             <!--<ul class="nav nav-justified">-->
                                                 <!--<li class="nav-item">-->
-                                                    <!--<a data-toggle="tab" href="#tab-eg9-0" class="nav-link active show">-->
+                                                    <!--<a data-bs-toggle="tab" href="#tab-eg9-0" class="nav-link active show">-->
                                                         <!--<div class="widget-number">Child Info.</div>-->
                                                     <!--</a></li>-->
                                             <!--</ul>-->
@@ -243,17 +243,17 @@
                                         </div>
                                         <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
                                             <li class="nav-item">
-                                                <a role="tab" class="nav-link active show" id="tab-c-1" data-toggle="tab" href="#tab-animated-1" aria-selected="true">
+                                                <a role="tab" class="nav-link active show" id="tab-c-1" data-bs-toggle="tab" href="#tab-animated-1" aria-selected="true">
                                                     <span>Address</span>
                                                 </a>
                                             </li>
                                             <li class="nav-item">
-                                                <a role="tab" class="nav-link" id="tab-c-0" data-toggle="tab" href="#tab-animated-0">
+                                                <a role="tab" class="nav-link" id="tab-c-0" data-bs-toggle="tab" href="#tab-animated-0">
                                                     <span>Household</span>
                                                 </a>
                                             </li>
                                             <li class="nav-item">
-                                                <a role="tab" class="nav-link" id="tab-c-2" data-toggle="tab" href="#tab-animated-2">
+                                                <a role="tab" class="nav-link" id="tab-c-2" data-bs-toggle="tab" href="#tab-animated-2">
                                                     <span>Social/Economic</span>
                                                 </a>
                                             </li>
@@ -498,12 +498,12 @@
                                         </div>
                                         <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
                                             <li class="nav-item">
-                                                <a role="tab" class="nav-link active show" id="tab-c-3" data-toggle="tab" href="#tab-animated-3" aria-selected="true">
+                                                <a role="tab" class="nav-link active show" id="tab-c-3" data-bs-toggle="tab" href="#tab-animated-3" aria-selected="true">
                                                     <span>Situation</span>
                                                 </a>
                                             </li>
                                             <li class="nav-item">
-                                                  <a role="tab" class="nav-link" id="tab-c-4" data-toggle="tab" href="#tab-animated-4">
+                                                  <a role="tab" class="nav-link" id="tab-c-4" data-bs-toggle="tab" href="#tab-animated-4">
                                                       <span>Education History</span>
                                                   </a>
                                               </li>
@@ -585,8 +585,8 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-study text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{{ item.programme_type }} {% if item.round %} - {{ item.round }}{% endif %}
-                                                                          <div data-toggle="tooltip" data-placement="top" data-original-title="View Progarmme details" style="float: right;font-size: 20px;">
-                                                                              <a href="{% url 'mscc:find_programme_details' %}?programme_id={{ item.programme_id }}&programme_type={{ item.programme_type }}" class="show-progarmme-details" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="fa fa-search-plus"> </i></a>
+                                                                          <div data-bs-toggle="tooltip" data-placement="top" data-original-title="View Progarmme details" style="float: right;font-size: 20px;">
+                                                                              <a href="{% url 'mscc:find_programme_details' %}?programme_id={{ item.programme_id }}&programme_type={{ item.programme_type }}" class="show-progarmme-details" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg"><i class="fa fa-search-plus"> </i></a>
                                                                           </div>
                                                                           </h4>
                                                                             {% if item.registration_date %}<p>Registration Date: {{ item.registration_date }}</p>{% endif %}

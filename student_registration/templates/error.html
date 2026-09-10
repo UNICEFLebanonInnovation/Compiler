@@ -1,8 +1,20 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}User Error{% endblock %}
+{% block project_title %}{% trans "Error" %}{% endblock %}
+{% block module_name %}{% trans "Error" %}{% endblock %}
 
 {% block content %}
+<div class="card">
+    <div class="empty-state">
+        <i class="bi bi-exclamation-triangle empty-state-icon text-warning" aria-hidden="true"></i>
+        <h1 class="empty-state-title h4">{% trans "Something needs your attention" %}</h1>
+        <p class="empty-state-description">
+            {% trans "The request could not be completed. Please review your input and try again." %}
+        </p>
+        <a href="{% url 'landing_page' %}" class="btn btn-primary">
+            <i class="bi bi-house-door me-2"></i>{% trans "Back to home" %}
+        </a>
+    </div>
+</div>
 {% endblock content %}
-
-

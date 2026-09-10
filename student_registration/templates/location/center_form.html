@@ -14,42 +14,28 @@
 
 {% block content %}
 
-<div class="app-page-title">
-      <div class="page-title-wrapper">
-          <div class="page-title-heading">
-              <div>
-                  <div class="page-title-head center-elem page-title-heading">
-                      <span class="d-inline-block pr-2">
-                          <i class="fa fa-id-card"></i>
-                      </span>
-                      <span class="d-inline-block">
-                        Center
-                      </span>
-                  </div>
-                  <div class="page-title-subheading opacity-10">
-                      <nav class="" aria-label="breadcrumb">
-                          <ol class="breadcrumb">
-                                                <li class="breadcrumb-item">
-                                                    <a href="/">
-                                                        Home
-                                                    </a>
-                                                </li>
-                                                {% if request.user|has_group:"MSCC_PARTNER" %}
-                                                <li class="breadcrumb-item">
-                                                    <a href="{% url 'locations:center_list' %}{% if instance.is_tls %}?is_tls={{ instance.is_tls }}{% endif %}">List</a>
-                                                </li>
-                                                {% endif %}
-                               <li class="breadcrumb-item">
-                                     Center
-                              </li>
+<div class="page-header">
+    <div class="page-header-titles">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                                  <li class="breadcrumb-item">
+                                      <a href="/">
+                                          Home
+                                      </a>
+                                  </li>
+                                  {% if request.user|has_group:"MSCC_PARTNER" %}
+                                  <li class="breadcrumb-item">
+                                      <a href="{% url 'locations:center_list' %}{% if instance.is_tls %}?is_tls={{ instance.is_tls }}{% endif %}">List</a>
+                                  </li>
+                                  {% endif %}
+                 <li class="breadcrumb-item">
+                       Center
+                </li>
 
-                          </ol>
-                      </nav>
-                  </div>
-              </div>
-          </div>
-          <div class="page-title-actions"></div>
-      </div>
+            </ol>
+        </nav>
+        <h1 class="page-header-title"><i class="fa fa-id-card"></i> Center</h1>
+    </div>
 </div>
 
         <!--{{ form.errors }}-->
@@ -66,7 +52,7 @@
                                         </ul>
                                         <div class="form-wizard-content">
 
-                                           {% crispy form 'bootstrap3' %}
+                                           {% crispy form 'bootstrap5' %}
                                         </div>
                                     </div>
                                     <div class="divider"></div>
@@ -78,7 +64,7 @@
                                         <!--<button type="submit" id="submit-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save</button>-->
                                         <!--<button type="submit" id="submit-btn22-1" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save & add another</button>-->
 
-                                        <!--<button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">Next</button>-->
+                                        <!--<button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">Continue</button>-->
                                         <!--<button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>-->
                                     </div>
                                 </div>
@@ -93,8 +79,8 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/location/center.js' %}?v=11"></script>
     <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
     <script>
-      var url_districts = "{% url 'clm:load_districts' %}";
-      var url_cadasters = "{% url 'clm:load_cadasters' %}";
+      var url_districts = "{% url 'locations:load_districts' %}";
+      var url_cadasters = "{% url 'locations:load_cadasters' %}";
 
       $("#id_governorate").change(function () {
           load_districts(url_districts);

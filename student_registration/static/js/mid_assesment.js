@@ -4,7 +4,7 @@
 var protocol = window.location.protocol;
 var host = protocol+window.location.host;
 
-$(window).load(function () {
+$(window).on('load', function () {
 
     /* Background loading full-size images */
     $('.image-link').each(function() {

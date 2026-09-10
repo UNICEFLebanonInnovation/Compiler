@@ -31,7 +31,9 @@ class UserActivityMiddleware(MiddlewareMixin):
     def __call__(self, request):
         response = self.get_response(request)
         try:
-            if request.user.is_authenticated and not request.path.startswith("/admin"):
+            # The session keep-alive ping is not user activity worth a row.
+            if (request.user.is_authenticated and not request.path.startswith("/admin")
+                    and request.path != "/session/ping/"):
                 data = self._extract_data(request)
                 if hasattr(data, "lists"):
                     data_dict = dict(data.lists())

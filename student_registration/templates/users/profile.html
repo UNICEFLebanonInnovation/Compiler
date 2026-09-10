@@ -1,50 +1,119 @@
 {% extends "base.html" %}
 {% load static i18n %}
-{% load static i18n %}
-{% load render_table from django_tables2 %}
-{% load django_bootstrap5 %}
-{% load util_tags %}
-{% bootstrap_css %}
+
+{% block project_title %}{% trans "Profile" %}{% endblock %}
+{% block module_name %}{% trans "My Profile" %}{% endblock %}
 
 {% block content %}
 
-<div class="app-page-title"><div class="page-title-wrapper"><div class="page-title-heading"><div class="page-title-icon"><i class="icon pe-7s-server icon-gradient bg-ripe-malin"></i></div><div>
-    Welcome {{ request.user }} to CLM<sup>+</sup>
-    <div class="page-title-subheading">
-                                    </div>
-</div></div><div class="page-title-actions">
-</div></div></div>
-
-
-    <section>
-
-
-      	<div class="profile-content">
-            <div class="container">
-                <div class="row">
-                      <br>
-        	           <div class="profile text-center">
-	                        <div class="avatar"><img src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png" class="avatar img-circle img-thumbnail" alt="avatar"></a></div>
-
-    <div class="name text-center">
-      <blockquote>
-        <h4>{{ user }}</h4>
-        <!--<small><cite title="Source Title"><i class="icon-map-marker"></i></cite></small>-->
-      </blockquote>
+<div class="page-header">
+    <div class="page-header-titles">
+        <nav aria-label="{% trans 'breadcrumb' %}">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'landing_page' %}">{% trans "Home" %}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{% trans "Profile" %}</li>
+            </ol>
+        </nav>
+        <h1 class="page-header-title"><i class="bi bi-person-circle"></i>{% trans "My Profile" %}</h1>
     </div>
-        <div class="description text-center">
-      <p>
-        <b>{% trans "Partner: " %}</b> {{ user.partner }}<br>
-        <b>{% trans "Email: " %}</b> {{ user.email }} <br>
-        <b>{% trans "Name: " %}</b> {{ user.first_name }}, {{ user.last_name }} <br>
-        <b>{% trans "Date Joined: " %}</b> {{ user.date_joined }}<br>
-      </p>
+    <div class="page-header-actions">
+        <a href="{% url 'account_change_password' %}" class="btn btn-outline-primary btn-icon">
+            <i class="bi bi-lock"></i>{% trans "Change Password" %}
+        </a>
+        <a href="{% url 'account_logout' %}" class="btn btn-outline-danger btn-icon">
+            <i class="bi bi-box-arrow-right"></i>{% trans "Logout" %}
+        </a>
     </div>
-    </div>
-
 </div>
-      </div>
-        </div>
 
-</section>
+<div class="profile-header">
+    <div class="d-flex flex-wrap align-items-center gap-3">
+        <span class="profile-avatar">
+            {{ user.first_name|first|upper }}{{ user.last_name|first|upper|default:"" }}
+        </span>
+        <div class="min-w-0">
+            <h2 class="mb-1">{{ user.get_full_name|default:user.username }}</h2>
+            <div class="opacity-75 small">{{ user.email|default:_("No e-mail on file") }}</div>
+        </div>
+    </div>
+
+    <div class="profile-meta">
+        <div class="profile-meta-item">
+            <div class="label">{% trans "Username" %}</div>
+            <div class="value">{{ user.username }}</div>
+        </div>
+        <div class="profile-meta-item">
+            <div class="label">{% trans "Partner" %}</div>
+            <div class="value">{{ user.partner|default:"—" }}</div>
+        </div>
+        {% if user.center %}
+        <div class="profile-meta-item">
+            <div class="label">{% trans "Center" %}</div>
+            <div class="value">{{ user.center }}</div>
+        </div>
+        {% endif %}
+        <div class="profile-meta-item">
+            <div class="label">{% trans "Date Joined" %}</div>
+            <div class="value">{{ user.date_joined|date:"d M Y"|default:"—" }}</div>
+        </div>
+        <div class="profile-meta-item">
+            <div class="label">{% trans "Last Login" %}</div>
+            <div class="value">{{ user.last_login|date:"d M Y H:i"|default:"—" }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card h-100 mb-0">
+            <div class="card-header">
+                <span class="card-title"><i class="bi bi-person-vcard me-2"></i>{% trans "Account Details" %}</span>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0 small">
+                    <dt class="col-sm-5 text-muted fw-normal">{% trans "First Name" %}</dt>
+                    <dd class="col-sm-7 fw-medium">{{ user.first_name|default:"—" }}</dd>
+
+                    <dt class="col-sm-5 text-muted fw-normal">{% trans "Last Name" %}</dt>
+                    <dd class="col-sm-7 fw-medium">{{ user.last_name|default:"—" }}</dd>
+
+                    <dt class="col-sm-5 text-muted fw-normal">{% trans "E-mail" %}</dt>
+                    <dd class="col-sm-7 fw-medium text-break">{{ user.email|default:"—" }}</dd>
+
+                    <dt class="col-sm-5 text-muted fw-normal">{% trans "Partner" %}</dt>
+                    <dd class="col-sm-7 fw-medium">{{ user.partner|default:"—" }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card h-100 mb-0">
+            <div class="card-header">
+                <span class="card-title"><i class="bi bi-shield-check me-2"></i>{% trans "Access" %}</span>
+            </div>
+            <div class="card-body">
+                {% if user.groups.all %}
+                <div class="d-flex flex-wrap gap-2">
+                    {% for group in user.groups.all %}
+                    <span class="status-pill is-info">{{ group.name }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted small mb-0">{% trans "No groups assigned to this account." %}</p>
+                {% endif %}
+
+                <div class="section-divider">{% trans "Flags" %}</div>
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="status-pill {% if user.is_active %}is-success{% endif %}">
+                        {% if user.is_active %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}
+                    </span>
+                    {% if user.is_staff %}<span class="status-pill is-info">{% trans "Staff" %}</span>{% endif %}
+                    {% if user.is_superuser %}<span class="status-pill is-warning">{% trans "Superuser" %}</span>{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

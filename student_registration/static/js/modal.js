@@ -7,7 +7,7 @@
                 + '<div class="modal-content">'
                 + '<div class="modal-body"></div>'
                 + '<div class="modal-footer">'
-                + '<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>'
+                + '<button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-dismiss="modal">OK</button>'
                 + '</div></div></div></div>';
             $('body').append(modalHtml);
             modal = $('#alertModal');
