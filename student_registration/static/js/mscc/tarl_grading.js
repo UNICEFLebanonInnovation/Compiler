@@ -26,7 +26,10 @@ function reorganizeTarlForm()
 
     if (test_taken == 'Yes'){
         tarlFields.removeClass('d-none');
-        tarlFields.find('select, input').prop('required', true);
+
+        tarlFields.not('.tarl-optional').find('select, input').prop('required', true);
+        tarlFields.filter('.tarl-optional').find('select, input').prop('required', false);
+
     }else{
         tarlFields.addClass('d-none');
         tarlFields.find('select, input').prop('required', false).val('');

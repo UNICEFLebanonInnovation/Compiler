@@ -1770,6 +1770,7 @@ class EducationProgrammeSummerRSAssessment(TimeStampedModel):
 
 class TarlAssessment(TimeStampedModel):
     ARABIC_LEVELS = Choices(
+        ('', '----------'),
         ('Beginner', _('Beginner')),
         ('Letter', _('Letter')),
         ('Word', _('Word')),
@@ -1779,6 +1780,7 @@ class TarlAssessment(TimeStampedModel):
     )
 
     FRENCH_LEVELS = Choices(
+        ('', '----------'),
         ('Beginner', _('Beginner')),
         ('Letter', _('Letter')),
         ('Word', _('Word')),
@@ -1788,6 +1790,7 @@ class TarlAssessment(TimeStampedModel):
     )
 
     MATH_LEVELS = Choices(
+        ('', '----------'),
         ('Beginner', _('Beginner')),
         ('1-digit', _('1-digit')),
         ('2-digits', _('2-digits')),

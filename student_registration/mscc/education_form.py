@@ -2635,8 +2635,6 @@ class TarlGradingForm(forms.ModelForm):
             or programme_type in summer_rs_programmes
         )
 
-        self.require_french_language = show_french_language
-
         if not show_french_language:
             self.fields.pop('french_level_reached', None)
 
@@ -2686,7 +2684,7 @@ class TarlGradingForm(forms.ModelForm):
                     HTML('<span class="badge-form badge-pill">3</span>'),
                     Div(
                         'french_level_reached',
-                        css_class='col-md-4 tarl-dependent'
+                        css_class='col-md-4 tarl-dependent  tarl-optional'
                     ),
                     css_class='row card-body'
                 )
@@ -2742,8 +2740,6 @@ class TarlGradingForm(forms.ModelForm):
             'arabic_level_reached',
             'math_level_reached',
         ]
-        if self.require_french_language:
-            required_fields.append('french_level_reached')
         if test_taken == 'Yes':
             for field in required_fields:
                 if not cleaned_data.get(field):
