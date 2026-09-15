@@ -3266,28 +3266,6 @@ class BridgingAssessmentForm(forms.ModelForm):
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill" id="span_cerd_number">11</span>'),
-                        Div('cerd_number', css_class='col-md-3'),
-                        HTML('<span class="badge-form-2 badge-pill" id="span_formal_education_grade_level">13</span>'),
-                        Div('formal_education_grade_level', css_class='col-md-4'),
-                        css_class='row card-body',
-                    ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill" id="span_transition_grades">14</span>'),
-                        HTML('<div class="col-md-12"><strong>' + _('The grade of the child in the transition exam') + '</strong></div>'),
-                        Div('transition_arabic_grade', css_class='col-md-4'),
-                        Div('transition_foreign_languages_grade', css_class='col-md-4'),
-                        Div('transition_math_grade', css_class='col-md-4'),
-                        css_class='row card-body',
-                    ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill" id="span_retention_support_enrolled">15</span>'),
-                        Div('retention_support_enrolled', css_class='col-md-5'),
-                        Div('retention_support_partner', css_class='col-md-3'),
-                        Div('retention_support_center', css_class='col-md-3'),
-                        css_class='row card-body',
-                    ),
-                    Div(
                         HTML('<span class="badge-form-2 badge-pill" id="span_exam3">14</span>'),
                         Div('exam3', css_class='col-md-3'),
                         css_class='row grades card-body',
@@ -3305,7 +3283,8 @@ class BridgingAssessmentForm(forms.ModelForm):
         dropout_reason = cleaned_data.get("dropout_reason")
         referral_school = cleaned_data.get("referral_school")
         referral_school_type = cleaned_data.get("referral_school_type")
-        referred_to_public_school = learning_result == 'referred_public_school'
+        is_kayany = bool(self.request.user.partner and self.request.user.partner.is_Kayany)
+        referred_to_public_school = not is_kayany and learning_result == 'referred_public_school'
         public_school_fields = (
             'cerd_number', 'formal_education_grade_level', 'transition_arabic_grade',
             'transition_foreign_languages_grade', 'transition_math_grade', 'retention_support_enrolled',
@@ -3351,8 +3330,6 @@ class BridgingAssessmentForm(forms.ModelForm):
             elif community_Liaison_follow_up == 'yes':
                 if not community_liaison_specify:
                     self.add_error('community_liaison_specify', 'This field is required')
-
-        is_kayany = bool(self.request.user.partner and self.request.user.partner.is_Kayany)
 
         if is_kayany:
             if test_done == 'yes':
