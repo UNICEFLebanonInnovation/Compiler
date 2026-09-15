@@ -25,7 +25,8 @@ $(document).ready(function () {
         '#id_covid_parent_attended', '#id_followup_parent_attended', '#id_attended_biology',
         '#id_attended_chemistry', '#id_attended_physics', '#id_barriers_single', '#id_test_done',
         '#id_pss_session_attended', '#id_learning_result', '#id_covid_session_attended',
-        '#id_followup_session_attended', '#id_referal_other', '#id_parent_attended_visits'
+        '#id_followup_session_attended', '#id_referal_other', '#id_parent_attended_visits',
+        '#id_retention_support_enrolled'
     ].join(',');
 
     if ($('#id_test_done').length) {
@@ -134,6 +135,21 @@ function reorganizeForm_post_assessment()
         $('div#div_id_referral_school_type').removeClass('d-none');
         $('#span_referral_school_type').removeClass('d-none');
     }
+
+    var publicSchoolFieldIds = [
+        'cerd_number', 'formal_education_grade_level', 'transition_arabic_grade',
+        'transition_foreign_languages_grade', 'transition_math_grade', 'retention_support_enrolled'
+    ];
+    publicSchoolFieldIds.forEach(function (fieldId) {
+        $('#div_id_' + fieldId).toggleClass('d-none', learning_result !== 'referred_public_school');
+    });
+    $('#span_cerd_number, #span_formal_education_grade_level, #span_transition_grades, #span_retention_support_enrolled')
+        .toggleClass('d-none', learning_result !== 'referred_public_school');
+
+    var showRetentionDetails = learning_result === 'referred_public_school' &&
+        $('#id_retention_support_enrolled').val() === 'yes';
+    $('#div_id_retention_support_partner, #div_id_retention_support_center')
+        .toggleClass('d-none', !showRetentionDetails);
 
     var participation = $('select#id_participation').val();
     var barriers_single = $('select#id_barriers_single').val();

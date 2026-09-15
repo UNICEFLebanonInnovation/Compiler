@@ -1880,6 +1880,17 @@ class Bridging(CLM):
     SECTION_CHOICES = tuple(
         [('', _('----------'))] + [(char, char.upper()) for char in 'abcdefghijklmnopqrstuvwxyz']
     )
+    FORMAL_EDUCATION_GRADES = (
+        ('', _('----------')),
+        ('grade_five', _('Grade five')),
+        ('grade_six', _('Grade six')),
+        ('grade_seven', _('Grade seven')),
+        ('grade_eight', _('Grade eight')),
+        ('grade_nine', _('Grade nine')),
+        ('grade_ten', _('Grade ten')),
+        ('grade_eleven', _('Grade eleven')),
+        ('grade_twelve', _('Grade twelve')),
+    )
 
     child_outreach = models.IntegerField(blank=True, null=True)
     miss_school_date = models.DateField(
@@ -1958,6 +1969,45 @@ class Bridging(CLM):
         null=True,
         choices=SCHOOL_TYPE,
         verbose_name=_('School Type')
+    )
+    cerd_number = models.CharField(
+        max_length=6,
+        blank=True,
+        null=True,
+        verbose_name=_('CERD#')
+    )
+    formal_education_grade_level = models.CharField(
+        max_length=12,
+        blank=True,
+        null=True,
+        choices=FORMAL_EDUCATION_GRADES,
+        verbose_name=_('Grade level the Child is enrolled in')
+    )
+    transition_arabic_grade = models.PositiveSmallIntegerField(blank=True, null=True)
+    transition_foreign_languages_grade = models.PositiveSmallIntegerField(blank=True, null=True)
+    transition_math_grade = models.PositiveSmallIntegerField(blank=True, null=True)
+    retention_support_enrolled = models.CharField(
+        max_length=3,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was the child referred and enrolled in a Retention Support programme?')
+    )
+    retention_support_partner = models.ForeignKey(
+        PartnerOrganization,
+        blank=True,
+        null=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+        verbose_name=_('Which partner?')
+    )
+    retention_support_center = models.ForeignKey(
+        Center,
+        blank=True,
+        null=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+        verbose_name=_('Which center?')
     )
     dropout_date = models.DateField(
         blank=True,

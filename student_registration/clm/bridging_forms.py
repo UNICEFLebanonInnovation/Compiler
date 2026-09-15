@@ -2777,6 +2777,44 @@ class BridgingAssessmentForm(forms.ModelForm):
         widget=forms.Select,
         required=False
     )
+    cerd_number = forms.RegexField(
+        regex=r'^\d{1,6}$',
+        label=_('CERD#'),
+        widget=forms.TextInput(attrs={'maxlength': 6, 'inputmode': 'numeric', 'pattern': '[0-9]{1,6}'}),
+        required=False,
+        error_messages={'invalid': _('Enter a maximum of 6 numeric digits.')}
+    )
+    formal_education_grade_level = forms.ChoiceField(
+        label=_('Grade level the Child is enrolled in (Grade 5 to 12)'),
+        choices=Bridging.FORMAL_EDUCATION_GRADES,
+        required=False
+    )
+    transition_arabic_grade = forms.IntegerField(
+        label=_('Arabic Grade: Maximum 100'), min_value=0, max_value=100, required=False
+    )
+    transition_foreign_languages_grade = forms.IntegerField(
+        label=_('Foreign Languages Grade: Maximum 100'), min_value=0, max_value=100, required=False
+    )
+    transition_math_grade = forms.IntegerField(
+        label=_('Math Grade: Maximum 100'), min_value=0, max_value=100, required=False
+    )
+    retention_support_enrolled = forms.ChoiceField(
+        label=_('Was the child referred and enrolled in a Retention Support programme?'),
+        choices=Bridging.YES_NO,
+        required=False
+    )
+    retention_support_partner = forms.ModelChoiceField(
+        label=_('Which partner?'),
+        queryset=PartnerOrganization.objects.filter(is_dirasa=True, active=True),
+        empty_label='-------',
+        required=False
+    )
+    retention_support_center = forms.ModelChoiceField(
+        label=_('Which center?'),
+        queryset=Center.objects.filter(partner__is_dirasa=True, partner__active=True),
+        empty_label='-------',
+        required=False
+    )
     barriers_single = forms.ChoiceField(
         label=_('The main barriers affecting the daily attendance and performance '
                 'of the child or drop out of programme?'),
@@ -3137,6 +3175,28 @@ class BridgingAssessmentForm(forms.ModelForm):
                         css_class='row card-body',
                     ),
                     Div(
+                        HTML('<span class="badge-form-2 badge-pill" id="span_cerd_number">11</span>'),
+                        Div('cerd_number', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill" id="span_formal_education_grade_level">13</span>'),
+                        Div('formal_education_grade_level', css_class='col-md-4'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill" id="span_transition_grades">14</span>'),
+                        HTML('<div class="col-md-12"><strong>' + _('The grade of the child in the transition exam') + '</strong></div>'),
+                        Div('transition_arabic_grade', css_class='col-md-4'),
+                        Div('transition_foreign_languages_grade', css_class='col-md-4'),
+                        Div('transition_math_grade', css_class='col-md-4'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill" id="span_retention_support_enrolled">15</span>'),
+                        Div('retention_support_enrolled', css_class='col-md-5'),
+                        Div('retention_support_partner', css_class='col-md-3'),
+                        Div('retention_support_center', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
                         Div(HTML('<h5>English/French</h5>'), css_class='row card-body'),
                         *build_rows(layout_fields['english_french']),
                         Div(HTML('<strong>Total scores (English/French) / 40</strong>'), Div('english_french_sum', css_class='col-md-3'), css_class='row card-body'),
@@ -3206,6 +3266,28 @@ class BridgingAssessmentForm(forms.ModelForm):
                         css_class='row card-body',
                     ),
                     Div(
+                        HTML('<span class="badge-form-2 badge-pill" id="span_cerd_number">11</span>'),
+                        Div('cerd_number', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill" id="span_formal_education_grade_level">13</span>'),
+                        Div('formal_education_grade_level', css_class='col-md-4'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill" id="span_transition_grades">14</span>'),
+                        HTML('<div class="col-md-12"><strong>' + _('The grade of the child in the transition exam') + '</strong></div>'),
+                        Div('transition_arabic_grade', css_class='col-md-4'),
+                        Div('transition_foreign_languages_grade', css_class='col-md-4'),
+                        Div('transition_math_grade', css_class='col-md-4'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill" id="span_retention_support_enrolled">15</span>'),
+                        Div('retention_support_enrolled', css_class='col-md-5'),
+                        Div('retention_support_partner', css_class='col-md-3'),
+                        Div('retention_support_center', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
                         HTML('<span class="badge-form-2 badge-pill" id="span_exam3">14</span>'),
                         Div('exam3', css_class='col-md-3'),
                         css_class='row grades card-body',
@@ -3223,6 +3305,33 @@ class BridgingAssessmentForm(forms.ModelForm):
         dropout_reason = cleaned_data.get("dropout_reason")
         referral_school = cleaned_data.get("referral_school")
         referral_school_type = cleaned_data.get("referral_school_type")
+        referred_to_public_school = learning_result == 'referred_public_school'
+        public_school_fields = (
+            'cerd_number', 'formal_education_grade_level', 'transition_arabic_grade',
+            'transition_foreign_languages_grade', 'transition_math_grade', 'retention_support_enrolled',
+        )
+        if referred_to_public_school:
+            for field in public_school_fields:
+                if cleaned_data.get(field) in (None, ''):
+                    self.add_error(field, 'This field is required')
+
+            if cleaned_data.get('retention_support_enrolled') == 'yes':
+                partner = cleaned_data.get('retention_support_partner')
+                center = cleaned_data.get('retention_support_center')
+                if not partner:
+                    self.add_error('retention_support_partner', 'This field is required')
+                if not center:
+                    self.add_error('retention_support_center', 'This field is required')
+                elif partner and center.partner_id != partner.id:
+                    self.add_error('retention_support_center', 'Select a center belonging to the selected partner')
+            else:
+                cleaned_data['retention_support_partner'] = None
+                cleaned_data['retention_support_center'] = None
+        else:
+            for field in public_school_fields + (
+                'retention_support_partner', 'retention_support_center',
+            ):
+                cleaned_data[field] = None
 
         barriers_single = cleaned_data.get("barriers_single")
         barriers_other = cleaned_data.get("barriers_other")
@@ -3463,6 +3572,14 @@ class BridgingAssessmentForm(forms.ModelForm):
             'dropout_date',
             'referral_school',
             'referral_school_type',
+            'cerd_number',
+            'formal_education_grade_level',
+            'transition_arabic_grade',
+            'transition_foreign_languages_grade',
+            'transition_math_grade',
+            'retention_support_enrolled',
+            'retention_support_partner',
+            'retention_support_center',
             'community_Liaison_follow_up',
             'community_liaison_specify',
         )

@@ -460,6 +460,14 @@ class BridgingSerializer(CLMSerializer):
             'dropout_reason',
             'referral_school',
             'referral_school_type',
+            'cerd_number',
+            'formal_education_grade_level',
+            'transition_arabic_grade',
+            'transition_foreign_languages_grade',
+            'transition_math_grade',
+            'retention_support_enrolled',
+            'retention_support_partner',
+            'retention_support_center',
             'enrolled_formal_education',
         )
 
