@@ -2785,18 +2785,18 @@ class BridgingAssessmentForm(forms.ModelForm):
         error_messages={'invalid': _('Enter a maximum of 6 numeric digits.')}
     )
     formal_education_grade_level = forms.ChoiceField(
-        label=_('Grade level the Child is enrolled in (Grade 5 to 12)'),
+        label=_('Grade level the Child is enrolled in'),
         choices=Bridging.FORMAL_EDUCATION_GRADES,
         required=False
     )
     transition_arabic_grade = forms.IntegerField(
-        label=_('Arabic Grade: Maximum 100'), min_value=0, max_value=100, required=False
+        label=_('Arabic Transition Grade'), min_value=0, max_value=100, required=False
     )
     transition_foreign_languages_grade = forms.IntegerField(
-        label=_('Foreign Languages Grade: Maximum 100'), min_value=0, max_value=100, required=False
+        label=_('Foreign Languages Transition Grade'), min_value=0, max_value=100, required=False
     )
     transition_math_grade = forms.IntegerField(
-        label=_('Math Grade: Maximum 100'), min_value=0, max_value=100, required=False
+        label=_('Math Transition Grade'), min_value=0, max_value=100, required=False
     )
     retention_support_enrolled = forms.ChoiceField(
         label=_('Was the child referred and enrolled in a Retention Support programme?'),
@@ -3170,27 +3170,34 @@ class BridgingAssessmentForm(forms.ModelForm):
                     Div(
                         HTML('<span class="badge-form badge-pill" id="span_referral_school">9</span>'),
                         Div('referral_school', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill" id="span_referral_school_type">10</span>'),
+                        HTML('<span class="badge-form-2 badge-pill" id="span_cerd_number">10</span>'),
+                        Div('cerd_number', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill" id="span_referral_school_type">11</span>'),
                         Div('referral_school_type', css_class='col-md-4'),
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill" id="span_cerd_number">11</span>'),
-                        Div('cerd_number', css_class='col-md-3'),
-                        HTML('<span class="badge-form-2 badge-pill" id="span_formal_education_grade_level">13</span>'),
+                        HTML('<span class="badge-form-2 badge-pill" id="span_formal_education_grade_level">12</span>'),
                         Div('formal_education_grade_level', css_class='col-md-4'),
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill" id="span_transition_grades">14</span>'),
-                        HTML('<div class="col-md-12"><strong>' + _('The grade of the child in the transition exam') + '</strong></div>'),
-                        Div('transition_arabic_grade', css_class='col-md-4'),
-                        Div('transition_foreign_languages_grade', css_class='col-md-4'),
-                        Div('transition_math_grade', css_class='col-md-4'),
-                        css_class='row card-body',
+                        Div(
+                            HTML('<h5>Transition Grades</h5>'),css_class='row'
+                        ),
+                        Div(
+                            HTML('<span class="badge-form-2 badge-pill  transition-grade-badge">13</span>'),
+                            Div('transition_arabic_grade', css_class='col-md-3'),
+                            HTML('<span class="badge-form-2 badge-pill transition-grade-badge">14</span>'),
+                            Div('transition_foreign_languages_grade', css_class='col-md-3'),
+                            HTML('<span class="badge-form-2 badge-pill transition-grade-badge">15</span>'),
+                            Div('transition_math_grade', css_class='col-md-3'),
+                            css_class='row'
+                        ),
+                        css_class='card-body'
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill" id="span_retention_support_enrolled">15</span>'),
+                        HTML('<span class="badge-form-2 badge-pill" id="span_retention_support_enrolled">16</span>'),
                         Div('retention_support_enrolled', css_class='col-md-5'),
                         Div('retention_support_partner', css_class='col-md-3'),
                         Div('retention_support_center', css_class='col-md-3'),
