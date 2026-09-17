@@ -15,6 +15,9 @@ $(document).ready(function(){
     $(document).on('change', 'select#id_recommended_learning_path' , function(){
        reorganizeForm();
     });
+    $(document).on('change', 'select#id_retention_support_enrolled' , function(){
+       reorganizeForm();
+    });
 
 });
 
@@ -35,8 +38,11 @@ function reorganizeForm()
         $('#id_referred_service_other').removeClass('error-field');
     }
 
+    var recommended_learning_path = $('select#id_recommended_learning_path').val();
+    var showTransitionFields = recommended_learning_path ==
+        'Progress to  Higher Level  in next school year';
     var referred_formal_education = $('select#id_referred_formal_education').val();
-    if(referred_formal_education == 'Yes'){
+    if(referred_formal_education == 'Yes' || showTransitionFields){
         $('div#div_id_referred_school').removeClass('d-none');
         if ($('#id_referred_school').val()== null || $('#id_referred_school').val()=='')
         {
@@ -49,7 +55,6 @@ function reorganizeForm()
         $('#id_referred_school').removeClass('error-field');
     }
 
-    var recommended_learning_path = $('select#id_recommended_learning_path').val();
     if(recommended_learning_path == 'Drop out'){
         $('div#div_id_dropout_date').removeClass('d-none');
     }
@@ -57,5 +62,11 @@ function reorganizeForm()
         $('#id_dropout_date').val('');
         $('div#div_id_dropout_date').addClass('d-none');
     }
-  }
 
+    $('#transition-fields').toggleClass('d-none', !showTransitionFields);
+
+    var showRetentionDetails = showTransitionFields &&
+        $('#id_retention_support_enrolled').val() == 'Yes';
+    $('#div_id_retention_support_partner, #div_id_retention_support_center')
+        .toggleClass('d-none', !showRetentionDetails);
+  }

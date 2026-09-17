@@ -28,7 +28,8 @@ from .models import (
     YES_NO
 )
 from student_registration.schools.models import (
-    School
+    School,
+    PartnerOrganization,
 )
 from .utils import generate_services, generate_education_history, regenerate_services
 from .serializers import MainSerializer
@@ -938,7 +939,7 @@ class ReferralForm(forms.ModelForm):
     referred_school = forms.ModelChoiceField(
         queryset=School.objects.filter(is_bma=True),
         widget=autocomplete.ModelSelect2(url='school_autocomplete'),
-        label=_('Name of public School'),
+        label=_('Formal Education School'),
         required=False,
     )
     receive_needed_material = forms.ChoiceField(
@@ -964,6 +965,43 @@ class ReferralForm(forms.ModelForm):
         label=_("Please Specify dropout date"),
         required=False
     )
+    formal_education_school_type = forms.ChoiceField(
+        label=_('School Type'), choices=Referral.SCHOOL_TYPE, required=False
+    )
+    cerd_number = forms.RegexField(
+        regex=r'^\d{1,6}$', label=_('CERD#'), required=False,
+        widget=forms.TextInput(attrs={
+            'maxlength': 6, 'inputmode': 'numeric', 'pattern': '[0-9]{1,6}'
+        }),
+        error_messages={'invalid': _('Enter a maximum of 6 numeric digits.')}
+    )
+    formal_education_grade_level = forms.ChoiceField(
+        label=_('Grade level the Child is enrolled in'),
+        choices=Referral.FORMAL_EDUCATION_GRADES, required=False
+    )
+    transition_arabic_grade = forms.IntegerField(
+        label=_('Arabic Grade'), min_value=0, max_value=100, required=False
+    )
+    transition_foreign_languages_grade = forms.IntegerField(
+        label=_('Foreign Languages Grade'), min_value=0, max_value=100, required=False
+    )
+    transition_math_grade = forms.IntegerField(
+        label=_('Math Grade'), min_value=0, max_value=100, required=False
+    )
+    retention_support_enrolled = forms.ChoiceField(
+        label=_('Was the child referred and enrolled in a Retention Support programme?'),
+        choices=YES_NO, required=False
+    )
+    retention_support_partner = forms.ModelChoiceField(
+        label=_('Which partner?'),
+        queryset=PartnerOrganization.objects.filter(active=True).order_by('name'),
+        empty_label='-------', required=False
+    )
+    retention_support_center = forms.ModelChoiceField(
+        label=_('Which center?'),
+        queryset=Center.objects.filter(partner__active=True).order_by('name'),
+        empty_label='-------', required=False
+    )
     is_cbece = forms.CharField(required=False)
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -983,6 +1021,12 @@ class ReferralForm(forms.ModelForm):
             self.fields['referred_formal_education'].required = True
 
         education_program = get_education_service(registry)
+        bln_programmes = ['BLN Level {}'.format(level) for level in range(1, 13)]
+        if education_program in bln_programmes:
+            formal_education_grades = list(Referral.FORMAL_EDUCATION_GRADES)
+            self.fields['formal_education_grade_level'].choices = (
+                formal_education_grades[:1] + formal_education_grades[5:]
+            )
         choices = list()
         choices.append(('Transition to Dirasa', _('Transition to Dirasa')))
         choices.append(('Repeat same level in next  school year', _('Repeat same level in next  school year')))
@@ -1033,6 +1077,41 @@ class ReferralForm(forms.ModelForm):
                         Div('dropout_date', css_class='col-md-6'),
                         css_class='row card-body'
                     ),
+                    Div(
+                        Div(
+                            HTML('<span class="badge-form badge-pill">4</span>'),
+                            Div('cerd_number', css_class='col-md-3'),
+                            HTML('<span class="badge-form badge-pill">5</span>'),
+                            Div('formal_education_school_type', css_class='col-md-3'),
+                            css_class='row card-body'
+                        ),
+                        Div(
+                            HTML('<span class="badge-form badge-pill">6</span>'),
+                            Div('formal_education_grade_level', css_class='col-md-5'),
+                            css_class='row card-body'
+                        ),
+                        Div(
+                            HTML('<h5>The grade of the child in the transition exam</h5>'),
+                            css_class='row card-body'
+                        ),
+                        Div(
+                            HTML('<span class="badge-form badge-pill">7</span>'),
+                            Div('transition_arabic_grade', css_class='col-md-3'),
+                            HTML('<span class="badge-form badge-pill">8</span>'),
+                            Div('transition_foreign_languages_grade', css_class='col-md-3'),
+                            HTML('<span class="badge-form badge-pill">9</span>'),
+                            Div('transition_math_grade', css_class='col-md-3'),
+                            css_class='row card-body'
+                        ),
+                        Div(
+                            HTML('<span class="badge-form badge-pill">10</span>'),
+                            Div('retention_support_enrolled', css_class='col-md-5'),
+                            Div('retention_support_partner', css_class='col-md-3'),
+                            Div('retention_support_center', css_class='col-md-3'),
+                            css_class='row card-body'
+                        ),
+                        css_id='transition-fields'
+                    ),
 
                     css_id='step-1'
                 ),
@@ -1053,7 +1132,6 @@ class ReferralForm(forms.ModelForm):
                     Div(
                         HTML('<span class="badge-form badge-pill">1</span>'),
                         Div('referred_formal_education', css_class='col-md-5'),
-                        Div('referred_school', css_class='col-md-6'),
                         css_class='row card-body d-none'
                     ),
                     Div(
@@ -1075,6 +1153,43 @@ class ReferralForm(forms.ModelForm):
                     Div(
                         Div('dropout_date', css_class='col-md-5'),
                         css_class='row card-body'
+                    ),
+                    Div(
+                        Div(
+                            HTML('<span class="badge-form badge-pill">4</span>'),
+                            Div('referred_school', css_class='col-md-4'),
+                            HTML('<span class="badge-form badge-pill">5</span>'),
+                            Div('cerd_number', css_class='col-md-3'),
+                            HTML('<span class="badge-form badge-pill">6</span>'),
+                            Div('formal_education_school_type', css_class='col-md-3'),
+                            css_class='row card-body'
+                        ),
+                        Div(
+                            HTML('<span class="badge-form badge-pill">7</span>'),
+                            Div('formal_education_grade_level', css_class='col-md-5'),
+                            css_class='row card-body'
+                        ),
+                        Div(
+                            HTML('<h5>The grade of the child in the transition exam</h5>'),
+                            css_class='row card-body'
+                        ),
+                        Div(
+                            HTML('<span class="badge-form badge-pill">8</span>'),
+                            Div('transition_arabic_grade', css_class='col-md-3'),
+                            HTML('<span class="badge-form badge-pill">9</span>'),
+                            Div('transition_foreign_languages_grade', css_class='col-md-3'),
+                            HTML('<span class="badge-form badge-pill">10</span>'),
+                            Div('transition_math_grade', css_class='col-md-3'),
+                            css_class='row card-body'
+                        ),
+                        Div(
+                            HTML('<span class="badge-form badge-pill">11</span>'),
+                            Div('retention_support_enrolled', css_class='col-md-5'),
+                            Div('retention_support_partner', css_class='col-md-3'),
+                            Div('retention_support_center', css_class='col-md-3'),
+                            css_class='row card-body'
+                        ),
+                        css_id='transition-fields'
                     ),
                     css_id='step-1'
                 ),
@@ -1101,6 +1216,24 @@ class ReferralForm(forms.ModelForm):
         instance.referred_service = validated_data.get('referred_service')
         instance.referred_service_other = validated_data.get('referred_service_other')
         instance.recommended_learning_path = validated_data.get('recommended_learning_path')
+        transition_selected = validated_data.get('recommended_learning_path') == \
+            'Progress to  Higher Level  in next school year'
+        transition_fields = (
+            'cerd_number', 'formal_education_school_type',
+            'formal_education_grade_level', 'transition_arabic_grade',
+            'transition_foreign_languages_grade', 'transition_math_grade',
+            'retention_support_enrolled',
+        )
+        for field in transition_fields:
+            setattr(instance, field, validated_data.get(field) if transition_selected else None)
+        retention_selected = transition_selected and \
+            validated_data.get('retention_support_enrolled') == 'Yes'
+        instance.retention_support_partner_id = (
+            validated_data.get('retention_support_partner') if retention_selected else None
+        )
+        instance.retention_support_center_id = (
+            validated_data.get('retention_support_center') if retention_selected else None
+        )
         dropout_date_str = validated_data.get('dropout_date')
         if dropout_date_str:
             dropout_date = datetime.strptime(dropout_date_str, '%Y-%m-%d')
@@ -1120,9 +1253,8 @@ class ReferralForm(forms.ModelForm):
         if is_cbece and is_cbece == 'Yes':
             if not referred_formal_education:
                 self.add_error('referred_formal_education', 'This field is required')
-
-                if referred_formal_education == 'Yes' and not referred_school:
-                    self.add_error('referred_school', 'This field is required')
+            if referred_formal_education == 'Yes' and not referred_school:
+                self.add_error('referred_school', 'This field is required')
 
         referred_service = cleaned_data.get("referred_service")
         referred_service_other = cleaned_data.get("referred_service_other")
@@ -1134,6 +1266,30 @@ class ReferralForm(forms.ModelForm):
         if recommended_learning_path == 'Drop out' and not dropout_date:
             self.add_error('dropout_date', 'This field is required')
 
+        transition_fields = (
+            'referred_school', 'cerd_number', 'formal_education_school_type',
+            'formal_education_grade_level', 'transition_arabic_grade',
+            'transition_foreign_languages_grade', 'transition_math_grade',
+            'retention_support_enrolled',
+        )
+        if recommended_learning_path == 'Progress to  Higher Level  in next school year':
+            for field in transition_fields:
+                if cleaned_data.get(field) in (None, ''):
+                    self.add_error(field, 'This field is required')
+
+            if cleaned_data.get('retention_support_enrolled') == 'Yes':
+                partner = cleaned_data.get('retention_support_partner')
+                center = cleaned_data.get('retention_support_center')
+                if not partner:
+                    self.add_error('retention_support_partner', 'This field is required')
+                if not center:
+                    self.add_error('retention_support_center', 'This field is required')
+                elif partner and center.partner_id != partner.id:
+                    self.add_error(
+                        'retention_support_center',
+                        'Select a center belonging to the selected partner'
+                    )
+
     class Meta:
         model = Referral
         fields = (
@@ -1143,5 +1299,14 @@ class ReferralForm(forms.ModelForm):
             'referred_service',
             'referred_service_other',
             'recommended_learning_path',
+            'cerd_number',
+            'formal_education_school_type',
+            'formal_education_grade_level',
+            'transition_arabic_grade',
+            'transition_foreign_languages_grade',
+            'transition_math_grade',
+            'retention_support_enrolled',
+            'retention_support_partner',
+            'retention_support_center',
             'dropout_date',
         )
