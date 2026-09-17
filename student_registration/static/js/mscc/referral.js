@@ -15,6 +15,9 @@ $(document).ready(function(){
     $(document).on('change', 'select#id_recommended_learning_path' , function(){
        reorganizeForm();
     });
+    $(document).on('change', 'select#id_retention_support_enrolled' , function(){
+       reorganizeForm();
+    });
 
 });
 
@@ -57,5 +60,13 @@ function reorganizeForm()
         $('#id_dropout_date').val('');
         $('div#div_id_dropout_date').addClass('d-none');
     }
-  }
 
+    var showTransitionFields = recommended_learning_path ==
+        'Progress to  Higher Level  in next school year';
+    $('#transition-fields').toggleClass('d-none', !showTransitionFields);
+
+    var showRetentionDetails = showTransitionFields &&
+        $('#id_retention_support_enrolled').val() == 'Yes';
+    $('#div_id_retention_support_partner, #div_id_retention_support_center')
+        .toggleClass('d-none', !showRetentionDetails);
+  }

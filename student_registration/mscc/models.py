@@ -2153,6 +2153,27 @@ class FollowUpService(TimeStampedModel):
 
 
 class Referral(TimeStampedModel):
+    SCHOOL_TYPE = Choices(
+        ('', '----------'),
+        ('Public', _('Public')),
+        ('Private', _('Private')),
+        ('Semi-Private', _('Semi-Private')),
+    )
+    FORMAL_EDUCATION_GRADES = Choices(
+        ('', '----------'),
+        ('grade_one', _('Grade 1')),
+        ('grade_two', _('Grade 2')),
+        ('grade_three', _('Grade 3')),
+        ('grade_four', _('Grade 4')),
+        ('grade_five', _('Grade 5')),
+        ('grade_six', _('Grade 6')),
+        ('grade_seven', _('Grade 7')),
+        ('grade_eight', _('Grade 8')),
+        ('grade_nine', _('Grade 9')),
+        ('grade_ten', _('Grade 10')),
+        ('grade_eleven', _('Grade 11')),
+        ('grade_twelve', _('Grade 12')),
+    )
 
     REFERRED_SERVICE = Choices(
         ('', '----------'),
@@ -2220,6 +2241,36 @@ class Referral(TimeStampedModel):
         null=True,
         choices=LEARNING_PATH,
         verbose_name=_('Based on the overall score, what is the recommended learning path/outcome?')
+    )
+    formal_education_school = models.TextField(
+        blank=True, null=True, verbose_name=_('Formal Education School')
+    )
+    formal_education_school_type = models.CharField(
+        max_length=100, blank=True, null=True, choices=SCHOOL_TYPE,
+        verbose_name=_('School Type')
+    )
+    cerd_number = models.CharField(
+        max_length=6, blank=True, null=True, verbose_name=_('CERD#')
+    )
+    formal_education_grade_level = models.CharField(
+        max_length=12, blank=True, null=True,
+        choices=FORMAL_EDUCATION_GRADES,
+        verbose_name=_('Grade level the Child is enrolled in')
+    )
+    transition_arabic_grade = models.PositiveSmallIntegerField(blank=True, null=True)
+    transition_foreign_languages_grade = models.PositiveSmallIntegerField(blank=True, null=True)
+    transition_math_grade = models.PositiveSmallIntegerField(blank=True, null=True)
+    retention_support_enrolled = models.CharField(
+        max_length=3, blank=True, null=True, choices=YES_NO,
+        verbose_name=_('Was the child referred and enrolled in a Retention Support programme?')
+    )
+    retention_support_partner = models.ForeignKey(
+        PartnerOrganization, blank=True, null=True, related_name='+',
+        on_delete=models.SET_NULL, verbose_name=_('Which partner?')
+    )
+    retention_support_center = models.ForeignKey(
+        Center, blank=True, null=True, related_name='+',
+        on_delete=models.SET_NULL, verbose_name=_('Which center?')
     )
     dropout_date = models.DateField(blank=True, null=True)
 
