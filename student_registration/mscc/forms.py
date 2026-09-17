@@ -939,7 +939,7 @@ class ReferralForm(forms.ModelForm):
     referred_school = forms.ModelChoiceField(
         queryset=School.objects.filter(is_bma=True),
         widget=autocomplete.ModelSelect2(url='school_autocomplete'),
-        label=_('Name of public School'),
+        label=_('Formal Education School'),
         required=False,
     )
     receive_needed_material = forms.ChoiceField(
@@ -964,9 +964,6 @@ class ReferralForm(forms.ModelForm):
     dropout_date = forms.DateField(
         label=_("Please Specify dropout date"),
         required=False
-    )
-    formal_education_school = forms.CharField(
-        label=_('Formal Education School'), widget=forms.TextInput, required=False
     )
     formal_education_school_type = forms.ChoiceField(
         label=_('School Type'), choices=Referral.SCHOOL_TYPE, required=False
@@ -1083,15 +1080,13 @@ class ReferralForm(forms.ModelForm):
                     Div(
                         Div(
                             HTML('<span class="badge-form badge-pill">4</span>'),
-                            Div('formal_education_school', css_class='col-md-4'),
-                            HTML('<span class="badge-form badge-pill">5</span>'),
                             Div('cerd_number', css_class='col-md-3'),
-                            HTML('<span class="badge-form badge-pill">6</span>'),
+                            HTML('<span class="badge-form badge-pill">5</span>'),
                             Div('formal_education_school_type', css_class='col-md-3'),
                             css_class='row card-body'
                         ),
                         Div(
-                            HTML('<span class="badge-form badge-pill">7</span>'),
+                            HTML('<span class="badge-form badge-pill">6</span>'),
                             Div('formal_education_grade_level', css_class='col-md-5'),
                             css_class='row card-body'
                         ),
@@ -1100,16 +1095,16 @@ class ReferralForm(forms.ModelForm):
                             css_class='row card-body'
                         ),
                         Div(
-                            HTML('<span class="badge-form badge-pill">8</span>'),
+                            HTML('<span class="badge-form badge-pill">7</span>'),
                             Div('transition_arabic_grade', css_class='col-md-3'),
-                            HTML('<span class="badge-form badge-pill">9</span>'),
+                            HTML('<span class="badge-form badge-pill">8</span>'),
                             Div('transition_foreign_languages_grade', css_class='col-md-3'),
-                            HTML('<span class="badge-form badge-pill">10</span>'),
+                            HTML('<span class="badge-form badge-pill">9</span>'),
                             Div('transition_math_grade', css_class='col-md-3'),
                             css_class='row card-body'
                         ),
                         Div(
-                            HTML('<span class="badge-form badge-pill">11</span>'),
+                            HTML('<span class="badge-form badge-pill">10</span>'),
                             Div('retention_support_enrolled', css_class='col-md-5'),
                             Div('retention_support_partner', css_class='col-md-3'),
                             Div('retention_support_center', css_class='col-md-3'),
@@ -1137,7 +1132,6 @@ class ReferralForm(forms.ModelForm):
                     Div(
                         HTML('<span class="badge-form badge-pill">1</span>'),
                         Div('referred_formal_education', css_class='col-md-5'),
-                        Div('referred_school', css_class='col-md-6'),
                         css_class='row card-body d-none'
                     ),
                     Div(
@@ -1163,7 +1157,7 @@ class ReferralForm(forms.ModelForm):
                     Div(
                         Div(
                             HTML('<span class="badge-form badge-pill">4</span>'),
-                            Div('formal_education_school', css_class='col-md-4'),
+                            Div('referred_school', css_class='col-md-4'),
                             HTML('<span class="badge-form badge-pill">5</span>'),
                             Div('cerd_number', css_class='col-md-3'),
                             HTML('<span class="badge-form badge-pill">6</span>'),
@@ -1225,7 +1219,7 @@ class ReferralForm(forms.ModelForm):
         transition_selected = validated_data.get('recommended_learning_path') == \
             'Progress to  Higher Level  in next school year'
         transition_fields = (
-            'formal_education_school', 'cerd_number', 'formal_education_school_type',
+            'cerd_number', 'formal_education_school_type',
             'formal_education_grade_level', 'transition_arabic_grade',
             'transition_foreign_languages_grade', 'transition_math_grade',
             'retention_support_enrolled',
@@ -1259,9 +1253,8 @@ class ReferralForm(forms.ModelForm):
         if is_cbece and is_cbece == 'Yes':
             if not referred_formal_education:
                 self.add_error('referred_formal_education', 'This field is required')
-
-                if referred_formal_education == 'Yes' and not referred_school:
-                    self.add_error('referred_school', 'This field is required')
+            if referred_formal_education == 'Yes' and not referred_school:
+                self.add_error('referred_school', 'This field is required')
 
         referred_service = cleaned_data.get("referred_service")
         referred_service_other = cleaned_data.get("referred_service_other")
@@ -1274,7 +1267,7 @@ class ReferralForm(forms.ModelForm):
             self.add_error('dropout_date', 'This field is required')
 
         transition_fields = (
-            'formal_education_school', 'cerd_number', 'formal_education_school_type',
+            'referred_school', 'cerd_number', 'formal_education_school_type',
             'formal_education_grade_level', 'transition_arabic_grade',
             'transition_foreign_languages_grade', 'transition_math_grade',
             'retention_support_enrolled',
@@ -1306,7 +1299,6 @@ class ReferralForm(forms.ModelForm):
             'referred_service',
             'referred_service_other',
             'recommended_learning_path',
-            'formal_education_school',
             'cerd_number',
             'formal_education_school_type',
             'formal_education_grade_level',

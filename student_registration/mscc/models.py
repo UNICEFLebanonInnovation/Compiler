@@ -2242,9 +2242,6 @@ class Referral(TimeStampedModel):
         choices=LEARNING_PATH,
         verbose_name=_('Based on the overall score, what is the recommended learning path/outcome?')
     )
-    formal_education_school = models.TextField(
-        blank=True, null=True, verbose_name=_('Formal Education School')
-    )
     formal_education_school_type = models.CharField(
         max_length=100, blank=True, null=True, choices=SCHOOL_TYPE,
         verbose_name=_('School Type')

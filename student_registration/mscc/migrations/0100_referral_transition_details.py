@@ -12,10 +12,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name='referral', name='formal_education_school',
-            field=models.TextField(blank=True, null=True, verbose_name='Formal Education School'),
-        ),
-        migrations.AddField(
             model_name='referral', name='formal_education_school_type',
             field=models.CharField(blank=True, choices=[('', '----------'), ('Public', 'Public'), ('Private', 'Private'), ('Semi-Private', 'Semi-Private')], max_length=100, null=True, verbose_name='School Type'),
         ),

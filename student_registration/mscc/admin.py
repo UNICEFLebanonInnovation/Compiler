@@ -403,7 +403,6 @@ class ReferralAdmin(admin.ModelAdmin):
         'referred_service',
         'referred_service_other',
         'recommended_learning_path',
-        'formal_education_school',
         'formal_education_school_type',
         'cerd_number',
         'formal_education_grade_level',
