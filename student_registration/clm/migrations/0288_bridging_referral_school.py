@@ -10,6 +10,13 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL(
+            sql=(
+                "UPDATE clm_bridging SET referral_school = NULL "
+                "WHERE BTRIM(referral_school) = ''"
+            ),
+            reverse_sql=migrations.RunSQL.noop,
+        ),
         migrations.AlterField(
             model_name='bridging',
             name='referral_school',
