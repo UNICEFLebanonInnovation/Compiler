@@ -143,7 +143,13 @@ function reorganizeForm_post_assessment()
     publicSchoolFieldIds.forEach(function (fieldId) {
         $('#div_id_' + fieldId).toggleClass('d-none', learning_result !== 'referred_public_school');
     });
-    $('#span_cerd_number, #span_formal_education_grade_level, #span_transition_grades, #span_retention_support_enrolled')
+    $('#span_cerd_number, #span_formal_education_grade_level, #span_retention_support_enrolled')
+        .toggleClass('d-none', learning_result !== 'referred_public_school');
+    $('#transition_grades_section')
+        .toggleClass('d-none', learning_result !== 'referred_public_school');
+    $('.transition-grades-heading, .transition-grade-badge')
+        .toggleClass('d-none', learning_result !== 'referred_public_school');
+    $('.transition-grade-badge').first().closest('.card-body').find('h5')
         .toggleClass('d-none', learning_result !== 'referred_public_school');
 
     var showRetentionDetails = learning_result === 'referred_public_school' &&
