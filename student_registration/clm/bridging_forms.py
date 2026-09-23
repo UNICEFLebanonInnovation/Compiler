@@ -3225,7 +3225,8 @@ class BridgingAssessmentForm(forms.ModelForm):
                             Div('transition_math_grade', css_class='col-md-3'),
                             css_class='row'
                         ),
-                        css_class='card-body'
+                        css_id='transition_grades_section',
+                        css_class='card-body d-none'
                     ),
                     Div(
                         HTML('<span class="badge-form-2 badge-pill" id="span_retention_support_enrolled">16</span>'),
