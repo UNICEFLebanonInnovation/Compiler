@@ -397,7 +397,6 @@ class FollowUpServiceAdmin(admin.ModelAdmin):
 class ReferralAdmin(admin.ModelAdmin):
     list_display = (
         'registration',
-        'referred_formal_education',
         'referred_school',
         'receive_needed_material',
         'referred_service',

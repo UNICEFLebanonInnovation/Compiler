@@ -928,11 +928,6 @@ class MainForm(forms.ModelForm):
 
 class ReferralForm(forms.ModelForm):
 
-    referred_formal_education = forms.ChoiceField(
-        label=_("Was the child referred to formal education (Grade 1)?"),
-        widget=forms.Select, required=False,
-        choices=YES_NO,
-    )
     referred_school = forms.ModelChoiceField(
         queryset=School.objects.filter(is_bma=True),
         widget=autocomplete.ModelSelect2(url='school_autocomplete'),
@@ -977,8 +972,6 @@ class ReferralForm(forms.ModelForm):
         if pk:
             form_action = reverse('mscc:referral_edit',
                                   kwargs={'registry': registry, 'pk': pk})
-        if is_cbece == 'Yes':
-            self.fields['referred_formal_education'].required = True
 
         education_program = get_education_service(registry)
         choices = list()
@@ -1010,7 +1003,6 @@ class ReferralForm(forms.ModelForm):
                     ),
                     Div(
                         HTML('<span class="badge-form badge-pill">1</span>'),
-                        Div('referred_formal_education', css_class='col-md-5'),
                         Div('referred_school', css_class='col-md-6'),
                         css_class='row card-body'
                     ),
@@ -1050,7 +1042,6 @@ class ReferralForm(forms.ModelForm):
                     ),
                     Div(
                         HTML('<span class="badge-form badge-pill">1</span>'),
-                        Div('referred_formal_education', css_class='col-md-5'),
                         Div('referred_school', css_class='col-md-6'),
                         css_class='row card-body d-none'
                     ),
@@ -1093,7 +1084,6 @@ class ReferralForm(forms.ModelForm):
         else:
             instance = Referral.objects.get(id=instance)
 
-        instance.referred_formal_education = validated_data.get('referred_formal_education')
         instance.referred_school_id = validated_data.get('referred_school')
         instance.receive_needed_material = validated_data.get('receive_needed_material')
         instance.referred_service = validated_data.get('referred_service')
@@ -1112,16 +1102,6 @@ class ReferralForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(ReferralForm, self).clean()
         is_cbece  = cleaned_data.get("is_cbece")
-        referred_formal_education = cleaned_data.get("referred_formal_education")
-        referred_school = cleaned_data.get("referred_school")
-
-        if is_cbece and is_cbece == 'Yes':
-            if not referred_formal_education:
-                self.add_error('referred_formal_education', 'This field is required')
-
-                if referred_formal_education == 'Yes' and not referred_school:
-                    self.add_error('referred_school', 'This field is required')
-
         referred_service = cleaned_data.get("referred_service")
         referred_service_other = cleaned_data.get("referred_service_other")
         if referred_service and referred_service == 'Other' and not referred_service_other:
@@ -1135,7 +1115,6 @@ class ReferralForm(forms.ModelForm):
     class Meta:
         model = Referral
         fields = (
-            'referred_formal_education',
             'referred_school',
             'receive_needed_material',
             'referred_service',

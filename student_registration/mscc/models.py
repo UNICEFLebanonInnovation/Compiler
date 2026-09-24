@@ -2203,13 +2203,6 @@ class Referral(TimeStampedModel):
         related_name='+',
         on_delete=models.SET_NULL,
     )
-    referred_formal_education = models.CharField(
-        max_length=10,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-        verbose_name=_('Was the child referred to formal education (Grade 1)?')
-    )
     referred_school = models.ForeignKey(
         School,
         blank=False, null=True,

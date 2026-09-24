@@ -9,16 +9,9 @@ $(document).ready(function(){
     $(document).on('change', 'select#id_referred_service' , function(){
        reorganizeForm();
     });
-    $(document).on('change', 'select#id_referred_formal_education' , function(){
-       reorganizeForm();
-    });
     $(document).on('change', 'select#id_recommended_learning_path' , function(){
        reorganizeForm();
     });
-    $(document).on('change', 'select#id_retention_support_enrolled' , function(){
-       reorganizeForm();
-    });
-
 });
 
 
@@ -39,10 +32,24 @@ function reorganizeForm()
     }
 
     var recommended_learning_path = $('select#id_recommended_learning_path').val();
-    var showTransitionFields = recommended_learning_path ==
-        'Progress to  Higher Level  in next school year';
-    var referred_formal_education = $('select#id_referred_formal_education').val();
-    if(referred_formal_education == 'Yes' || showTransitionFields){
+    var progressToFormalEducation = recommended_learning_path == 'Progress to FE';
+    var educationProgram = $('#id_education_program').val();
+    var programmesWithFormalEducationDetails = [
+        'CBECE Level 1',
+        'BLN Level 1',
+        'BLN Level 2',
+        'BLN Level 3',
+        'BLN Level 4',
+        'BLN Level 5',
+        'BLN Level 6',
+        'BLN Level 7',
+        'BLN Level 8',
+        'BLN Level 9'
+    ];
+    var showFormalEducationDetails = progressToFormalEducation &&
+        programmesWithFormalEducationDetails.indexOf(educationProgram) !== -1;
+
+    if(progressToFormalEducation){
         $('div#div_id_referred_school').removeClass('d-none');
         if ($('#id_referred_school').val()== null || $('#id_referred_school').val()=='')
         {
@@ -63,10 +70,12 @@ function reorganizeForm()
         $('div#div_id_dropout_date').addClass('d-none');
     }
 
-    $('#transition-fields').toggleClass('d-none', !showTransitionFields);
-
-    var showRetentionDetails = showTransitionFields &&
-        $('#id_retention_support_enrolled').val() == 'Yes';
-    $('#div_id_retention_support_partner, #div_id_retention_support_center')
-        .toggleClass('d-none', !showRetentionDetails);
+    $('#div_id_cerd_number, #div_id_formal_education_school_type, ' +
+      '#div_id_formal_education_grade_level').toggleClass(
+        'd-none', !showFormalEducationDetails
+    );
+    if (!showFormalEducationDetails) {
+        $('#id_cerd_number, #id_formal_education_school_type, ' +
+          '#id_formal_education_grade_level').val('');
+    }
   }
