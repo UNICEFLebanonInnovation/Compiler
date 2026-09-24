@@ -1046,9 +1046,13 @@ class ReferralForm(forms.ModelForm):
                         css_class='row card-body'
                     ),
                     Div(
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('referred_school', css_class='col-md-4'),
+                        css_class='row card-body',
+                        css_id='referred-school-fields'
+                    ),
+                    Div(
                         Div(
-                            HTML('<span class="badge-form badge-pill">4</span>'),
-                            Div('referred_school', css_class='col-md-4'),
                             HTML('<span class="badge-form badge-pill">5</span>'),
                             Div('cerd_number', css_class='col-md-3'),
                             HTML('<span class="badge-form badge-pill">6</span>'),
