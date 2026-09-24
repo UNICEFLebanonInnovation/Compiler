@@ -1959,9 +1959,13 @@ class Bridging(CLM):
         blank=True, null=True,
         verbose_name=_('Please Specify')
     )
-    referral_school = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('Formal Education school')
+    referral_school = models.ForeignKey(
+        School,
+        blank=True,
+        null=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+        verbose_name=_('Formal Education school'),
     )
     referral_school_type = models.CharField(
         max_length=100,

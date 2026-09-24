@@ -2767,9 +2767,17 @@ class BridgingAssessmentForm(forms.ModelForm):
         label=_('Please specify'),
         widget=forms.TextInput, required=False
     )
-    referral_school = forms.CharField(
-        label=_('Formal Education School '),
-        widget=forms.TextInput, required=False
+    referral_school = forms.ModelChoiceField(
+        queryset=School.objects.filter(
+            is_closed=False,
+            partner_schools__is_dirasa=True,
+        ).distinct(),
+        widget=forms.Select,
+        label=_('School Name'),
+        empty_label='-------',
+        required=False,
+        to_field_name='id',
+        initial=0,
     )
     referral_school_type = forms.ChoiceField(
         label=_('School Type'),
@@ -2929,6 +2937,29 @@ class BridgingAssessmentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(BridgingAssessmentForm, self).__init__(*args, **kwargs)
+
+        user = self.request.user
+        school_id = user.school_id or 0
+        partner_id = user.partner_id or 0
+
+        if has_group(user, 'CLM_BRIDGING_ALL'):
+            referral_schools = School.objects.filter(
+                is_closed=False,
+                partner_schools__is_dirasa=True,
+            ).distinct()
+        elif school_id > 0:
+            referral_schools = School.objects.filter(id=school_id)
+        elif partner_id > 0:
+            referral_schools = School.objects.filter(
+                is_closed=False,
+                id__in=PartnerOrganization.objects.filter(
+                    id=partner_id,
+                ).values_list('schools', flat=True),
+            )
+        else:
+            referral_schools = School.objects.none()
+
+        self.fields['referral_school'].queryset = referral_schools
 
         post_test = ''
         post_test_button = ' btn-outline-secondary disabled'
