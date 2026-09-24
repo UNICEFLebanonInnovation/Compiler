@@ -1110,18 +1110,19 @@ class ReferralForm(forms.ModelForm):
                             Div('transition_arabic_grade', css_class='col-md-3'),
                             HTML('<span class="badge-form badge-pill">9</span>'),
                             Div('transition_foreign_languages_grade', css_class='col-md-3'),
-                            HTML('<span class="badge-form badge-pill">10</span>'),
+                            HTML('<span class="badge-form-2 badge-pill">10</span>'),
                             Div('transition_math_grade', css_class='col-md-3'),
                             css_class='row card-body'
                         ),
                         Div(
-                            HTML('<span class="badge-form badge-pill">11</span>'),
-                            Div('retention_support_enrolled', css_class='col-md-5'),
+                            HTML('<span class="badge-form-2 badge-pill">11</span>'),
+                            Div('retention_support_enrolled', css_class='col-md-4'),
                             css_class='row card-body'
                         ),
                         Div(
-                            Div('retention_support_partner', css_class='col-md-6'),
-                            Div('retention_support_center', css_class='col-md-6'),
+                            HTML('<span class="badge-form-0 badge-pill"></span>'),
+                            Div('retention_support_partner', css_class='col-md-4'),
+                            Div('retention_support_center', css_class='col-md-4'),
                             css_class='row card-body',
                             css_id='retention-support-fields'
                         ),
