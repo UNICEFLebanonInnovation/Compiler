@@ -971,6 +971,19 @@ class ReferralForm(forms.ModelForm):
         label=_('Grade level the Child is enrolled in'),
         choices=Referral.FORMAL_EDUCATION_GRADES, required=False
     )
+    transition_arabic_grade = forms.IntegerField(
+        label=_('Arabic Grade'), min_value=0, max_value=100, required=False
+    )
+    transition_foreign_languages_grade = forms.IntegerField(
+        label=_('Foreign Languages Grade'), min_value=0, max_value=100, required=False
+    )
+    transition_math_grade = forms.IntegerField(
+        label=_('Math Grade'), min_value=0, max_value=100, required=False
+    )
+    retention_support_enrolled = forms.ChoiceField(
+        label=_('Was the child referred and enrolled in a Retention Support programme?'),
+        choices=YES_NO, required=False
+    )
     education_program = forms.CharField(widget=forms.HiddenInput, required=False)
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -993,6 +1006,10 @@ class ReferralForm(forms.ModelForm):
                 self._requires_fe_details()):
             for field in ('cerd_number', 'formal_education_school_type',
                           'formal_education_grade_level'):
+                self.fields[field].disabled = True
+        if self.is_bound and self.data.get('recommended_learning_path') != 'Progress to FE':
+            for field in ('transition_arabic_grade', 'transition_foreign_languages_grade',
+                          'transition_math_grade', 'retention_support_enrolled'):
                 self.fields[field].disabled = True
         bln_programmes = ['BLN Level {}'.format(level) for level in range(1, 13)]
         if education_program in bln_programmes:
@@ -1066,6 +1083,27 @@ class ReferralForm(forms.ModelForm):
                         ),
                         css_id='formal-education-fields'
                     ),
+                    Div(
+                        Div(
+                            HTML('<h5>The grade of the child in the transition exam</h5>'),
+                            css_class='row card-body'
+                        ),
+                        Div(
+                            HTML('<span class="badge-form badge-pill">8</span>'),
+                            Div('transition_arabic_grade', css_class='col-md-3'),
+                            HTML('<span class="badge-form badge-pill">9</span>'),
+                            Div('transition_foreign_languages_grade', css_class='col-md-3'),
+                            HTML('<span class="badge-form badge-pill">10</span>'),
+                            Div('transition_math_grade', css_class='col-md-3'),
+                            css_class='row card-body'
+                        ),
+                        Div(
+                            HTML('<span class="badge-form badge-pill">11</span>'),
+                            Div('retention_support_enrolled', css_class='col-md-5'),
+                            css_class='row card-body'
+                        ),
+                        css_id='transition-fields'
+                    ),
                     css_id='step-1'
                 ),
                 FormActions(
@@ -1098,7 +1136,7 @@ class ReferralForm(forms.ModelForm):
                     if formal_education_details_required else None)
         for field in ('transition_arabic_grade', 'transition_foreign_languages_grade',
                       'transition_math_grade', 'retention_support_enrolled'):
-            setattr(instance, field, None)
+            setattr(instance, field, validated_data.get(field) if progress_to_fe else None)
         instance.retention_support_partner_id = None
         instance.retention_support_center_id = None
         dropout_date_str = validated_data.get('dropout_date')
@@ -1161,5 +1199,9 @@ class ReferralForm(forms.ModelForm):
             'cerd_number',
             'formal_education_school_type',
             'formal_education_grade_level',
+            'transition_arabic_grade',
+            'transition_foreign_languages_grade',
+            'transition_math_grade',
+            'retention_support_enrolled',
             'dropout_date',
         )

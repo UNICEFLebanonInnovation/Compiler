@@ -75,4 +75,10 @@ function reorganizeForm()
         $('#id_cerd_number, #id_formal_education_school_type, ' +
           '#id_formal_education_grade_level').val('');
     }
+
+    $('#transition-fields').toggleClass('d-none', !progressToFormalEducation);
+    if (!progressToFormalEducation) {
+        $('#id_transition_arabic_grade, #id_transition_foreign_languages_grade, ' +
+          '#id_transition_math_grade, #id_retention_support_enrolled').val('');
+    }
   }
