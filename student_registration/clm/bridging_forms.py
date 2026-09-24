@@ -1,7 +1,11 @@
 from __future__ import unicode_literals, absolute_import, division
 
+import io
+import os
+
 from django.utils.translation import gettext as _
 from django import forms
+from django.core.files.base import ContentFile
 from django.urls import reverse
 from django.contrib import messages
 
@@ -461,6 +465,12 @@ class CommonForm(forms.ModelForm):
 
 
 class BridgingForm(CommonForm):
+
+    student_photo = forms.ImageField(
+        label=_("Child photo"),
+        required=False,
+        help_text=_("Upload a clear photo of the child. It will be stored at low resolution."),
+    )
 
     REGISTRATION_LEVEL = (
         ('', '----------'),
@@ -1054,6 +1064,7 @@ class BridgingForm(CommonForm):
                         Div('student_mother_fullname', css_class='col-md-3'),
                         HTML('<span class="badge-form badge-pill">5</span>'),
                         Div('student_sex', css_class='col-md-3'),
+                        Div('student_photo', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
                     Div(
@@ -1445,6 +1456,7 @@ class BridgingForm(CommonForm):
                         Div('student_mother_fullname', css_class='col-md-3'),
                         HTML('<span class="badge-form badge-pill">5</span>'),
                         Div('student_sex', css_class='col-md-3'),
+                        Div('student_photo', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
                     Div(
@@ -1988,6 +2000,14 @@ class BridgingForm(CommonForm):
             return None
         instance.save()
 
+        student_photo = self.cleaned_data.get('student_photo')
+        if student_photo:
+            instance.student.std_image.save(
+                self._photo_name(student_photo.name),
+                self._low_resolution_photo(student_photo),
+                save=False,
+            )
+
         if old_section != instance.section:
             update_child_attendance(instance.id, old_section, instance.section)
 
@@ -2019,6 +2039,31 @@ class BridgingForm(CommonForm):
             instance.student.save()
 
         return instance
+
+    @staticmethod
+    def _photo_name(original_name):
+        return '{}.jpg'.format(os.path.splitext(original_name)[0])
+
+    @staticmethod
+    def _low_resolution_photo(uploaded_photo):
+        """Normalize profile photos to a small, bandwidth-friendly JPEG."""
+        from PIL import Image, ImageOps
+
+        image = ImageOps.exif_transpose(Image.open(uploaded_photo))
+        if image.mode not in ('RGB', 'L'):
+            background = Image.new('RGB', image.size, 'white')
+            if 'A' in image.getbands():
+                background.paste(image, mask=image.getchannel('A'))
+            else:
+                background.paste(image)
+            image = background
+        else:
+            image = image.convert('RGB')
+        image.thumbnail((256, 256), Image.Resampling.LANCZOS)
+
+        output = io.BytesIO()
+        image.save(output, format='JPEG', quality=65, optimize=True)
+        return ContentFile(output.getvalue())
 
     class Meta:
         model = Bridging

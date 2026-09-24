@@ -55,6 +55,14 @@
 
 <div class="main-card mb-3 card">
                                 <div class="card-body">
+                                    {% if form.instance.student.std_image %}
+                                    <div class="mb-3 text-center">
+                                        <a href="{{ form.instance.student.std_image.url }}" target="_blank" rel="noopener">
+                                            <img src="{{ form.instance.student.std_image.url }}" alt="{{ form.instance.student.full_name }}" width="96" height="96" class="rounded-circle" style="object-fit: cover;">
+                                        </a>
+                                        <div class="small text-muted mt-1">Child photo</div>
+                                    </div>
+                                    {% endif %}
                                     <div id="smartwizard3" class="forms-wizard">
                                         <ul class="forms-wizard">
                                             <li>

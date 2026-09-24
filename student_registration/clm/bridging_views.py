@@ -81,6 +81,27 @@ from .utils import is_allowed_create, is_allowed_edit,  get_outreach_child
 from student_registration.users.templatetags.custom_tags import has_group
 from student_registration.students.utils import generate_one_unique_id
 from student_registration.students.models import Nationality
+from student_registration.students.models import Student
+
+
+def _add_child_photo_links(headers, rows, request):
+    """Append a public, absolute profile-photo URL to exported Dirasa rows."""
+    id_column = next(
+        (name for name in ('student_id', 'child_id') if name in headers),
+        None,
+    )
+    headers = list(headers) + ['child_photo_public_link']
+    if not id_column:
+        return headers, [tuple(row) + ('',) for row in rows]
+
+    id_index = list(headers).index(id_column)
+    student_ids = {row[id_index] for row in rows if row[id_index]}
+    photos = {
+        student.id: request.build_absolute_uri(student.std_image.url)
+        for student in Student.objects.filter(id__in=student_ids).only('id', 'std_image')
+        if student.std_image
+    }
+    return headers, [tuple(row) + (photos.get(row[id_index], ''),) for row in rows]
 
 
 class CLMView(LoginRequiredMixin,
@@ -439,6 +460,7 @@ def bridging_export_data(request, **kwargs):
         logging.debug("Query params: %s", str(query_params))
 
         headers = [col[0] for col in cursor.description]
+        headers, bridging_data = _add_child_photo_links(headers, bridging_data, request)
 
         # Create CSV
         csv_output = io.StringIO()
@@ -528,6 +550,7 @@ def bridging_school_export(request, **kwargs):
         logging.debug("Query params: %s", str(query_params))
 
         headers = [col[0] for col in cursor.description]
+        headers, bridging_data = _add_child_photo_links(headers, bridging_data, request)
 
         csv_output = io.StringIO()
         csv_writer = csv.writer(csv_output)
@@ -1186,6 +1209,7 @@ def bridging_export_all(request, **kwargs):
         cursor.execute(query)
         data = cursor.fetchall()
         headers = [col[0] for col in cursor.description]
+        headers, data = _add_child_photo_links(headers, data, request)
 
         # Create CSV in memory
         csv_output = io.StringIO()

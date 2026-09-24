@@ -3438,6 +3438,7 @@ def load_child_attendance(round_id, attendance_date, school_id, registration_lev
                     'child_mother_fullname': student.mother_fullname if student else None,
                     'child_birthday': student.birthday if student else None,
                     'child_nationality': student.nationality.name if student and student.nationality else None,
+                    'child_photo_url': student.std_image.url if student and student.std_image else '',
                     'attended': att.attended,
                     'absence_reason': att.absence_reason,
                     'absence_reason_other': att.absence_reason_other
@@ -3467,6 +3468,7 @@ def load_child_attendance(round_id, attendance_date, school_id, registration_lev
                     'child_mother_fullname': reg.student.mother_fullname,
                     'child_birthday': reg.student.birthday,
                     'child_nationality': reg.student.nationality.name,
+                    'child_photo_url': reg.student.std_image.url if reg.student.std_image else '',
                     'attended': 'Yes',
                     'absence_reason': '',
                     'absence_reason_other': ''
