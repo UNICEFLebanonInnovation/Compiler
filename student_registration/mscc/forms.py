@@ -19,6 +19,7 @@ from student_registration.students.models import (
     IDType,
 )
 
+from student_registration.locations.models import Center
 from student_registration.clm.models import Disability, EducationalLevel
 from student_registration.child.models import Child
 from .models import (
@@ -28,6 +29,7 @@ from .models import (
 )
 from student_registration.schools.models import (
     School,
+    PartnerOrganization,
 )
 from .utils import generate_services, generate_education_history, regenerate_services
 from .serializers import MainSerializer
@@ -984,6 +986,16 @@ class ReferralForm(forms.ModelForm):
         label=_('Was the child referred and enrolled in a Retention Support programme?'),
         choices=YES_NO, required=False
     )
+    retention_support_partner = forms.ModelChoiceField(
+        label=_('Which partner?'),
+        queryset=PartnerOrganization.objects.filter(active=True).order_by('name'),
+        empty_label='-------', required=False
+    )
+    retention_support_center = forms.ModelChoiceField(
+        label=_('Which center?'),
+        queryset=Center.objects.filter(partner__active=True).order_by('name'),
+        empty_label='-------', required=False
+    )
     education_program = forms.CharField(widget=forms.HiddenInput, required=False)
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -1011,6 +1023,11 @@ class ReferralForm(forms.ModelForm):
             for field in ('transition_arabic_grade', 'transition_foreign_languages_grade',
                           'transition_math_grade', 'retention_support_enrolled'):
                 self.fields[field].disabled = True
+        if self.is_bound and not (
+                self.data.get('recommended_learning_path') == 'Progress to FE' and
+                self.data.get('retention_support_enrolled') == 'Yes'):
+            self.fields['retention_support_partner'].disabled = True
+            self.fields['retention_support_center'].disabled = True
         bln_programmes = ['BLN Level {}'.format(level) for level in range(1, 13)]
         if education_program in bln_programmes:
             formal_education_grades = list(Referral.FORMAL_EDUCATION_GRADES)
@@ -1102,6 +1119,12 @@ class ReferralForm(forms.ModelForm):
                             Div('retention_support_enrolled', css_class='col-md-5'),
                             css_class='row card-body'
                         ),
+                        Div(
+                            Div('retention_support_partner', css_class='col-md-6'),
+                            Div('retention_support_center', css_class='col-md-6'),
+                            css_class='row card-body',
+                            css_id='retention-support-fields'
+                        ),
                         css_id='transition-fields'
                     ),
                     css_id='step-1'
@@ -1137,8 +1160,17 @@ class ReferralForm(forms.ModelForm):
         for field in ('transition_arabic_grade', 'transition_foreign_languages_grade',
                       'transition_math_grade', 'retention_support_enrolled'):
             setattr(instance, field, validated_data.get(field) if progress_to_fe else None)
-        instance.retention_support_partner_id = None
-        instance.retention_support_center_id = None
+        retention_support_selected = (
+            progress_to_fe and validated_data.get('retention_support_enrolled') == 'Yes'
+        )
+        instance.retention_support_partner_id = (
+            validated_data.get('retention_support_partner')
+            if retention_support_selected else None
+        )
+        instance.retention_support_center_id = (
+            validated_data.get('retention_support_center')
+            if retention_support_selected else None
+        )
         dropout_date_str = validated_data.get('dropout_date')
         if dropout_date_str:
             dropout_date = datetime.strptime(dropout_date_str, '%Y-%m-%d')
@@ -1203,5 +1235,7 @@ class ReferralForm(forms.ModelForm):
             'transition_foreign_languages_grade',
             'transition_math_grade',
             'retention_support_enrolled',
+            'retention_support_partner',
+            'retention_support_center',
             'dropout_date',
         )

@@ -12,6 +12,9 @@ $(document).ready(function(){
     $(document).on('change', 'select#id_recommended_learning_path' , function(){
        reorganizeForm();
     });
+    $(document).on('change', 'select#id_retention_support_enrolled', function(){
+       reorganizeForm();
+    });
 });
 
 
@@ -80,5 +83,12 @@ function reorganizeForm()
     if (!progressToFormalEducation) {
         $('#id_transition_arabic_grade, #id_transition_foreign_languages_grade, ' +
           '#id_transition_math_grade, #id_retention_support_enrolled').val('');
+    }
+
+    var showRetentionSupportDetails = progressToFormalEducation &&
+        $('#id_retention_support_enrolled').val() == 'Yes';
+    $('#retention-support-fields').toggleClass('d-none', !showRetentionSupportDetails);
+    if (!showRetentionSupportDetails) {
+        $('#id_retention_support_partner, #id_retention_support_center').val('');
     }
   }
