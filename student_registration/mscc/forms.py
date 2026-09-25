@@ -930,12 +930,6 @@ class MainForm(forms.ModelForm):
 
 
 class ReferralForm(forms.ModelForm):
-    referred_school = forms.ModelChoiceField(
-        queryset=School.objects.filter(is_bma=True).order_by('name'),
-        widget=autocomplete.Select2,
-        label=_('Formal Education School'),
-        required=False,
-    )
     receive_needed_material = forms.ChoiceField(
         label=_("Did the child receive all needed materials and resources (Stationery, Books, Learning bundle)?"),
         widget=forms.Select, required=True,
@@ -958,16 +952,6 @@ class ReferralForm(forms.ModelForm):
     dropout_date = forms.DateField(
         label=_("Please Specify dropout date"),
         required=False
-    )
-    formal_education_school_type = forms.ChoiceField(
-        label=_('School Type'), choices=Referral.SCHOOL_TYPE, required=False
-    )
-    cerd_number = forms.RegexField(
-        regex=r'^\d{1,6}$', label=_('CERD#'), required=False,
-        widget=forms.TextInput(attrs={
-            'maxlength': 6, 'inputmode': 'numeric', 'pattern': '[0-9]{1,6}'
-        }),
-        error_messages={'invalid': _('Enter a maximum of 6 numeric digits.')}
     )
     formal_education_grade_level = forms.ChoiceField(
         label=_('Grade level the Child is enrolled in'),
@@ -1020,9 +1004,7 @@ class ReferralForm(forms.ModelForm):
         if self.is_bound and not (
                 self.data.get('recommended_learning_path') == 'Progress to FE' and
                 self._requires_fe_details()):
-            for field in ('cerd_number', 'formal_education_school_type',
-                          'formal_education_grade_level'):
-                self.fields[field].disabled = True
+            self.fields['formal_education_grade_level'].disabled = True
         if self.is_bound and self.data.get('recommended_learning_path') != 'Progress to FE':
             for field in ('transition_arabic_grade', 'transition_foreign_languages_grade',
                           'transition_math_grade', 'retention_support_enrolled'):
@@ -1084,19 +1066,6 @@ class ReferralForm(forms.ModelForm):
                         css_class='row card-body'
                     ),
                     Div(
-                        HTML('<span class="badge-form badge-pill">4</span>'),
-                        Div('referred_school', css_class='col-md-4'),
-                        css_class='row card-body',
-                        css_id='referred-school-fields'
-                    ),
-                    Div(
-                        Div(
-                            HTML('<span class="badge-form badge-pill">5</span>'),
-                            Div('cerd_number', css_class='col-md-3'),
-                            HTML('<span class="badge-form badge-pill">6</span>'),
-                            Div('formal_education_school_type', css_class='col-md-3'),
-                            css_class='row card-body'
-                        ),
                         Div(
                             HTML('<span class="badge-form badge-pill">7</span>'),
                             Div('formal_education_grade_level', css_class='col-md-5'),
@@ -1152,16 +1121,15 @@ class ReferralForm(forms.ModelForm):
             instance = Referral.objects.get(id=instance)
 
         progress_to_fe = validated_data.get('recommended_learning_path') == 'Progress to FE'
-        instance.referred_school_id = validated_data.get('referred_school') if progress_to_fe else None
         instance.receive_needed_material = validated_data.get('receive_needed_material')
         instance.referred_service = validated_data.get('referred_service')
         instance.referred_service_other = validated_data.get('referred_service_other')
         instance.recommended_learning_path = validated_data.get('recommended_learning_path')
         formal_education_details_required = progress_to_fe and self._requires_fe_details()
-        for field in ('cerd_number', 'formal_education_school_type',
-                      'formal_education_grade_level'):
-            setattr(instance, field, validated_data.get(field)
-                    if formal_education_details_required else None)
+        instance.formal_education_grade_level = (
+            validated_data.get('formal_education_grade_level')
+            if formal_education_details_required else None
+        )
         for field in ('transition_arabic_grade', 'transition_foreign_languages_grade',
                       'transition_math_grade', 'retention_support_enrolled'):
             setattr(instance, field, validated_data.get(field) if progress_to_fe else None)
@@ -1190,7 +1158,6 @@ class ReferralForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(ReferralForm, self).clean()
-        referred_school = cleaned_data.get("referred_school")
 
         referred_service = cleaned_data.get("referred_service")
         referred_service_other = cleaned_data.get("referred_service_other")
@@ -1203,13 +1170,9 @@ class ReferralForm(forms.ModelForm):
             self.add_error('dropout_date', 'This field is required')
 
         if recommended_learning_path == 'Progress to FE':
-            if not referred_school:
-                self.add_error('referred_school', 'This field is required')
             if self._requires_fe_details():
-                for field in ('cerd_number', 'formal_education_school_type',
-                              'formal_education_grade_level'):
-                    if cleaned_data.get(field) in (None, ''):
-                        self.add_error(field, 'This field is required')
+                if cleaned_data.get('formal_education_grade_level') in (None, ''):
+                    self.add_error('formal_education_grade_level', 'This field is required')
 
     def _requires_fe_details(self):
         return self.education_program in (
@@ -1228,13 +1191,10 @@ class ReferralForm(forms.ModelForm):
     class Meta:
         model = Referral
         fields = (
-            'referred_school',
             'receive_needed_material',
             'referred_service',
             'referred_service_other',
             'recommended_learning_path',
-            'cerd_number',
-            'formal_education_school_type',
             'formal_education_grade_level',
             'transition_arabic_grade',
             'transition_foreign_languages_grade',

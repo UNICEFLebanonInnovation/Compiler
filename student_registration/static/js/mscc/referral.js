@@ -52,19 +52,6 @@ function reorganizeForm()
     var showFormalEducationDetails = progressToFormalEducation &&
         programmesWithFormalEducationDetails.indexOf(educationProgram) !== -1;
 
-    if(progressToFormalEducation){
-        $('#referred-school-fields').removeClass('d-none');
-        if ($('#id_referred_school').val()== null || $('#id_referred_school').val()=='')
-        {
-        $('#id_referred_school').addClass('error-field');
-        }
-    }
-    else{
-        $('#id_referred_school').val('');
-        $('#referred-school-fields').addClass('d-none');
-        $('#id_referred_school').removeClass('error-field');
-    }
-
     if(recommended_learning_path == 'Drop out'){
         $('div#div_id_dropout_date').removeClass('d-none');
     }
@@ -75,8 +62,7 @@ function reorganizeForm()
 
     $('#formal-education-fields').toggleClass('d-none', !showFormalEducationDetails);
     if (!showFormalEducationDetails) {
-        $('#id_cerd_number, #id_formal_education_school_type, ' +
-          '#id_formal_education_grade_level').val('');
+        $('#id_formal_education_grade_level').val('');
     }
 
     $('#transition-fields').toggleClass('d-none', !progressToFormalEducation);

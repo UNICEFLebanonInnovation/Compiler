@@ -2203,13 +2203,6 @@ class Referral(TimeStampedModel):
         related_name='+',
         on_delete=models.SET_NULL,
     )
-    referred_school = models.ForeignKey(
-        School,
-        blank=False, null=True,
-        related_name='+',
-        on_delete=models.SET_NULL,
-        verbose_name=_('Name of the School referred to')
-    )
     receive_needed_material = models.CharField(
         max_length=50,
         blank=True,
@@ -2234,13 +2227,6 @@ class Referral(TimeStampedModel):
         null=True,
         choices=LEARNING_PATH,
         verbose_name=_('Based on the overall score, what is the recommended learning path/outcome?')
-    )
-    formal_education_school_type = models.CharField(
-        max_length=100, blank=True, null=True, choices=SCHOOL_TYPE,
-        verbose_name=_('School Type')
-    )
-    cerd_number = models.CharField(
-        max_length=6, blank=True, null=True, verbose_name=_('CERD#')
     )
     formal_education_grade_level = models.CharField(
         max_length=12, blank=True, null=True,

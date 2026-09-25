@@ -2767,31 +2767,6 @@ class BridgingAssessmentForm(forms.ModelForm):
         label=_('Please specify'),
         widget=forms.TextInput, required=False
     )
-    referral_school = forms.ModelChoiceField(
-        queryset=School.objects.filter(
-            is_closed=False,
-            partner_schools__is_dirasa=True,
-        ).distinct(),
-        widget=forms.Select,
-        label=_('School Name'),
-        empty_label='-------',
-        required=False,
-        to_field_name='id',
-        initial=0,
-    )
-    referral_school_type = forms.ChoiceField(
-        label=_('School Type'),
-        choices=Bridging.SCHOOL_TYPE,
-        widget=forms.Select,
-        required=False
-    )
-    cerd_number = forms.RegexField(
-        regex=r'^\d{1,6}$',
-        label=_('CERD#'),
-        widget=forms.TextInput(attrs={'maxlength': 6, 'inputmode': 'numeric', 'pattern': '[0-9]{1,6}'}),
-        required=False,
-        error_messages={'invalid': _('Enter a maximum of 6 numeric digits.')}
-    )
     formal_education_grade_level = forms.ChoiceField(
         label=_('Grade level the Child is enrolled in'),
         choices=Bridging.FORMAL_EDUCATION_GRADES,
@@ -2937,29 +2912,6 @@ class BridgingAssessmentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(BridgingAssessmentForm, self).__init__(*args, **kwargs)
-
-        user = self.request.user
-        school_id = user.school_id or 0
-        partner_id = user.partner_id or 0
-
-        if has_group(user, 'CLM_BRIDGING_ALL'):
-            referral_schools = School.objects.filter(
-                is_closed=False,
-                partner_schools__is_dirasa=True,
-            ).distinct()
-        elif school_id > 0:
-            referral_schools = School.objects.filter(id=school_id)
-        elif partner_id > 0:
-            referral_schools = School.objects.filter(
-                is_closed=False,
-                id__in=PartnerOrganization.objects.filter(
-                    id=partner_id,
-                ).values_list('schools', flat=True),
-            )
-        else:
-            referral_schools = School.objects.none()
-
-        self.fields['referral_school'].queryset = referral_schools
 
         post_test = ''
         post_test_button = ' btn-outline-secondary disabled'
@@ -3199,15 +3151,6 @@ class BridgingAssessmentForm(forms.ModelForm):
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form badge-pill" id="span_referral_school">9</span>'),
-                        Div('referral_school', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill" id="span_cerd_number">10</span>'),
-                        Div('cerd_number', css_class='col-md-3'),
-                        HTML('<span class="badge-form-2 badge-pill" id="span_referral_school_type">11</span>'),
-                        Div('referral_school_type', css_class='col-md-4'),
-                        css_class='row card-body',
-                    ),
-                    Div(
                         HTML('<span class="badge-form-2 badge-pill" id="span_formal_education_grade_level">12</span>'),
                         Div('formal_education_grade_level', css_class='col-md-4'),
                         css_class='row card-body',
@@ -3297,13 +3240,6 @@ class BridgingAssessmentForm(forms.ModelForm):
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill" id="span_referral_school">12</span>'),
-                        Div('referral_school', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill" id="span_referral_school_type">13</span>'),
-                        Div('referral_school_type', css_class='col-md-4'),
-                        css_class='row card-body',
-                    ),
-                    Div(
                         HTML('<span class="badge-form-2 badge-pill" id="span_exam3">14</span>'),
                         Div('exam3', css_class='col-md-3'),
                         css_class='row grades card-body',
@@ -3319,12 +3255,10 @@ class BridgingAssessmentForm(forms.ModelForm):
         learning_result_other = cleaned_data.get("learning_result_other")
         dropout_date = cleaned_data.get("dropout_date")
         dropout_reason = cleaned_data.get("dropout_reason")
-        referral_school = cleaned_data.get("referral_school")
-        referral_school_type = cleaned_data.get("referral_school_type")
         is_kayany = bool(self.request.user.partner and self.request.user.partner.is_Kayany)
         referred_to_public_school = not is_kayany and learning_result == 'referred_public_school'
         public_school_fields = (
-            'cerd_number', 'formal_education_grade_level', 'transition_arabic_grade',
+            'formal_education_grade_level', 'transition_arabic_grade',
             'transition_foreign_languages_grade', 'transition_math_grade', 'retention_support_enrolled',
         )
         if referred_to_public_school:
@@ -3585,9 +3519,6 @@ class BridgingAssessmentForm(forms.ModelForm):
             'learning_result_other',
             'dropout_reason',
             'dropout_date',
-            'referral_school',
-            'referral_school_type',
-            'cerd_number',
             'formal_education_grade_level',
             'transition_arabic_grade',
             'transition_foreign_languages_grade',

@@ -10747,16 +10747,6 @@ class BridgingAssessmentForm(forms.ModelForm):
         label=_('Please specify'),
         widget=forms.TextInput, required=False
     )
-    referral_school = forms.CharField(
-        label=_('Formal Education School '),
-        widget=forms.TextInput, required=False
-    )
-    referral_school_type = forms.ChoiceField(
-        label=_('School Type'),
-        choices=Bridging.SCHOOL_TYPE,
-        widget=forms.Select,
-        required=False
-    )
     barriers_single = forms.ChoiceField(
         label=_('The main barriers affecting the daily attendance and performance '
                 'of the child or drop out of programme?'),
@@ -10943,13 +10933,6 @@ class BridgingAssessmentForm(forms.ModelForm):
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill" id="span_referral_school">12</span>'),
-                    Div('referral_school', css_class='col-md-4'),
-                    HTML('<span class="badge-form-2 badge-pill" id="span_referral_school_type">13</span>'),
-                    Div('referral_school_type', css_class='col-md-4'),
-                    css_class='row card-body',
-                ),
-                Div(
                     HTML('<span class="badge-form-2 badge-pill" id="span_arabic">14</span>'),
                     Div('arabic_alphabet_knowledge', css_class='col-md-3'),
                     Div('arabic_familiar_words', css_class='col-md-3'),
@@ -10991,8 +10974,6 @@ class BridgingAssessmentForm(forms.ModelForm):
         learning_result_other = cleaned_data.get("learning_result_other")
         dropout_date = cleaned_data.get("dropout_date")
         dropout_reason = cleaned_data.get("dropout_reason")
-        referral_school = cleaned_data.get("referral_school")
-        referral_school_type = cleaned_data.get("referral_school_type")
 
         barriers_single = cleaned_data.get("barriers_single")
         barriers_other = cleaned_data.get("barriers_other")
@@ -11024,11 +11005,6 @@ class BridgingAssessmentForm(forms.ModelForm):
             self.add_error('dropout_date', 'This field is required')
         if learning_result == 'dropout' and not dropout_reason:
             self.add_error('dropout_reason', 'This field is required')
-
-        if learning_result == 'referred_public_school' and not referral_school:
-            self.add_error('referral_school', 'This field is required')
-        if learning_result == 'referred_public_school' and not referral_school_type:
-            self.add_error('referral_school_type', 'This field is required')
 
         if barriers_single == 'other':
             if not barriers_other:
@@ -11150,8 +11126,6 @@ class BridgingAssessmentForm(forms.ModelForm):
             'learning_result_other',
             'dropout_reason',
             'dropout_date',
-            'referral_school',
-            'referral_school_type',
             'community_Liaison_follow_up',
             'community_liaison_specify',
         )

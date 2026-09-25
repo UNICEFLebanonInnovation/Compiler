@@ -125,25 +125,14 @@ function reorganizeForm_post_assessment()
         $('#span_dropout_date').removeClass('d-none');
     }
 
-    $('div#div_id_referral_school').addClass('d-none');
-    $('#span_referral_school').addClass('d-none');
-    $('div#div_id_referral_school_type').addClass('d-none');
-    $('#span_referral_school_type').addClass('d-none');
-    if(learning_result == 'referred_public_school'){
-        $('div#div_id_referral_school').removeClass('d-none');
-        $('#span_referral_school').removeClass('d-none');
-        $('div#div_id_referral_school_type').removeClass('d-none');
-        $('#span_referral_school_type').removeClass('d-none');
-    }
-
     var publicSchoolFieldIds = [
-        'cerd_number', 'formal_education_grade_level', 'transition_arabic_grade',
+        'formal_education_grade_level', 'transition_arabic_grade',
         'transition_foreign_languages_grade', 'transition_math_grade', 'retention_support_enrolled'
     ];
     publicSchoolFieldIds.forEach(function (fieldId) {
         $('#div_id_' + fieldId).toggleClass('d-none', learning_result !== 'referred_public_school');
     });
-    $('#span_cerd_number, #span_formal_education_grade_level, #span_retention_support_enrolled')
+    $('#span_formal_education_grade_level, #span_retention_support_enrolled')
         .toggleClass('d-none', learning_result !== 'referred_public_school');
     $('#transition_grades_section')
         .toggleClass('d-none', learning_result !== 'referred_public_school');
