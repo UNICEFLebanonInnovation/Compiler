@@ -1170,9 +1170,29 @@ class ReferralForm(forms.ModelForm):
             self.add_error('dropout_date', 'This field is required')
 
         if recommended_learning_path == 'Progress to FE':
-            if self._requires_fe_details():
-                if cleaned_data.get('formal_education_grade_level') in (None, ''):
-                    self.add_error('formal_education_grade_level', 'This field is required')
+            public_school_fields = (
+                'formal_education_grade_level', 'transition_arabic_grade',
+                'transition_foreign_languages_grade', 'transition_math_grade', 'retention_support_enrolled',
+            )
+            for field in public_school_fields:
+                if cleaned_data.get(field) in (None, ''):
+                    self.add_error(field, 'This field is required')
+
+            if cleaned_data.get('retention_support_enrolled') == 'Yes':
+                partner = cleaned_data.get('retention_support_partner')
+                center = cleaned_data.get('retention_support_center')
+                if not partner:
+                    self.add_error('retention_support_partner', 'This field is required')
+                if not center:
+                    self.add_error('retention_support_center', 'This field is required')
+                # elif partner and center.partner_id != partner.id:
+                #     self.add_error('retention_support_center',
+                #                    'Select a center belonging to the selected partner')
+            else:
+                cleaned_data['retention_support_partner'] = None
+                cleaned_data['retention_support_center'] = None
+
+        return cleaned_data
 
     def _requires_fe_details(self):
         return self.education_program in (

@@ -3273,8 +3273,8 @@ class BridgingAssessmentForm(forms.ModelForm):
                     self.add_error('retention_support_partner', 'This field is required')
                 if not center:
                     self.add_error('retention_support_center', 'This field is required')
-                elif partner and center.partner_id != partner.id:
-                    self.add_error('retention_support_center', 'Select a center belonging to the selected partner')
+                # elif partner and center.partner_id != partner.id:
+                #     self.add_error('retention_support_center', 'Select a center belonging to the selected partner')
             else:
                 cleaned_data['retention_support_partner'] = None
                 cleaned_data['retention_support_center'] = None
