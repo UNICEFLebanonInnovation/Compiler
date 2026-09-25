@@ -9,16 +9,12 @@ $(document).ready(function(){
     $(document).on('change', 'select#id_referred_service' , function(){
        reorganizeForm();
     });
-    $(document).on('change', 'select#id_referred_formal_education' , function(){
-       reorganizeForm();
-    });
     $(document).on('change', 'select#id_recommended_learning_path' , function(){
        reorganizeForm();
     });
-    $(document).on('change', 'select#id_retention_support_enrolled' , function(){
+    $(document).on('change', 'select#id_retention_support_enrolled', function(){
        reorganizeForm();
     });
-
 });
 
 
@@ -39,11 +35,25 @@ function reorganizeForm()
     }
 
     var recommended_learning_path = $('select#id_recommended_learning_path').val();
-    var showTransitionFields = recommended_learning_path ==
-        'Progress to  Higher Level  in next school year';
-    var referred_formal_education = $('select#id_referred_formal_education').val();
-    if(referred_formal_education == 'Yes' || showTransitionFields){
-        $('div#div_id_referred_school').removeClass('d-none');
+    var progressToFormalEducation = recommended_learning_path == 'Progress to FE';
+    var educationProgram = $('#id_education_program').val();
+    var programmesWithFormalEducationDetails = [
+        'CBECE Level 1',
+        'BLN Level 1',
+        'BLN Level 2',
+        'BLN Level 3',
+        'BLN Level 4',
+        'BLN Level 5',
+        'BLN Level 6',
+        'BLN Level 7',
+        'BLN Level 8',
+        'BLN Level 9'
+    ];
+    var showFormalEducationDetails = progressToFormalEducation &&
+        programmesWithFormalEducationDetails.indexOf(educationProgram) !== -1;
+
+    if(progressToFormalEducation){
+        $('#referred-school-fields').removeClass('d-none');
         if ($('#id_referred_school').val()== null || $('#id_referred_school').val()=='')
         {
         $('#id_referred_school').addClass('error-field');
@@ -51,7 +61,7 @@ function reorganizeForm()
     }
     else{
         $('#id_referred_school').val('');
-        $('div#div_id_referred_school').addClass('d-none');
+        $('#referred-school-fields').addClass('d-none');
         $('#id_referred_school').removeClass('error-field');
     }
 
@@ -63,10 +73,22 @@ function reorganizeForm()
         $('div#div_id_dropout_date').addClass('d-none');
     }
 
-    $('#transition-fields').toggleClass('d-none', !showTransitionFields);
+    $('#formal-education-fields').toggleClass('d-none', !showFormalEducationDetails);
+    if (!showFormalEducationDetails) {
+        $('#id_cerd_number, #id_formal_education_school_type, ' +
+          '#id_formal_education_grade_level').val('');
+    }
 
-    var showRetentionDetails = showTransitionFields &&
+    $('#transition-fields').toggleClass('d-none', !progressToFormalEducation);
+    if (!progressToFormalEducation) {
+        $('#id_transition_arabic_grade, #id_transition_foreign_languages_grade, ' +
+          '#id_transition_math_grade, #id_retention_support_enrolled').val('');
+    }
+
+    var showRetentionSupportDetails = progressToFormalEducation &&
         $('#id_retention_support_enrolled').val() == 'Yes';
-    $('#div_id_retention_support_partner, #div_id_retention_support_center')
-        .toggleClass('d-none', !showRetentionDetails);
+    $('#retention-support-fields').toggleClass('d-none', !showRetentionSupportDetails);
+    if (!showRetentionSupportDetails) {
+        $('#id_retention_support_partner, #id_retention_support_center').val('');
+    }
   }
