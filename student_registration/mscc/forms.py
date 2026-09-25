@@ -983,7 +983,7 @@ class ReferralForm(forms.ModelForm):
         widget=autocomplete.Select2,
         empty_label='-------',
         required=False
-    ) 
+    )
     education_program = forms.CharField(widget=forms.HiddenInput, required=False)
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -1067,7 +1067,7 @@ class ReferralForm(forms.ModelForm):
                     ),
                     Div(
                         Div(
-                            HTML('<span class="badge-form badge-pill">7</span>'),
+                            HTML('<span class="badge-form badge-pill">4</span>'),
                             Div('formal_education_grade_level', css_class='col-md-5'),
                             css_class='row card-body'
                         ),
@@ -1079,16 +1079,16 @@ class ReferralForm(forms.ModelForm):
                             css_class='row card-body'
                         ),
                         Div(
-                            HTML('<span class="badge-form badge-pill">8</span>'),
+                            HTML('<span class="badge-form badge-pill">5</span>'),
                             Div('transition_arabic_grade', css_class='col-md-3'),
-                            HTML('<span class="badge-form badge-pill">9</span>'),
+                            HTML('<span class="badge-form badge-pill">6</span>'),
                             Div('transition_foreign_languages_grade', css_class='col-md-3'),
-                            HTML('<span class="badge-form-2 badge-pill">10</span>'),
+                            HTML('<span class="badge-form badge-pill">7</span>'),
                             Div('transition_math_grade', css_class='col-md-3'),
                             css_class='row card-body'
                         ),
                         Div(
-                            HTML('<span class="badge-form-2 badge-pill">11</span>'),
+                            HTML('<span class="badge-form badge-pill">8</span>'),
                             Div('retention_support_enrolled', css_class='col-md-4'),
                             css_class='row card-body'
                         ),

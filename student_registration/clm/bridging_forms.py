@@ -3131,27 +3131,20 @@ class BridgingAssessmentForm(forms.ModelForm):
                     ),
                     Div(
                         HTML('<span class="badge-form badge-pill">6</span>'),
-                        Div('test_done', css_class='col-md-3'),
-                        HTML('<span class="badge-form badge-pill" id="span_round_complete">7</span>'),
-                        Div('round_complete', css_class='col-md-3'),
-                        css_class='row card-body',
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">8</span>'),
                         Div('learning_result', css_class='col-md-4'),
-                        HTML('<span class="badge-form badge-pill" id="span_learning_result_other">9</span>'),
+                        HTML('<span class="badge-form-0 badge-pill" id="span_learning_result_other"></span>'),
                         Div('learning_result_other', css_class='col-md-4'),
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form badge-pill" id="span_dropout_reason">9</span>'),
+                        HTML('<span class="badge-form badge-pill" id="span_dropout_reason">7</span>'),
                         Div('dropout_reason', css_class='col-md-3'),
-                        HTML('<span class="badge-form-2 badge-pill" id="span_dropout_date">10</span>'),
+                        HTML('<span class="badge-form badge-pill" id="span_dropout_date">8</span>'),
                         Div('dropout_date', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill" id="span_formal_education_grade_level">12</span>'),
+                        HTML('<span class="badge-form badge-pill" id="span_formal_education_grade_level">7</span>'),
                         Div('formal_education_grade_level', css_class='col-md-4'),
                         css_class='row card-body',
                     ),
@@ -3160,21 +3153,28 @@ class BridgingAssessmentForm(forms.ModelForm):
                             HTML('<h5>Transition Grades</h5>'),css_class='row'
                         ),
                         Div(
-                            HTML('<span class="badge-form-2 badge-pill  transition-grade-badge">13</span>'),
+                            HTML('<span class="badge-form badge-pill  transition-grade-badge">8</span>'),
                             Div('transition_arabic_grade', css_class='col-md-3'),
-                            HTML('<span class="badge-form-2 badge-pill transition-grade-badge">14</span>'),
+                            HTML('<span class="badge-form badge-pill transition-grade-badge">9</span>'),
                             Div('transition_foreign_languages_grade', css_class='col-md-3'),
-                            HTML('<span class="badge-form-2 badge-pill transition-grade-badge">15</span>'),
+                            HTML('<span class="badge-form-2 badge-pill transition-grade-badge">10</span>'),
                             Div('transition_math_grade', css_class='col-md-3'),
                             css_class='row'
                         ),
                         css_class='card-body'
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill" id="span_retention_support_enrolled">16</span>'),
+                        HTML('<span class="badge-form-2 badge-pill" id="span_retention_support_enrolled">11</span>'),
                         Div('retention_support_enrolled', css_class='col-md-5'),
                         Div('retention_support_partner', css_class='col-md-3'),
                         Div('retention_support_center', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-0 badge-pill"></span>'),
+                        Div('test_done', css_class='col-md-3'),
+                        HTML('<span class="badge-form-0 badge-pill" id="span_round_complete"></span>'),
+                        Div('round_complete', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
                     Div(
