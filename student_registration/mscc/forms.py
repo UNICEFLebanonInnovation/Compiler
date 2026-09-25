@@ -931,8 +931,8 @@ class MainForm(forms.ModelForm):
 
 class ReferralForm(forms.ModelForm):
     referred_school = forms.ModelChoiceField(
-        queryset=School.objects.filter(is_bma=True),
-        widget=autocomplete.ModelSelect2(url='school_autocomplete'),
+        queryset=School.objects.filter(is_bma=True).order_by('name'),
+        widget=autocomplete.Select2,
         label=_('Formal Education School'),
         required=False,
     )
@@ -989,13 +989,17 @@ class ReferralForm(forms.ModelForm):
     retention_support_partner = forms.ModelChoiceField(
         label=_('Which partner?'),
         queryset=PartnerOrganization.objects.filter(active=True).order_by('name'),
-        empty_label='-------', required=False
+        widget=autocomplete.Select2,
+        empty_label='-------',
+        required=False
     )
     retention_support_center = forms.ModelChoiceField(
         label=_('Which center?'),
         queryset=Center.objects.filter(partner__active=True).order_by('name'),
-        empty_label='-------', required=False
-    )
+        widget=autocomplete.Select2,
+        empty_label='-------',
+        required=False
+    ) 
     education_program = forms.CharField(widget=forms.HiddenInput, required=False)
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
