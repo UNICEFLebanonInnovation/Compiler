@@ -1,0 +1,8 @@
+{% load static %}
+{% if record.student.std_image %}
+  <a href="{{ record.student.std_image.url }}" target="_blank" rel="noopener" aria-label="View {{ record.student.full_name }} photo">
+    <img src="{{ record.student.std_image.url }}" alt="{{ record.student.full_name }}" width="48" height="48" class="rounded-circle" style="object-fit: cover;">
+  </a>
+{% else %}
+  <img src="{% static 'images/avatars/male.png' %}" alt="No child photo" width="48" height="48" class="rounded-circle" style="object-fit: cover;">
+{% endif %}

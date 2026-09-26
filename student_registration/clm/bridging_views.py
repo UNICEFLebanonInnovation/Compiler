@@ -81,6 +81,44 @@ from .utils import is_allowed_create, is_allowed_edit,  get_outreach_child
 from student_registration.users.templatetags.custom_tags import has_group
 from student_registration.students.utils import generate_one_unique_id
 from student_registration.students.models import Nationality
+from student_registration.students.models import Student
+from .id_cards import build_cards_pdf
+
+
+def _add_child_photo_links(headers, rows, request):
+    """Append a public, absolute profile-photo URL to exported Dirasa rows."""
+    id_column = next(
+        (name for name in ('student_id', 'child_id') if name in headers),
+        None,
+    )
+    headers = list(headers) + ['child_photo_public_link']
+    if not id_column:
+        return headers, [tuple(row) + ('',) for row in rows]
+
+    id_index = list(headers).index(id_column)
+    student_ids = {row[id_index] for row in rows if row[id_index]}
+    photos = {
+        student.id: request.build_absolute_uri(student.std_image.url)
+        for student in Student.objects.filter(id__in=student_ids).only('id', 'std_image')
+        if student.std_image
+    }
+    return headers, [tuple(row) + (photos.get(row[id_index], ''),) for row in rows]
+
+
+def _bridging_queryset_for_user(user):
+    """Apply the Dirasa list's data-access rules for HTML and card exports."""
+    is_world_learning = bool(user.partner and user.partner.is_world_learning)
+    queryset = Bridging.objects.filter(round__current_year=True, deleted=False).select_related(
+        'student', 'student__nationality', 'round', 'school', 'governorate',
+        'district', 'partner', 'disability', 'owner', 'modified_by',
+    )
+    if not has_group(user, 'CLM_BRIDGING_ALL') and not user.is_staff and not is_world_learning:
+        if not user.partner:
+            return queryset.none()
+        queryset = queryset.filter(partner_id=user.partner_id)
+        if user.school:
+            queryset = queryset.filter(school_id=user.school_id)
+    return queryset
 
 
 class CLMView(LoginRequiredMixin,
@@ -161,57 +199,41 @@ class BridgingListView(LoginRequiredMixin,
     filterset_class = BridgingPartnerFilter
 
     def get_queryset(self):
-        is_world_learning = bool(self.request.user.partner and self.request.user.partner.is_world_learning)
-
-        qs = (
-            Bridging.objects.filter(round__current_year=True, deleted=False)
-            .select_related(
-                "student",
-                "student__nationality",
-                "round",
-                "school",
-                "governorate",
-                "district",
-                "owner",
-                "modified_by",
-            )
-            .order_by(
-                "student__first_name",
-                "student__father_name",
-                "student__last_name",
-            )
+        qs = _bridging_queryset_for_user(self.request.user).order_by(
+            "student__first_name",
+            "student__father_name",
+            "student__last_name",
         )
-
-        if (
-            not has_group(self.request.user, "CLM_BRIDGING_ALL")
-            and not self.request.user.is_staff
-            and not is_world_learning
-        ):
-            if self.request.user.partner:
-                qs = qs.filter(partner_id=self.request.user.partner_id)\
-                    .order_by(
-                    "student__first_name",
-                    "student__father_name",
-                    "student__last_name",
-                )
-                if self.request.user.school:
-                    qs = qs.filter(school_id=self.request.user.school_id)\
-                    .order_by(
-                    "student__first_name",
-                    "student__father_name",
-                    "student__last_name",
-                )
-            else:
-                qs = qs.none()
-
         return qs
 
     def get_filterset_class(self):
         if has_group(self.request.user, 'CLM_BRIDGING_ALL'):
             return BridgingFullFilter
-        else:
-            return self.filterset_class
+        return self.filterset_class
 
+
+@login_required(login_url='/users/login')
+def bridging_id_card(request, pk):
+    if not request.user.is_staff and not has_group(request.user, 'CLM_Bridging'):
+        return HttpResponseForbidden()
+    registration = get_object_or_404(_bridging_queryset_for_user(request.user), pk=pk)
+    pdf = build_cards_pdf([registration])
+    return FileResponse(pdf, content_type='application/pdf', filename='dirasa-id-{}.pdf'.format(pk))
+
+
+@login_required(login_url='/users/login')
+def bridging_id_cards(request):
+    if not request.user.is_staff and not has_group(request.user, 'CLM_Bridging'):
+        return HttpResponseForbidden()
+    queryset = _bridging_queryset_for_user(request.user).order_by(
+        'student__first_name', 'student__father_name', 'student__last_name'
+    )
+    filter_class = BridgingFullFilter if has_group(request.user, 'CLM_BRIDGING_ALL') else BridgingPartnerFilter
+    queryset = filter_class(request.GET, queryset=queryset, request=request).qs
+    pdf = build_cards_pdf(queryset.iterator())
+    if pdf is None:
+        return HttpResponseBadRequest('No children match the selected filters.')
+    return FileResponse(pdf, content_type='application/pdf', filename='dirasa-id-cards.pdf')
 
 class BridgingAddView(LoginRequiredMixin,
                       GroupRequiredMixin,
@@ -439,6 +461,7 @@ def bridging_export_data(request, **kwargs):
         logging.debug("Query params: %s", str(query_params))
 
         headers = [col[0] for col in cursor.description]
+        headers, bridging_data = _add_child_photo_links(headers, bridging_data, request)
 
         # Create CSV
         csv_output = io.StringIO()
@@ -528,6 +551,7 @@ def bridging_school_export(request, **kwargs):
         logging.debug("Query params: %s", str(query_params))
 
         headers = [col[0] for col in cursor.description]
+        headers, bridging_data = _add_child_photo_links(headers, bridging_data, request)
 
         csv_output = io.StringIO()
         csv_writer = csv.writer(csv_output)
@@ -1186,6 +1210,7 @@ def bridging_export_all(request, **kwargs):
         cursor.execute(query)
         data = cursor.fetchall()
         headers = [col[0] for col in cursor.description]
+        headers, data = _add_child_photo_links(headers, data, request)
 
         # Create CSV in memory
         csv_output = io.StringIO()

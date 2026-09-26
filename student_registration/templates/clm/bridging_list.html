@@ -118,6 +118,9 @@
 
 {% endif %}
 {% endif %}
+<a href="{% url 'clm:bridging_id_cards' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}" target="_blank" class="mr-3 btn-icon btn btn-primary">
+    <i class="fa fa-id-card btn-icon-wrapper"></i> Print all ID cards
+</a>
                         </div>
                         </div>
 </div>

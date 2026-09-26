@@ -31,6 +31,12 @@
 
 <div tabindex="-1" class="dropdown-divider"></div>
 
+        <a type="button" href="{% url 'clm:bridging_id_card' record.id %}" target="_blank" tabindex="0" class="dropdown-item">
+          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="fa fa-id-card btn-icon-wrapper"> </i></button>
+          {% trans "Print ID card" %}</a>
+
+<div tabindex="-1" class="dropdown-divider"></div>
+
         <a type="button" href="{{ column.attrs.url_pre_assessment }}{{ record.id }}" tabindex="0" class="dropdown-item">
           <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-create btn-icon-wrapper"> </i></button>
           {% if request.user.partner and request.user.partner.is_Kayany %}
