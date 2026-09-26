@@ -47,7 +47,13 @@
                   </div>
               </div>
           </div>
-          <div class="page-title-actions"></div>
+          <div class="page-title-actions">
+              {% if form.instance.id %}
+              <a href="{% url 'clm:bridging_id_card' form.instance.id %}" target="_blank" class="btn btn-info">
+                  <i class="fa fa-id-card"></i> Print ID card
+              </a>
+              {% endif %}
+          </div>
       </div>
 </div>
 
