@@ -44,6 +44,24 @@ class ClubTypeAdmin(ImportExportModelAdmin):
     resource_class = ClubTypeResource
 
 
+class PublicSchoolResource(resources.ModelResource):
+    class Meta:
+        model = PublicSchool
+        fields = (
+            'name',
+            'cerd',
+        )
+        import_id_fields = ('cerd',)
+        export_order = ('cerd', 'name')
+
+
+class PublicSchoolAdmin(ImportExportModelAdmin):
+    resource_class = PublicSchoolResource
+    list_display = ('cerd', 'name')
+    search_fields = ('cerd', 'name')
+    ordering = ('name',)
+
+
 class GovernorateFilter(admin.SimpleListFilter):
     # Human-readable title which will be displayed in the
     # right admin sidebar just above the filter options.
@@ -834,4 +852,4 @@ admin.site.register(EducationalLevel, EducationalLevelAdmin)
 # admin.site.register(Evaluation, EvaluationAdmin)
 admin.site.register(PublicHolidays)
 admin.site.register(ClubType, ClubTypeAdmin)
-admin.site.register(PublicSchool)
+admin.site.register(PublicSchool, PublicSchoolAdmin)
