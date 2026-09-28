@@ -38,13 +38,6 @@ function reorganizeForm()
 
     var recommended_learning_path = $('select#id_recommended_learning_path').val();
     var progressToFormalEducation = recommended_learning_path == 'Progress to FE';
-    $('#public-school-fields').toggleClass('d-none', !progressToFormalEducation);
-    if (!progressToFormalEducation) {
-        $('#id_public_school').val('');
-        $('#public-school-name').text('');
-    } else {
-        lookupPublicSchool();
-    }
     var educationProgram = $('#id_education_program').val();
     var programmesWithFormalEducationDetails = [
         'CBECE Level 1',
@@ -61,6 +54,14 @@ function reorganizeForm()
     var showFormalEducationDetails = progressToFormalEducation &&
         programmesWithFormalEducationDetails.indexOf(educationProgram) !== -1;
 
+    $('#public-school-fields').toggleClass('d-none', !showFormalEducationDetails);
+    if (!showFormalEducationDetails) {
+        $('#id_public_school').val('');
+        $('#public-school-name').text('');
+    } else {
+        lookupPublicSchool();
+    }
+
     if(recommended_learning_path == 'Drop out'){
         $('div#div_id_dropout_date').removeClass('d-none');
     }
@@ -74,13 +75,13 @@ function reorganizeForm()
         $('#id_formal_education_grade_level').val('');
     }
 
-    $('#transition-fields').toggleClass('d-none', !progressToFormalEducation);
-    if (!progressToFormalEducation) {
+    $('#transition-fields').toggleClass('d-none', !showFormalEducationDetails);
+    if (!showFormalEducationDetails) {
         $('#id_transition_arabic_grade, #id_transition_foreign_languages_grade, ' +
           '#id_transition_math_grade, #id_retention_support_enrolled').val('');
     }
 
-    var showRetentionSupportDetails = progressToFormalEducation &&
+    var showRetentionSupportDetails = showFormalEducationDetails &&
         $('#id_retention_support_enrolled').val() == 'Yes';
     $('#retention-support-fields').toggleClass('d-none', !showRetentionSupportDetails);
     if (!showRetentionSupportDetails) {
