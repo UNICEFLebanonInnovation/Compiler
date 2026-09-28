@@ -14,6 +14,7 @@ import logging
 logging.basicConfig(level=logging.ERROR)
 import os
 import uuid
+import mimetypes
 from django.core.files.storage import default_storage
 from storages.backends.azure_storage import AzureStorage
 from django.core.files.base import ContentFile
@@ -397,6 +398,23 @@ class BridgingProfilePictureView(LoginRequiredMixin,
     template_name = 'clm/bridging_profile_picture.html'
     success_url = '/clm/bridging-list/'
     group_required = [u"CLM_Bridging"]
+
+
+class BridgingProfilePictureFileView(LoginRequiredMixin,
+                                     GroupRequiredMixin,
+                                     View):
+    group_required = [u"CLM_Bridging"]
+
+    def get(self, request, pk):
+        bridging = get_object_or_404(Bridging, pk=pk)
+        if not bridging.profile_picture:
+            raise Http404("Profile picture not found")
+
+        content_type = mimetypes.guess_type(bridging.profile_picture.name)[0]
+        return FileResponse(
+            bridging.profile_picture.open('rb'),
+            content_type=content_type or 'application/octet-stream',
+        )
 
 
 class ExportStorage(AzureStorage):
