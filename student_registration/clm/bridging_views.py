@@ -69,6 +69,7 @@ from .bridging_forms import (
     BridgingMidAssessmentForm,
     BridgingFollowupForm,
     BridgingServiceForm,
+    BridgingProfilePictureForm,
     BridgingForm
 )
 from .serializers import (
@@ -386,6 +387,16 @@ class BridgingEditView(LoginRequiredMixin,
         instance = Bridging.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(BridgingEditView, self).form_valid(form)
+
+
+class BridgingProfilePictureView(LoginRequiredMixin,
+                                 GroupRequiredMixin,
+                                 UpdateView):
+    model = Bridging
+    form_class = BridgingProfilePictureForm
+    template_name = 'clm/bridging_profile_picture.html'
+    success_url = '/clm/bridging-list/'
+    group_required = [u"CLM_Bridging"]
 
 
 class ExportStorage(AzureStorage):

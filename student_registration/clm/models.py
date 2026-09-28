@@ -2201,6 +2201,12 @@ class Bridging(CLM):
         null=True,
         verbose_name=_('3- Other additional document'),
     )
+    profile_picture = models.ImageField(
+        upload_to='uploads/bridging/profile_pictures',
+        blank=True,
+        null=True,
+        verbose_name=_('Profile Picture'),
+    )
     consent = models.CharField(
         max_length=10,
         blank=True,

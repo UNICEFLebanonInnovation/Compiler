@@ -322,6 +322,11 @@ urlpatterns = [
         name='bridging_edit'
     ),
     re_path(
+        r'^bridging-profile-picture/(?P<pk>[\w.@+-]+)/$',
+        view=bridging_views.BridgingProfilePictureView.as_view(),
+        name='bridging_profile_picture'
+    ),
+    re_path(
         r'^bridging-pre-assessment/(?P<pk>[\w.@+-]+)/$',
         view=bridging_views.BridgingPreAssessmentView.as_view(),
         name='bridging_pre_assessment'
