@@ -1225,7 +1225,7 @@ class ReferralForm(forms.ModelForm):
 
     def _requires_fe_details(self):
         return self.education_program in (
-            'CBECE Level 1',
+            'CBECE Level 3',
             'BLN Level 1',
             'BLN Level 2',
             'BLN Level 3',

@@ -40,7 +40,7 @@ function reorganizeForm()
     var progressToFormalEducation = recommended_learning_path == 'Progress to FE';
     var educationProgram = $('#id_education_program').val();
     var programmesWithFormalEducationDetails = [
-        'CBECE Level 1',
+        'CBECE Level 3',
         'BLN Level 1',
         'BLN Level 2',
         'BLN Level 3',
