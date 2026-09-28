@@ -1076,6 +1076,7 @@ class ReferralForm(forms.ModelForm):
                         css_class='row card-body'
                     ),
                     Div(
+                        HTML('<span class="badge-form badge-pill">5</span>'),
                         Div('public_school', css_class='col-md-5'),
                         HTML('<div class="col-md-6"><label>School name</label>'
                              '<div id="public-school-name" class="form-control-plaintext" '
@@ -1101,16 +1102,16 @@ class ReferralForm(forms.ModelForm):
                             css_class='row card-body'
                         ),
                         Div(
-                            HTML('<span class="badge-form badge-pill">5</span>'),
-                            Div('transition_arabic_grade', css_class='col-md-3'),
                             HTML('<span class="badge-form badge-pill">6</span>'),
-                            Div('transition_foreign_languages_grade', css_class='col-md-3'),
+                            Div('transition_arabic_grade', css_class='col-md-3'),
                             HTML('<span class="badge-form badge-pill">7</span>'),
+                            Div('transition_foreign_languages_grade', css_class='col-md-3'),
+                            HTML('<span class="badge-form badge-pill">8</span>'),
                             Div('transition_math_grade', css_class='col-md-3'),
                             css_class='row card-body'
                         ),
                         Div(
-                            HTML('<span class="badge-form badge-pill">8</span>'),
+                            HTML('<span class="badge-form badge-pill">9</span>'),
                             Div('retention_support_enrolled', css_class='col-md-4'),
                             css_class='row card-body'
                         ),
