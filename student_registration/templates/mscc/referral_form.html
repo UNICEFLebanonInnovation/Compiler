@@ -88,7 +88,8 @@
 {% endblock %}
 
 {% block extra_js %}
+  <script>$('#id_public_school').data('lookup-url', '{% url "mscc:public_school_lookup" %}');</script>
   <script src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
-  <script src="{% static 'js/mscc/referral.js' %}?v=10"></script>
+  <script src="{% static 'js/mscc/referral.js' %}?v=11"></script>
   <script src="{% static 'js/mscc/general.js' %}?v=1"></script>
 {% endblock %}

@@ -30,6 +30,7 @@ from .models import (
 from student_registration.schools.models import (
     School,
     PartnerOrganization,
+    PublicSchool,
 )
 from .utils import generate_services, generate_education_history, regenerate_services
 from .serializers import MainSerializer
@@ -930,6 +931,18 @@ class MainForm(forms.ModelForm):
 
 
 class ReferralForm(forms.ModelForm):
+    public_school = forms.ModelChoiceField(
+        label=_('Public school CERD number'),
+        queryset=PublicSchool.objects.all(),
+        to_field_name='cerd',
+        widget=forms.TextInput(attrs={
+            'maxlength': 6,
+            'inputmode': 'numeric',
+            'pattern': '[0-9]{1,6}',
+            'autocomplete': 'off',
+        }),
+        required=False,
+    )
     receive_needed_material = forms.ChoiceField(
         label=_("Did the child receive all needed materials and resources (Stationery, Books, Learning bundle)?"),
         widget=forms.Select, required=True,
@@ -1006,6 +1019,7 @@ class ReferralForm(forms.ModelForm):
                 self._requires_fe_details()):
             self.fields['formal_education_grade_level'].disabled = True
         if self.is_bound and self.data.get('recommended_learning_path') != 'Progress to FE':
+            self.fields['public_school'].disabled = True
             for field in ('transition_arabic_grade', 'transition_foreign_languages_grade',
                           'transition_math_grade', 'retention_support_enrolled'):
                 self.fields[field].disabled = True
@@ -1060,6 +1074,14 @@ class ReferralForm(forms.ModelForm):
                         HTML('<span class="badge-form badge-pill">3</span>'),
                         Div('recommended_learning_path', css_class='col-md-11'),
                         css_class='row card-body'
+                    ),
+                    Div(
+                        Div('public_school', css_class='col-md-5'),
+                        HTML('<div class="col-md-6"><label>School name</label>'
+                             '<div id="public-school-name" class="form-control-plaintext" '
+                             'aria-live="polite"></div></div>'),
+                        css_class='row card-body',
+                        css_id='public-school-fields'
                     ),
                     Div(
                         Div('dropout_date', css_class='col-md-5'),
@@ -1125,6 +1147,7 @@ class ReferralForm(forms.ModelForm):
         instance.referred_service = validated_data.get('referred_service')
         instance.referred_service_other = validated_data.get('referred_service_other')
         instance.recommended_learning_path = validated_data.get('recommended_learning_path')
+        instance.public_school = self.cleaned_data.get('public_school') if progress_to_fe else None
         formal_education_details_required = progress_to_fe and self._requires_fe_details()
         instance.formal_education_grade_level = (
             validated_data.get('formal_education_grade_level')
@@ -1170,6 +1193,8 @@ class ReferralForm(forms.ModelForm):
             self.add_error('dropout_date', 'This field is required')
 
         if recommended_learning_path == 'Progress to FE':
+            if not cleaned_data.get('public_school'):
+                self.add_error('public_school', 'Enter a valid public school CERD number')
             public_school_fields = (
                 'formal_education_grade_level', 'transition_arabic_grade',
                 'transition_foreign_languages_grade', 'transition_math_grade', 'retention_support_enrolled',
@@ -1215,6 +1240,7 @@ class ReferralForm(forms.ModelForm):
             'referred_service',
             'referred_service_other',
             'recommended_learning_path',
+            'public_school',
             'formal_education_grade_level',
             'transition_arabic_grade',
             'transition_foreign_languages_grade',

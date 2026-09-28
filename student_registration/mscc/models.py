@@ -14,7 +14,8 @@ from student_registration.child.models import Child
 from student_registration.locations.models import Center
 from student_registration.schools.models import (
     School,
-    PartnerOrganization
+    PartnerOrganization,
+    PublicSchool,
 )
 
 PACKAGE_TYPES = Choices(
@@ -2227,6 +2228,14 @@ class Referral(TimeStampedModel):
         null=True,
         choices=LEARNING_PATH,
         verbose_name=_('Based on the overall score, what is the recommended learning path/outcome?')
+    )
+    public_school = models.ForeignKey(
+        PublicSchool,
+        blank=True,
+        null=True,
+        related_name='referrals',
+        on_delete=models.SET_NULL,
+        verbose_name=_('Public school'),
     )
     formal_education_grade_level = models.CharField(
         max_length=12, blank=True, null=True,

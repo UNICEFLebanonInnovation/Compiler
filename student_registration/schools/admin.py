@@ -25,7 +25,8 @@ from .models import (
     Evaluation,
     PublicHolidays,
     Schl_Subject,
-    ClubType
+    ClubType,
+    PublicSchool,
 )
 from student_registration.locations.models import Location
 
@@ -833,3 +834,4 @@ admin.site.register(EducationalLevel, EducationalLevelAdmin)
 # admin.site.register(Evaluation, EvaluationAdmin)
 admin.site.register(PublicHolidays)
 admin.site.register(ClubType, ClubTypeAdmin)
+admin.site.register(PublicSchool)

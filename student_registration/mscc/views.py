@@ -738,6 +738,18 @@ class ReferralFormView(LoginRequiredMixin,
         return super(ReferralFormView, self).form_valid(form)
 
 
+def public_school_lookup(request):
+    from student_registration.schools.models import PublicSchool
+
+    if not request.user.is_authenticated:
+        return JsonResponse({'name': ''}, status=403)
+    cerd = request.GET.get('cerd', '')
+    if not cerd.isdigit() or len(cerd) > 6:
+        return JsonResponse({'name': ''})
+    school = PublicSchool.objects.filter(cerd=int(cerd)).only('name').first()
+    return JsonResponse({'name': school.name if school else ''})
+
+
 def old_child_search(request):
     birthday_year = request.GET.get('birthday_year')
     birthday_month = request.GET.get('birthday_month')

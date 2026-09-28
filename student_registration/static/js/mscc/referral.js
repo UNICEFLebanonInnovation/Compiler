@@ -15,6 +15,8 @@ $(document).ready(function(){
     $(document).on('change', 'select#id_retention_support_enrolled', function(){
        reorganizeForm();
     });
+    $(document).on('input', '#id_public_school', lookupPublicSchool);
+    lookupPublicSchool();
 });
 
 
@@ -36,6 +38,13 @@ function reorganizeForm()
 
     var recommended_learning_path = $('select#id_recommended_learning_path').val();
     var progressToFormalEducation = recommended_learning_path == 'Progress to FE';
+    $('#public-school-fields').toggleClass('d-none', !progressToFormalEducation);
+    if (!progressToFormalEducation) {
+        $('#id_public_school').val('');
+        $('#public-school-name').text('');
+    } else {
+        lookupPublicSchool();
+    }
     var educationProgram = $('#id_education_program').val();
     var programmesWithFormalEducationDetails = [
         'CBECE Level 1',
@@ -78,3 +87,19 @@ function reorganizeForm()
         $('#id_retention_support_partner, #id_retention_support_center').val('');
     }
   }
+
+function lookupPublicSchool()
+{
+    var cerd = $('#id_public_school').val();
+    var schoolName = $('#public-school-name');
+    schoolName.text('');
+    if (!/^[0-9]{1,6}$/.test(cerd || '')) {
+        return;
+    }
+    $.getJSON($('#id_public_school').data('lookup-url') || '/mscc/public-school-lookup/', {cerd: cerd})
+        .done(function(data) {
+            if ($('#id_public_school').val() === cerd) {
+                schoolName.text(data.name || 'No matching public school');
+            }
+        });
+}

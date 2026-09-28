@@ -9,6 +9,12 @@ app_name = 'mscc'
 urlpatterns = [
 
     re_path(
+        r'^public-school-lookup/$',
+        view=views.public_school_lookup,
+        name='public_school_lookup'
+    ),
+
+    re_path(
         r'^child-add/$',
         view=views.MainAddView.as_view(),
         name='child_add'
