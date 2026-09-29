@@ -81,11 +81,9 @@
 
   <!-- Education -->
 {% service_data 'EducationService' instance as result1 %}
-{% have_service_category 'Education' instance as result2 %}
-{% have_education_programme result1.education_program as result3 %}
 
   {# The TLS services tab is limited to the RS and CBECE programmes. #}
-  {% if result1 and result2 and result1.education_program and result3 and result1.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, RS Grade 7, RS Grade 8, RS Grade 9, Summer RS Grade 1, Summer RS Grade 2, Summer RS Grade 3, Summer RS Grade 4, Summer RS Grade 5, Summer RS Grade 6, Summer RS Grade 7, Summer RS Grade 8, Summer RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9, CBECE Level 1, CBECE Level 2, CBECE Level 3' %}
+  {% if result1 and result1.education_program in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, RS Grade 7, RS Grade 8, RS Grade 9, Summer RS Grade 1, Summer RS Grade 2, Summer RS Grade 3, Summer RS Grade 4, Summer RS Grade 5, Summer RS Grade 6, Summer RS Grade 7, Summer RS Grade 8, Summer RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9, CBECE Level 1, CBECE Level 2, CBECE Level 3' %}
   {% service_data 'EducationProgrammeAssessment' instance as result %}
 
   {% if 'Summer RS' not in result1.education_program and result1.education_program not in 'PPL, BLN Catch-up, ABLN Catch-up, YBLN Catch-up, CBECE Catch-up' %}
