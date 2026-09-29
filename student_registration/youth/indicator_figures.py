@@ -12,7 +12,8 @@ under two indicators counts once in their master indicator's total. Unique count
 up across groups (the same person can be in two partners' programmes), so the figures are given for
 a fixed set of groupings ("grouping sets") and a reader picks the one that matches its question:
 every combination of master indicator, partner, donor and governorate, each alone or with one more
-detail (sub indicator, programme document, district, sex, age group or nationality).
+detail (sub indicator, programme document, district, sex, age group or nationality), and the sub
+indicators of each programme document.
 
 Places: the enrolment's governorate and district, or the youth's registered address when the
 enrolment is "in the same location" (the form leaves the enrolment's place empty then).
@@ -42,6 +43,8 @@ FORMAT_VERSION = 1
 # The groupings: every subset of the main dimensions, alone or with one detail.
 MAIN_DIMENSIONS = ('master', 'partner', 'donor', 'governorate')
 DETAILS = ('sub', 'program_document', 'district', 'sex', 'age_group', 'nationality')
+# Also: youth per sub indicator of each programme document, to compare with the partner's reporting
+EXTRA_GROUPINGS = (('program_document', 'sub'),)
 
 AGE_GROUPS = (
     (0, 14, 'Under 15'),
@@ -60,7 +63,7 @@ def groupings() -> list[tuple[str, ...]]:
             out.append(tuple(sorted(main)))
             for detail in DETAILS:
                 out.append(tuple(sorted(main + (detail,))))
-    return out
+    return out + [tuple(sorted(g)) for g in EXTRA_GROUPINGS]
 
 
 def age_group(birthday_year, year: int) -> str:

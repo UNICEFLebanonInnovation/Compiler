@@ -104,7 +104,10 @@ def test_groupings_combine_main_dimensions_with_one_detail(data):
     by_donor_sub = table(payload, 'donor', 'sub')
     assert by_donor_sub[(data['digital'].id, data['eu'].id)] == 2
     assert by_donor_sub[(data['life'].id, data['japan'].id)] == 2
-    assert len(indicator_figures.groupings()) == 16 * 7
+    assert len(indicator_figures.groupings()) == 16 * 7 + 1
+    assert table(payload, 'program_document', 'sub') == {
+        (data['pd'].id, data['digital'].id): 2, (data['pd'].id, data['life'].id): 2,
+    }
     assert all(sorted(g['by']) == g['by'] for g in payload['figures'])
 
 
