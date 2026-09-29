@@ -108,6 +108,7 @@ LOCAL_APPS = [
     'student_registration.tls',
     'student_registration.youth',
     'student_registration.adolescent',
+    'student_registration.figures',
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
