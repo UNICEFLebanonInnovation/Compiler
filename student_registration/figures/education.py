@@ -14,6 +14,17 @@ of groupings (see engine.py) with its measures:
 * ``staff``: facilitators (Makani) or teachers (Bridging);
 * ``attendance``: attendance days recorded and attended (not unique children), by month.
 
+The payload also holds ``cubes`` (format 2): records counted per combination of all the dashboard's
+slicers at once (see ``engine.cube``), so NeuroDB can filter on any of them and add the rows up.
+
+* Makani: ``enrolment`` (registrations, with the cards' flags: married, IDP, caregiver counselling,
+  and the answers of the latest health and nutrition record) and ``staff`` (today's facilitators);
+  ``centers`` lists their centers with type, emergency status and GPS point;
+* Bridging: ``enrolment`` (registrations), ``teachers`` and ``trainings`` (teachers per training
+  topic); ``schools`` lists their schools with the children numbers the schools report;
+  ``outreach`` counts the Kobo outreach children of every year (shared by all programmes) per
+  answer of four questions.
+
 Which registrations count follows the partners' own lists: Makani, registrations not deleted in the
 rounds of the year (the current year also counts registrations without a round yet); Bridging,
 registrations not deleted in the round. A child who dropped out still counts as reached; the
@@ -29,23 +40,27 @@ import logging
 from django.db.models import (
     Case,
     CharField,
+    Exists,
     F,
     Func,
     IntegerField,
+    OuterRef,
     Q,
+    Subquery,
     Value,
     When,
 )
-from django.db.models.functions import Cast, Coalesce
+from django.db.models.functions import Cast, Coalesce, Left, Lower, NullIf, Trim
 from django.utils import timezone
 
 from . import engine
 
 logger = logging.getLogger(__name__)
 
-FORMAT_VERSION = 1
+FORMAT_VERSION = 2
 NOT_SPECIFIED = 'Not specified'
 AGE_GROUPS = ('Under 6', '6-9', '10-14', '15-17', '18 and over', NOT_SPECIFIED)
+LEBANON = ((33.0, 34.8), (35.0, 36.7))  # rough box of the GPS points kept: latitude, longitude
 
 
 # ---------------------------------------------------------------------------------------- helpers
@@ -56,6 +71,50 @@ def sex(path):
         default=Value(NOT_SPECIFIED),
         output_field=CharField(),
     )
+
+
+def yes_no(path):
+    """'Yes', 'No' or "Not specified" from a yes/no answer, whatever its case."""
+    return Case(
+        When(**{path + '__iexact': 'yes'}, then=Value('Yes')),
+        When(**{path + '__iexact': 'no'}, then=Value('No')),
+        default=Value(NOT_SPECIFIED),
+        output_field=CharField(),
+    )
+
+
+def caregiver(path):
+    return Case(
+        When(**{path + '__iexact': 'mother'}, then=Value('Mother')),
+        When(**{path + '__iexact': 'father'}, then=Value('Father')),
+        When(**{path + '__iexact': 'other'}, then=Value('Other')),
+        default=Value(NOT_SPECIFIED),
+        output_field=CharField(),
+    )
+
+
+def blank_to_null(expression):
+    return NullIf(expression, Value(''))
+
+
+def latest(model, value, path='registration'):
+    """``value`` (a field name or an expression) of the latest ``model`` record (highest id) of each
+    registration, NULL when it has none."""
+    value = F(value) if isinstance(value, str) else value
+    records = model.objects.filter(**{path: OuterRef('pk')}).order_by('-id')
+    return Subquery(records.values(v=value)[:1])
+
+
+def text_key(path):
+    """A free-text answer as a key: lower case, every run of other characters as one "_", cut at 40
+    characters (older Kobo forms cut their names there), no "_" at either end, NULL when blank. The
+    name and the label of a Kobo choice ("never_been_engaged_in_any_type_of_learni", "Never been
+    engaged in any type of learning") give the same key. The leading "_" goes before the cut, so a
+    quote, dash or tab in front of the answer does not shorten its key."""
+    underscored = Func(Lower(Trim(path)), Value('[^a-z0-9]+'), Value('_'), Value('g'),
+                       function='REGEXP_REPLACE', output_field=CharField())
+    leading = Func(underscored, Value('_'), function='LTRIM', output_field=CharField())
+    return blank_to_null(Func(Left(leading, 40), Value('_'), function='RTRIM', output_field=CharField()))
 
 
 def month_of(date_path):
@@ -114,6 +173,16 @@ def block(name, sql_params, dimensions, grouping_list, measures=engine.PEOPLE):
         return {'measures': [m for m, _sql in measures], 'figures': [], 'error': type(exc).__name__}
 
 
+def cube(name, sql_params, dimensions, measures):
+    sql, params = sql_params
+    try:
+        return engine.cube(sql, params, dimensions, measures)
+    except Exception as exc:  # one cube's failure (e.g. a timeout) leaves the others
+        logger.exception('figures cube %s failed', name)
+        return {'dims': list(dimensions), 'measures': [m for m, _sql in measures], 'rows': [],
+                'error': type(exc).__name__}
+
+
 def ids_in(blocks, dimension):
     """Every value of ``dimension`` found in the single-dimension groupings of ``blocks``."""
     found = set()
@@ -122,6 +191,30 @@ def ids_in(blocks, dimension):
             if grouping['by'] == [dimension]:
                 found.update(row[0] for row in grouping['rows'] if row[0] is not None)
     return found
+
+
+def ids_in_cubes(cubes, dimension):
+    """Every value of ``dimension`` found in the rows of ``cubes``."""
+    found = set()
+    for data in cubes.values():
+        if dimension in data['dims']:
+            position = data['dims'].index(dimension)
+            found.update(row[position] for row in data['rows'] if row[position] is not None)
+    return found
+
+
+def yes_no_label(value):
+    return {'yes': 'Yes', 'no': 'No'}.get((value or '').strip().lower(), NOT_SPECIFIED)
+
+
+def coordinates(latitude, longitude):
+    """The GPS point as floats, or (None, None) when it is missing, 0 or outside Lebanon."""
+    (south, north), (west, east) = LEBANON
+    if latitude is None or longitude is None:
+        return None, None
+    if not (south <= latitude <= north and west <= longitude <= east):
+        return None, None
+    return float(latitude), float(longitude)
 
 
 def partners(ids):
@@ -155,6 +248,19 @@ class Makani:
     EXTRA = (('sex', 'age_group'), ('partner', 'sex', 'age_group'), ('governorate', 'sex', 'age_group'),
              ('disability', 'sex'), ('nationality', 'sex'), ('district', 'sex'))
     SUBGROUPS = ('partner', 'governorate', 'sex', 'age_group')
+    ENROLMENT = ('center', 'partner', 'governorate', 'sex', 'nationality', 'disability', 'caregiver', 'working',
+                 'programme', 'education_status', 'package', 'id_type', 'malnutrition', 'delay')
+    ENROLMENT_MEASURES = (
+        ('registrations', 'COUNT(*)'),
+        ('married', 'SUM(b.married)'),
+        ('idp', 'SUM(b.idp)'),
+        ('counselling', 'SUM(b.counselling)'),
+        ('immunized', 'SUM(b.immunized)'),
+        ('screened', 'COUNT(b.malnutrition)'),  # a malnutrition result recorded
+        ('minimum_meals', 'SUM(b.minimum_meals)'),
+        ('vaccinated', 'SUM(b.vaccinated)'),
+    )
+    STAFF = ('center', 'partner', 'governorate', 'sex', 'active')
 
     @staticmethod
     def _rounds():
@@ -193,12 +299,64 @@ class Makani:
             'age_group': age,
         }
 
+    @staticmethod
+    def _enrolment():
+        """One row per registration: the slicers of the dashboard and the flags its cards add up.
+        The education programme and status, and the health and nutrition answers, are those of the
+        registration's latest record."""
+        from student_registration.mscc.models import EducationService
+        from student_registration.mscc.models import HealthNutritionService as Health
+
+        def yes(field):
+            return Q(**{field + '__iexact': 'yes'})
+
+        return {
+            'center': F('center_id'),
+            'partner': Coalesce('partner_id', 'center__partner_id'),
+            'governorate': F('center__governorate_id'),
+            'sex': sex('child__gender'),
+            'nationality': F('child__nationality_id'),
+            'disability': F('child__disability_id'),
+            'caregiver': caregiver('child__main_caregiver'),
+            'working': Case(When(have_labour__istartswith='yes', then=Value('Yes')),
+                            When(have_labour__iexact='no', then=Value('No')),
+                            default=Value(NOT_SPECIFIED), output_field=CharField()),
+            'programme': blank_to_null(latest(EducationService, 'education_program')),
+            'education_status': blank_to_null(latest(EducationService, 'education_status')),
+            'package': blank_to_null(F('type')),
+            'id_type': F('child__id_type_id'),
+            'malnutrition': latest(Health, Coalesce(blank_to_null(F('muac_malnutrition_screening')),
+                                                    blank_to_null(F('child_malnutrition_screening')))),
+            'delay': blank_to_null(latest(Health, 'development_delays_identified')),
+            'married': _flag(Q(child__marital_status__iexact='married')),
+            'idp': _flag(yes('child_is_idp')),
+            'counselling': _flag(Exists(Health.objects.filter(yes('caregiver_counselling'),
+                                                              registration=OuterRef('pk')))),
+            'immunized': Coalesce(latest(Health, _flag(yes('immunization_record_screened')
+                                                       | yes('child_immunization_screened'))), Value(0)),
+            'minimum_meals': Coalesce(latest(Health, _flag(yes('eating_minimum_meals'))), Value(0)),
+            'vaccinated': Coalesce(latest(Health, _flag(yes('child_vaccinated'))), Value(0)),
+        }
+
+    @staticmethod
+    def _centers(ids):
+        from student_registration.locations.models import Center
+
+        out = []
+        for c in Center.objects.filter(id__in=ids).order_by('id'):
+            latitude, longitude = coordinates(c.latitude, c.longitude)
+            out.append({'id': c.id, 'name': c.name, 'partner': c.partner_id, 'governorate': c.governorate_id,
+                        'district': c.caza_id, 'cadaster': c.cadaster_id, 'type': c.type or None,
+                        'emergency': yes_no_label(c.active_during_emergency), 'is_active': c.is_active,
+                        'latitude': latitude, 'longitude': longitude})
+        return out
+
     def build(self, year):
         from student_registration.attendances.models import MSCCAttendanceChild
         from student_registration.clm.models import Disability
         from student_registration.locations.models import Center, ProgramStaff
         from student_registration.mscc import models as m
-        from student_registration.students.models import Nationality
+        from student_registration.students.models import IDType, Nationality
 
         year = str(year)
         rounds = list(self._rounds().filter(year=int(year)).order_by('start_date', 'name'))
@@ -284,6 +442,21 @@ class Makani:
             'attendance', select(attendance, fields), ('partner', 'governorate', 'month', 'education_programme'),
             engine.groupings(('partner', 'governorate'), ('month', 'education_programme')), ATTENDANCE)
 
+        # cubes: registrations, and today's facilitators, per combination of the dashboard's slicers
+        cubes = {
+            'enrolment': cube('enrolment', select(m.Registration.objects.filter(self._valid(year)), self._enrolment()),
+                              self.ENROLMENT, self.ENROLMENT_MEASURES),
+            'staff': cube('staff', select(ProgramStaff.objects.filter(center__isnull=False), {
+                'center': F('center_id'),
+                'partner': F('center__partner_id'),
+                'governorate': F('center__governorate_id'),
+                'sex': sex('gender'),
+                'active': yes_no('is_active_current_round'),
+            }), self.STAFF, (('staff', 'COUNT(*)'),)),
+        }
+        centers_seen = self._centers(ids_in_cubes(cubes, 'center'))
+        places = {c[k] for c in centers_seen for k in ('governorate', 'district', 'cadaster') if c[k]}
+
         centers = Center.objects.filter(id__in=ids_in(blocks, 'center'))
         return {
             'format': FORMAT_VERSION,
@@ -294,14 +467,18 @@ class Makani:
             'counts': COUNTS,
             'rounds': [{'id': r.id, 'name': r.name, 'start_date': _iso(r.start_date),
                         'end_date': _iso(r.end_date), 'current': r.current_year} for r in rounds],
-            'partners': partners(ids_in(blocks, 'partner')),
+            'partners': partners(ids_in(blocks, 'partner') | ids_in_cubes(cubes, 'partner')
+                                 | {c['partner'] for c in centers_seen if c['partner']}),
             'locations': locations(ids_in(blocks, 'governorate') | ids_in(blocks, 'district')
-                                   | ids_in(blocks, 'cadaster')),
+                                   | ids_in(blocks, 'cadaster') | ids_in_cubes(cubes, 'governorate') | places),
             'sites': [{'id': c.id, 'name': c.name, 'partner': c.partner_id, 'governorate': c.governorate_id,
                        'district': c.caza_id, 'type': c.type} for c in centers],
-            'nationalities': named(Nationality, ids_in(blocks, 'nationality')),
-            'disabilities': named(Disability, ids_in(blocks, 'disability')),
+            'centers': centers_seen,
+            'nationalities': named(Nationality, ids_in(blocks, 'nationality') | ids_in_cubes(cubes, 'nationality')),
+            'disabilities': named(Disability, ids_in(blocks, 'disability') | ids_in_cubes(cubes, 'disability')),
+            'id_types': named(IDType, ids_in_cubes(cubes, 'id_type')),
             'blocks': blocks,
+            'cubes': cubes,
         }
 
 
@@ -327,6 +504,19 @@ class Bridging:
         ('WASH referral', 'referal_wash'),
         ('Health referral', 'referal_health'),
         ('Other referral', 'referal_other'),
+    )
+    ENROLMENT = ('school', 'partner', 'governorate', 'sex', 'nationality', 'disability', 'level', 'learning_result',
+                 'barrier')
+    # the children numbers each school reports (one value per school, no round)
+    SCHOOL_COUNTS = (
+        ('children', 'number_children'),
+        ('children_male', 'number_children_male'),
+        ('children_female', 'number_children_female'),
+        ('children_lebanese', 'number_children_lebanese'),
+        ('children_non_lebanese', 'number_children_non_lebanese'),
+        ('cwd', 'number_total_children_disability'),
+        ('dirasa_children', 'number_children_sbp'),
+        ('dirasa_cwd', 'number_dirasa_children_disability'),
     )
 
     @staticmethod
@@ -359,12 +549,44 @@ class Bridging:
             'age_group': age,
         }
 
+    def _schools(self, cubes):
+        """The schools of the cubes. A school's partners are those that registered children there in
+        the round, else the Dirasa partners that list it."""
+        from student_registration.schools.models import PartnerOrganization, School
+
+        ids = ids_in_cubes(cubes, 'school')
+        registered, listed = {}, {}
+        enrolment = cubes['enrolment']
+        school_at, partner_at = enrolment['dims'].index('school'), enrolment['dims'].index('partner')
+        for row in enrolment['rows']:
+            if row[school_at] is not None and row[partner_at] is not None:
+                registered.setdefault(row[school_at], set()).add(row[partner_at])
+        links = PartnerOrganization.schools.through.objects.filter(
+            school_id__in=ids, partnerorganization__is_dirasa=True).values_list('school_id', 'partnerorganization_id')
+        for school_id, partner_id in links:
+            listed.setdefault(school_id, set()).add(partner_id)
+        counts = [field for _name, field in self.SCHOOL_COUNTS]
+        out = []
+        for school in School.objects.filter(id__in=ids).order_by('id').values(
+                'id', 'name', 'number', 'type', 'governorate_id', 'district_id', 'active_during_emergency',
+                'latitude', 'longitude', *counts):
+            latitude, longitude = coordinates(school['latitude'], school['longitude'])
+            out.append({
+                'id': school['id'], 'name': school['name'], 'number': school['number'],
+                'type': school['type'] or None, 'governorate': school['governorate_id'],
+                'district': school['district_id'], 'emergency': yes_no_label(school['active_during_emergency']),
+                'latitude': latitude, 'longitude': longitude,
+                'partners': sorted(registered.get(school['id']) or listed.get(school['id']) or ()),
+                'counts': {name: school[field] for name, field in self.SCHOOL_COUNTS},
+            })
+        return out
+
     def build(self, year):
         from student_registration.attendances.models import CLMAttendanceStudent
         from student_registration.clm.models import Bridging as Registration
         from student_registration.clm.models import Disability
         from student_registration.schools.models import School
-        from student_registration.students.models import Nationality, Teacher
+        from student_registration.students.models import Nationality, Teacher, Training
 
         the_round = self._rounds().get(name=year)
         start = the_round.start_date_bridging
@@ -383,6 +605,19 @@ class Bridging:
             pre_tested=_flag(~Q(pre_test={}) & Q(pre_test__isnull=False)),
             post_tested=_flag(~Q(post_test={}) & Q(post_test__isnull=False)),
         )
+        enrolment = {
+            'school': F('school_id'),
+            'partner': F('partner_id'),
+            'governorate': F('governorate_id'),  # the child's governorate
+            'sex': sex('student__sex'),
+            'nationality': F('student__nationality_id'),
+            'disability': F('disability_id'),
+            'level': blank_to_null(F('registration_level')),
+            'learning_result': Coalesce(blank_to_null(F('learning_result')), Value('in_progress')),
+            'barrier': blank_to_null(F('barriers_single')),
+            'pre_tested': fields['pre_tested'],
+            'post_tested': fields['post_tested'],
+        }
         measures = engine.PEOPLE + (
             ('pre_tested', 'COUNT(DISTINCT b.person) FILTER (WHERE b.pre_tested = 1)'),
             ('post_tested', 'COUNT(DISTINCT b.person) FILTER (WHERE b.post_tested = 1)'),
@@ -442,6 +677,24 @@ class Bridging:
             'attendance', select(attendance, fields), ('partner', 'governorate', 'month', 'registration_level'),
             engine.groupings(('partner', 'governorate'), ('month', 'registration_level')), ATTENDANCE)
 
+        # cubes: registrations, teachers, and teachers per training topic, per combination of slicers
+        teachers = Teacher.objects.filter(round=the_round)
+        trained = Teacher.trainings.through.objects.filter(teacher__round=the_round)
+        cubes = {
+            'enrolment': cube('enrolment', select(valid, enrolment), self.ENROLMENT, (
+                ('registrations', 'COUNT(*)'), ('pre_tested', 'SUM(b.pre_tested)'),
+                ('post_tested', 'SUM(b.post_tested)'))),
+            'teachers': cube('teachers', select(teachers, {'school': F('school_id'), 'sex': sex('sex')}),
+                             ('school', 'sex'), (('teachers', 'COUNT(*)'),)),
+            'trainings': cube('trainings', select(trained, {
+                'school': F('teacher__school_id'),
+                'sex': sex('teacher__sex'),
+                'training': F('training_id'),
+            }), ('school', 'sex', 'training'), (('teachers', 'COUNT(*)'),)),
+        }
+        schools_seen = self._schools(cubes)
+        places = {s[k] for s in schools_seen for k in ('governorate', 'district') if s[k]}
+
         schools = School.objects.filter(id__in=ids_in(blocks, 'school'))
         return {
             'format': FORMAT_VERSION,
@@ -453,15 +706,49 @@ class Bridging:
             'rounds': [{'id': the_round.id, 'name': the_round.name, 'start_date': _iso(start),
                         'end_date': _iso(the_round.end_date_bridging),
                         'current': the_round.current_round_bridging}],
-            'partners': partners(ids_in(blocks, 'partner')),
+            'partners': partners(ids_in(blocks, 'partner') | ids_in_cubes(cubes, 'partner')
+                                 | {p for s in schools_seen for p in s['partners']}),
             'locations': locations(ids_in(blocks, 'governorate') | ids_in(blocks, 'district')
-                                   | ids_in(blocks, 'cadaster')),
+                                   | ids_in(blocks, 'cadaster') | ids_in_cubes(cubes, 'governorate') | places),
             'sites': [{'id': s.id, 'name': s.name, 'number': s.number, 'governorate': s.governorate_id,
                        'district': s.district_id, 'type': s.type} for s in schools],
-            'nationalities': named(Nationality, ids_in(blocks, 'nationality')),
-            'disabilities': named(Disability, ids_in(blocks, 'disability')),
+            'schools': schools_seen,
+            'nationalities': named(Nationality, ids_in(blocks, 'nationality') | ids_in_cubes(cubes, 'nationality')),
+            'disabilities': named(Disability, ids_in(blocks, 'disability') | ids_in_cubes(cubes, 'disability')),
+            'trainings': [{'id': t.id, 'name': t.name} for t in Training.objects.order_by('name', 'id')],
             'blocks': blocks,
+            'cubes': cubes,
+            'outreach': outreach(),
         }
+
+
+# ---------------------------------------------------------------------------------- outreach
+OUTREACH = ('year', 'partner', 'governorate', 'value')
+OUTREACH_QUESTIONS = (
+    ('education_status', 'education_status'),
+    ('referral', 'child_referral'),
+    ('dropout_reason', 'dropout_reason'),
+    ('id_type', 'outreach_caregiver__id_type'),
+)
+
+
+def outreach():
+    """The Kobo outreach children (shared by all programmes, every year) per year of the interview,
+    partner, governorate and answer. Partner and governorate are the Kobo form's own text."""
+    from student_registration.outreach.models import OutreachChild
+
+    date = 'outreach_caregiver__interview_date'
+    common = {
+        'year': Case(When(**{date + '__regex': r'^[0-9]{4}'}, then=Left(date, 4)), default=None,
+                     output_field=CharField()),
+        'partner': blank_to_null(Trim('outreach_caregiver__partner_name')),
+        'governorate': blank_to_null(Trim('outreach_caregiver__governorate')),
+    }
+    return {'cubes': {
+        name: cube('outreach ' + name, select(OutreachChild.objects.all(), dict(common, value=text_key(path))),
+                   OUTREACH, (('children', 'COUNT(*)'),))
+        for name, path in OUTREACH_QUESTIONS
+    }}
 
 
 COUNTS = 'unique children per grouping (attendance: days), no personal data'

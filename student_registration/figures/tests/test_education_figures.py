@@ -205,7 +205,278 @@ def test_only_the_service_account_reads(makani):
     assert client.get('/api/figures/').status_code == 403
 
 
+def test_a_snapshot_of_an_older_format_is_counted_again(makani):
+    snapshot = snapshots.refresh('mscc')
+    assert not snapshots.is_stale(snapshot)
+    FiguresSnapshot.objects.filter(pk=snapshot.pk).update(payload=dict(snapshot.payload, format=1))
+    assert snapshots.is_stale(snapshots.latest('mscc', '2025'))  # counted before the upgrade, however recent
+    FiguresSnapshot.objects.filter(pk=snapshot.pk).update(payload={'year': '2025'})
+    assert snapshots.is_stale(snapshots.latest('mscc', '2025'))
+
+
 def test_refresh_keeps_the_last_three_snapshots(makani):
     for _ in range(5):
         snapshots.refresh('mscc')
     assert FiguresSnapshot.objects.filter(programme='mscc').count() == snapshots.KEEP
+
+
+# ------------------------------------------------------------------------------------ cubes
+def records(cube, **where):
+    """The rows of ``cube`` as dicts, those matching ``where``."""
+    names = cube['dims'] + cube['measures']
+    rows = [dict(zip(names, row)) for row in cube['rows']]
+    return [r for r in rows if all(r[k] == v for k, v in where.items())]
+
+
+def total(cube, measure, **where):
+    return sum(r[measure] for r in records(cube, **where))
+
+
+def test_the_counting_cursor_is_read_only_and_bounded():
+    with engine.read_only_cursor() as cursor:
+        cursor.execute('SHOW transaction_read_only')
+        assert cursor.fetchone()[0] == 'on'
+        cursor.execute('SHOW max_parallel_workers_per_gather')
+        assert cursor.fetchone()[0] == '0'
+    with pytest.raises(ValueError):
+        engine.cube('SELECT 1 AS a', [], (), (('n', 'COUNT(*)'),))
+
+
+def test_makani_enrolment_cube_adds_up_to_the_registrations(makani, places):
+    payload = education.PROGRAMMES['mscc'].build('2025')
+    assert payload['format'] == 2
+    enrolment = payload['cubes']['enrolment']
+    assert enrolment['dims'] == list(education.Makani.ENROLMENT)
+    assert enrolment['measures'] == ['registrations', 'married', 'idp', 'counselling', 'immunized', 'screened',
+                                     'minimum_meals', 'vaccinated']
+    # three registrations of the year (the girl twice), where the unique count says two children
+    assert total(enrolment, 'registrations') == 3
+    assert table(payload['blocks']['registrations'])[()] == [2]
+    assert total(enrolment, 'registrations', partner=makani['partner'].id) == 2
+    assert total(enrolment, 'registrations', governorate=places['beirut'].id) == 1
+    assert total(enrolment, 'registrations', sex='Female') == 2
+    assert total(enrolment, 'registrations', package='Walk-in') == 1
+    assert total(enrolment, 'registrations', programme='ABLN') == 1
+    assert total(enrolment, 'registrations', programme=None) == 1  # the second partner's: no education record
+    assert all(isinstance(v, int) for row in enrolment['rows'] for v in row[len(enrolment['dims']):])
+    assert enrolment['rows'] == sorted(enrolment['rows'], key=lambda r: tuple('' if v is None else str(v) for v in r))
+    # the old lists are still there, the new lookups cover the cubes
+    assert {'blocks', 'sites', 'rounds', 'partners', 'locations', 'nationalities', 'disabilities'} <= set(payload)
+    assert {p['id'] for p in payload['partners']} == {makani['partner'].id, makani['other'].id}
+    assert {n['id'] for n in payload['nationalities']} == {places['syrian'].id}
+
+
+def test_makani_uses_the_latest_education_and_health_records(makani):
+    registration = m.Registration.objects.get(partner=makani['partner'], round=makani['current'], deleted=False)
+    m.EducationService.objects.create(registration=registration, education_program='BLN Level 2',
+                                      education_status='Never registered in any formal school before',
+                                      round=makani['current'])
+    health = m.HealthNutritionService.objects.create
+    older = health(registration=registration, muac_malnutrition_screening='SAM (MUAC <11.5 cm)',
+                   child_vaccinated='No', caregiver_counselling='Yes',
+                   development_delays_identified='Social/Emotional')
+    health(registration=registration, muac_malnutrition_screening='',
+           child_malnutrition_screening='No malnutrition screening', child_vaccinated='Yes',
+           eating_minimum_meals='yes', development_delays_identified='No', immunization_record_screened='No',
+           child_immunization_screened='Yes', caregiver_counselling='No')
+    # the latest is the highest id, even when an older record was edited after it
+    edited = datetime.datetime(2030, 1, 1, tzinfo=datetime.timezone.utc)
+    m.HealthNutritionService.objects.filter(pk=older.pk).update(created=edited, modified=edited)
+    m.EducationService.objects.filter(registration=registration, education_program='BLN Level 1').update(
+        created=edited, modified=edited)
+    enrolment = education.PROGRAMMES['mscc'].build('2025')['cubes']['enrolment']
+    [row] = records(enrolment, partner=makani['partner'].id, sex='Female')
+    assert row['programme'] == 'BLN Level 2'
+    assert row['education_status'] == 'Never registered in any formal school before'
+    assert row['malnutrition'] == 'No malnutrition screening' and row['delay'] == 'No'
+    assert (row['counselling'], row['immunized'], row['screened'], row['minimum_meals'], row['vaccinated']) == (
+        1, 1, 1, 1, 1)  # counselling: any record; the others: the latest record
+    assert total(enrolment, 'screened') == 1 and total(enrolment, 'vaccinated') == 1
+    assert records(enrolment, malnutrition='SAM (MUAC <11.5 cm)') == []
+
+
+def test_makani_normalises_the_slicers_and_lists_the_centers(makani, places):
+    from student_registration.students.models import IDType
+
+    unhcr = IDType.objects.create(name='UNHCR Registered', active=True)
+    Child.objects.filter(gender='Female', birthday_year='2016').update(
+        main_caregiver='mother', marital_status='married', id_type=unhcr)
+    Child.objects.filter(gender='Male').update(main_caregiver='FATHER')
+    m.Registration.objects.filter(partner=makani['partner'], child__gender='Female').update(
+        have_labour='Yes - Morning', child_is_idp='yes')
+    m.Registration.objects.filter(partner=makani['other'], round=makani['current']).update(have_labour='No')
+    m.Registration.objects.filter(child__gender='Male').update(have_labour='yes_all_day')
+    Center.objects.filter(pk=makani['center'].pk).update(active_during_emergency='yes', latitude=34.5,
+                                                          longitude=36.1, is_active=True)
+    Center.objects.filter(name='Center B').update(active_during_emergency='NO', latitude=0, longitude=0)
+
+    payload = education.PROGRAMMES['mscc'].build('2025')
+    enrolment = payload['cubes']['enrolment']
+    assert total(enrolment, 'registrations', caregiver='Mother') == 2
+    assert total(enrolment, 'registrations', caregiver='Father') == 1
+    assert total(enrolment, 'registrations', working='Yes') == 2  # 'Yes - Morning' and the old 'yes_all_day'
+    assert total(enrolment, 'registrations', working='No') == 1
+    assert total(enrolment, 'married') == 2 and total(enrolment, 'idp') == 1
+    assert total(enrolment, 'registrations', id_type=unhcr.id) == 2
+    assert payload['id_types'] == [{'id': unhcr.id, 'name': 'UNHCR Registered'}]
+    centers = {c['id']: c for c in payload['centers']}
+    a, b = centers[makani['center'].id], centers[Center.objects.get(name='Center B').id]
+    assert set(a) == {'id', 'name', 'partner', 'governorate', 'district', 'cadaster', 'type', 'emergency',
+                      'is_active', 'latitude', 'longitude'}
+    assert (a['emergency'], a['latitude'], a['longitude'], a['is_active']) == ('Yes', 34.5, 36.1, True)
+    assert (b['emergency'], b['latitude'], b['longitude']) == ('No', None, None)
+    assert (a['partner'], a['governorate'], a['district'], a['type']) == (
+        makani['partner'].id, places['akkar'].id, places['halba'].id, 'Community Hub')
+    assert {loc['id'] for loc in payload['locations']} >= {places['akkar'].id, places['beirut'].id,
+                                                           places['halba'].id}
+
+
+def test_makani_staff_cube(makani, places):
+    center_b = Center.objects.get(name='Center B')
+    ProgramStaff.objects.create(facilitator_name='G', center=center_b, gender='Male', is_active_current_round='no')
+    ProgramStaff.objects.create(facilitator_name='H', center=center_b, gender='Male')
+    ProgramStaff.objects.create(facilitator_name='No center', gender='Male')  # not counted
+    staff = education.PROGRAMMES['mscc'].build('2025')['cubes']['staff']
+    assert staff['dims'] == ['center', 'partner', 'governorate', 'sex', 'active'] and staff['measures'] == ['staff']
+    assert sorted(staff['rows'], key=str) == sorted([
+        [makani['center'].id, makani['partner'].id, places['akkar'].id, 'Female', 'Yes', 1],
+        [center_b.id, makani['other'].id, places['beirut'].id, 'Male', 'No', 1],
+        [center_b.id, makani['other'].id, places['beirut'].id, 'Male', 'Not specified', 1],
+    ], key=str)
+
+
+@pytest.fixture
+def dirasa_more(bridging, places):
+    """A second school with teachers only, listed by a Dirasa partner and a non-Dirasa one; topics."""
+    from student_registration.students.models import Training
+
+    other = PartnerOrganization.objects.create(name='Second Dirasa Partner', is_dirasa=True)
+    not_dirasa = PartnerOrganization.objects.create(name='Not Dirasa', is_dirasa=False)
+    school_b = School.objects.create(number='1002', name='School B', governorate=places['beirut'],
+                                     type='Private Free School', latitude=33.9, longitude=35.5)
+    other.schools.add(school_b)
+    not_dirasa.schools.add(school_b)
+    School.objects.filter(pk=bridging['school'].pk).update(
+        type='Private School', active_during_emergency='yes', number_children=100, number_children_male=40,
+        number_children_female=60, number_children_lebanese=30, number_children_non_lebanese=70,
+        number_children_sbp=12, number_total_children_disability=5, number_dirasa_children_disability=2)
+    digital, sel = Training.objects.create(name='Digital Literacy'), Training.objects.create(name='SEL')
+    Teacher.objects.get(round=bridging['round']).trainings.add(digital)
+    teacher = Teacher.objects.create(first_name='Secret', sex='Female', round=bridging['round'], school=school_b)
+    teacher.trainings.add(digital, sel)
+    Bridging.objects.filter(student__sex='Female').update(barriers_single='family_moved')
+    Bridging.objects.filter(student__sex='Male').update(barriers_single='')
+    return {'school_b': school_b, 'other': other, 'digital': digital, 'sel': sel}
+
+
+def test_bridging_cubes_schools_and_trainings(bridging, dirasa_more, places):
+    payload = education.PROGRAMMES['bridging'].build('Bridging 2025')
+    assert payload['format'] == 2
+    enrolment = payload['cubes']['enrolment']
+    assert enrolment['dims'] == list(education.Bridging.ENROLMENT)
+    assert enrolment['measures'] == ['registrations', 'pre_tested', 'post_tested']
+    assert total(enrolment, 'registrations') == 2 and total(enrolment, 'pre_tested') == 1
+    assert total(enrolment, 'registrations', learning_result='in_progress') == 1
+    assert total(enrolment, 'registrations', level='level_two', sex='Male', learning_result='dropout') == 1
+    assert total(enrolment, 'registrations', barrier='family_moved') == 1
+    assert total(enrolment, 'registrations', barrier=None) == 1
+    school_a, school_b = bridging['school'].id, dirasa_more['school_b'].id
+
+    assert payload['cubes']['teachers']['rows'] == sorted([[school_a, 'Male', 1], [school_b, 'Female', 1]], key=str)
+    trainings = payload['cubes']['trainings']
+    assert trainings['dims'] == ['school', 'sex', 'training'] and trainings['measures'] == ['teachers']
+    assert total(trainings, 'teachers', training=dirasa_more['digital'].id) == 2
+    assert total(trainings, 'teachers', training=dirasa_more['sel'].id, sex='Female') == 1
+    assert {t['name'] for t in payload['trainings']} == {'Digital Literacy', 'SEL'}
+
+    schools = {s['id']: s for s in payload['schools']}
+    assert set(schools) == {school_a, school_b}
+    a, b = schools[school_a], schools[school_b]
+    assert set(a) == {'id', 'name', 'number', 'type', 'governorate', 'district', 'emergency', 'latitude',
+                      'longitude', 'partners', 'counts'}
+    assert a['partners'] == [bridging['partner'].id]  # registered children there
+    assert b['partners'] == [dirasa_more['other'].id]  # no children: the Dirasa partners listing it
+    assert a['counts'] == {'children': 100, 'children_male': 40, 'children_female': 60, 'children_lebanese': 30,
+                           'children_non_lebanese': 70, 'cwd': 5, 'dirasa_children': 12, 'dirasa_cwd': 2}
+    assert b['counts']['children'] is None
+    assert (a['emergency'], a['type'], a['latitude']) == ('Yes', 'Private School', None)
+    assert (b['emergency'], b['type'], b['latitude'], b['longitude']) == (
+        'Not specified', 'Private Free School', 33.9, 35.5)
+    assert {p['id'] for p in payload['partners']} >= {bridging['partner'].id, dirasa_more['other'].id}
+    assert places['beirut'].id in {loc['id'] for loc in payload['locations']}  # school B's governorate
+
+
+def test_outreach_cubes_merge_spellings_and_read_the_year(bridging):
+    from student_registration.outreach.models import OutreachCaregiver, OutreachChild
+
+    first = OutreachCaregiver.objects.create(
+        father_name='Secret', partner_name=' Partner X ', governorate='Akkar',
+        interview_date='2024-05-01T10:00:00', id_type='UNHCR registered')
+    second = OutreachCaregiver.objects.create(partner_name='Partner X', governorate='Akkar',
+                                              interview_date='2025-01-02', id_type='unhcr_registered')
+    undated = OutreachCaregiver.objects.create(interview_date='', id_type='No_papers', partner_name='')
+    OutreachChild.objects.create(outreach_caregiver=first, first_name='Secret', child_referral='Referred_to_Dirasa',
+                                 education_status='Never been engaged in any type of learning',
+                                 dropout_reason='family needs more income')
+    OutreachChild.objects.create(outreach_caregiver=second, education_status='never_been_engaged_in_any_type_of_learni',
+                                 child_referral='referred to Dirasa')
+    OutreachChild.objects.create(outreach_caregiver=undated, education_status='  ')
+
+    cubes = education.PROGRAMMES['bridging'].build('Bridging 2025')['outreach']['cubes']
+    assert set(cubes) == {'education_status', 'referral', 'dropout_reason', 'id_type'}
+    status = cubes['education_status']
+    assert status['dims'] == ['year', 'partner', 'governorate', 'value'] and status['measures'] == ['children']
+    key = 'never_been_engaged_in_any_type_of_learni'
+    assert sorted(status['rows'], key=str) == sorted([
+        ['2024', 'Partner X', 'Akkar', key, 1], ['2025', 'Partner X', 'Akkar', key, 1], [None, None, None, None, 1],
+    ], key=str)
+    assert total(cubes['referral'], 'children', value='referred_to_dirasa') == 2
+    assert total(cubes['dropout_reason'], 'children', value='family_needs_more_income') == 1
+    assert total(cubes['id_type'], 'children', value='unhcr_registered') == 2
+    assert total(cubes['id_type'], 'children', value='no_papers', year=None) == 1
+
+
+def test_outreach_keys_keep_their_length_after_leading_punctuation():
+    from student_registration.outreach.models import OutreachCaregiver, OutreachChild
+
+    caregiver = OutreachCaregiver.objects.create(interview_date='2025-03-01')
+    for status in ('Never been engaged in any type of learning', '"Never been engaged in any type of learning"',
+                   '- never_been_engaged_in_any_type_of_learni', '\tNever been engaged in any type of learning'):
+        OutreachChild.objects.create(outreach_caregiver=caregiver, education_status=status)
+    rows = education.outreach()['cubes']['education_status']['rows']
+    assert rows == [['2025', None, None, 'never_been_engaged_in_any_type_of_learni', 4]]
+
+
+def test_cubes_hold_no_personal_data(makani, bridging, dirasa_more):
+    from student_registration.outreach.models import OutreachCaregiver, OutreachChild
+
+    caregiver = OutreachCaregiver.objects.create(father_name='Secret', caregiver_first_name='Secret',
+                                                 partner_name='Partner X', interview_date='2025-02-02')
+    OutreachChild.objects.create(outreach_caregiver=caregiver, first_name='Secret', education_status='out')
+    ProgramStaff.objects.create(facilitator_name='Secret', center=makani['center'], gender='Male')
+    for name, year in (('mscc', '2025'), ('bridging', 'Bridging 2025')):
+        payload = education.PROGRAMMES[name].build(year)
+        assert payload['cubes'] and all(not c.get('error') for c in payload['cubes'].values())
+        text = str(payload)
+        assert 'Secret' not in text and 'first_name' not in text and 'birthday' not in text
+
+
+def test_a_failing_cube_does_not_stop_the_others(makani, bridging):
+    real = engine.cube
+
+    def flaky(sql, params, dimensions, measures):
+        if 'malnutrition' in dimensions or list(dimensions) == ['school', 'sex']:
+            raise RuntimeError('canceling statement due to statement timeout')
+        return real(sql, params, dimensions, measures)
+
+    with mock.patch.object(engine, 'cube', side_effect=flaky):
+        makani_payload = education.PROGRAMMES['mscc'].build('2025')
+        bridging_payload = education.PROGRAMMES['bridging'].build('Bridging 2025')
+    failed = makani_payload['cubes']['enrolment']
+    assert failed['error'] == 'RuntimeError' and failed['rows'] == []
+    assert failed['dims'] == list(education.Makani.ENROLMENT) and failed['measures'][0] == 'registrations'
+    assert total(makani_payload['cubes']['staff'], 'staff') == 1
+    assert table(makani_payload['blocks']['registrations'])[()] == [2]
+    assert bridging_payload['cubes']['teachers']['error'] == 'RuntimeError'
+    assert total(bridging_payload['cubes']['enrolment'], 'registrations') == 2
+    assert 'error' not in bridging_payload['outreach']['cubes']['id_type']

@@ -56,8 +56,14 @@ def latest(programme, year):
 
 
 def is_stale(snapshot):
+    """Missing, older than FIGURES_MAX_AGE_HOURS, or counted in an older payload format (after an
+    upgrade it is counted again at once, not at night)."""
+    from .education import FORMAT_VERSION
+
+    if snapshot is None or (snapshot.payload or {}).get('format') != FORMAT_VERSION:
+        return True
     hours = int(getattr(settings, 'FIGURES_MAX_AGE_HOURS', 26))
-    return snapshot is None or snapshot.created_at < timezone.now() - datetime.timedelta(hours=hours)
+    return snapshot.created_at < timezone.now() - datetime.timedelta(hours=hours)
 
 
 def request_refresh(programme, year):
