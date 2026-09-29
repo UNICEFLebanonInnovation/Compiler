@@ -647,6 +647,11 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
 
         else:
             data = BridgingSerializer(instance).data
+            # The form accepts a CERD number rather than a PublicSchool primary
+            # key.  BridgingSerializer does not serialize this form-only field,
+            # so populate it explicitly when reopening a saved assessment.
+            if instance.public_school_id:
+                data['public_school'] = instance.public_school.cerd
             if 'post_test' in data:
                 p_test = data['post_test']
                 if p_test:
