@@ -19,7 +19,8 @@ from student_registration.schools.models import (
     ClassRoom,
     CLMRound,
     EducationalLevel,
-    PartnerOrganization
+    PartnerOrganization,
+    PublicSchool,
 )
 
 
@@ -1958,6 +1959,14 @@ class Bridging(CLM):
     learning_result_other = models.TextField(
         blank=True, null=True,
         verbose_name=_('Please Specify')
+    )
+    public_school = models.ForeignKey(
+        PublicSchool,
+        blank=True,
+        null=True,
+        related_name='bridging_referrals',
+        on_delete=models.SET_NULL,
+        verbose_name=_('Public school')
     )
     formal_education_grade_level = models.CharField(
         max_length=12,
