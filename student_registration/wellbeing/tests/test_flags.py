@@ -6,8 +6,7 @@ import datetime
 import pytest
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.test import Client
-from django.urls import reverse
+from rest_framework.test import APIClient
 
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
 from student_registration.child.models import Child
@@ -220,50 +219,71 @@ def test_a_followed_up_protection_flag_returns_only_with_a_new_record(world):
     assert flags(registration=reg, status=Flag.OPEN) == [Flag.PROTECTION_NO_REFERRAL]
 
 
-# --------------------------------------------------------------------------------------- pages
-def user(world, group, **kw):
-    u = get_user_model().objects.create_user(username=group.lower(), password='x-' + group, **kw)
+# ----------------------------------------------------------------------------------------- API
+def api_client(group='NeuroDB API'):
+    u = get_user_model().objects.create_user(username='api-' + group.replace(' ', ''), password='x-' + group)
     u.groups.add(Group.objects.get_or_create(name=group)[0])
-    u.groups.add(Group.objects.get_or_create(name='MSCC')[0])
-    client = Client()
-    client.force_login(u)
+    client = APIClient()
+    client.force_authenticate(u)
     return client
 
 
-def test_centre_and_partner_staff_see_their_flags_and_record_the_follow_up(world):
-    mine = world['register'](name='Mine')
-    theirs = world['register'](name='Theirs', center=world['other_center'], partner=world['other_center'].partner)
-    for reg in (mine, theirs):
-        m.PSSService.objects.create(registration=reg, child_protection_concern='Distress')
-    engine.refresh(today=TODAY)
-    centre = user(world, 'MSCC_CENTER', center=world['center'])
-    page = centre.get(reverse('wellbeing:flags'))
-    assert page.status_code == 200 and b'Mine' in page.content and b'Theirs' not in page.content
-    other_flag = Flag.objects.get(registration=theirs)
-    assert centre.get(reverse('wellbeing:follow_up', args=[other_flag.pk])).status_code == 404
-    flag = Flag.objects.get(registration=mine)
-    assert b'Record the follow-up' in centre.get(reverse('wellbeing:follow_up', args=[flag.pk])).content
-    response = centre.post(reverse('wellbeing:follow_up', args=[flag.pk]), {
-        'follow_up_type': 'Home visit', 'result': 'referred', 'followed_up_on': TODAY.isoformat(), 'note': ''})
-    assert response.status_code == 302
-    flag.refresh_from_db()
-    assert flag.status == Flag.FOLLOWED_UP and flag.result == 'referred'
-    partner = user(world, 'MSCC_PARTNER', partner=world['partner'])
-    assert b'Mine' in partner.get(reverse('wellbeing:flags') + '?status=followed_up').content
-
-
-def test_unicef_sees_centre_summaries_but_no_child(world):
+def test_neurodb_reads_flags_by_registration_number_without_names(world):
     reg = world['register'](name='Secret')
     attendance(world, 'PPPPAAA', reg)
+    m.PSSService.objects.create(registration=reg, child_protection_concern='Distress')
     engine.refresh(today=TODAY)
-    unicef = user(world, 'MSCC_UNICEF')
-    assert unicef.get(reverse('wellbeing:flags')).status_code == 302
-    page = unicef.get(reverse('wellbeing:summaries'))
-    assert page.status_code == 200 and b'Center A' in page.content and b'Secret' not in page.content
+    client = api_client()
+    data = client.get('/api/wellbeing/flags/', {'limit': 1}).json()
+    assert len(data['flags']) == 1 and data['next_after'] == data['flags'][0]['id']
+    assert data['settings']['absence_streak'] == 3 and data['kinds']['A1']
+    rest = client.get('/api/wellbeing/flags/', {'after': data['next_after']}).json()
+    flags_ = data['flags'] + rest['flags']
+    assert {f['kind'] for f in flags_} == {'A1', 'P1'} and rest['next_after'] is None
+    first = flags_[0]
+    assert first['registration'] == reg.id and first['bma_path'] == '/mscc/child-profile/%s/' % reg.id
+    age = engine._age_band(reg.child, datetime.date.today())  # an age band, never the date of birth
+    assert first['child'] == {'gender': 'Female', 'age_band': age, 'nationality': 'Syrian'}
+    assert b'Secret' not in client.get('/api/wellbeing/flags/').content
+    later = client.get('/api/wellbeing/flags/', {'modified_since': '2999-01-01T00:00:00'}).json()
+    assert later['flags'] == []
+    assert client.get('/api/wellbeing/flags/', {'modified_since': 'yesterday'}).status_code == 400
+
+
+def test_neurodb_records_a_follow_up(world):
+    reg = world['register']()
+    m.PSSService.objects.create(registration=reg, child_protection_concern='Distress')
+    engine.refresh(today=TODAY)
     flag = Flag.objects.get(registration=reg)
-    assert unicef.get(reverse('wellbeing:follow_up', args=[flag.pk])).status_code == 403
-    nobody = user(world, 'OTHER')
-    assert nobody.get(reverse('wellbeing:summaries')).status_code == 403
+    client = api_client()
+    url = '/api/wellbeing/flags/%s/follow-up/' % flag.pk
+    bad = client.post(url, {'follow_up_type': 'Phone call', 'result': 'nope', 'followed_up_on': '2025-06-01',
+                            'by': 'A. Officer'}, format='json')
+    assert bad.status_code == 400
+    ok = client.post(url, {'follow_up_type': 'Phone call', 'result': 'referred',
+                           'followed_up_on': TODAY.isoformat(), 'note': 'Called the mother', 'by': 'A. Officer'},
+                     format='json')
+    assert ok.status_code == 200 and ok.json()['flag']['follow_up']['by'] == 'A. Officer'
+    flag.refresh_from_db()
+    assert flag.status == Flag.FOLLOWED_UP and flag.result == 'referred'
+    again = client.post(url, {'follow_up_type': 'Phone call', 'result': 'referred',
+                              'followed_up_on': TODAY.isoformat(), 'by': 'B'}, format='json')
+    assert again.status_code == 409
+
+
+def test_neurodb_reads_centre_summaries(world):
+    reg = world['register']()
+    attendance(world, 'PPPPAAA', reg)
+    engine.refresh(today=TODAY)
+    data = api_client().get('/api/wellbeing/summaries/').json()
+    assert data['month'] == '2025-05-01' and data['months'] == ['2025-05-01']
+    row = data['summaries'][0]
+    assert row['center']['name'] == 'Center A' and row['figures']['flags']['children_flagged'] == 1
+
+
+def test_only_the_neurodb_service_account_uses_the_api(world):
+    assert APIClient().get('/api/wellbeing/flags/').status_code in (401, 403)
+    assert api_client('MSCC_UNICEF').get('/api/wellbeing/summaries/').status_code == 403
 
 
 # --------------------------------------------------------------------------------------- back-test

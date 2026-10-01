@@ -12,7 +12,6 @@ import statistics
 from collections import Counter, defaultdict
 
 from django.db import transaction
-from django.db.models import Q
 
 from student_registration.mscc import models as m
 
@@ -205,13 +204,3 @@ def refresh(today=None, rounds=None, center_ids=None):
             totals['failed'] += 1
     return totals
 
-
-def scope_filter(user):
-    """The flags a user may see: their centre's or their partner's; None for no child-level access."""
-    from student_registration.users.templatetags.custom_tags import has_group
-
-    if has_group(user, 'MSCC_CENTER') and user.center_id:
-        return Q(center_id=user.center_id)
-    if has_group(user, 'MSCC_PARTNER') and user.partner_id:
-        return Q(partner_id=user.partner_id)
-    return None

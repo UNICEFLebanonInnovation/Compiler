@@ -3,7 +3,8 @@ follow-up recorded on each flag, and monthly centre summaries.
 
 A flag says "check on this child" and why; it is not a score or a label. Flags are worked out every
 night from the data the centres already record (attendance, services, screenings, referrals, tests)
-by ``rules.py``; staff record the follow-up, which closes the flag.
+by ``rules.py``. BMA only calculates and serves them (``api.py``); NeuroDB shows them and sends the
+follow-ups back, which close the flags.
 """
 
 import datetime
@@ -119,6 +120,8 @@ class Flag(models.Model):
     followed_up_on = models.DateField(null=True, blank=True)
     followed_up_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
                                        on_delete=models.SET_NULL, related_name='+')
+    followed_up_by_name = models.CharField(
+        max_length=150, blank=True, help_text='who recorded the follow-up in NeuroDB')
     follow_up_type = models.CharField(max_length=40, blank=True)
     result = models.CharField(max_length=20, choices=RESULTS, blank=True)
     note = models.TextField(blank=True)

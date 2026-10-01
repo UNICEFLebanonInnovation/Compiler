@@ -107,7 +107,6 @@ urlpatterns = [
     re_path(r'^students/', include('student_registration.students.urls', namespace='students')),
     re_path(r'^clm/', include('student_registration.clm.urls', namespace='clm')),
     re_path(r'^mscc/', include('student_registration.mscc.urls', namespace='mscc')),
-    re_path(r'^wellbeing/', include('student_registration.wellbeing.urls', namespace='wellbeing')),
     re_path(r'^tls/', include('student_registration.tls.urls', namespace='tls')),
     re_path(r'^youth/', include('student_registration.youth.urls', namespace='youth')),
     re_path(r'^outreach/', include('student_registration.outreach.urls', namespace='outreach')),
@@ -128,6 +127,8 @@ urlpatterns = [
     # Counts of youth per indicator, partner, donor and place, for NeuroDB (no personal data)
     re_path(r'^api/youth/indicator-figures/$', YouthIndicatorFiguresView.as_view(),
             name='youth_indicator_figures'),
+    # Makani wellbeing flags and centre summaries, for NeuroDB (children by registration number only)
+    re_path(r'^api/wellbeing/', include('student_registration.wellbeing.api_urls')),
     re_path(r'^api/', include(api.urls)),
     re_path(r"^serve-file/(?P<file_path>.+)/$", serve_file, name="serve_file")
 

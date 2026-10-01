@@ -32,22 +32,28 @@ data the centres already record. Thresholds are in admin → Flag settings.
 - Not in phase 1: the main programme assessment (raw form data, unvalidated scores; a missing test
   can look like a 0) and anything predictive.
 
-## Follow-up
+## BMA calculates, NeuroDB shows
 
-Centre staff (`MSCC_CENTER`, their centre) and partner staff (`MSCC_PARTNER`, their partner) see
-**Makani → Children to follow up** and record what was done (how, result, date, optional note);
-the flag closes. It opens again only when newer data shows the problem continues (e.g. new
-absences after the follow-up date, a new PSS record). A flag whose condition clears by itself
-(the child came back) closes as "resolved by itself".
+BMA has no page for this: it works out the flags and summaries and serves them through an API that
+only the NeuroDB service account (group "NeuroDB API", token authentication) can call. NeuroDB
+shows them and records the follow-ups (UNICEF administrators and section editors).
 
-## Centre summaries
-
-**Makani → Wellbeing summaries**, per centre and month: children, dropouts, attendance rate,
-children with an open flag, flags raised and followed up within 7 days, median days to follow-up,
-flags open past 7 days, required services completed, learning tests compared, and data quality
-(all-present sheets, core-package children without a service checklist). Counts only.
-`MSCC_UNICEF` sees every centre's summary and **no child-level flag**; partners and centres see
-their own.
+- `GET /api/wellbeing/flags/?modified_since=<ISO date-time>&after=<id>&limit=<n>`: flags in id
+  order, `next_after` for the next page; with `modified_since`, only the flags changed since then.
+  Each flag carries the BMA **registration number**, the centre, partner and round, and the child's
+  gender, age band and nationality: no name, contact detail or date of birth. `bma_path` is the
+  child's profile in BMA, opened with the user's own BMA access. The response also has the flag
+  kinds, follow-up results and thresholds.
+- `POST /api/wellbeing/flags/<id>/follow-up/` with `follow_up_type`, `result` (one of the
+  results), `followed_up_on`, `note` and `by` (the NeuroDB user's name): the flag closes (409 when
+  it is no longer open). It opens again only when newer data shows the problem continues (e.g. new
+  absences after the follow-up date, a new PSS record); a flag whose condition clears by itself
+  closes as "resolved by itself".
+- `GET /api/wellbeing/summaries/?month=YYYY-MM-01`: the centre summaries of a month (latest by
+  default) and the months available. Per centre: children, dropouts, attendance rate, children with
+  an open flag, flags raised and followed up within 7 days, median days to follow-up, flags open
+  past 7 days, required services completed, learning tests compared, and data quality
+  (all-present sheets, core-package children without a service checklist). Counts only.
 
 ## Running it
 
