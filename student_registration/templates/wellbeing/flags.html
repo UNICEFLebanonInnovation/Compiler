@@ -1,0 +1,67 @@
+{% extends "mscc/base.html" %}
+{% block project_title %}Wellbeing flags{% endblock %}
+{% block content %}
+{% include "wellbeing/_title.html" with title="Children to follow up" subtitle="Worked out every night from attendance, services, screenings, referrals and tests. A flag means: check on this child; it is not a judgement." %}
+
+{% if messages %}{% for message in messages %}<div class="alert alert-success">{{ message }}</div>{% endfor %}{% endif %}
+
+<div class="row mb-3">
+  {% for code, label, n in counts %}
+  <div class="col-6 col-md-4 col-xl-2 mb-2">
+    <a class="card card-body p-2 text-decoration-none{% if kind == code %} border-primary{% endif %}" href="?kind={{ code }}&status=open{% if center %}&center={{ center }}{% endif %}">
+      <div class="small text-muted">{{ label }}</div><div class="h4 mb-0">{{ n }}</div>
+    </a>
+  </div>
+  {% endfor %}
+</div>
+
+<form method="get" class="form-inline mb-3">
+  <select name="status" class="form-control form-control-sm mr-2 mb-2" aria-label="Status">
+    {% for code, label in statuses %}<option value="{{ code }}" {% if code == status %}selected{% endif %}>{{ label }}</option>{% endfor %}
+  </select>
+  <select name="kind" class="form-control form-control-sm mr-2 mb-2" aria-label="Kind of flag">
+    <option value="">All kinds of flag</option>
+    {% for code, label in kinds %}<option value="{{ code }}" {% if code == kind %}selected{% endif %}>{{ label }}</option>{% endfor %}
+  </select>
+  {% if centers %}
+  <select name="center" class="form-control form-control-sm mr-2 mb-2" aria-label="Centre">
+    <option value="">All centres</option>
+    {% for id, name in centers %}<option value="{{ id }}" {% if id|stringformat:"s" == center %}selected{% endif %}>{{ name }}</option>{% endfor %}
+  </select>
+  {% endif %}
+  <button class="btn btn-primary btn-sm mb-2" type="submit">Show</button>
+  <a class="btn btn-link btn-sm mb-2" href="{% url 'wellbeing:summaries' %}">Centre summaries</a>
+</form>
+
+<div class="main-card mb-3 card"><div class="card-body p-0">
+<div class="table-responsive">
+<table class="table table-hover table-sm mb-0">
+  <thead><tr><th>Child</th><th>Centre</th><th>Flag</th><th>Why</th><th>Raised</th><th>{% if status == "open" %}Open for{% else %}Follow-up{% endif %}</th><th></th></tr></thead>
+  <tbody>
+  {% for f in page %}
+  <tr>
+    <td><a href="{% url 'mscc:child_profile' f.registration_id %}?current_tab=services">{{ f.child.first_name }} {{ f.child.father_name }} {{ f.child.last_name }}</a>
+      {% if f.urgent %}<span class="badge badge-danger">Urgent</span>{% endif %}
+      {% if f.priority %}<span class="badge badge-warning" title="The child works, lives without parents or has a disability">Priority</span>{% endif %}</td>
+    <td class="small">{{ f.center.name }}</td>
+    <td>{{ f.get_kind_display }}</td>
+    <td class="small">{{ f.reason }}</td>
+    <td class="small text-nowrap">{{ f.opened_on|date:"d M Y" }}</td>
+    <td class="small">{% if f.status == "open" %}{{ f.days_open }} day{{ f.days_open|pluralize }}{% if f.days_open > settings.followup_days %} <span class="badge badge-danger">late</span>{% endif %}{% elif f.status == "followed_up" %}{{ f.followed_up_on|date:"d M Y" }} · {{ f.get_result_display }}{% else %}Cleared on {{ f.resolved_on|date:"d M Y" }}{% endif %}</td>
+    <td>{% if f.status == "open" %}<a class="btn btn-sm btn-outline-primary" href="{% url 'wellbeing:follow_up' f.pk %}">Record follow-up</a>{% endif %}</td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="7" class="text-muted p-3">No flag here.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div></div></div>
+{% if page.has_other_pages %}
+<nav><ul class="pagination">
+  {% if page.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}&status={{ status }}&kind={{ kind }}&center={{ center }}">Previous</a></li>{% endif %}
+  <li class="page-item disabled"><span class="page-link">{{ page.number }} / {{ page.paginator.num_pages }}</span></li>
+  {% if page.has_next %}<li class="page-item"><a class="page-link" href="?page={{ page.next_page_number }}&status={{ status }}&kind={{ kind }}&center={{ center }}">Next</a></li>{% endif %}
+</ul></nav>
+{% endif %}
+<p class="small text-muted">Attendance sheets where every child of the class is marked present are not counted (the form fills "present" in advance, so such a sheet may not have been filled in). Protection concerns follow the child protection referral procedure straight away; the flag only shows that no referral is recorded.</p>
+{% endblock %}

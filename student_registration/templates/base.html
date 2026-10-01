@@ -143,6 +143,20 @@
                                                             <span>Dashboard</span>
                                                         </a>
                                                     </li>
+                                                    {% if request.user|has_group:"MSCC_CENTER" or request.user|has_group:"MSCC_PARTNER" %}
+                                                    <li class="nav-item">
+                                                        <a href="{% url 'wellbeing:flags' %}" class="nav-link">
+                                                            <i class="nav-link-icon lnr-heart-pulse"></i>
+                                                            <span>Children to follow up</span>
+                                                        </a>
+                                                    </li>
+                                                    {% endif %}
+                                                    <li class="nav-item">
+                                                        <a href="{% url 'wellbeing:summaries' %}" class="nav-link">
+                                                            <i class="nav-link-icon lnr-chart-bars"></i>
+                                                            <span>Wellbeing summaries</span>
+                                                        </a>
+                                                    </li>
                                                 </ul>
                                             </div>
                                             {% endif %}

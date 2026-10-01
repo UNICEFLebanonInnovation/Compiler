@@ -1,0 +1,27 @@
+{% extends "mscc/base.html" %}
+{% block project_title %}Record follow-up{% endblock %}
+{% block content %}
+{% include "wellbeing/_title.html" with title="Record the follow-up" subtitle="What was done for this child; the flag then closes. It opens again only if new data shows the problem continues." %}
+<div class="main-card mb-3 card"><div class="card-body">
+  <h5 class="card-title">{{ flag.child.first_name }} {{ flag.child.father_name }} {{ flag.child.last_name }} · {{ flag.center.name }}</h5>
+  <p class="mb-1"><strong>{{ flag.get_kind_display }}</strong>{% if flag.urgent %} <span class="badge badge-danger">Urgent</span>{% endif %}</p>
+  <p class="text-muted">{{ flag.reason }} · raised {{ flag.opened_on|date:"d M Y" }}</p>
+  {% if flag.kind == "P1" %}<div class="alert alert-warning">A protection concern follows the child protection referral procedure; record here what was done.</div>{% endif %}
+  {% if flag.status != "open" %}
+  <div class="alert alert-info">This flag is no longer open.</div>
+  {% else %}
+  <form method="post" style="max-width: 640px">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-group">
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% for e in field.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+    </div>
+    {% endfor %}
+    <button class="btn btn-primary" type="submit">Save</button>
+    <a class="btn btn-link" href="{% url 'wellbeing:flags' %}">Cancel</a>
+  </form>
+  {% endif %}
+</div></div>
+{% endblock %}
