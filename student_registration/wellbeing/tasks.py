@@ -1,6 +1,5 @@
-"""Nightly wellbeing flags (Celery). Schedule it in admin → Periodic tasks:
-"student_registration.wellbeing.tasks.refresh_wellbeing_flags", e.g. at 03:00 (after attendance
-is in, away from the working day)."""
+"""Nightly wellbeing flags (Celery). Celery beat runs it every day at 03:00 (CELERY_BEAT_SCHEDULE in
+config/settings/base.py): after the day's attendance is in, away from the working day."""
 
 import logging
 

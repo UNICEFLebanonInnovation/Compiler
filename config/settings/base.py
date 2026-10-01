@@ -13,6 +13,7 @@ from __future__ import absolute_import, unicode_literals
 import environ
 import os
 import logging
+from celery.schedules import crontab
 from kombu import Queue
 
 logger = logging.getLogger(__name__)
@@ -381,6 +382,15 @@ CELERY_TASK_ROUTES = {
     'student_registration.mscc.tasks.generate_mscc_export': {
         'queue': 'mscc_export',
         'routing_key': 'mscc_export',
+    },
+}
+# Fixed schedules run by the Celery beat process ("beater" in the Procfile, "celerybeat" in
+# production.yml). Beat uses its default scheduler, so periodic tasks added in the admin do not run;
+# schedules go here. Times are in TIME_ZONE (Asia/Beirut).
+CELERY_BEAT_SCHEDULE = {
+    'wellbeing-flags-nightly': {
+        'task': 'student_registration.wellbeing.tasks.refresh_wellbeing_flags',
+        'schedule': crontab(hour=3, minute=0),  # every day at 03:00
     },
 }
 ########## END CELERY
