@@ -63,8 +63,8 @@ their own.
 
 ## Data limits to know
 
-- `MSCCAttendance.attendance_date` has no index; the nightly run reads 120 days per centre, one
-  centre at a time. Add an index on `(center_id, attendance_date)` before running on a large round.
+- Makani attendance gets an index on `(center_id, attendance_date)` (migration `attendances.0069`,
+  built concurrently so the table stays writable); the nightly run reads 120 days per centre, one centre at a time.
 - PSS and digital services have no record date; service rows are not unique per child (the latest
   one is used).
 - Dropout is recorded in several places (referral, follow-up, inclusion, youth kit); all are used.

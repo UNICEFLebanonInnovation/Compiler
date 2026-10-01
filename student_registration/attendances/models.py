@@ -700,6 +700,10 @@ class MSCCAttendance(TimeStampedModel):
     class Meta:
         ordering = ['attendance_date']
         verbose_name = "Makani Attendance"
+        indexes = [
+            # the wellbeing flags read a centre's attendance over a period every night
+            models.Index(fields=['center', 'attendance_date'], name='mscc_attendance_center_date'),
+        ]
 
     def __str__(self):
         return '{} - {}'.format(self.center, self.attendance_date)
