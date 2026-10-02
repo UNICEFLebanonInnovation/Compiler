@@ -171,3 +171,38 @@ class CenterSummary(models.Model):
 
     def __str__(self):
         return '{} {:%Y-%m}'.format(self.center, self.month)
+
+
+class WellbeingRun(models.Model):
+    """One calculation of the flags and centre summaries that NeuroDB asked for (NeuroDB polls it)."""
+
+    QUEUED, RUNNING, SUCCEEDED, FAILED = 'queued', 'running', 'succeeded', 'failed'
+    STATUSES = ((QUEUED, 'Queued'), (RUNNING, 'Running'), (SUCCEEDED, 'Succeeded'), (FAILED, 'Failed'))
+
+    center_ids = models.JSONField(default=list, blank=True, help_text='empty: every centre')
+    status = models.CharField(max_length=10, choices=STATUSES, default=QUEUED, db_index=True)
+    requested_by = models.CharField(max_length=150, blank=True)
+    requested_at = models.DateTimeField(auto_now_add=True)
+    started_at = models.DateTimeField(null=True, blank=True)
+    finished_at = models.DateTimeField(null=True, blank=True)
+    totals = models.JSONField(default=dict, blank=True)
+    error = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ('-requested_at',)
+
+    def __str__(self):
+        return 'wellbeing run %s (%s)' % (self.pk, self.status)
+
+    def as_dict(self):
+        return {
+            'id': self.pk,
+            'status': self.status,
+            'center_ids': self.center_ids,
+            'requested_by': self.requested_by,
+            'requested_at': self.requested_at.isoformat() if self.requested_at else None,
+            'started_at': self.started_at.isoformat() if self.started_at else None,
+            'finished_at': self.finished_at.isoformat() if self.finished_at else None,
+            'totals': self.totals,
+            'error': self.error,
+        }

@@ -57,8 +57,12 @@ shows them and records the follow-ups (UNICEF administrators and section editors
 
 ## Running it
 
-- Nightly: admin → Periodic tasks → add `student_registration.wellbeing.tasks.refresh_wellbeing_flags`
-  (e.g. 03:00).
+- **NeuroDB decides when** (it holds the schedule; BMA keeps none): `POST /api/wellbeing/runs/`
+  (optionally `{"center": id}`) queues a calculation for the Celery worker and returns the run (202),
+  or the run already queued or running (200); `GET /api/wellbeing/runs/<id>/` tells how it went
+  (queued, running, succeeded with the totals, or failed with the error). A run left unfinished for
+  3 hours (worker restarted) is marked failed so it does not block the next one. A Celery **worker**
+  must be running; beat is not needed.
 - Now: `python manage.py refresh_wellbeing_flags [--center ID]`.
 - Back-test on a past round (read-only, counts only):
   `python manage.py wellbeing_backtest --round ID [--every 7] [--silence-days 28]` — replays the

@@ -3,6 +3,10 @@
     GET  /api/wellbeing/flags/?modified_since=<ISO>&after=<id>&limit=<n>   flags, oldest change first
     POST /api/wellbeing/flags/<id>/follow-up/                              record a follow-up
     GET  /api/wellbeing/summaries/?month=YYYY-MM-01                        centre summaries (counts)
+    POST /api/wellbeing/runs/ {"center": optional id}                      calculate now (queued)
+    GET  /api/wellbeing/runs/<id>/                                         how that calculation went
+
+NeuroDB decides when the flags are calculated (it holds the schedule); BMA keeps none.
 
 Children are identified by their BMA registration number only: no name, no contact detail, no
 date of birth (an age band). Only the NeuroDB service account (the group named by
@@ -178,3 +182,25 @@ class SummariesView(Base):
             } for s in rows],
             'kinds': dict(Flag.KINDS),
         })
+
+
+class RunsView(Base):
+    def post(self, request):
+        center = request.data.get('center')
+        if center not in (None, '') and not str(center).isdigit():
+            return Response({'detail': 'center must be a centre id'}, status=400)
+        from . import runs
+
+        run, created = runs.start([int(center)] if center not in (None, '') else [],
+                                  requested_by=request.user.get_username())
+        return Response(run.as_dict(), status=202 if created else 200)
+
+
+class RunView(Base):
+    def get(self, request, pk):
+        from .models import WellbeingRun
+
+        run = WellbeingRun.objects.filter(pk=pk).first()
+        if run is None:
+            return Response({'detail': 'No such run'}, status=404)
+        return Response(run.as_dict())

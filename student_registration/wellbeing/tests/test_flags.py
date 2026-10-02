@@ -298,3 +298,53 @@ def test_the_backtest_counts_children_warned_before_they_left(world):
     assert result['left_recorded_dropout'] == 1 and result['left_and_flagged_before'] == 1
     assert result['flagged'] == 1 and result['flagged_and_stayed'] == 0
     assert result['median_days_of_warning'] >= 0
+
+
+def test_neurodb_asks_for_a_calculation_and_follows_it(world, django_capture_on_commit_callbacks):
+    from unittest import mock
+
+    from student_registration.wellbeing import runs
+    from student_registration.wellbeing.models import WellbeingRun
+
+    attendance(world, 'PPPPPPPAAA', world['register']())
+    client = api_client()
+    with mock.patch('student_registration.wellbeing.tasks.run_wellbeing.delay') as queued, \
+            django_capture_on_commit_callbacks(execute=True):
+        response = client.post('/api/wellbeing/runs/', {}, format='json')
+        assert response.status_code == 202 and response.json()['status'] == 'queued'
+        run_id = response.json()['id']
+        again = client.post('/api/wellbeing/runs/', {'center': world['center'].id}, format='json')
+        assert again.status_code == 200 and again.json()['id'] == run_id  # one calculation at a time
+    queued.assert_called_once_with(run_id)
+    runs.execute(run_id)  # what the worker does
+    status = client.get('/api/wellbeing/runs/%s/' % run_id).json()
+    assert status['status'] == 'succeeded' and status['finished_at'] and 'totals' in status
+    assert client.get('/api/wellbeing/runs/999999/').status_code == 404
+    assert client.post('/api/wellbeing/runs/', {'center': 'x'}, format='json').status_code == 400
+    assert WellbeingRun.objects.get(pk=run_id).requested_by
+
+
+def test_a_failed_calculation_is_reported_and_a_lost_run_does_not_block(world):
+    import datetime
+    from unittest import mock
+
+    from django.utils import timezone
+
+    from student_registration.wellbeing import runs
+    from student_registration.wellbeing.models import WellbeingRun
+
+    with mock.patch('student_registration.wellbeing.tasks.run_wellbeing.delay'):
+        run, created = runs.start([], 'neurodb')
+    with mock.patch('student_registration.wellbeing.engine.refresh', side_effect=RuntimeError('db gone')):
+        runs.execute(run.pk)
+    run.refresh_from_db()
+    assert created and run.status == WellbeingRun.FAILED and 'RuntimeError: db gone' in run.error
+
+    with mock.patch('student_registration.wellbeing.tasks.run_wellbeing.delay'):
+        stuck, _ = runs.start([], 'neurodb')
+        WellbeingRun.objects.filter(pk=stuck.pk).update(
+            status=WellbeingRun.RUNNING, requested_at=timezone.now() - datetime.timedelta(hours=4)
+        )
+        fresh, created = runs.start([], 'neurodb')
+    assert created and fresh.pk != stuck.pk
+    assert WellbeingRun.objects.get(pk=stuck.pk).status == WellbeingRun.FAILED
