@@ -59,7 +59,7 @@ from student_registration.students.views import serve_file
 from student_registration.clm.attendance_views import BridgingAttendanceHeatmapViewSet
 from student_registration.mscc.attendance_views import AttendanceHeatmapViewSet
 from student_registration.youth.indicator_figures_api import YouthIndicatorFiguresView
-from student_registration.figures.api import FiguresIndexView, FiguresView
+from student_registration.figures.api import FiguresIndexView, FiguresRunsView, FiguresRunView, FiguresView
 
 api = routers.SimpleRouter()
 
@@ -130,6 +130,8 @@ urlpatterns = [
             name='youth_indicator_figures'),
     # Counts of children per programme, partner and place, for NeuroDB (stored snapshots, no personal data)
     re_path(r'^api/figures/$', FiguresIndexView.as_view(), name='neurodb_figures_index'),
+    re_path(r'^api/figures/runs/$', FiguresRunsView.as_view(), name='neurodb_figures_runs'),
+    re_path(r'^api/figures/runs/(?P<run_id>[0-9]+)/$', FiguresRunView.as_view(), name='neurodb_figures_run'),
     re_path(r'^api/figures/(?P<programme>[a-z_]+)/$', FiguresView.as_view(), name='neurodb_figures'),
     re_path(r'^api/', include(api.urls)),
     re_path(r"^serve-file/(?P<file_path>.+)/$", serve_file, name="serve_file")

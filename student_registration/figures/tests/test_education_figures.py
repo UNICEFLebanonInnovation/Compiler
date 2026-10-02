@@ -167,19 +167,21 @@ def test_a_failing_block_does_not_stop_the_others(makani):
     assert table(payload['blocks']['registrations'])[()] == [2]
 
 
-def test_the_api_serves_snapshots_and_never_counts_in_the_request(makani):
+def _service_client():
     client = APIClient()
-    user_model = get_user_model()
-    service = user_model.objects.create_user(username='neurodb', password='x-pass-123456')
-    service.groups.add(Group.objects.create(name='NeuroDB API'))
+    service = get_user_model().objects.create_user(username='neurodb', password='x-pass-123456')
+    service.groups.add(Group.objects.get_or_create(name='NeuroDB API')[0])
     client.credentials(HTTP_AUTHORIZATION='Token ' + Token.objects.create(user=service).key)
+    return client
 
-    with mock.patch('student_registration.figures.tasks.refresh_figures.delay') as queued, \
+
+def test_the_api_serves_snapshots_and_never_counts_on_its_own(makani):
+    client = _service_client()
+    with mock.patch('student_registration.figures.tasks.run_figures.delay') as queued, \
             mock.patch.object(education.Makani, 'build', side_effect=AssertionError('counted in a request')):
         response = client.get('/api/figures/mscc/')
-        assert response.status_code == 202 and queued.call_count == 1
-        client.get('/api/figures/mscc/')
-        assert queued.call_count == 1  # one count queued, not one per request
+        assert response.status_code == 404 and 'POST /api/figures/runs/' in response.json()['detail']
+        assert queued.call_count == 0  # reading never starts a count: NeuroDB decides when
     assert client.get('/api/figures/unknown/').status_code == 404
     assert client.get('/api/figures/mscc/', {'year': '1999'}).status_code == 404
 
@@ -191,9 +193,56 @@ def test_the_api_serves_snapshots_and_never_counts_in_the_request(makani):
     assert {p['programme'] for p in index} == {'mscc', 'bridging'}
 
     FiguresSnapshot.objects.update(created_at=datetime.datetime(2020, 1, 1, tzinfo=datetime.timezone.utc))
-    with mock.patch('student_registration.figures.snapshots.request_refresh') as refresh:
-        assert client.get('/api/figures/mscc/').status_code == 200  # the old one, while a new one is counted
-        refresh.assert_called_once_with('mscc', '2025')
+    with mock.patch('student_registration.figures.tasks.run_figures.delay') as queued:
+        assert client.get('/api/figures/mscc/').status_code == 200  # an old one is served as it is
+        assert queued.call_count == 0
+
+
+def test_neurodb_asks_for_a_count_and_follows_it(makani, django_capture_on_commit_callbacks):
+    from student_registration.figures.models import FiguresRun
+
+    client = _service_client()
+    with mock.patch('student_registration.figures.tasks.run_figures.delay') as queued, \
+            django_capture_on_commit_callbacks(execute=True):
+        response = client.post('/api/figures/runs/', {}, format='json')
+        assert response.status_code == 202 and response.json()['status'] == 'queued'
+        run_id = response.json()['id']
+        assert sorted(t[0] for t in response.json()['targets']) == ['bridging', 'mscc']
+        again = client.post('/api/figures/runs/', {'programme': 'mscc'}, format='json')
+        assert again.status_code == 200 and again.json()['id'] == run_id  # one count at a time
+    queued.assert_called_once_with(run_id)
+    snapshots.execute_run(run_id)  # what the worker does
+    status = client.get('/api/figures/runs/%s/' % run_id).json()
+    assert status['status'] == 'succeeded' and status['finished_at']
+    assert {c[0] for c in status['counted']} == {'mscc'}
+    assert 'bridging current: no such year' in status['error']  # no Bridging round in this data
+    assert client.get('/api/figures/mscc/').status_code == 200
+    assert client.get('/api/figures/runs/999999/').status_code == 404
+    assert client.post('/api/figures/runs/', {'programme': 'nope'}, format='json').status_code == 400
+    assert client.post('/api/figures/runs/', {'year': '2025'}, format='json').status_code == 400
+    assert FiguresRun.objects.get(pk=run_id).requested_by == 'neurodb'
+
+
+def test_a_failed_count_is_reported_and_a_lost_run_does_not_block(makani):
+    from student_registration.figures.models import FiguresRun
+
+    with mock.patch('student_registration.figures.tasks.run_figures.delay'):
+        run, created = snapshots.start_run([('mscc', None)], 'neurodb')
+    assert created
+    with mock.patch.object(snapshots, 'refresh', side_effect=RuntimeError('database gone')):
+        snapshots.execute_run(run.pk)
+    run.refresh_from_db()
+    assert run.status == FiguresRun.FAILED and 'RuntimeError: database gone' in run.error
+
+    with mock.patch('student_registration.figures.tasks.run_figures.delay'):
+        stuck, _ = snapshots.start_run([('mscc', None)], 'neurodb')
+        FiguresRun.objects.filter(pk=stuck.pk).update(
+            status=FiguresRun.RUNNING,
+            requested_at=datetime.datetime(2020, 1, 1, tzinfo=datetime.timezone.utc),
+        )
+        fresh, created = snapshots.start_run([('mscc', None)], 'neurodb')
+    assert created and fresh.pk != stuck.pk
+    assert FiguresRun.objects.get(pk=stuck.pk).status == FiguresRun.FAILED
 
 
 def test_only_the_service_account_reads(makani):

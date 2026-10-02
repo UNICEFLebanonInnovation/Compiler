@@ -1,9 +1,14 @@
-"""GET /api/figures/<programme>/?year= : the stored counts of a programme, for NeuroDB.
+"""The education figures API, for NeuroDB, which decides when they are counted.
 
-The view reads one stored snapshot (one indexed SELECT); it never counts. When the snapshot is
-older than FIGURES_MAX_AGE_HOURS it still answers with it and queues one background count; when
-there is none yet it queues one and answers 202. Only the NeuroDB service account (the group named
-by YOUTH_FIGURES_API_GROUP, "NeuroDB API") or a superuser may read, at most FIGURES_API_RATE times.
+* GET /api/figures/ : the programmes, their years and which are counted.
+* GET /api/figures/<programme>/?year= : the latest stored counts (one indexed SELECT; it never counts;
+  404 when not counted yet).
+* POST /api/figures/runs/ {"programme": optional, "year": optional} : ask for a count (every programme's
+  current year by default). 202 with the run; 200 with the run already queued or running.
+* GET /api/figures/runs/<id>/ : how that count is going (queued, running, succeeded, failed).
+
+Only the NeuroDB service account (the group named by YOUTH_FIGURES_API_GROUP, "NeuroDB API") or a
+superuser may call it, at most FIGURES_API_RATE times.
 """
 
 from __future__ import annotations
@@ -40,11 +45,9 @@ class FiguresView(APIView):
         if year is None or (requested and not definition.has_year(requested)):
             return Response({'detail': 'No such year: %s' % (requested or 'current')}, status=404)
         snapshot = snapshots.latest(programme, year)
-        if snapshots.is_stale(snapshot):
-            snapshots.request_refresh(programme, year)
         if snapshot is None:
-            return Response({'detail': 'The figures are being counted; ask again later.', 'year': year},
-                            status=202)
+            return Response({'detail': 'Not counted yet: ask for a count (POST /api/figures/runs/).',
+                             'year': year}, status=404)
         return Response(dict(snapshot.payload, counted_at=snapshot.created_at.isoformat(),
                              counting_seconds=snapshot.seconds))
 
@@ -68,3 +71,35 @@ class FiguresIndexView(APIView):
                 'years': [{'year': y, 'counted': y in counted} for y in definition.years()],
             })
         return Response({'programmes': out})
+
+
+class FiguresRunsView(APIView):
+    permission_classes = (permissions.IsAuthenticated, CanReadIndicatorFigures)
+    throttle_classes = (FiguresThrottle,)
+
+    def post(self, request):
+        definitions = snapshots.programmes()
+        programme = (request.data.get('programme') or '').strip()
+        year = (request.data.get('year') or '').strip() or None
+        if programme and programme not in definitions:
+            return Response({'detail': 'Unknown programme', 'programmes': sorted(definitions)}, status=400)
+        if year and not programme:
+            return Response({'detail': 'A year needs its programme'}, status=400)
+        if year and not definitions[programme].has_year(year):
+            return Response({'detail': 'No such year: %s' % year}, status=400)
+        targets = [(programme, year)] if programme else [(name, None) for name in definitions]
+        run, created = snapshots.start_run(targets, requested_by=request.user.get_username())
+        return Response(run.as_dict(), status=202 if created else 200)
+
+
+class FiguresRunView(APIView):
+    permission_classes = (permissions.IsAuthenticated, CanReadIndicatorFigures)
+    throttle_classes = (FiguresThrottle,)
+
+    def get(self, request, run_id):
+        from .models import FiguresRun
+
+        run = FiguresRun.objects.filter(pk=run_id).first()
+        if run is None:
+            return Response({'detail': 'No such run'}, status=404)
+        return Response(run.as_dict())
