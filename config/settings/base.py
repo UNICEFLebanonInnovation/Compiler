@@ -108,6 +108,7 @@ LOCAL_APPS = [
     'student_registration.tls',
     'student_registration.youth',
     'student_registration.adolescent',
+    'student_registration.wellbeing',
     'student_registration.figures',
 ]
 

@@ -128,6 +128,8 @@ urlpatterns = [
     # Counts of youth per indicator, partner, donor and place, for NeuroDB (no personal data)
     re_path(r'^api/youth/indicator-figures/$', YouthIndicatorFiguresView.as_view(),
             name='youth_indicator_figures'),
+    # Makani wellbeing flags and centre summaries, for NeuroDB (children by registration number only)
+    re_path(r'^api/wellbeing/', include('student_registration.wellbeing.api_urls')),
     # Counts of children per programme, partner and place, for NeuroDB (stored snapshots, no personal data)
     re_path(r'^api/figures/$', FiguresIndexView.as_view(), name='neurodb_figures_index'),
     re_path(r'^api/figures/runs/$', FiguresRunsView.as_view(), name='neurodb_figures_runs'),
