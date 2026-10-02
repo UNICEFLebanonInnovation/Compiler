@@ -57,10 +57,8 @@ shows them and records the follow-ups (UNICEF administrators and section editors
 
 ## Running it
 
-- Every day at 03:00 (Beirut), by the Celery beat process: `CELERY_BEAT_SCHEDULE` in
-  `config/settings/base.py`. Beat ("beater" in the Procfile, "celerybeat" in production.yml) and a
-  Celery worker must be running. Beat uses its default scheduler, so a periodic task added in the
-  admin would not run: change the time in the settings.
+- Nightly: admin → Periodic tasks → add `student_registration.wellbeing.tasks.refresh_wellbeing_flags`
+  (e.g. 03:00).
 - Now: `python manage.py refresh_wellbeing_flags [--center ID]`.
 - Back-test on a past round (read-only, counts only):
   `python manage.py wellbeing_backtest --round ID [--every 7] [--silence-days 28]` — replays the
