@@ -54,6 +54,13 @@
       <a href="{% url 'clm:bridging_list' %}" class="btn btn-link">{% trans "Back to list" %}</a>
       <button type="submit" class="btn btn-success">{% trans "Save" %}</button>
     </form>
+
+    <hr>
+    <h5 class="card-title">{% trans "Profile ID" %}</h5>
+    <p class="text-muted">{% trans "Generate a printable profile ID card for this child using the saved profile picture and registration details." %}</p>
+    <a href="{% url 'clm:bridging_profile_id' object.pk %}" class="btn btn-primary" target="_blank" rel="noopener">
+      <i class="fa fa-id-card"></i> {% trans "Generate Profile ID" %}
+    </a>
   </div>
 </div>
 {% endblock %}

@@ -4,7 +4,7 @@ from __future__ import absolute_import, unicode_literals
 import json
 from datetime import datetime
 
-from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
+from django.views.generic import ListView, FormView, TemplateView, UpdateView, View, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden, Http404, FileResponse
@@ -415,6 +415,74 @@ class BridgingProfilePictureFileView(LoginRequiredMixin,
             bridging.profile_picture.open('rb'),
             content_type=content_type or 'application/octet-stream',
         )
+
+
+def _first_non_empty(*values):
+    for value in values:
+        if value:
+            return value
+    return ''
+
+
+def _date_part(value):
+    """Birthday day/month/year are stored as strings and default to 0 when unknown."""
+    value = str(value or '').strip()
+    return '' if value == '0' else value
+
+
+def bridging_profile_id_card(bridging):
+    """Collect the fields printed on a child's Dirasa profile ID card."""
+    student = bridging.student
+    full_name = ''
+    birthday = ''
+    place_of_birth = ''
+    nationality = ''
+    if student:
+        full_name = ' '.join(
+            part for part in (student.first_name, student.father_name, student.last_name) if part
+        )
+        day = _date_part(student.birthday_day)
+        month = _date_part(student.birthday_month)
+        year = _date_part(student.birthday_year)
+        if day and month and year:
+            birthday = '{}/{}/{}'.format(day, month, year[-2:])
+        place_of_birth = student.place_of_birth or ''
+        if student.nationality:
+            nationality = _first_non_empty(student.nationality.name_en, student.nationality.name)
+
+    governorate = ''
+    if bridging.governorate:
+        governorate = _first_non_empty(bridging.governorate.name_en, bridging.governorate.name)
+
+    disability = bridging.disability
+    physical_difficulties = _first_non_empty(disability.name_en, disability.name) if disability else 'No'
+
+    return {
+        'round': bridging.round.name if bridging.round else '',
+        'id': bridging.id,
+        'ngo': bridging.partner.name if bridging.partner else '',
+        'full_name': full_name,
+        'birthday': birthday,
+        'place_of_birth': place_of_birth,
+        'nationality': nationality,
+        'governorate': governorate,
+        'physical_difficulties': physical_difficulties,
+        'has_picture': bool(bridging.profile_picture),
+    }
+
+
+class BridgingProfileIdView(LoginRequiredMixin,
+                            GroupRequiredMixin,
+                            DetailView):
+    """Printable child profile ID card generated from a Bridging registration."""
+    model = Bridging
+    template_name = 'clm/bridging_profile_id.html'
+    group_required = [u"CLM_Bridging"]
+
+    def get_context_data(self, **kwargs):
+        context = super(BridgingProfileIdView, self).get_context_data(**kwargs)
+        context['card'] = bridging_profile_id_card(self.object)
+        return context
 
 
 class ExportStorage(AzureStorage):

@@ -1,3 +1,114 @@
-from django.test import TestCase
+"""Tests for the Dirasa (Bridging) child profile ID card."""
 
-# Create your tests here.
+import pytest
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
+from django.core.files.uploadedfile import SimpleUploadedFile
+
+from student_registration.clm.bridging_views import bridging_profile_id_card
+from student_registration.clm.models import Bridging, Disability
+from student_registration.locations.models import Location, LocationType
+from student_registration.schools.models import CLMRound, PartnerOrganization
+from student_registration.students.models import Nationality, Student
+
+pytestmark = pytest.mark.django_db
+
+# Smallest valid 1x1 GIF, enough for ImageField validation.
+GIF = (b'GIF89a\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xff\xff\xff!\xf9\x04\x01\x00\x00\x00\x00,'
+       b'\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;')
+
+
+@pytest.fixture
+def registration():
+    governorate = LocationType.objects.create(name='Governorate')
+    baalbek = Location.objects.create(name='بعلبك الهرمل', name_en='Baalbek-Hermel', p_code='LB2', type=governorate)
+    student = Student.objects.create(
+        first_name='ريهام', father_name='علي', last_name='الشمق',
+        birthday_day='5', birthday_month='5', birthday_year='2014',
+        place_of_birth='Hazmieh',
+        nationality=Nationality.objects.create(name='سوري', name_en='Syrian'),
+    )
+    return Bridging.objects.create(
+        student=student,
+        round=CLMRound.objects.create(name='2026-2027', current_round_bridging=True),
+        partner=PartnerOrganization.objects.create(name='SAVE', is_dirasa=True),
+        governorate=baalbek,
+        disability=Disability.objects.create(name='لا', name_en='No'),
+    )
+
+
+@pytest.fixture
+def bridging_client(client):
+    user = get_user_model().objects.create_user(username='dirasa', password='x-pass-123456')
+    user.groups.add(Group.objects.get_or_create(name='CLM_Bridging')[0])
+    client.force_login(user)
+    return client
+
+
+def test_card_data_matches_registration(registration):
+    card = bridging_profile_id_card(registration)
+    assert card == {
+        'round': '2026-2027',
+        'id': registration.id,
+        'ngo': 'SAVE',
+        'full_name': 'ريهام علي الشمق',
+        'birthday': '5/5/14',
+        'place_of_birth': 'Hazmieh',
+        'nationality': 'Syrian',
+        'governorate': 'Baalbek-Hermel',
+        'physical_difficulties': 'No',
+        'has_picture': False,
+    }
+
+
+def test_card_data_tolerates_missing_details():
+    student = Student.objects.create(first_name='Only', birthday_day='0', birthday_month='0', birthday_year='0')
+    bridging = Bridging.objects.create(student=student)
+    card = bridging_profile_id_card(bridging)
+    assert card['full_name'] == 'Only'
+    assert card['birthday'] == ''
+    assert card['nationality'] == ''
+    assert card['governorate'] == ''
+    assert card['ngo'] == ''
+    assert card['round'] == ''
+    assert card['physical_difficulties'] == 'No'
+    assert bridging_profile_id_card(Bridging.objects.create())['full_name'] == ''
+
+
+def test_profile_id_page_renders_card(bridging_client, registration):
+    response = bridging_client.get('/clm/bridging-profile-id/{}/'.format(registration.id))
+    assert response.status_code == 200
+    html = response.content.decode('utf-8')
+    for text in ('2026-2027', 'ID: {}'.format(registration.id), 'NGO: SAVE', 'ريهام علي الشمق',
+                 'Date of Birth: 5/5/14', 'Place of Birth: Hazmieh', 'Nationality: Syrian',
+                 'Governorate: Baalbek-Hermel', 'Physical difficulties: No',
+                 'الامتحان الاستثنائي لطلاب التعليم الغير نظامي'):
+        assert text in html
+    assert '/clm/bridging-profile-picture/{}/image/'.format(registration.id) not in html
+
+
+def test_profile_id_page_shows_uploaded_picture(bridging_client, registration, settings, tmp_path):
+    settings.MEDIA_ROOT = str(tmp_path)
+    settings.DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    settings.STORAGES = {
+        'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+        'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+    }
+    registration.profile_picture.save('child.gif', SimpleUploadedFile('child.gif', GIF, content_type='image/gif'))
+
+    response = bridging_client.get('/clm/bridging-profile-id/{}/'.format(registration.id))
+    assert response.status_code == 200
+    assert '/clm/bridging-profile-picture/{}/image/'.format(registration.id) in response.content.decode('utf-8')
+
+
+def test_profile_picture_page_links_to_profile_id(bridging_client, registration):
+    response = bridging_client.get('/clm/bridging-profile-picture/{}/'.format(registration.id))
+    assert response.status_code == 200
+    assert '/clm/bridging-profile-id/{}/'.format(registration.id) in response.content.decode('utf-8')
+
+
+def test_profile_id_requires_bridging_group(client, registration):
+    assert client.get('/clm/bridging-profile-id/{}/'.format(registration.id)).status_code == 302
+    user = get_user_model().objects.create_user(username='outsider', password='x-pass-123456')
+    client.force_login(user)
+    assert client.get('/clm/bridging-profile-id/{}/'.format(registration.id)).status_code in (302, 403)
