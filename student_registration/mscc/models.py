@@ -1171,6 +1171,13 @@ class ServiceProgramOption(models.Model):
         choices=YES_NO,
         verbose_name=_('TaRL')
     )
+    is_tls = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('TLS')
+    )
 
     class Meta:
         ordering = ['service_name', 'program_code']
