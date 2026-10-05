@@ -15,6 +15,8 @@ $(document).ready(function(){
     $(document).on('change', 'select#id_retention_support_enrolled', function(){
        reorganizeForm();
     });
+    $(document).on('input', '#id_public_school', lookupPublicSchool);
+    lookupPublicSchool();
 });
 
 
@@ -38,7 +40,7 @@ function reorganizeForm()
     var progressToFormalEducation = recommended_learning_path == 'Progress to FE';
     var educationProgram = $('#id_education_program').val();
     var programmesWithFormalEducationDetails = [
-        'CBECE Level 1',
+        'CBECE Level 3',
         'BLN Level 1',
         'BLN Level 2',
         'BLN Level 3',
@@ -51,6 +53,14 @@ function reorganizeForm()
     ];
     var showFormalEducationDetails = progressToFormalEducation &&
         programmesWithFormalEducationDetails.indexOf(educationProgram) !== -1;
+
+    $('#public-school-fields').toggleClass('d-none', !showFormalEducationDetails);
+    if (!showFormalEducationDetails) {
+        $('#id_public_school').val('');
+        $('#public-school-name').text('');
+    } else {
+        lookupPublicSchool();
+    }
 
     if(recommended_learning_path == 'Drop out'){
         $('div#div_id_dropout_date').removeClass('d-none');
@@ -65,16 +75,32 @@ function reorganizeForm()
         $('#id_formal_education_grade_level').val('');
     }
 
-    $('#transition-fields').toggleClass('d-none', !progressToFormalEducation);
-    if (!progressToFormalEducation) {
+    $('#transition-fields').toggleClass('d-none', !showFormalEducationDetails);
+    if (!showFormalEducationDetails) {
         $('#id_transition_arabic_grade, #id_transition_foreign_languages_grade, ' +
           '#id_transition_math_grade, #id_retention_support_enrolled').val('');
     }
 
-    var showRetentionSupportDetails = progressToFormalEducation &&
+    var showRetentionSupportDetails = showFormalEducationDetails &&
         $('#id_retention_support_enrolled').val() == 'Yes';
     $('#retention-support-fields').toggleClass('d-none', !showRetentionSupportDetails);
     if (!showRetentionSupportDetails) {
         $('#id_retention_support_partner, #id_retention_support_center').val('');
     }
   }
+
+function lookupPublicSchool()
+{
+    var cerd = $('#id_public_school').val();
+    var schoolName = $('#public-school-name');
+    schoolName.text('');
+    if (!/^[0-9]{1,6}$/.test(cerd || '')) {
+        return;
+    }
+    $.getJSON($('#id_public_school').data('lookup-url') || '/mscc/public-school-lookup/', {cerd: cerd})
+        .done(function(data) {
+            if ($('#id_public_school').val() === cerd) {
+                schoolName.text(data.name || 'No matching public school');
+            }
+        });
+}

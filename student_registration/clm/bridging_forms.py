@@ -26,6 +26,7 @@ from student_registration.schools.models import (
     ClassRoom,
     EducationalLevel,
     PartnerOrganization,
+    PublicSchool,
 )
 from student_registration.locations.models import Location
 from .models import (
@@ -2106,6 +2107,17 @@ class BridgingForm(CommonForm):
         )
 
 
+class BridgingProfilePictureForm(forms.ModelForm):
+    """Upload or replace the profile picture stored on a Bridging record."""
+
+    class Meta:
+        model = Bridging
+        fields = ('profile_picture',)
+        widgets = {
+            'profile_picture': forms.ClearableFileInput(attrs={'accept': 'image/*'}),
+        }
+
+
 class BridgingMathAssessmentForm(forms.ModelForm):
     REGISTRATION_LEVEL = (
         ('', '----------'),
@@ -2767,6 +2779,18 @@ class BridgingAssessmentForm(forms.ModelForm):
         label=_('Please specify'),
         widget=forms.TextInput, required=False
     )
+    public_school = forms.ModelChoiceField(
+        label=_('Public school CERD number'),
+        queryset=PublicSchool.objects.all(),
+        to_field_name='cerd',
+        widget=forms.TextInput(attrs={
+            'maxlength': 6,
+            'inputmode': 'numeric',
+            'pattern': '[0-9]{1,6}',
+            'autocomplete': 'off',
+        }),
+        required=False,
+    )
     formal_education_grade_level = forms.ChoiceField(
         label=_('Grade level the Child is enrolled in'),
         choices=Bridging.FORMAL_EDUCATION_GRADES,
@@ -3149,6 +3173,14 @@ class BridgingAssessmentForm(forms.ModelForm):
                         css_class='row card-body',
                     ),
                     Div(
+                        Div('public_school', css_class='col-md-5'),
+                        HTML('<div class="col-md-6"><label>School name</label>'
+                             '<div id="public-school-name" class="form-control-plaintext" '
+                             'aria-live="polite"></div></div>'),
+                        css_class='row card-body',
+                        css_id='public-school-fields',
+                    ),
+                    Div(
                         Div(
                             HTML('<h5>Transition Grades</h5>'),css_class='row'
                         ),
@@ -3258,7 +3290,7 @@ class BridgingAssessmentForm(forms.ModelForm):
         is_kayany = bool(self.request.user.partner and self.request.user.partner.is_Kayany)
         referred_to_public_school = not is_kayany and learning_result == 'referred_public_school'
         public_school_fields = (
-            'formal_education_grade_level', 'transition_arabic_grade',
+            'public_school', 'formal_education_grade_level', 'transition_arabic_grade',
             'transition_foreign_languages_grade', 'transition_math_grade', 'retention_support_enrolled',
         )
         if referred_to_public_school:
@@ -3519,6 +3551,7 @@ class BridgingAssessmentForm(forms.ModelForm):
             'learning_result_other',
             'dropout_reason',
             'dropout_date',
+            'public_school',
             'formal_education_grade_level',
             'transition_arabic_grade',
             'transition_foreign_languages_grade',

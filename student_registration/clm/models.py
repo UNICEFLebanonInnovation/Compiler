@@ -19,7 +19,8 @@ from student_registration.schools.models import (
     ClassRoom,
     CLMRound,
     EducationalLevel,
-    PartnerOrganization
+    PartnerOrganization,
+    PublicSchool,
 )
 
 
@@ -1959,6 +1960,14 @@ class Bridging(CLM):
         blank=True, null=True,
         verbose_name=_('Please Specify')
     )
+    public_school = models.ForeignKey(
+        PublicSchool,
+        blank=True,
+        null=True,
+        related_name='bridging_referrals',
+        on_delete=models.SET_NULL,
+        verbose_name=_('Public school')
+    )
     formal_education_grade_level = models.CharField(
         max_length=12,
         blank=True,
@@ -2200,6 +2209,12 @@ class Bridging(CLM):
         blank=True,
         null=True,
         verbose_name=_('3- Other additional document'),
+    )
+    profile_picture = models.ImageField(
+        upload_to='uploads/bridging/profile_pictures',
+        blank=True,
+        null=True,
+        verbose_name=_('Profile Picture'),
     )
     consent = models.CharField(
         max_length=10,

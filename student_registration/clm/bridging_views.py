@@ -14,6 +14,7 @@ import logging
 logging.basicConfig(level=logging.ERROR)
 import os
 import uuid
+import mimetypes
 from django.core.files.storage import default_storage
 from storages.backends.azure_storage import AzureStorage
 from django.core.files.base import ContentFile
@@ -69,6 +70,7 @@ from .bridging_forms import (
     BridgingMidAssessmentForm,
     BridgingFollowupForm,
     BridgingServiceForm,
+    BridgingProfilePictureForm,
     BridgingForm
 )
 from .serializers import (
@@ -388,6 +390,33 @@ class BridgingEditView(LoginRequiredMixin,
         return super(BridgingEditView, self).form_valid(form)
 
 
+class BridgingProfilePictureView(LoginRequiredMixin,
+                                 GroupRequiredMixin,
+                                 UpdateView):
+    model = Bridging
+    form_class = BridgingProfilePictureForm
+    template_name = 'clm/bridging_profile_picture.html'
+    success_url = '/clm/bridging-list/'
+    group_required = [u"CLM_Bridging"]
+
+
+class BridgingProfilePictureFileView(LoginRequiredMixin,
+                                     GroupRequiredMixin,
+                                     View):
+    group_required = [u"CLM_Bridging"]
+
+    def get(self, request, pk):
+        bridging = get_object_or_404(Bridging, pk=pk)
+        if not bridging.profile_picture:
+            raise Http404("Profile picture not found")
+
+        content_type = mimetypes.guess_type(bridging.profile_picture.name)[0]
+        return FileResponse(
+            bridging.profile_picture.open('rb'),
+            content_type=content_type or 'application/octet-stream',
+        )
+
+
 class ExportStorage(AzureStorage):
     """Azure storage backend dedicated for exported files."""
     location = "export"
@@ -618,6 +647,11 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
 
         else:
             data = BridgingSerializer(instance).data
+            # The form accepts a CERD number rather than a PublicSchool primary
+            # key.  BridgingSerializer does not serialize this form-only field,
+            # so populate it explicitly when reopening a saved assessment.
+            if instance.public_school_id:
+                data['public_school'] = instance.public_school.cerd
             if 'post_test' in data:
                 p_test = data['post_test']
                 if p_test:

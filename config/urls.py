@@ -58,6 +58,7 @@ from student_registration.users.views import LoginRedirectView, home, login_succ
 from student_registration.students.views import serve_file
 from student_registration.clm.attendance_views import BridgingAttendanceHeatmapViewSet
 from student_registration.mscc.attendance_views import AttendanceHeatmapViewSet
+from student_registration.youth.indicator_figures_api import YouthIndicatorFiguresView
 
 api = routers.SimpleRouter()
 
@@ -123,6 +124,9 @@ urlpatterns = [
     re_path(r'^api/schema/redoc/$', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 
     re_path(r'^api/save-fcm-token/$', save_fcm_token, name='save_fcm_token'),
+    # Counts of youth per indicator, partner, donor and place, for NeuroDB (no personal data)
+    re_path(r'^api/youth/indicator-figures/$', YouthIndicatorFiguresView.as_view(),
+            name='youth_indicator_figures'),
     re_path(r'^api/', include(api.urls)),
     re_path(r"^serve-file/(?P<file_path>.+)/$", serve_file, name="serve_file")
 
