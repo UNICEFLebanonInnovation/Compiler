@@ -6,6 +6,7 @@ from django.contrib.auth.models import Group
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from student_registration.clm.bridging_views import bridging_profile_id_card
+from student_registration.schools.models import School
 from student_registration.clm.models import Bridging, Disability
 from student_registration.locations.models import Location, LocationType
 from student_registration.schools.models import CLMRound, PartnerOrganization
@@ -30,7 +31,7 @@ def registration():
     )
     return Bridging.objects.create(
         student=student,
-        round=CLMRound.objects.create(name='2026-2027', current_round_bridging=True),
+        round=CLMRound.objects.create(name='2026-2027', current_year=True, current_round_bridging=True),
         partner=PartnerOrganization.objects.create(name='SAVE', is_dirasa=True),
         governorate=baalbek,
         disability=Disability.objects.create(name='لا', name_en='No'),
@@ -111,3 +112,89 @@ def test_profile_id_requires_login(client, registration):
     response = client.get('/clm/bridging-profile-id/{}/'.format(registration.id))
     assert response.status_code == 302
     assert response['Location'] == '/?next=/clm/bridging-profile-id/{}/'.format(registration.id)
+
+
+@pytest.fixture
+def classmates(registration):
+    """A second child of the same partner and one child of another partner."""
+    school = School.objects.create(number='2001', name='School B', governorate=registration.governorate)
+    registration.partner.schools.add(school)
+    second = Bridging.objects.create(
+        student=Student.objects.create(first_name='أحمد', father_name='خالد', last_name='حسن',
+                                       birthday_day='1', birthday_month='2', birthday_year='2013',
+                                       nationality=registration.student.nationality),
+        round=registration.round, partner=registration.partner, school=school,
+        governorate=registration.governorate,
+    )
+    other = Bridging.objects.create(
+        student=Student.objects.create(first_name='Other', father_name='Partner', last_name='Child'),
+        round=registration.round, partner=PartnerOrganization.objects.create(name='OTHER', is_dirasa=True),
+        governorate=registration.governorate,
+    )
+    return {'second': second, 'other': other, 'school': school}
+
+
+@pytest.fixture
+def partner_client(client, registration):
+    user = get_user_model().objects.create_user(username='save', password='x-pass-123456',
+                                                partner=registration.partner)
+    user.groups.add(Group.objects.get_or_create(name='CLM_Bridging')[0])
+    client.force_login(user)
+    return client
+
+
+def _sheets(html):
+    return html.count('class="sheet"')
+
+
+def test_bulk_profile_ids_one_page_per_visible_child(partner_client, registration, classmates):
+    response = partner_client.get('/clm/bridging-profile-ids/')
+    assert response.status_code == 200
+    html = response.content.decode('utf-8')
+    assert _sheets(html) == 2
+    assert 'data-registration-id="{}"'.format(registration.id) in html
+    assert 'data-registration-id="{}"'.format(classmates['second'].id) in html
+    assert 'data-registration-id="{}"'.format(classmates['other'].id) not in html
+    assert 'ريهام علي الشمق' in html and 'أحمد خالد حسن' in html
+    assert '2 children, one page per child.' in html
+
+
+def test_bulk_profile_ids_follow_list_filters(partner_client, registration, classmates):
+    response = partner_client.get('/clm/bridging-profile-ids/?school={}'.format(classmates['school'].id))
+    html = response.content.decode('utf-8')
+    assert _sheets(html) == 1
+    assert 'data-registration-id="{}"'.format(classmates['second'].id) in html
+
+    response = partner_client.get('/clm/bridging-profile-ids/?ids={},999999'.format(registration.id))
+    html = response.content.decode('utf-8')
+    assert _sheets(html) == 1
+    assert 'data-registration-id="{}"'.format(registration.id) in html
+
+
+def test_bulk_profile_ids_all_group_sees_every_partner(bridging_client, registration, classmates):
+    user = get_user_model().objects.get(username='dirasa')
+    user.groups.add(Group.objects.get_or_create(name='CLM_BRIDGING_ALL')[0])
+    response = bridging_client.get('/clm/bridging-profile-ids/')
+    assert _sheets(response.content.decode('utf-8')) == 3
+
+
+def test_bulk_profile_ids_empty_list(partner_client, registration):
+    response = partner_client.get('/clm/bridging-profile-ids/?student__first_name=nobody')
+    assert response.status_code == 200
+    html = response.content.decode('utf-8')
+    assert _sheets(html) == 0
+    assert 'nothing to generate' in html
+
+
+def test_bulk_profile_ids_requires_login(client):
+    response = client.get('/clm/bridging-profile-ids/')
+    assert response.status_code == 302
+    assert response['Location'] == '/?next=/clm/bridging-profile-ids/'
+
+
+def test_list_page_links_to_bulk_profile_ids(partner_client, registration):
+    response = partner_client.get('/clm/bridging-list/?school={}'.format(registration.school_id or ''))
+    assert response.status_code == 200
+    html = response.content.decode('utf-8')
+    assert '/clm/bridging-profile-ids/?school=' in html
+    assert 'Generate Profile IDs (PDF)' in html

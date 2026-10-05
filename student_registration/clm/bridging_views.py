@@ -149,6 +149,50 @@ class BridgingPage(LoginRequiredMixin,
     template_name = 'clm/index.html'
 
 
+def bridging_list_queryset(request):
+    """Current-year Dirasa registrations the user may see, ordered like the Dirasa list."""
+    is_world_learning = bool(request.user.partner and request.user.partner.is_world_learning)
+
+    qs = (
+        Bridging.objects.filter(round__current_year=True, deleted=False)
+        .select_related(
+            "student",
+            "student__nationality",
+            "round",
+            "school",
+            "governorate",
+            "district",
+            "owner",
+            "modified_by",
+        )
+        .order_by(
+            "student__first_name",
+            "student__father_name",
+            "student__last_name",
+        )
+    )
+
+    if (
+        not has_group(request.user, "CLM_BRIDGING_ALL")
+        and not request.user.is_staff
+        and not is_world_learning
+    ):
+        if request.user.partner:
+            qs = qs.filter(partner_id=request.user.partner_id)
+            if request.user.school:
+                qs = qs.filter(school_id=request.user.school_id)
+        else:
+            qs = qs.none()
+
+    return qs
+
+
+def bridging_filterset_class(user):
+    if has_group(user, 'CLM_BRIDGING_ALL'):
+        return BridgingFullFilter
+    return BridgingPartnerFilter
+
+
 class BridgingListView(LoginRequiredMixin,
                        GroupRequiredMixin,
                        FilterView,
@@ -163,56 +207,10 @@ class BridgingListView(LoginRequiredMixin,
     filterset_class = BridgingPartnerFilter
 
     def get_queryset(self):
-        is_world_learning = bool(self.request.user.partner and self.request.user.partner.is_world_learning)
-
-        qs = (
-            Bridging.objects.filter(round__current_year=True, deleted=False)
-            .select_related(
-                "student",
-                "student__nationality",
-                "round",
-                "school",
-                "governorate",
-                "district",
-                "owner",
-                "modified_by",
-            )
-            .order_by(
-                "student__first_name",
-                "student__father_name",
-                "student__last_name",
-            )
-        )
-
-        if (
-            not has_group(self.request.user, "CLM_BRIDGING_ALL")
-            and not self.request.user.is_staff
-            and not is_world_learning
-        ):
-            if self.request.user.partner:
-                qs = qs.filter(partner_id=self.request.user.partner_id)\
-                    .order_by(
-                    "student__first_name",
-                    "student__father_name",
-                    "student__last_name",
-                )
-                if self.request.user.school:
-                    qs = qs.filter(school_id=self.request.user.school_id)\
-                    .order_by(
-                    "student__first_name",
-                    "student__father_name",
-                    "student__last_name",
-                )
-            else:
-                qs = qs.none()
-
-        return qs
+        return bridging_list_queryset(self.request)
 
     def get_filterset_class(self):
-        if has_group(self.request.user, 'CLM_BRIDGING_ALL'):
-            return BridgingFullFilter
-        else:
-            return self.filterset_class
+        return bridging_filterset_class(self.request.user)
 
 
 class BridgingAddView(LoginRequiredMixin,
@@ -482,6 +480,39 @@ class BridgingProfileIdView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         context = super(BridgingProfileIdView, self).get_context_data(**kwargs)
         context['card'] = bridging_profile_id_card(self.object)
+        return context
+
+
+class BridgingBulkProfileIdView(LoginRequiredMixin,
+                                GroupRequiredMixin,
+                                TemplateView):
+    """One printable document with a profile ID card per child, one child per page.
+
+    Takes the same filters as the Dirasa list, so the button on the list page
+    generates cards for exactly the children currently listed. An optional
+    ``ids`` parameter (comma separated registration ids) narrows it further.
+    """
+    template_name = 'clm/bridging_profile_id_bulk.html'
+    group_required = [u"CLM_Bridging"]
+
+    def get_registrations(self):
+        queryset = bridging_list_queryset(self.request).select_related('partner', 'disability')
+        filterset = bridging_filterset_class(self.request.user)(
+            self.request.GET, queryset=queryset, request=self.request)
+        queryset = filterset.qs  # like the list page: invalid filters list nothing
+
+        ids = [value for value in self.request.GET.get('ids', '').split(',') if value.strip().isdigit()]
+        if ids:
+            queryset = queryset.filter(id__in=ids)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(BridgingBulkProfileIdView, self).get_context_data(**kwargs)
+        context['cards'] = [
+            {'bridging': bridging, 'card': bridging_profile_id_card(bridging)}
+            for bridging in self.get_registrations()
+        ]
+        context['list_url'] = '{}?{}'.format(reverse('clm:bridging_list'), self.request.GET.urlencode())
         return context
 
 

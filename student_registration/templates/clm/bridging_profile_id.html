@@ -4,116 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>BMA | {% trans "Profile ID" %} - {{ card.full_name }}</title>
-  <style>
-    :root {
-      --card-width: 900px;
-      --card-height: 640px;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      padding: 24px 16px;
-      background: #e9ecef;
-      font-family: "Times New Roman", Times, serif;
-      color: #000;
-    }
-    .toolbar {
-      max-width: var(--card-width);
-      margin: 0 auto 16px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 14px;
-    }
-    .toolbar .btn {
-      display: inline-block;
-      padding: 8px 16px;
-      border-radius: 4px;
-      border: 1px solid #0d6efd;
-      background: #0d6efd;
-      color: #fff;
-      text-decoration: none;
-      cursor: pointer;
-      font: inherit;
-    }
-    .toolbar .btn.secondary {
-      background: #fff;
-      color: #0d6efd;
-    }
-    .toolbar .spacer { flex: 1; }
-    .toolbar .hint { color: #6c757d; }
-    .card {
-      position: relative;
-      width: 100%;
-      max-width: var(--card-width);
-      min-height: var(--card-height);
-      margin: 0 auto;
-      padding: 24px;
-      background: #fff;
-      border: 1px solid #000;
-      border-bottom-width: 6px;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-    }
-    .photo {
-      position: absolute;
-      top: 24px;
-      left: 24px;
-      width: 180px;
-      height: 160px;
-      background: #4472c4;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 14px;
-    }
-    .photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .details {
-      margin: 110px 0 0 0;
-      text-align: center;
-      font-weight: bold;
-      font-size: 20px;
-      line-height: 1.65;
-    }
-    .details .title { font-size: 22px; }
-    .details .subtitle {
-      direction: rtl;
-      font-size: 14px;
-    }
-    .details .name {
-      direction: rtl;
-      unicode-bidi: embed;
-    }
-    @media (max-width: 700px) {
-      .photo { position: static; margin-bottom: 16px; }
-      .details { margin-top: 0; font-size: 18px; }
-    }
-    @media print {
-      @page { size: A5 landscape; margin: 10mm; }
-      body { padding: 0; background: #fff; }
-      .toolbar { display: none; }
-      .card {
-        max-width: none;
-        min-height: 0;
-        height: calc(100vh - 2px);
-        box-shadow: none;
-        page-break-after: avoid;
-      }
-      .photo {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-    }
-  </style>
+  {% include "clm/includes/bridging_profile_id_style.html" %}
 </head>
 <body>
   <div class="toolbar">
@@ -126,26 +17,8 @@
     {% endif %}
   </div>
 
-  <div class="card" id="profile-id-card">
-    <div class="photo">
-      {% if card.has_picture %}
-        <img src="{% url 'clm:bridging_profile_picture_file' object.pk %}" alt="{{ card.full_name }}">
-      {% else %}
-        picture
-      {% endif %}
-    </div>
-    <div class="details">
-      <div class="title">{{ card.round }}</div>
-      <div class="subtitle">الامتحان الاستثنائي لطلاب التعليم الغير نظامي</div>
-      <div>ID: {{ card.id }}</div>
-      <div>NGO: {{ card.ngo }}</div>
-      <div class="name">الاسم الثلاثي: {{ card.full_name }}</div>
-      <div>Date of Birth: {{ card.birthday }}</div>
-      <div>Place of Birth: {{ card.place_of_birth }}</div>
-      <div>Nationality: {{ card.nationality }}</div>
-      <div>Governorate: {{ card.governorate }}</div>
-      <div>Physical difficulties: {{ card.physical_difficulties }}</div>
-    </div>
+  <div class="sheet">
+    {% include "clm/includes/bridging_profile_id_card.html" with bridging=object card=card %}
   </div>
 </body>
 </html>
