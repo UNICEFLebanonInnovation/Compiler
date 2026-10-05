@@ -107,8 +107,7 @@ def test_profile_picture_page_links_to_profile_id(bridging_client, registration)
     assert '/clm/bridging-profile-id/{}/'.format(registration.id) in response.content.decode('utf-8')
 
 
-def test_profile_id_requires_bridging_group(client, registration):
-    assert client.get('/clm/bridging-profile-id/{}/'.format(registration.id)).status_code == 302
-    user = get_user_model().objects.create_user(username='outsider', password='x-pass-123456')
-    client.force_login(user)
-    assert client.get('/clm/bridging-profile-id/{}/'.format(registration.id)).status_code in (302, 403)
+def test_profile_id_requires_login(client, registration):
+    response = client.get('/clm/bridging-profile-id/{}/'.format(registration.id))
+    assert response.status_code == 302
+    assert response['Location'] == '/?next=/clm/bridging-profile-id/{}/'.format(registration.id)
