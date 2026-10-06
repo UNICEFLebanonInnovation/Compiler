@@ -37,15 +37,14 @@
                                 </div>
                             </div>
 
-      {% if request.user|has_group:"MSCC_FULL" and request.user.partner and not request.user.partner.is_world_learning %}
                         <div class="page-title-actions">
+                                <a href="{% url 'mscc:child_profile_picture' instance.id %}" class="mr-3 btn-icon btn btn-info"><i class="fa fa-image btn-icon-wrapper"> </i>{% trans "Profile Picture" %}</a>
+                                <a href="{% url 'mscc:child_profile_id' instance.id %}" target="_blank" rel="noopener" class="mr-3 btn-icon btn btn-primary"><i class="fa fa-id-card btn-icon-wrapper"> </i>{% trans "Generate Profile ID" %}</a>
+      {% if request.user|has_group:"MSCC_FULL" and request.user.partner and not request.user.partner.is_world_learning %}
                                 <a href="#" data-toggle="modal" data-target="#newRoundModal" class="mr-3 btn-icon btn btn-success"><i class="fa fa-plus btn-icon-wrapper"> </i>Register in a new Round</a>
 
-                                <!--<button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-primary" data-original-title="Package Type">-->
-                                    <!--{{ instance.type }}-->
-                                <!--</button>-->
-                            </div>
     {% endif %}
+                            </div>
 
                         </div>
 </div>

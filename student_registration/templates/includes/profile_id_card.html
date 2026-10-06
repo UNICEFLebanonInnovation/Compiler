@@ -1,10 +1,10 @@
 {% comment %}
-One Dirasa child profile ID card. Expects `card` (from bridging_profile_id_card) and `bridging`.
+One child profile ID card. Expects `card` (round, id, ngo, full_name, ...), `card_id` and `photo_url`.
 {% endcomment %}
-<div class="card" id="profile-id-card-{{ bridging.pk }}" data-registration-id="{{ bridging.pk }}">
+<div class="card" id="profile-id-card-{{ card_id }}" data-registration-id="{{ card_id }}">
   <div class="photo">
     {% if card.has_picture %}
-      <img src="{% url 'clm:bridging_profile_picture_file' bridging.pk %}" alt="{{ card.full_name }}">
+      <img src="{{ photo_url }}" alt="{{ card.full_name }}">
     {% else %}
       picture
     {% endif %}

@@ -63,7 +63,7 @@ from student_registration.schools.models import (
     CLMRound,
 )
 from student_registration.backends.models import ExportHistory
-from student_registration.backends.utils import download_file, is_valid_filename
+from student_registration.backends.profile_ids import profile_ids_download, start_profile_ids_export
 from .bridging_forms import (
     BridgingPreAssessmentForm,
     BridgingMathAssessmentForm,
@@ -81,8 +81,7 @@ from .serializers import (
     BridgingSerializer
 )
 from .utils import is_allowed_create, is_allowed_edit,  get_outreach_child
-from .profile_id import bridging_profile_id_card  # noqa: F401  (re-exported for callers and tests)
-from .tasks import PROFILE_IDS_EXPORT_TYPE, queue_bridging_profile_ids
+from .profile_id import BRIDGING_PROFILE_IDS, bridging_profile_id_card
 from student_registration.users.templatetags.custom_tags import has_group
 from student_registration.students.utils import generate_one_unique_id
 from student_registration.students.models import Nationality
@@ -462,23 +461,10 @@ class BridgingBulkProfileIdView(LoginRequiredMixin,
         if not registration_ids:
             return JsonResponse({'error': 'No children match the current filters, so there is nothing to generate.'},
                                 status=400)
-
-        export = ExportHistory.objects.create(
-            export_type=PROFILE_IDS_EXPORT_TYPE,
-            created_by=request.user,
-            partner_name=request.user.partner.name if request.user.partner else '',
-            file_format='pdf',
-            fields={'count': len(registration_ids), 'filters': request.GET.dict()},
-        )
-        queue_bridging_profile_ids(export.id, registration_ids)
-        return JsonResponse({'status': 'started', 'export_id': export.id, 'count': len(registration_ids)})
+        return JsonResponse(start_profile_ids_export(request, BRIDGING_PROFILE_IDS, registration_ids))
 
 
-@login_required(login_url='/users/login')
-def bridging_profile_ids_download(request, file_name):
-    if is_valid_filename(file_name, 'pdf'):
-        return download_file(file_name, 'bridging_profile_ids.pdf', content_type='application/pdf')
-    return HttpResponse("Invalid file.", status=400)
+bridging_profile_ids_download = profile_ids_download
 
 
 class ExportStorage(AzureStorage):

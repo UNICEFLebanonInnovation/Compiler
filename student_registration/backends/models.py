@@ -87,6 +87,7 @@ class ExportHistory(TimeStampedModel):
         ('Teacher List', _('Teacher List')),
         ('Bridging List', _('Bridging List')),
         ('Bridging Profile IDs', _('Bridging Profile IDs')),
+        ('Makani Profile IDs', _('Makani Profile IDs')),
         ('School List - Bridging', _('School List - Bridging')),
         ('School List', _('School List')),
     )

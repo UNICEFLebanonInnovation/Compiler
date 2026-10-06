@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>BMA | {% trans "Profile ID" %} - {{ card.full_name }}</title>
-  {% include "clm/includes/bridging_profile_id_style.html" %}
+  {% include "includes/profile_id_style.html" %}
 </head>
 <body>
   <div class="toolbar">
@@ -18,7 +18,8 @@
   </div>
 
   <div class="sheet">
-    {% include "clm/includes/bridging_profile_id_card.html" with bridging=object card=card %}
+    {% url 'clm:bridging_profile_picture_file' object.pk as photo_url %}
+    {% include "includes/profile_id_card.html" with card=card card_id=object.pk photo_url=photo_url %}
   </div>
 </body>
 </html>

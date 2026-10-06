@@ -13,6 +13,10 @@ from django.views.generic import (
     FormView,
 )
 from django.views import View
+from django.http import FileResponse, Http404
+from django.shortcuts import get_object_or_404
+import mimetypes
+from .forms import ChildProfilePictureForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.db.models import Count, F
@@ -78,6 +82,8 @@ from .utils import *
 
 from student_registration.mscc.templatetags.simple_tags import education_history_model, get_education_service_history
 from .tasks import queue_mscc_export, queue_filtered_mscc_export
+from .profile_id import MAKANI_PROFILE_IDS, registration_profile_id_card
+from student_registration.backends.profile_ids import profile_ids_download, start_profile_ids_export
 from student_registration.users.templatetags.custom_tags import has_group
 from student_registration.child.models import Child
 
@@ -495,6 +501,72 @@ def main_mark_delete_view(request, pk):
     return JsonResponse(result)
 
 
+def makani_list_queryset(request, package_type_filter=None, exclude_package_type='TLS'):
+    """Registrations the user may see, scoped and ordered like the Makani list."""
+    user = request.user
+    center_id = user.center_id
+    partner_id = user.partner_id
+    is_world_learning = bool(user.partner and user.partner.is_world_learning)
+
+    qs = (Registration.objects
+          .select_related(
+              'child',
+              'child__nationality',
+              'partner',
+              'center',
+              'center__governorate',
+              'center__caza',
+              'center__cadaster',
+              'owner',
+              'modified_by',
+              'round',
+          )
+          .prefetch_related('education_service')
+          .filter(deleted=False))
+
+    previous_registration = Registration.objects.filter(
+        child_id=OuterRef('child_id'),
+        created__lt=OuterRef('created'),
+    )
+
+    absent_days = (
+        MSCCAttendanceChild.objects
+        .filter(registration_id=OuterRef('pk'), attended='No')
+        .values('registration')
+        .annotate(count=Count('id'))
+        .values('count')
+    )
+
+    qs = qs.annotate(
+        has_previous=Exists(previous_registration),
+        _total_absent_days=Coalesce(Subquery(absent_days, output_field=IntegerField()), 0),
+    )
+
+    round_filter = Q(round__isnull=True) | Q(round__current_year=True)
+    if package_type_filter:
+        qs = qs.filter(type=package_type_filter)
+    if exclude_package_type:
+        qs = qs.exclude(type=exclude_package_type)
+
+    ordering = ('child__first_name', 'child__father_name', 'child__last_name')
+    if has_group(user, 'MSCC_UNICEF') or is_world_learning:
+        return qs.filter(round_filter).order_by(*ordering)
+
+    elif has_group(user, 'MSCC_PARTNER') and partner_id:
+        return qs.filter(round_filter, partner=partner_id).order_by(*ordering)
+
+    elif has_group(user, 'MSCC_CENTER') and center_id:
+        return qs.filter(round_filter, center=center_id).order_by(*ordering)
+
+    return Registration.objects.none()
+
+
+def makani_filterset_class(user):
+    if has_group(user, 'MSCC_UNICEF'):
+        return FullFilter
+    return MainFilter
+
+
 class MainListView(LoginRequiredMixin,
                    GroupRequiredMixin,
                    FilterView,
@@ -513,61 +585,7 @@ class MainListView(LoginRequiredMixin,
     exclude_package_type = 'TLS'
 
     def get_queryset(self):
-        user = self.request.user
-        center_id = user.center_id
-        partner_id = user.partner_id
-        is_world_learning = bool(user.partner and user.partner.is_world_learning)
-
-        qs = (Registration.objects
-              .select_related(
-            'child',
-            'child__nationality',
-            'partner',
-            'center',
-            'center__governorate',
-            'center__caza',
-            'center__cadaster',
-            'owner',
-            'modified_by',
-            'round',
-        )
-              .prefetch_related('education_service')
-              .filter(deleted=False))
-
-        previous_registration = Registration.objects.filter(
-            child_id=OuterRef('child_id'),
-            created__lt=OuterRef('created'),
-        )
-
-        absent_days = (
-            MSCCAttendanceChild.objects
-                .filter(registration_id=OuterRef('pk'), attended='No')
-                .values('registration')
-                .annotate(count=Count('id'))
-                .values('count')
-        )
-
-        qs = qs.annotate(
-            has_previous=Exists(previous_registration),
-            _total_absent_days=Coalesce(Subquery(absent_days, output_field=IntegerField()), 0),
-        )
-
-        round_filter = Q(round__isnull=True) | Q(round__current_year=True)
-        if self.package_type_filter:
-            qs = qs.filter(type=self.package_type_filter)
-        if self.exclude_package_type:
-            qs = qs.exclude(type=self.exclude_package_type)
-
-        if has_group(user, 'MSCC_UNICEF') or is_world_learning:
-            return qs.filter(round_filter).order_by('child__first_name', 'child__father_name', 'child__last_name')
-
-        elif has_group(user, 'MSCC_PARTNER') and partner_id:
-            return qs.filter(round_filter, partner=partner_id).order_by('child__first_name', 'child__father_name', 'child__last_name')
-
-        elif has_group(user, 'MSCC_CENTER') and center_id:
-            return qs.filter(round_filter, center=center_id).order_by('child__first_name', 'child__father_name', 'child__last_name')
-
-        return Registration.objects.none()
+        return makani_list_queryset(self.request, self.package_type_filter, self.exclude_package_type)
 
     def get_table_class(self):
 
@@ -586,14 +604,100 @@ class MainListView(LoginRequiredMixin,
         return self.table_class
 
     def get_filterset_class(self):
-        if has_group(self.request.user, 'MSCC_UNICEF'):
-            return FullFilter
-        elif has_group(self.request.user, 'MSCC_PARTNER'):
-            return self.filterset_class
-        elif has_group(self.request.user, 'MSCC_CENTER'):
-            return self.filterset_class
+        return makani_filterset_class(self.request.user)
 
-        return self.filterset_class
+
+class ChildProfilePictureView(LoginRequiredMixin,
+                              GroupRequiredMixin,
+                              UpdateView):
+    """Upload the photo of the child behind a Makani registration."""
+    model = Child
+    form_class = ChildProfilePictureForm
+    template_name = 'mscc/child_profile_picture.html'
+    group_required = [u"MSCC"]
+
+    def get_registration(self):
+        if not hasattr(self, '_registration'):
+            self._registration = get_object_or_404(Registration, pk=self.kwargs['pk'])
+        return self._registration
+
+    def get_object(self, queryset=None):
+        return self.get_registration().child
+
+    def get_context_data(self, **kwargs):
+        context = super(ChildProfilePictureView, self).get_context_data(**kwargs)
+        context['registration'] = self.get_registration()
+        return context
+
+    def get_success_url(self):
+        return reverse('mscc:child_profile', kwargs={'pk': self.kwargs['pk']})
+
+
+class ChildProfilePictureFileView(LoginRequiredMixin,
+                                  GroupRequiredMixin,
+                                  View):
+    group_required = [u"MSCC"]
+
+    def get(self, request, pk):
+        registration = get_object_or_404(Registration, pk=pk)
+        child = registration.child
+        if not child or not child.profile_picture:
+            raise Http404("Profile picture not found")
+
+        content_type = mimetypes.guess_type(child.profile_picture.name)[0]
+        return FileResponse(
+            child.profile_picture.open('rb'),
+            content_type=content_type or 'application/octet-stream',
+        )
+
+
+class RegistrationProfileIdView(LoginRequiredMixin,
+                                GroupRequiredMixin,
+                                DetailView):
+    """Printable child profile ID card generated from a Makani registration."""
+    model = Registration
+    template_name = 'mscc/profile_id.html'
+    group_required = [u"MSCC"]
+
+    def get_context_data(self, **kwargs):
+        context = super(RegistrationProfileIdView, self).get_context_data(**kwargs)
+        context['card'] = registration_profile_id_card(self.object)
+        return context
+
+
+def makani_profile_ids_queryset(request):
+    """Children a bulk profile ID request covers: the Makani list scope and filters, plus optional ``ids``."""
+    queryset = makani_list_queryset(request)
+    filterset = makani_filterset_class(request.user)(request.GET, queryset=queryset, request=request)
+    queryset = filterset.qs  # like the list page: invalid filters list nothing
+
+    ids = [value for value in request.GET.get('ids', '').split(',') if value.strip().isdigit()]
+    if ids:
+        queryset = queryset.filter(id__in=ids)
+    return queryset
+
+
+class MakaniBulkProfileIdView(LoginRequiredMixin,
+                              GroupRequiredMixin,
+                              View):
+    """Start background generation of one PDF with a profile ID page per child.
+
+    Takes the same filters as the Makani list, so the button on the list page
+    covers exactly the children currently listed. The user gets a web push
+    notification with the download link when the PDF is ready.
+    """
+    group_required = [u"MSCC"]
+    http_method_names = ['post']
+
+    def post(self, request, *args, **kwargs):
+        registration_ids = list(makani_profile_ids_queryset(request).values_list('id', flat=True))
+        if not registration_ids:
+            return JsonResponse({'error': 'No children match the current filters, so there is nothing to generate.'},
+                                status=400)
+        return JsonResponse(start_profile_ids_export(request, MAKANI_PROFILE_IDS, registration_ids))
+
+
+makani_profile_ids_download = profile_ids_download
 
 
 class MainViewSet(mixins.RetrieveModelMixin,

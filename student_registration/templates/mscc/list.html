@@ -133,6 +133,10 @@
 <a href="#" data-toggle="modal" data-target="#child-registration-modal" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Beneficiary</a>
 
 {% endif %}
+<a href="#" id="generate-profile-ids" data-url="{% url 'mscc:profile_ids_bulk' %}"
+   class="mr-3 btn-icon btn btn-primary"
+   title="{% trans 'Generate one PDF with a profile ID page for every child in the current list. It runs in the background and you are notified when it is ready.' %}">
+  <i class="fa fa-id-card btn-icon-wrapper"> </i>{% trans "Generate Profile IDs (PDF)" %}</a>
                         </div>
                         </div>
 </div>
@@ -256,6 +260,35 @@
 {% block extra_js %}
 
     <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/list.js' %}?v=20"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/list.js' %}?v=21"></script>
+    <script>
+        $(document).on('click', '#generate-profile-ids', function (event) {
+            event.preventDefault();
+            var button = $(this);
+            if (button.hasClass('disabled')) {
+                return;
+            }
+            button.addClass('disabled');
+            $.ajax({
+                url: button.data('url') + window.location.search,
+                type: "POST",
+                headers: getHeader(),
+                success: function (data) {
+                    showModal("Generating the profile IDs PDF for " + data.count + " child(ren) in the background. " +
+                              "You will receive a notification with the download link once it is ready.");
+                    if (window.pollExportUntilReady) {
+                        window.pollExportUntilReady(data.export_id);
+                    }
+                },
+                error: function (xhr) {
+                    showModal((xhr.responseJSON && xhr.responseJSON.error) ||
+                              "Error starting the profile IDs generation. Please try again.");
+                },
+                complete: function () {
+                    button.removeClass('disabled');
+                }
+            });
+        });
+    </script>
 
 {% endblock %}

@@ -187,6 +187,36 @@
         var href_full_path = '{{ request.build_absolute_uri }}';
         var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
 
+        function pollProfileIdsUntilReady(exportId) {
+            // Fallback for users without web push: watch the export until it is done.
+            var attempts = 0;
+            var interval = window.setInterval(function () {
+                attempts += 1;
+                $.ajax({
+                    url: '/backends/export-history-list/?export_id=' + encodeURIComponent(exportId),
+                    type: 'GET',
+                    headers: getHeader(),
+                    success: function (data) {
+                        var item = data.exports && data.exports[0];
+                        if (!item) {
+                            return;
+                        }
+                        if (item.status === 'done') {
+                            window.clearInterval(interval);
+                            $('#downloadReadyModal .download-link').attr('href', item.url);
+                            $('#downloadReadyModal').modal('show');
+                        } else if (item.status === 'failed') {
+                            window.clearInterval(interval);
+                            alert('Generating the profile IDs PDF failed. Please try again later.');
+                        }
+                    }
+                });
+                if (attempts >= 200) {
+                    window.clearInterval(interval);
+                }
+            }, 3000);
+        }
+
         function generateProfileIds(event) {
             event.preventDefault();
             var button = $('#generate-profile-ids');
@@ -203,6 +233,7 @@
                 success: function (data) {
                     alert("Generating the profile IDs PDF for " + data.count + " child(ren) in the background. " +
                           "You will receive a notification with the download link once it is ready.");
+                    pollProfileIdsUntilReady(data.export_id);
                 },
                 error: function (xhr) {
                     var message = (xhr.responseJSON && xhr.responseJSON.error) ||

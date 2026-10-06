@@ -489,6 +489,11 @@ class Child(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('Please specify')
     )
+    profile_picture = models.ImageField(
+        upload_to='uploads/mscc/profile_pictures',
+        blank=True, null=True,
+        verbose_name=_('Profile picture')
+    )
 
     cash_programmes = JSONField(default=dict)
 

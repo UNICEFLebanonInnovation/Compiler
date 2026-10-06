@@ -1254,3 +1254,14 @@ class ReferralForm(forms.ModelForm):
             'retention_support_center',
             'dropout_date',
         )
+
+
+class ChildProfilePictureForm(forms.ModelForm):
+    """Upload or replace the profile picture stored on a Makani child."""
+
+    class Meta:
+        model = Child
+        fields = ('profile_picture',)
+        widgets = {
+            'profile_picture': forms.ClearableFileInput(attrs={'accept': 'image/*'}),
+        }

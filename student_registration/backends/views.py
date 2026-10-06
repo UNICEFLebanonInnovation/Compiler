@@ -156,7 +156,7 @@ def export_history_list(request):
         data.append({
             'id': export.id,
             'url': export.file_url or '#',
-            'text': f'MSCC export {timestamp}',
+            'text': f'{export.export_type or "MSCC export"} {timestamp}',
             'status': export.status,
         })
     return JsonResponse({'exports': data})

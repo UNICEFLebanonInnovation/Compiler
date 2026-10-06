@@ -8,10 +8,13 @@ from django.contrib.auth.models import Group
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http import HttpResponse
 
+from student_registration.backends import profile_ids
 from student_registration.backends.models import ExportHistory
-from student_registration.clm import bridging_views, tasks
+from student_registration.backends.profile_ids import shape_text
+from student_registration.clm import profile_id as clm_profile_id
+from student_registration.clm import tasks
 from student_registration.clm.bridging_views import bridging_profile_id_card
-from student_registration.clm.profile_id import build_profile_ids_pdf, shape_text
+from student_registration.clm.profile_id import build_profile_ids_pdf
 from student_registration.schools.models import School
 from student_registration.clm.models import Bridging, Disability
 from student_registration.locations.models import Location, LocationType
@@ -174,14 +177,14 @@ class FakeExportStorage(object):
 @pytest.fixture
 def fake_storage(monkeypatch):
     FakeExportStorage.saved = {}
-    monkeypatch.setattr(tasks, 'ExportStorage', FakeExportStorage)
+    monkeypatch.setattr(profile_ids, 'ExportStorage', FakeExportStorage)
     return FakeExportStorage
 
 
 @pytest.fixture
 def pushes(monkeypatch):
     sent = []
-    monkeypatch.setattr(tasks, 'send_push_to_web', lambda user, title, body, data=None: sent.append(
+    monkeypatch.setattr(profile_ids, 'send_push_to_web', lambda user, title, body, data=None: sent.append(
         {'user': user, 'title': title, 'body': body, 'data': data}) or True)
     return sent
 
@@ -195,7 +198,8 @@ def test_shape_text_keeps_latin_and_reorders_arabic():
 
 def test_pdf_has_one_page_per_child(registration, classmates, local_media):
     registration.profile_picture.save('child.gif', SimpleUploadedFile('child.gif', GIF, content_type='image/gif'))
-    pdf_bytes = build_profile_ids_pdf(tasks.profile_ids_registrations([registration.id, classmates['second'].id]))
+    registrations = clm_profile_id.profile_ids_registrations([registration.id, classmates['second'].id])
+    pdf_bytes = build_profile_ids_pdf(registrations)
     assert _page_count(pdf_bytes) == 2
     assert _page_count(build_profile_ids_pdf([])) == 1
 
@@ -208,21 +212,21 @@ def test_generate_profile_ids_stores_pdf_and_notifies(registration, classmates, 
     export.refresh_from_db()
     assert export.status == 'done'
     assert export.file_url == file_url
-    assert re.match(r'^/clm/bridging-profile-ids/download/bridging_profile_ids_[0-9a-f-]+[.]pdf/$', file_url)
+    assert re.match(r'^/clm/bridging-profile-ids/download/profile_ids_[0-9a-f-]+[.]pdf/$', file_url)
     file_name = file_url.split('/')[-2]
     assert _page_count(fake_storage.saved[file_name]) == 2
     assert pushes == [{
         'user': export.created_by,
         'title': 'Dirasa profile IDs ready',
         'body': 'The PDF with 2 profile ID card(s) is ready to download.',
-        'data': {'type': 'bridging_profile_ids_ready', 'url': file_url, 'export_id': export.id},
+        'data': {'type': 'profile_ids_ready', 'label': 'Dirasa', 'url': file_url, 'export_id': export.id},
     }]
 
 
 def test_generate_profile_ids_failure_marks_export_failed(registration, fake_storage, pushes, monkeypatch):
-    def boom(registrations):
+    def boom(cards, title=''):
         raise RuntimeError('font missing')
-    monkeypatch.setattr(tasks, 'build_profile_ids_pdf', boom)
+    monkeypatch.setattr(profile_ids, 'build_cards_pdf', boom)
     user = get_user_model().objects.create_user(username='owner2')
     export = ExportHistory.objects.create(export_type=tasks.PROFILE_IDS_EXPORT_TYPE, created_by=user)
 
@@ -231,7 +235,7 @@ def test_generate_profile_ids_failure_marks_export_failed(registration, fake_sto
     assert export.status == 'failed'
     assert export.file_url is None
     assert pushes[0]['title'] == 'Dirasa profile IDs failed'
-    assert pushes[0]['data'] == {'type': 'bridging_profile_ids_failed', 'reason': 'font missing',
+    assert pushes[0]['data'] == {'type': 'profile_ids_failed', 'label': 'Dirasa', 'reason': 'font missing',
                                  'export_id': export.id}
     assert tasks._generate_bridging_profile_ids(999999, [registration.id]) is None
 
@@ -239,8 +243,8 @@ def test_generate_profile_ids_failure_marks_export_failed(registration, fake_sto
 @pytest.fixture
 def queued(monkeypatch):
     calls = []
-    monkeypatch.setattr(bridging_views, 'queue_bridging_profile_ids',
-                        lambda export_id, ids: calls.append((export_id, list(ids))))
+    monkeypatch.setattr(profile_ids, 'queue_profile_ids',
+                        lambda export_id, programme, ids: calls.append((export_id, list(ids))))
     return calls
 
 
@@ -293,13 +297,13 @@ def test_bulk_profile_ids_requires_login(client):
 
 def test_profile_ids_download(bridging_client, monkeypatch):
     calls = []
-    monkeypatch.setattr(bridging_views, 'download_file',
+    monkeypatch.setattr(profile_ids, 'download_file',
                         lambda name, returned, content_type=None: calls.append((name, returned, content_type))
                         or HttpResponse(b'%PDF', content_type=content_type))
-    name = 'bridging_profile_ids_0f1e2d3c-4b5a-6978-8a9b-0c1d2e3f4a5b.pdf'
+    name = 'profile_ids_0f1e2d3c-4b5a-6978-8a9b-0c1d2e3f4a5b.pdf'
     response = bridging_client.get('/clm/bridging-profile-ids/download/{}/'.format(name))
     assert response.status_code == 200
-    assert calls == [(name, 'bridging_profile_ids.pdf', 'application/pdf')]
+    assert calls == [(name, 'profile_ids.pdf', 'application/pdf')]
     assert bridging_client.get('/clm/bridging-profile-ids/download/..%2Fsecret.pdf/').status_code == 400
     assert bridging_client.get('/clm/bridging-profile-ids/download/export.csv/').status_code == 400
 
