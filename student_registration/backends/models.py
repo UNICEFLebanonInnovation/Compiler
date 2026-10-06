@@ -86,6 +86,7 @@ class ExportHistory(TimeStampedModel):
         ('Bridging Absence Consecutive', _('Bridging Absence Consecutive')),
         ('Teacher List', _('Teacher List')),
         ('Bridging List', _('Bridging List')),
+        ('Bridging Profile IDs', _('Bridging Profile IDs')),
         ('School List - Bridging', _('School List - Bridging')),
         ('School List', _('School List')),
     )

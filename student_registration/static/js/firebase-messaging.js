@@ -90,7 +90,24 @@ navigator.serviceWorker
   });
 
 onMessage(messaging, (payload) => {
-  if (payload.data && payload.data.type === "mscc_export_ready") {
+  if (payload.data && payload.data.type === "bridging_profile_ids_ready") {
+    if (!document.hidden) {
+      $('#downloadReadyModal .download-link').attr('href', payload.data.url);
+      $('#downloadReadyModal').modal('show');
+    }
+    const timestamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
+    const text = 'Dirasa profile IDs ' + timestamp;
+    saveNotification(payload.data.url, text);
+    addNotificationToList(payload.data.url, text);
+  } else if (payload.data && payload.data.type === "bridging_profile_ids_failed") {
+    const reason = payload.data.reason || 'Unknown error';
+    const text = 'Dirasa profile IDs failed: ' + reason;
+    if (!document.hidden) {
+      alert(text);
+    }
+    saveNotification('#', text);
+    addNotificationToList('#', text);
+  } else if (payload.data && payload.data.type === "mscc_export_ready") {
     if (!document.hidden) {
       $('#downloadReadyModal .download-link').attr('href', payload.data.url);
       $('#downloadReadyModal').modal('show');

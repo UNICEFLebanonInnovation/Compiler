@@ -288,7 +288,7 @@
                                 {% recent_export_history as exports %}
                                 {% for export in exports %}
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ export.file_url|default:'#' }}" target="_blank">MSCC export {{ export.created|date:"Y-m-d H:i" }}</a>
+                                    <a class="nav-link" href="{{ export.file_url|default:'#' }}" target="_blank">{{ export.export_type|default:"MSCC export" }} {{ export.created|date:"Y-m-d H:i" }}</a>
                                 </li>
                                 {% empty %}
                                 <li class="nav-item">

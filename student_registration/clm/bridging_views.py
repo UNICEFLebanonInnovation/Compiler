@@ -63,6 +63,7 @@ from student_registration.schools.models import (
     CLMRound,
 )
 from student_registration.backends.models import ExportHistory
+from student_registration.backends.utils import download_file, is_valid_filename
 from .bridging_forms import (
     BridgingPreAssessmentForm,
     BridgingMathAssessmentForm,
@@ -80,6 +81,8 @@ from .serializers import (
     BridgingSerializer
 )
 from .utils import is_allowed_create, is_allowed_edit,  get_outreach_child
+from .profile_id import bridging_profile_id_card  # noqa: F401  (re-exported for callers and tests)
+from .tasks import PROFILE_IDS_EXPORT_TYPE, queue_bridging_profile_ids
 from student_registration.users.templatetags.custom_tags import has_group
 from student_registration.students.utils import generate_one_unique_id
 from student_registration.students.models import Nationality
@@ -415,60 +418,6 @@ class BridgingProfilePictureFileView(LoginRequiredMixin,
         )
 
 
-def _first_non_empty(*values):
-    for value in values:
-        if value:
-            return value
-    return ''
-
-
-def _date_part(value):
-    """Birthday day/month/year are stored as strings and default to 0 when unknown."""
-    value = str(value or '').strip()
-    return '' if value == '0' else value
-
-
-def bridging_profile_id_card(bridging):
-    """Collect the fields printed on a child's Dirasa profile ID card."""
-    student = bridging.student
-    full_name = ''
-    birthday = ''
-    place_of_birth = ''
-    nationality = ''
-    if student:
-        full_name = ' '.join(
-            part for part in (student.first_name, student.father_name, student.last_name) if part
-        )
-        day = _date_part(student.birthday_day)
-        month = _date_part(student.birthday_month)
-        year = _date_part(student.birthday_year)
-        if day and month and year:
-            birthday = '{}/{}/{}'.format(day, month, year[-2:])
-        place_of_birth = student.place_of_birth or ''
-        if student.nationality:
-            nationality = _first_non_empty(student.nationality.name_en, student.nationality.name)
-
-    governorate = ''
-    if bridging.governorate:
-        governorate = _first_non_empty(bridging.governorate.name_en, bridging.governorate.name)
-
-    disability = bridging.disability
-    physical_difficulties = _first_non_empty(disability.name_en, disability.name) if disability else 'No'
-
-    return {
-        'round': bridging.round.name if bridging.round else '',
-        'id': bridging.id,
-        'ngo': bridging.partner.name if bridging.partner else '',
-        'full_name': full_name,
-        'birthday': birthday,
-        'place_of_birth': place_of_birth,
-        'nationality': nationality,
-        'governorate': governorate,
-        'physical_difficulties': physical_difficulties,
-        'has_picture': bool(bridging.profile_picture),
-    }
-
-
 class BridgingProfileIdView(LoginRequiredMixin,
                             GroupRequiredMixin,
                             DetailView):
@@ -483,37 +432,53 @@ class BridgingProfileIdView(LoginRequiredMixin,
         return context
 
 
+def bridging_profile_ids_queryset(request):
+    """Children a bulk profile ID request covers: the Dirasa list scope and filters, plus optional ``ids``."""
+    queryset = bridging_list_queryset(request)
+    filterset = bridging_filterset_class(request.user)(request.GET, queryset=queryset, request=request)
+    queryset = filterset.qs  # like the list page: invalid filters list nothing
+
+    ids = [value for value in request.GET.get('ids', '').split(',') if value.strip().isdigit()]
+    if ids:
+        queryset = queryset.filter(id__in=ids)
+    return queryset
+
+
 class BridgingBulkProfileIdView(LoginRequiredMixin,
                                 GroupRequiredMixin,
-                                TemplateView):
-    """One printable document with a profile ID card per child, one child per page.
+                                View):
+    """Start background generation of one PDF with a profile ID page per child.
 
     Takes the same filters as the Dirasa list, so the button on the list page
-    generates cards for exactly the children currently listed. An optional
-    ``ids`` parameter (comma separated registration ids) narrows it further.
+    covers exactly the children currently listed. The PDF is built in the
+    background and the user gets a web push notification with the download
+    link when it is ready (or a failure notice).
     """
-    template_name = 'clm/bridging_profile_id_bulk.html'
     group_required = [u"CLM_Bridging"]
+    http_method_names = ['post']
 
-    def get_registrations(self):
-        queryset = bridging_list_queryset(self.request).select_related('partner', 'disability')
-        filterset = bridging_filterset_class(self.request.user)(
-            self.request.GET, queryset=queryset, request=self.request)
-        queryset = filterset.qs  # like the list page: invalid filters list nothing
+    def post(self, request, *args, **kwargs):
+        registration_ids = list(bridging_profile_ids_queryset(request).values_list('id', flat=True))
+        if not registration_ids:
+            return JsonResponse({'error': 'No children match the current filters, so there is nothing to generate.'},
+                                status=400)
 
-        ids = [value for value in self.request.GET.get('ids', '').split(',') if value.strip().isdigit()]
-        if ids:
-            queryset = queryset.filter(id__in=ids)
-        return queryset
+        export = ExportHistory.objects.create(
+            export_type=PROFILE_IDS_EXPORT_TYPE,
+            created_by=request.user,
+            partner_name=request.user.partner.name if request.user.partner else '',
+            file_format='pdf',
+            fields={'count': len(registration_ids), 'filters': request.GET.dict()},
+        )
+        queue_bridging_profile_ids(export.id, registration_ids)
+        return JsonResponse({'status': 'started', 'export_id': export.id, 'count': len(registration_ids)})
 
-    def get_context_data(self, **kwargs):
-        context = super(BridgingBulkProfileIdView, self).get_context_data(**kwargs)
-        context['cards'] = [
-            {'bridging': bridging, 'card': bridging_profile_id_card(bridging)}
-            for bridging in self.get_registrations()
-        ]
-        context['list_url'] = '{}?{}'.format(reverse('clm:bridging_list'), self.request.GET.urlencode())
-        return context
+
+@login_required(login_url='/users/login')
+def bridging_profile_ids_download(request, file_name):
+    if is_valid_filename(file_name, 'pdf'):
+        return download_file(file_name, 'bridging_profile_ids.pdf', content_type='application/pdf')
+    return HttpResponse("Invalid file.", status=400)
 
 
 class ExportStorage(AzureStorage):

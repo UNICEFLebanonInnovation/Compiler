@@ -337,6 +337,11 @@ urlpatterns = [
         name='bridging_profile_id_bulk'
     ),
     re_path(
+        r'^bridging-profile-ids/download/(?P<file_name>.+)/$',
+        view=bridging_views.bridging_profile_ids_download,
+        name='bridging_profile_ids_download'
+    ),
+    re_path(
         r'^bridging-profile-id/(?P<pk>[\w.@+-]+)/$',
         view=bridging_views.BridgingProfileIdView.as_view(),
         name='bridging_profile_id'

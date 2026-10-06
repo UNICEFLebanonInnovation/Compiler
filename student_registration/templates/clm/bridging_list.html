@@ -119,10 +119,11 @@
 {% endif %}
 {% endif %}
 
-<a href="{% url 'clm:bridging_profile_id_bulk' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}"
-   target="_blank" rel="noopener" class="mr-3 btn-icon btn btn-primary"
-   title="{% trans 'Generate one PDF with a profile ID page for every child in the current list' %}">
+<a href="#" id="generate-profile-ids" data-url="{% url 'clm:bridging_profile_id_bulk' %}"
+   onclick="generateProfileIds(event)" class="mr-3 btn-icon btn btn-primary"
+   title="{% trans 'Generate one PDF with a profile ID page for every child in the current list. It runs in the background and you are notified when it is ready.' %}">
   <i class="fa fa-id-card btn-icon-wrapper"> </i>{% trans "Generate Profile IDs (PDF)" %}</a>
+<span class="generating-profile-ids text-muted" style="display: none;">{% trans "Starting..." %}</span>
                         </div>
                         </div>
 </div>
@@ -185,6 +186,35 @@
         var user_token = '{{ user_token }}';
         var href_full_path = '{{ request.build_absolute_uri }}';
         var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
+
+        function generateProfileIds(event) {
+            event.preventDefault();
+            var button = $('#generate-profile-ids');
+            if (button.hasClass('disabled')) {
+                return;
+            }
+            button.addClass('disabled');
+            $('.generating-profile-ids').show();
+
+            $.ajax({
+                url: button.data('url') + window.location.search,
+                type: "POST",
+                headers: {"X-CSRFToken": csrftoken},
+                success: function (data) {
+                    alert("Generating the profile IDs PDF for " + data.count + " child(ren) in the background. " +
+                          "You will receive a notification with the download link once it is ready.");
+                },
+                error: function (xhr) {
+                    var message = (xhr.responseJSON && xhr.responseJSON.error) ||
+                        "Error starting the profile IDs generation. Please try again.";
+                    alert(message);
+                },
+                complete: function () {
+                    button.removeClass('disabled');
+                    $('.generating-profile-ids').hide();
+                }
+            });
+        }
 
         function checkRoundBeforeExport(event) {
             event.preventDefault();
