@@ -17,11 +17,10 @@
           {% trans "Edit" %}</a>
       {% endif %}
 
-      {% if column.attrs.programme|is_allowed_edit %}
         <a type="button" href="{{ column.attrs.url_profile_picture }}{{ record.id }}" tabindex="0" class="dropdown-item">
           <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-image btn-icon-wrapper"> </i></button>
-          {% trans "Profile Picture" %}</a>
-      {% endif %}
+          {% trans "Profile Picture" %}
+        </a>
 
       {% if column.attrs.url_profile_id %}
         <a type="button" href="{{ column.attrs.url_profile_id }}{{ record.id }}" tabindex="0" class="dropdown-item">
