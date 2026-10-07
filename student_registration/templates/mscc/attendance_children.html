@@ -21,7 +21,7 @@
                                                             <input type="hidden" class="registration_id" name="registry_id[]" value="{{ item.registration_id }}" />
                                                             <input type="hidden" class="attendance_id" name="attendance_id[]" value="{{ item.attendance_id }}" />
                                                             <input type="hidden" class="child_id" name="child_id[]" value="{{ item.child_id }}" />
-                                                            <div class="widget-heading"><a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="{% url 'mscc:child_profile_preview' %}?registry_id={{ item.registration_id }}">{{ item.child_fullname }}</a></div>
+                                                            <div class="widget-heading"><a class="show-child-details" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg-2" href="{% url 'mscc:child_profile_preview' %}?registry_id={{ item.registration_id }}">{{ item.child_fullname }}</a></div>
                                                             <div class="widget-subheading">{{ item.child_mother_fullname }}</div>
                                                         </div>
                                                         <div class="widget-content-right" style="width: 200px !important;">
@@ -80,7 +80,7 @@
                                                             <input type="hidden" class="registration_id" name="registry_id[]" value="{{ item.registration_id }}" />
                                                             <input type="hidden" class="attendance_id" name="attendance_id[]" value="{{ item.attendance_id }}" />
                                                             <input type="hidden" class="child_id" name="child_id[]" value="{{ item.child_id }}" />
-                                                            <div class="widget-heading"><a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="{% url 'mscc:child_profile_preview' %}?registry_id={{ item.registration_id }}">{{ item.child_fullname }}</a></div>
+                                                            <div class="widget-heading"><a class="show-child-details" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg-2" href="{% url 'mscc:child_profile_preview' %}?registry_id={{ item.registration_id }}">{{ item.child_fullname }}</a></div>
                                                             <div class="widget-subheading">{{ item.child_mother_fullname }}</div>
                                                         </div>
                                                         <div class="widget-content-right" style="width: 200px !important;">

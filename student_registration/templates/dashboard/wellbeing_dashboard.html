@@ -2,88 +2,157 @@
 {% load static i18n %}
 
 {% block project_title %}{% trans "Wellbeing Dashboard" %}{% endblock %}
-
-{% block extra_head %}
-<style>
-    .dashboard-card { margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 8px; background: #fff; }
-    .chart-container { height: 300px; width: 100%; }
-    .correlation-label { font-style: italic; font-size: 0.9rem; margin-top: 10px; color: #00ADEF; }
-</style>
-{% endblock %}
+{% block module_name %}{% trans "Child Wellbeing" %}{% endblock %}
 
 {% block content %}
-<div class="app-page-title">
-    <div class="page-title-wrapper">
-        <div class="page-title-heading">
-            <div class="page-title-icon"><i class="pe-7s-graph2 icon-gradient bg-plum-plate"></i></div>
-            <div>
-                {% trans "Child Wellbeing Advanced Dashboard" %}
-                <div class="page-title-subheading">{% trans "Multi-dimensional analysis of child welfare, education, and socio-economic factors." %}</div>
+<div class="page-header">
+    <div class="page-header-titles">
+        <nav aria-label="{% trans 'breadcrumb' %}">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'landing_page' %}">{% trans "Home" %}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{% trans "Wellbeing" %}</li>
+            </ol>
+        </nav>
+        <h1 class="page-header-title">
+            <i class="bi bi-heart-pulse"></i>{% trans "Child Wellbeing" %}
+        </h1>
+        <p class="page-header-subtitle">
+            {% trans "Welfare, education and socio-economic factors across registered children." %}
+            <span id="wellbeing-status" role="status" aria-live="polite"></span>
+        </p>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-12 col-lg-6 col-xxl-4">
+        <div class="card chart-card mb-0 h-100">
+            <div class="card-header">
+                <span class="card-title">{% trans "PSS &amp; distress indicators" %}</span>
+                <button type="button" class="chart-toggle-table" aria-pressed="false"
+                        title="{% trans 'Show as table' %}" aria-label="{% trans 'Show as table' %}">
+                    <i class="bi bi-table"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="viz" id="distress-chart" data-viz-label="{% trans 'Distress reported by caregivers and children' %}"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6 col-xxl-4">
+        <div class="card chart-card mb-0 h-100">
+            <div class="card-header">
+                <span class="card-title">{% trans "Educational status at entry" %}</span>
+                <button type="button" class="chart-toggle-table" aria-pressed="false"
+                        title="{% trans 'Show as table' %}" aria-label="{% trans 'Show as table' %}">
+                    <i class="bi bi-table"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="viz" id="edu-status-chart" data-viz-label="{% trans 'Educational status at entry' %}"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6 col-xxl-4">
+        <div class="card chart-card mb-0 h-100">
+            <div class="card-header">
+                <span class="card-title">{% trans "Barriers to participation" %}</span>
+                <button type="button" class="chart-toggle-table" aria-pressed="false"
+                        title="{% trans 'Show as table' %}" aria-label="{% trans 'Show as table' %}">
+                    <i class="bi bi-table"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="viz" id="barriers-chart" data-viz-label="{% trans 'Barriers to participation' %}"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6 col-xxl-4">
+        <div class="card chart-card mb-0 h-100">
+            <div class="card-header">
+                <span class="card-title">{% trans "Child labour" %}</span>
+                <button type="button" class="chart-toggle-table" aria-pressed="false"
+                        title="{% trans 'Show as table' %}" aria-label="{% trans 'Show as table' %}">
+                    <i class="bi bi-table"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="viz" id="labor-chart" data-viz-label="{% trans 'Children reported in labour' %}"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6 col-xxl-4">
+        <div class="card chart-card mb-0 h-100">
+            <div class="card-header">
+                <span class="card-title">{% trans "Average improvement by subject" %}</span>
+                <button type="button" class="chart-toggle-table" aria-pressed="false"
+                        title="{% trans 'Show as table' %}" aria-label="{% trans 'Show as table' %}">
+                    <i class="bi bi-table"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="viz" id="subject-improvement-chart" data-viz-label="{% trans 'Average improvement by subject' %}"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6 col-xxl-4">
+        <div class="card chart-card mb-0 h-100">
+            <div class="card-header">
+                <span class="card-title">{% trans "Living arrangement" %}</span>
+                <button type="button" class="chart-toggle-table" aria-pressed="false"
+                        title="{% trans 'Show as table' %}" aria-label="{% trans 'Show as table' %}">
+                    <i class="bi bi-table"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="viz" id="family-chart" data-viz-label="{% trans 'Living arrangement' %}"></div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-6 col-xl-4">
-        <div class="card dashboard-card">
-            <div class="card-header">{% trans "PSS & Distress Indicators" %}</div>
-            <div class="card-body">
-                <div id="distress-chart" class="chart-container"></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-xl-4">
-        <div class="card dashboard-card">
-            <div class="card-header">{% trans "Educational Status at Entry" %}</div>
-            <div class="card-body">
-                <div id="edu-status-chart" class="chart-container"></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-xl-4">
-        <div class="card dashboard-card">
-            <div class="card-header">{% trans "Barriers to Participation" %}</div>
-            <div class="card-body">
-                <div id="barriers-chart" class="chart-container"></div>
-            </div>
-        </div>
-    </div>
-</div>
+{% comment %}
+These two were previously overlaid on a single plot with two x-axes and two
+y-axes. They measure different things over different categories, so they are
+two charts.
+{% endcomment %}
+<div class="section-divider">{% trans "Correlations" %}</div>
 
-<div class="row">
-    <div class="col-md-6 col-xl-4">
-        <div class="card dashboard-card">
-            <div class="card-header">{% trans "Child Labor Overview" %}</div>
+<div class="row g-3">
+    <div class="col-12 col-xl-6">
+        <div class="card chart-card mb-0 h-100">
+            <div class="card-header">
+                <span class="card-title">{% trans "Average attendance by labour status" %}</span>
+                <button type="button" class="chart-toggle-table" aria-pressed="false"
+                        title="{% trans 'Show as table' %}" aria-label="{% trans 'Show as table' %}">
+                    <i class="bi bi-table"></i>
+                </button>
+            </div>
             <div class="card-body">
-                <div id="labor-chart" class="chart-container"></div>
+                <div class="viz" id="labor-attendance-chart"
+                     data-viz-label="{% trans 'Average attendance rate by labour status' %}"></div>
+                <p class="form-text mb-0">{% trans "Mean attendance rate (%) of children in each labour status." %}</p>
             </div>
         </div>
     </div>
-    <div class="col-md-6 col-xl-4">
-        <div class="card dashboard-card">
-            <div class="card-header">{% trans "Subject Improvement" %}</div>
-            <div class="card-body">
-                <div id="subject-improvement-chart" class="chart-container"></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-xl-4">
-        <div class="card dashboard-card">
-            <div class="card-header">{% trans "Family Situation" %}</div>
-            <div class="card-body">
-                <div id="family-chart" class="chart-container"></div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="card dashboard-card">
-            <div class="card-header">{% trans "Impact & Correlation Analysis" %}</div>
+    <div class="col-12 col-xl-6">
+        <div class="card chart-card mb-0 h-100">
+            <div class="card-header">
+                <span class="card-title">{% trans "Average improvement by attendance band" %}</span>
+                <button type="button" class="chart-toggle-table" aria-pressed="false"
+                        title="{% trans 'Show as table' %}" aria-label="{% trans 'Show as table' %}">
+                    <i class="bi bi-table"></i>
+                </button>
+            </div>
             <div class="card-body">
-                <div id="impact-correlation-chart" style="height: 450px; width: 100%;"></div>
+                <div class="viz" id="attendance-improvement-chart"
+                     data-viz-label="{% trans 'Average educational improvement by attendance band' %}"></div>
+                <p class="form-text mb-0">{% trans "Mean educational improvement (%) within each attendance band." %}</p>
             </div>
         </div>
     </div>
@@ -91,10 +160,24 @@
 {% endblock content %}
 
 {% block extra_js %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/10.3.3/highcharts.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="{% static 'js/dashboard/bma-charts.js' %}?v=1"></script>
 <script type="text/javascript">
-    const DATA_URL = "{% url 'dashboard:wellbeing_data' %}";
+    window.wellbeingDashboardConfig = {
+        dataUrl: "{% url 'dashboard:wellbeing_data' %}",
+        labels: {
+            empty: "{% trans 'No data available.' %}",
+            loading: "{% trans 'Loading…' %}",
+            failed: "{% trans 'Could not load wellbeing data.' %}",
+            caregivers: "{% trans 'Caregivers' %}",
+            children: "{% trans 'Children' %}",
+            yes: "{% trans 'Yes' %}",
+            no: "{% trans 'No' %}",
+            arabic: "{% trans 'Arabic' %}",
+            math: "{% trans 'Math' %}",
+            foreignLanguage: "{% trans 'Foreign language' %}"
+        }
+    };
 </script>
-<script src="{% static 'js/wellbeing_dashboard.js' %}"></script>
+<script src="{% static 'js/dashboard/wellbeing-dashboard.js' %}?v=1"></script>
 {% endblock %}

@@ -13,9 +13,10 @@ from .models import (
     Center,
     Location
 )
+from student_registration.filter_labels import label_filter_fields
 
 class PlaceholderFilterSet(FilterSet):
-    """Base FilterSet that hides labels and uses placeholders."""
+    """Base FilterSet with the shared toolbar (Filter, Export) and a visible label on every control."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -38,11 +39,8 @@ class PlaceholderFilterSet(FilterSet):
                 css_class="d-flex gap-2"  # optional: layout/spacing
             ),
         )
-        for name, field in self.form.fields.items():
-            label = field.label or name.replace('_', ' ').title()
-            field.label = ''
-            if isinstance(field.widget, (forms.TextInput, forms.NumberInput)):
-                field.widget.attrs.setdefault('placeholder', label)
+        # Visible labels for every control; see student_registration/filter_labels.py.
+        label_filter_fields(self.form)
 
 
 class CenterFilter(PlaceholderFilterSet):

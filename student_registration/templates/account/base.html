@@ -1,10 +1,55 @@
 {% extends "base.html" %}
-{% block title %}{% block head_title %}{% endblock head_title %}{% endblock title %}
+{% load static i18n %}
+
+{% comment %}
+Shared shell for every allauth page.
+
+Anonymous visitors get a focused, full-viewport card (base.html renders no
+sidebar or topbar when the user is not signed in). Signed-in visitors — e.g.
+someone changing their password — get the same card centred inside the normal
+application chrome, so the two states share one layout.
+{% endcomment %}
+
+{% block project_title %}{% block head_title %}{% trans "Account" %}{% endblock head_title %}{% endblock %}
+{% block module_name %}{% trans "Account" %}{% endblock %}
 
 {% block content %}
-<div class="row">
-  <div class="col-md-3 offset-md-3">
-    {% block inner %}{% endblock %}
-  </div>
+<div class="{% if not request.user.is_authenticated %}auth-shell{% else %}d-flex justify-content-center py-3{% endif %}">
+    <div class="auth-card">
+
+        {% block auth_logo %}
+        <img src="{% static 'images/clm_plus_logo.png' %}" alt="{% trans 'BMA logo' %}" class="auth-logo">
+        {% endblock auth_logo %}
+
+        {% block auth_heading %}
+        <h1 class="auth-title">{% block auth_title %}{% trans "Account" %}{% endblock auth_title %}</h1>
+        <p class="auth-subtitle">
+            {% block auth_subtitle %}{% trans "MEHE Beneficiary Monitoring &amp; Assessment" %}{% endblock auth_subtitle %}
+        </p>
+        {% endblock auth_heading %}
+
+        {% block inner %}{% endblock inner %}
+
+        {% block auth_footer %}
+        {% get_available_languages as AVAILABLE_LANGUAGES %}
+        {% get_current_language as CURRENT_LANGUAGE %}
+        {% if AVAILABLE_LANGUAGES|length > 1 %}
+        <nav class="auth-language" aria-label="{% trans 'Language' %}">
+            {% for code, name in AVAILABLE_LANGUAGES %}
+            <form action="{% url 'set_language' %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <button type="submit" name="language" value="{{ code }}" lang="{{ code }}"
+                        class="btn btn-link auth-language-link{% if code == CURRENT_LANGUAGE %} is-current{% endif %}"
+                        {% if code == CURRENT_LANGUAGE %}aria-current="true"{% endif %}>{{ name }}</button>
+            </form>
+            {% endfor %}
+        </nav>
+        {% endif %}
+        <p class="auth-footer-note">
+            {% trans "&copy; MEHE BMA — Beneficiary Monitoring &amp; Assessment" %}
+        </p>
+        {% endblock auth_footer %}
+    </div>
 </div>
-{% endblock %}
+{% endblock content %}

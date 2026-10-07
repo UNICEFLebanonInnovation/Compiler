@@ -1,12 +1,14 @@
 {% extends "account/base.html" %}
-
 {% load i18n %}
 
 {% block head_title %}{% trans "Sign Up Closed" %}{% endblock %}
+{% block auth_title %}{% trans "Sign Up Closed" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Registration is not open at the moment." %}{% endblock %}
 
 {% block inner %}
-<h1>{% trans "Sign Up Closed" %}</h1>
-
-<p>{% trans "We are sorry, but the sign up is currently closed." %}</p>
+<div class="text-center">
+    <i class="bi bi-door-closed text-muted" style="font-size: 3rem;"></i>
+    <p class="text-muted mt-3">{% trans "We are sorry, but the sign up is currently closed." %}</p>
+    <a href="{% url 'account_login' %}" class="btn btn-outline-primary mt-2">{% trans "Back to sign in" %}</a>
+</div>
 {% endblock %}
-

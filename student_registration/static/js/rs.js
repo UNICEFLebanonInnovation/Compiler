@@ -13,7 +13,7 @@ var min_age_restriction_msg = '';
 var min_age_limit_msg = '';
 var max_age_limit_msg = '';
 
-$(window).load(function () {
+$(window).on('load', function () {
 
     /* Background loading full-size images */
     $('.image-link').each(function() {

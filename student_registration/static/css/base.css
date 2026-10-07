@@ -46,42 +46,21 @@ form .radio {
 .form-filters .form-control {
     width: 200px;
 }
-.w-100 {
-    width: 1500px !important;
+/* These rules used to target the bare `.w-100` utility, which meant every
+   element Bootstrap expects to be full-width was forced to 1500px instead.
+   The intent was only ever to give the wide operational data grids room to
+   scroll horizontally, so they are now scoped to that context. */
+.table-list .card-body .table-responsive table.w-100,
+.table-responsive table.w-100 {
+    width: 100% !important;
+    min-width: 1200px;
 }
 
-.table-list .card-body .table-responsive table {
-    width: 1500px !important;
-}
-
-@media (width: 500px) {
-    .w-100 {
-        width: 500px !important;
+@media (max-width: 900px) {
+    .table-list .card-body .table-responsive table.w-100,
+    .table-responsive table.w-100 {
+        min-width: 900px;
     }
-}
-
-@media (width: 700px) {
-.w-100 {
-    width: 700px !important;
-}
-}
-
-@media (width: 900px) {
-.w-100 {
-    width: 900px !important;
-}
-}
-
-@media (width: 1800px) {
-.w-100 {
-    width: 1600px !important;
-}
-}
-
-@media (width: 2000px) {
-.w-100 {
-    width: 1800px !important;
-}
 }
 .table-container th {
     background: white;

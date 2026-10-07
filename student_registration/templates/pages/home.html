@@ -8,16 +8,12 @@
 
 {% block content %}
 
-<div class="app-page-title"><div class="page-title-wrapper"><div class="page-title-heading"><div class="page-title-icon"><i class="icon pe-7s-server icon-gradient bg-ripe-malin"></i></div><div>
-    Welcome
-  {% if request.user.is_authenticated %}
-  <i>{{ request.user }}</i>
-  {% endif %}
-  to CLM<sup>+</sup>
-    <div class="page-title-subheading">
-                                    </div>
-</div></div><div class="page-title-actions">
-</div></div></div>
+<div class="page-header">
+    <div class="page-header-titles">
+        <h1 class="page-header-title"><i class="bi bi-house-door"></i>Welcome{% if request.user.is_authenticated %}, {{ request.user }}{% endif %}</h1>
+        <p class="page-header-subtitle">CLM<sup>+</sup></p>
+    </div>
+</div>
 
                     <div class="row">
                         <div class="col-md-6 col-lg-3">

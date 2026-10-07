@@ -14,36 +14,25 @@
       width: 50px;
     }
 </style>
-<div class="app-page-title">
-                        <div class="page-title-wrapper">
-                            <div class="page-title-heading">
-                                <div>
-                                    <div class="page-title-head center-elem page-title-heading">
-                                        <span class="d-inline-block pr-2">
-                                            <i class="fa fa-user"></i>
-                                        </span>
-                                        <span class="d-inline-block">
-                                            {{ request.user.username }} - {{ request.user.partner }}
-                                        </span>
-                                    </div>
-                                    <div class="page-title-subheading opacity-10">
-                                        <nav class="" aria-label="breadcrumb">
-                                            <ol class="breadcrumb">
-                                                 <li class="breadcrumb-item">
-                                                    <a href="/">
-                                                        Home
-                                                    </a>
-                                                  </li>
-                                                  <li class="breadcrumb-item">
-                                                        <a href="{% url 'youth:list' %}">List</a>
-                                                  </li>
-                                            </ol>
-                                        </nav>
-                                    </div>
-                                </div>
-                            </div>
-                        <div class="page-title-actions"></div>
-                        </div>
+<div class="page-header">
+    <div class="page-header-titles">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                 <li class="breadcrumb-item">
+                    <a href="/">
+                        Home
+                    </a>
+                  </li>
+                  <li class="breadcrumb-item">
+                        <a href="{% url 'youth:list' %}">List</a>
+                  </li>
+            </ol>
+        </nav>
+        <h1 class="page-header-title"><i class="bi bi-journal-text"></i>Programme document indicators</h1>
+        <p class="page-header-subtitle">
+            <i class="bi bi-person-circle me-1"></i>{{ request.user.username }}{% if request.user.partner %} &middot; {{ request.user.partner }}{% endif %}
+        </p>
+    </div>
 </div>
 
 <div class="row">

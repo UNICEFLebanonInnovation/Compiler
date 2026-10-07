@@ -1,4 +1,5 @@
 {% extends "schools/base.html" %}
+{% load custom_tags %}
 {% load static i18n %}
 {% load static i18n %}
 {% load render_table from django_tables2 %}
@@ -10,85 +11,91 @@
 
 {% block main_content %}
 
-<div class="app-page-title">
-                        <div class="page-title-wrapper">
-                            <div class="page-title-heading">
-                                <div>
-                                    <div class="page-title-head center-elem page-title-heading">
-                                        <span class="d-inline-block pr-2">
-                                            <i class="fa fa-user"></i>
-                                        </span>
-                                        <span class="d-inline-block">
-                                          {{ request.user.username }}
-                                          - {{ request.user.partner }}
-                                        </span>
-                                    </div>
-                                    <div class="page-title-subheading opacity-10">
-                                        <nav class="" aria-label="breadcrumb">
-                                            <ol class="breadcrumb">
-                                                <li class="breadcrumb-item">
-                                                    <a href="/">
-                                                        Home
-                                                    </a>
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    <a href="{% url 'clm:bridging_page' %}">
-                                                        Dirasa
-                                                    </a>
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                  <a href="{% url 'schools:school_list' %}">Schools</a></li>
-                                                <li class="breadcrumb-item">
-                                                  <a href="{% url 'schools:community_initiative_list' school_id %}">Community Initiative List</a></li>
-                                            </ol>
-                                        </nav>
-                                    </div>
-                                </div>
-                            </div>
-                        <div class="page-title-actions">
-                          {% if not request.user.partner or not request.user.partner.is_world_learning %}
-                          <a href="{% url 'schools:community_initiative_add' school_id %}" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Community Initiative</a>
-                          {% endif %}
-                        </div>
-                        </div>
+<div class="page-header">
+    <div class="page-header-titles">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                    <a href="/">
+                        Home
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'clm:bridging_page' %}">
+                        Dirasa
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                  <a href="{% url 'schools:school_list' %}">Schools</a></li>
+                <li class="breadcrumb-item">
+                  <a href="{% url 'schools:community_initiative_list' school_id %}">Community Initiative List</a></li>
+            </ol>
+        </nav>
+        <h1 class="page-header-title"><i class="bi bi-people"></i>{% trans "Community initiatives" %}</h1>
+        <p class="page-header-subtitle">
+            <i class="bi bi-person-circle me-1"></i>{{ request.user.username }}{% if request.user.partner %} &middot; {{ request.user.partner }}{% endif %}
+        </p>
+    </div>
+    <div class="page-header-actions">
+        {% if not request.user.partner or not request.user.partner.is_world_learning %}
+        <a href="{% url 'schools:community_initiative_add' school_id %}" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Community Initiative</a>
+        {% endif %}
+    </div>
 </div>
 
 <div class="row">
     <div class="col-lg-12">
-<div id="accordion" class="accordion-wrapper mb-3 form-filters">
-    <div class="card">
-        <div id="headingOne" class="card-header">
-            <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block collapsed">
-                <h5 class="m-0 p-0">
-                    <i class="pe-7s-filter text-primary"></i>
-                    Filters</h5>
-            </button>
-        </div>
-        <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse" style="">
-            <div class="card-body">
-            <form action="" method="get" class="form form-inline">
-                {% bootstrap_form filter.form layout='inline' %}
+{% active_filters filter as applied_filters %}
+<div class="filter-bar" id="filter-bar">
+    <button class="btn btn-outline-secondary btn-icon filter-bar-open" type="button"
+            data-bs-toggle="offcanvas" data-bs-target="#listFilters" aria-controls="listFilters">
+        <i class="bi bi-funnel" aria-hidden="true"></i>{% trans "Filters" %}
+        {% if applied_filters %}<span class="badge rounded-pill text-bg-primary">{{ applied_filters|length }}</span>{% endif %}
+    </button>
+    {% if applied_filters %}
+    <div class="active-filters" id="active-filters">
+        <span class="active-filters-label"><i class="bi bi-funnel-fill" aria-hidden="true"></i>{% trans "Filtered by" %}</span>
+        {% for entry in applied_filters %}
+        <span class="filter-chip">
+            <span class="filter-chip-label">{{ entry.label }}</span>
+            <span class="filter-chip-value">{{ entry.value }}</span>
+            <button type="button" class="btn-close" data-remove-filter="{{ entry.name }}"
+                    aria-label="{% blocktrans with name=entry.label %}Remove {{ name }} filter{% endblocktrans %}"></button>
+        </span>
+        {% endfor %}
+        <a href="{{ request.path }}" class="active-filters-clear">{% trans "Clear all" %}</a>
+    </div>
+    {% else %}
+    <span class="filter-bar-hint text-muted">{% trans "Showing everything. Use Filters to narrow the list." %}</span>
+    {% endif %}
+</div>
 
-                <button class="btn btn-outline-primary mr-left-5 filter-report" title="Search">
-                  <i style="font-weight:bolder" class="pe-7s-search"></i>
-                </button>
+<div class="offcanvas offcanvas-end filter-drawer" tabindex="-1" id="listFilters" aria-labelledby="listFiltersLabel">
+    <div class="offcanvas-header">
+        <h2 class="offcanvas-title" id="listFiltersLabel">
+            <i class="bi bi-funnel" aria-hidden="true"></i>{% trans "Filters" %}
+            {% if applied_filters %}<span class="badge rounded-pill text-bg-primary">{{ applied_filters|length }}</span>{% endif %}
+        </h2>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{% trans 'Close' %}"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form action="" method="get" class="form form-inline">
+            {% bootstrap_form filter.form %}
+                        <div class="filter-drawer-actions">
 
-                <button href="" title="Cancel"
-                 class="btn btn-outline-warning"><i class="fa fa-fw" aria-hidden="true"></i>
-                </button>
+            <button type="submit" class="btn btn-primary btn-icon filter-report"><i class="bi bi-search" aria-hidden="true"></i>{% trans "Search" %}</button>
 
-              {% if user|has_group:"EXPORT" %}
-                <a href="" title="Download" class="btn btn-outline-success download-report">
-                    <i class="lnr-download"></i>
-                </a>
-                <div class = "downloading-message" style = "display:none">
-                  Loading...
-                </div>
-              {% endif %}
+            <a href="{{ request.path }}" class="btn btn-outline-secondary btn-icon"><i class="bi bi-x-lg" aria-hidden="true"></i>{% trans "Clear" %}</a>
 
-            </form>
+          {% if user|has_group:"EXPORT" %}
+            <a href="" class="btn btn-outline-secondary btn-icon download-report"><i class="bi bi-download" aria-hidden="true"></i>{% trans "Export" %}</a>
+            <div class = "downloading-message" style = "display:none">
+              Loading...
             </div>
-        </div>
+          {% endif %}
+                        </div>
+
+        </form>
     </div>
 </div>
     </div>

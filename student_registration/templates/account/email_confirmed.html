@@ -1,23 +1,19 @@
 {% extends "account/base.html" %}
-
-{% load i18n %}
-{% load account %}
+{% load i18n account %}
 
 {% block head_title %}{% trans "Confirm E-mail Address" %}{% endblock %}
+{% block auth_title %}{% trans "E-mail Confirmed" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Thank you for verifying your address." %}{% endblock %}
 
+{% block inner %}
+{% user_display email_address.user as user_display %}
 
-{% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-12">
-                <h2>{% trans "Confirm E-mail Address" %}</h2>
-
-                {% user_display email_address.user as user_display %}
-
-                <p>{% blocktrans with email_address.email as email %}You have confirmed that
-                    <a href="mailto:{{ email }}">{{ email }}</a> is an e-mail address for user {{ user_display }}
-                    .{% endblocktrans %}</p>
-            </div>
-        </div>
-    </div>
+<div class="text-center">
+    <i class="bi bi-patch-check text-success" style="font-size: 3rem;"></i>
+    <p class="text-muted mt-3">
+        {% blocktrans with email_address.email as email %}You have confirmed that
+        <a href="mailto:{{ email }}">{{ email }}</a> is an e-mail address for user {{ user_display }}.{% endblocktrans %}
+    </p>
+    <a href="{% url 'landing_page' %}" class="btn btn-primary mt-2">{% trans "Continue" %}</a>
+</div>
 {% endblock %}

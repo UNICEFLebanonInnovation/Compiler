@@ -1,49 +1,88 @@
 {% extends "account/base.html" %}
-{% load static i18n %}
-
 {% load i18n %}
-{% load crispy_forms_tags %}
 
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
+{% block auth_title %}{% trans "Sign In" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Welcome back. Please sign in with your account." %}{% endblock %}
 
 {% block inner %}
+<form class="login" method="POST" action="{% url 'account_login' %}">
+    {% csrf_token %}
 
-<style>
-  .app-logo-home {
-    height: 250px;
-    width: 500px;
-}
-  .app-logo-home img {
-    width: 500px;
-}
-</style>
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger d-flex align-items-start gap-2" role="alert">
+        <i class="bi bi-exclamation-triangle-fill mt-1"></i>
+        <div>
+            {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
+        </div>
+    </div>
+    {% endif %}
 
-<div class="mx-auto app-login-box col-md-8">
-                        <div class="app-logo-home mx-auto mb-3"><img src="{% static 'images/clm_plus_logo.png' %}"></div>
-                        <div class="modal-dialog mx-auto" style="width: 500px;">
-                            <div class="modal-content">
-                                <div class="modal-body">
-                                    <div class="h5 modal-title text-center">
-                                        <h4 class="mt-2">
-                                          <div>Welcome to BMA</div>
-                                            <span>Please sign-in with your account.</span>
-                                        </h4>
-                                    </div>
-                                </div>
-                                <div class="modal-footer text-center">
-<form class="login" method="POST" action="{% url 'account_login' %}" style="width: 100%;">
-  {% csrf_token %}
-  {{ form|crispy }}
-  {% if redirect_field_value %}
-  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-  {% endif %}
-  <!--<a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>-->
-  <button class="primaryAction btn btn-primary" type="submit">{% trans "Sign In" %}</button>
-</form>                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <div class="mb-3">
+        <label for="{{ form.login.id_for_label }}" class="form-label fw-semibold">
+            {{ form.login.label }}{% if form.login.field.required %}<span class="asteriskField">*</span>{% endif %}
+        </label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-person"></i></span>
+            {{ form.login }}
+        </div>
+        {% for error in form.login.errors %}
+        <div class="text-danger small mt-1">{{ error }}</div>
+        {% endfor %}
+    </div>
 
+    <div class="mb-3">
+        <label for="{{ form.password.id_for_label }}" class="form-label fw-semibold">
+            {{ form.password.label }}{% if form.password.field.required %}<span class="asteriskField">*</span>{% endif %}
+        </label>
+        <div class="position-relative">
+            {{ form.password }}
+            <button type="button" class="password-toggle-btn"
+                    data-password-toggle="{{ form.password.id_for_label }}"
+                    aria-label="{% trans 'Show password' %}">
+                <i class="bi bi-eye"></i>
+            </button>
+        </div>
+        {% for error in form.password.errors %}
+        <div class="text-danger small mt-1">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    {% if form.remember %}
+    <div class="form-check mb-3">
+        {{ form.remember }}
+        <label class="form-check-label" for="{{ form.remember.id_for_label }}">{{ form.remember.label }}</label>
+    </div>
+    {% endif %}
+
+    {% if redirect_field_value %}
+    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+    {% endif %}
+
+    <button class="primaryAction btn btn-primary w-100 fw-semibold py-2" type="submit">
+        <i class="bi bi-box-arrow-in-right me-2"></i>{% trans "Sign In" %}
+    </button>
+
+    <div class="text-center mt-3">
+        <a class="secondaryAction small" href="{% url 'account_reset_password' %}">{% trans "Forgot your password?" %}</a>
+    </div>
+</form>
+{% endblock inner %}
+
+{% block extra_js %}
+<script>
+  // allauth renders these widgets without Bootstrap classes; apply them here
+  // rather than subclassing the form, so the styling stays in the template.
+  document.addEventListener('DOMContentLoaded', function () {
+    ['{{ form.login.id_for_label }}', '{{ form.password.id_for_label }}'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) { el.classList.add('form-control'); }
+    });
+    var remember = document.getElementById('{{ form.remember.id_for_label }}');
+    if (remember) { remember.classList.add('form-check-input'); }
+
+    var login = document.getElementById('{{ form.login.id_for_label }}');
+    if (login) { login.focus(); }
+  });
+</script>
 {% endblock %}
-
-

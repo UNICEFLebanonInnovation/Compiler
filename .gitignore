@@ -88,8 +88,13 @@ celerybeat-schedule
 #student_registration/templates/mscc/child_services_tab.html
 #student_registration/templates/mscc/child_services_tab.html
 
-# Ignore virtual environments
-.venv*
-bma-08-04*
-bma*
-mscc*
+# Ignore virtual environments.
+# These are anchored to the repo root and restricted to directories on
+# purpose: unanchored `bma*` / `mscc*` matched at any depth, so any new file
+# whose name started with those prefixes was silently untracked no matter
+# where it lived — a `git add` would appear to succeed and the file would
+# never reach the remote.
+/.venv*/
+/bma-08-04*/
+/bma*/
+/mscc*/
