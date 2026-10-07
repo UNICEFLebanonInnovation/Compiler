@@ -73,7 +73,7 @@ def is_allowed_create(programme):
             return True
 
         if programme == 'Bridging':
-            current_round = current_round.get(current_round_bridging=True)
+            current_round = current_round.get(current_year=True).order_by("-id").first()
             if current_round.start_date_bridging < current < current_round.end_date_bridging:
                 return True
             return False
@@ -128,13 +128,13 @@ def is_allowed_edit(programme):
             return True
 
         if programme == 'Bridging':
-            current_round = current_round.get(current_round_bridging=True)
+            current_round = current_round.get(current_year=True).order_by("-id").first()
             if current_round.start_date_bridging_edit < current < current_round.end_date_bridging_edit:
                 return True
             return False
 
         if programme == 'MSCC':
-            current_round = current_round.get(current_round_bridging=True)
+            current_round = current_round.get(current_year=True).order_by("-id").first()
             if current_round.start_date_mscc_edit < current < current_round.end_date_mscc_edit:
                 return True
             return False

@@ -6998,7 +6998,7 @@ class BridgingForm(CommonForm):
         initial='yes'
     )
     round = forms.ModelChoiceField(
-        queryset=CLMRound.objects.filter(current_round_bridging=True), widget=forms.Select,
+        queryset=CLMRound.objects.filter(current_year=True), widget=forms.Select,
         label=_('Academic year'),
         empty_label='-------',
         required=True, to_field_name='id',
