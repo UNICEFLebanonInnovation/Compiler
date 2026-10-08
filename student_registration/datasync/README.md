@@ -7,6 +7,31 @@ BMA-NFE are never pulled back.
 For the complete model coverage, field mappings, and receiver limitations,
 see [the replication guide](../../docs/nfe_replication.md).
 
+## Changes introduced by this branch
+
+Previously, partners had to enter Compiler MSCC data again in BMA-NFE.
+This branch adds automatic outbound replication when supported records are
+saved or deleted.
+
+| Change | Purpose |
+| --- | --- |
+| New `student_registration.datasync` Django app | Registers model signal handlers and the sync components |
+| `SyncEvent` model and migration | Stores queued events, attempts, retry times, receiver responses, and delivery status |
+| `SchoolCenterLink` model and admin | Maps Compiler schools to centres for BMA-NFE teachers |
+| Serializers and resource registry | Builds receiver payloads and translates relations and teacher fields |
+| HTTP client and dispatcher | Authenticates to BMA-NFE, sends events, and records per-event results |
+| Save/delete and related-object signal handlers | Captures supported changes and republishes registration or attendance aggregates |
+| `datasync.deliver_sync_event` and `datasync.flush_sync_outbox` tasks | Provides Celery delivery and scheduled recovery |
+| `datasync` Celery queue, routing, beat schedule, and worker configuration | Allows workers to consume sync work and retry due events |
+| `DATASYNC_*` settings | Controls activation, endpoint, delivery mode, batching, and retries |
+| `datasync_backfill` and `datasync_status` commands | Seeds existing data and reports connectivity and outbox health |
+| Sync-event admin and requeue action | Lets operators inspect failures and retry corrected events |
+
+This is the **sending side** of the integration. Deploying this Compiler
+branch alone does not create the BMA-NFE receiver. The compatible ingest
+endpoint, its authentication, receiver migrations, and required reference
+data must be deployed in BMA-NFE separately.
+
 ## Sync process
 
 1. Django model save/delete signals queue a `SyncEvent` in the outbox.
@@ -46,66 +71,150 @@ CLM/Dirasa attendance, administrative geography, and assessment models with
 no BMA-NFE counterpart are outside this channel. Attachment files are not
 transferred. See the linked guide for the full coverage table.
 
-## Setup
+## Concerns before enabling sync
+
+| Concern | Impact and action |
+| --- | --- |
+| Compiler is the source of truth | Replicated updates can overwrite edits made in BMA-NFE. Agree that replicated records are maintained in Compiler; inspect receiver conflict reports. |
+| Scope includes every partner and round | Activation captures supported model changes across the deployment. The default backfill selects all records, not a partner-specific subset. Confirm that the target is the intended BMA-NFE environment. |
+| Child and service data crosses systems | Payloads include child details and service history. Use HTTPS, keep the token in secret configuration, and verify receiver access is limited to the intended users. |
+| Receiver compatibility and reference data | Missing natural-key matches or unsupported fields can cause rejection or partial representation. Check centre P-codes, round names, school numbers, child identifiers, and receiver contract support. |
+| Teacher mapping is lossy | Map schools to centres before sending teachers. Birthday, assignment, and hours fields are translated; some destination fields have no source. Attachment files stay in Compiler. |
+| Coverage is incomplete by design | Some assessment models and fields have no receiver counterpart. Review the full coverage guide and `ignored_fields`; a sent event does not mean every source field was stored. |
+| Save success does not mean sync success | Thread and Celery delivery are asynchronous. Check the outbox and the corresponding BMA-NFE records rather than using the browser save response as confirmation. |
+| Outages and process restarts | Background work can be interrupted. Keep the retry worker and beat running, monitor pending/failed counts, and investigate abandoned events. |
+| Delivery order and duplicate attempts | The sweep/backfill orders resources by dependency, but separate save-time pushes can run concurrently. Do not assume exactly-once delivery; the receiver must handle repeated events and missing dependencies according to the contract. |
+| Deletes propagate | Deleting a supported Compiler record queues a receiver delete. Backfill republishes existing records; it does not recreate delete events missed while capture was disabled. |
+| Bulk writes can bypass capture | Signal-less updates, bulk operations, and direct SQL need explicit enqueueing or a suitable backfill. Capture failures can be logged without preventing the source save. |
+| Backfill can be large | Preview counts first. Backfill reads record IDs and queues events; sending also flushes other due work. Plan database and receiver capacity, and monitor progress. |
+
+Queued upserts represent the current state at delivery, not an audit history
+of every edit. Normal sync does not perform a full comparison of the two
+databases; validate representative records in BMA-NFE after the initial
+backfill.
+
+## How to start sending data to BMA-NFE
 
 Run Compiler commands below from the repository root in the application's
 configured Python environment.
 
-1. Deploy the compatible BMA-NFE receiver. On **BMA-NFE**, create its sync
-   service account:
+### 1. Prepare the BMA-NFE receiver
 
-   ```bash
-   python manage.py datasync_create_client
-   ```
+Deploy the compatible receiver and apply its migrations using the BMA-NFE
+deployment procedure. Make sure its ingest endpoint is enabled and that
+required administrative geography/reference data is available.
 
-2. Configure **Compiler** using deployment environment variables. Store the
-   token in the deployment's secret configuration.
+On **BMA-NFE**, create the sync service account:
 
-   ```dotenv
-   DATASYNC_ENABLED=True
-   DATASYNC_TARGET_URL=https://<bma-nfe-host>/api/sync/events/
-   DATASYNC_TARGET_TOKEN=<BMA-NFE service-account token>
-   DATASYNC_DELIVERY_MODE=thread
-   ```
+```bash
+python manage.py datasync_create_client
+```
 
-   Sync defaults to disabled. Saves made while disabled are not captured;
-   backfill existing records after enabling it.
+Keep the resulting token for Compiler's secret configuration. This command
+belongs to BMA-NFE, not to this Compiler app.
 
-3. Apply the outbox migration, restart application processes to load the
-   configuration, and check the endpoint:
+### 2. Deploy Compiler and prepare its database
 
-   ```bash
-   python manage.py migrate datasync
-   python manage.py datasync_status
-   ```
+Deploy branch `claude/compiler-bma-nfe-sync-ike6uq` with the application's
+normal dependencies and configuration. Keep sync disabled during preparation:
 
-   Confirm the target is reachable and reports ingest enabled.
+```dotenv
+DATASYNC_ENABLED=False
+DATASYNC_TARGET_URL=https://<bma-nfe-host>/api/sync/events/
+DATASYNC_TARGET_TOKEN=<BMA-NFE service-account token>
+DATASYNC_DELIVERY_MODE=thread
+DATASYNC_VERIFY_TLS=True
+```
 
-4. In Django admin, open **Data replication → School to centre links** and
-   map schools to centres for teacher replication. Teachers without a link
-   are sent without a centre. Teacher fields are translated from the
-   Compiler's Dirasa vocabulary to BMA-NFE's Makani vocabulary.
+Apply the Compiler outbox migration:
 
-5. Run a Celery worker consuming `datasync` and run Celery beat for recovery
-   sweeps:
+```bash
+python manage.py migrate datasync
+```
 
-   ```bash
-   celery -A student_registration.taskapp.celery worker -Q default,datasync --loglevel=info
-   celery -A student_registration.taskapp.celery beat --loglevel=info
-   ```
+Restart application processes to load the deployed code and environment.
+Sync defaults to disabled; records changed while disabled can be republished
+with backfill after activation.
 
-   The branch's worker process already includes the `datasync` queue.
+### 3. Verify connectivity and mappings before sending
 
-6. Preview and then send existing records:
+```bash
+python manage.py datasync_status
+python manage.py datasync_backfill --dry-run
+```
 
-   ```bash
-   python manage.py datasync_backfill --dry-run
-   python manage.py datasync_backfill
-   python manage.py datasync_status
-   ```
+The status command checks connectivity even when Compiler capture is disabled.
+Confirm that the URL is the intended environment, the receiver is reachable,
+and it reports ingest enabled. The dry run reports counts without queueing
+or sending records.
 
-   Backfill queues resources in dependency order and flushes due outbox events,
-   including previously queued work. Normal saves then sync automatically.
+In Django admin, open **Data replication → School to centre links** and map
+schools to centres. Teachers without a link are sent without a centre.
+Verify natural-key reference data in both systems before the first send.
+
+### 4. Start recovery processes and enable sync
+
+Run a worker consuming `datasync` and Celery beat. Under the deployment's
+process manager, the commands are:
+
+```bash
+celery -A student_registration.taskapp.celery worker -Q default,datasync --loglevel=info
+celery -A student_registration.taskapp.celery beat --loglevel=info
+```
+
+The branch's worker process already includes the `datasync` queue. Use the
+deployment's existing beat process rather than starting an additional scheduler.
+
+Set `DATASYNC_ENABLED=True` in Compiler's deployment configuration and restart
+web, worker, and beat processes so they all load the same settings.
+**Supported saves and deletes now start sending automatically**; enabling
+sync does not by itself queue all existing records.
+
+### 5. Send the existing data
+
+For a first check, send a small sample of parent resources:
+
+```bash
+python manage.py datasync_backfill --resource mscc.round --resource locations.center --limit 1
+python manage.py datasync_status
+```
+
+This sends up to one record per selected resource; it is not a partner filter
+and also flushes other due outbox events. Check those records in BMA-NFE.
+For a fresh receiver, send all required parents before testing individual
+registrations or services.
+
+When ready to seed all supported existing data:
+
+```bash
+python manage.py datasync_backfill --dry-run
+python manage.py datasync_backfill
+python manage.py datasync_status
+```
+
+Backfill queues resources in dependency order and sends due events. If the
+receiver is unavailable or dependencies fail, events may be deferred or
+abandoned; inspect the command output and admin rather than treating command
+completion as proof that every record arrived.
+
+### 6. Verify normal use and monitor
+
+Save a supported MSCC registration in Compiler. In **Data replication →
+Sync events**, find its `mscc.registration` event by source ID and confirm it
+becomes `sent`. Check the registration, child profile, services checklist,
+and education history in BMA-NFE. Also verify representative service,
+attendance, and mapped teacher records after backfill.
+
+Continue using Compiler forms normally; there is no separate send button
+required for each save. Monitor failed/abandoned events, conflicts,
+`ignored_fields`, and capture errors in application logs.
+
+If delivery must be paused, disable sync in the deployment configuration and
+restart processes. This stops new capture and scheduled tasks after they load
+the setting; already submitted or in-flight background deliveries may finish.
+Outbox rows remain for later processing. Backfill current records after
+re-enabling to cover updates made during the pause; missed deletions need
+separate reconciliation.
 
 ## Delivery modes
 
