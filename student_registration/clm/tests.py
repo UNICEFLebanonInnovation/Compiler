@@ -1,11 +1,15 @@
 """Tests for the Dirasa (Bridging) child profile ID card."""
 
+from io import BytesIO
+
 import pytest
+from PIL import Image
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from student_registration.clm.bridging_views import bridging_profile_id_card
+from student_registration.clm.bridging_forms import BridgingProfilePictureForm
 from student_registration.schools.models import School
 from student_registration.clm.models import Bridging, Disability
 from student_registration.locations.models import Location, LocationType
@@ -198,3 +202,66 @@ def test_list_page_links_to_bulk_profile_ids(partner_client, registration):
     html = response.content.decode('utf-8')
     assert '/clm/bridging-profile-ids/?school=' in html
     assert 'Generate Profile IDs (PDF)' in html
+
+
+def _profile_picture_upload(name, image_format):
+    content = BytesIO()
+    Image.new('RGB', (1, 1)).save(content, format=image_format)
+    return SimpleUploadedFile(name, content.getvalue())
+
+
+@pytest.mark.parametrize('name,image_format', [
+    ('child.png', 'PNG'),
+    ('child.jpg', 'JPEG'),
+    ('child.jpeg', 'JPEG'),
+    ('child.PNG', 'PNG'),
+    ('child.JPG', 'JPEG'),
+    ('child.JPEG', 'JPEG'),
+])
+def test_profile_picture_accepts_png_and_jpeg(name, image_format):
+    form = BridgingProfilePictureForm(
+        data={}, files={'profile_picture': _profile_picture_upload(name, image_format)},
+    )
+    assert form.is_valid(), form.errors
+
+
+@pytest.mark.parametrize('name,image_format', [
+    ('child.gif', 'GIF'),
+    ('child.bmp', 'BMP'),
+    ('child.jpg', 'GIF'),
+    ('child.png', 'BMP'),
+    ('child.gif', 'PNG'),
+    ('child', 'PNG'),
+])
+def test_profile_picture_rejects_other_extensions_and_image_formats(name, image_format):
+    form = BridgingProfilePictureForm(
+        data={}, files={'profile_picture': _profile_picture_upload(name, image_format)},
+    )
+    assert not form.is_valid()
+    assert 'profile_picture' in form.errors
+
+
+def test_profile_picture_rejects_non_image_content():
+    form = BridgingProfilePictureForm(
+        data={}, files={'profile_picture': SimpleUploadedFile('child.jpg', b'not an image')},
+    )
+    assert not form.is_valid()
+    assert 'profile_picture' in form.errors
+
+
+def test_profile_picture_can_keep_or_clear_existing_picture():
+    instance = Bridging(profile_picture='existing/child.gif')
+    keep = BridgingProfilePictureForm(data={}, files={}, instance=instance)
+    assert keep.is_valid(), keep.errors
+    assert keep.cleaned_data['profile_picture'].name == 'existing/child.gif'
+
+    clear = BridgingProfilePictureForm(
+        data={'profile_picture-clear': 'on'}, files={}, instance=instance,
+    )
+    assert clear.is_valid(), clear.errors
+    assert clear.cleaned_data['profile_picture'] is False
+
+
+def test_profile_picture_file_picker_limits_formats():
+    field = BridgingProfilePictureForm().fields['profile_picture']
+    assert field.widget.attrs['accept'] == '.png,.jpg,.jpeg,image/png,image/jpeg'
