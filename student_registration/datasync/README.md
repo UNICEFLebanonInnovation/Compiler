@@ -98,6 +98,20 @@ backfill.
 Run Compiler commands below from the repository root in the application's
 configured Python environment.
 
+The requested BMA-NFE target is
+[https://leb-container-test-sector-api.azurewebsites.net/](https://leb-container-test-sector-api.azurewebsites.net/).
+Compiler needs the full sync endpoint, not only the site's root URL:
+
+```text
+https://leb-container-test-sector-api.azurewebsites.net/api/sync/events/
+```
+
+This path follows the sync contract described in this repository. Verify that
+the compatible receiver is deployed at this host with `datasync_status`
+before sending. Adding the URL to this README does not update a running
+deployment or send records; apply the environment configuration below and
+complete the activation steps.
+
 ### 1. Prepare the BMA-NFE receiver
 
 Deploy the compatible receiver and apply its migrations using the BMA-NFE
@@ -120,7 +134,7 @@ normal dependencies and configuration. Keep sync disabled during preparation:
 
 ```dotenv
 DATASYNC_ENABLED=False
-DATASYNC_TARGET_URL=https://<bma-nfe-host>/api/sync/events/
+DATASYNC_TARGET_URL=https://leb-container-test-sector-api.azurewebsites.net/api/sync/events/
 DATASYNC_TARGET_TOKEN=<BMA-NFE service-account token>
 DATASYNC_DELIVERY_MODE=thread
 DATASYNC_VERIFY_TLS=True
