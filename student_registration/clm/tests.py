@@ -196,8 +196,19 @@ def test_bulk_profile_ids_requires_login(client):
     assert response['Location'] == '/?next=/clm/bridging-profile-ids/'
 
 
-def test_list_page_links_to_bulk_profile_ids(partner_client, registration):
+def test_list_page_hides_bulk_profile_ids_from_non_superuser(partner_client, registration):
     response = partner_client.get('/clm/bridging-list/?school={}'.format(registration.school_id or ''))
+    assert response.status_code == 200
+    html = response.content.decode('utf-8')
+    assert '/clm/bridging-profile-ids/' not in html
+    assert 'Generate Profile IDs (PDF)' not in html
+
+
+def test_list_page_links_to_bulk_profile_ids_for_superuser(partner_client, registration):
+    user = get_user_model().objects.get(username='save')
+    user.is_superuser = True
+    user.save()
+    response = partner_client.get('/clm/bridging-list/?school=')
     assert response.status_code == 200
     html = response.content.decode('utf-8')
     assert '/clm/bridging-profile-ids/?school=' in html
