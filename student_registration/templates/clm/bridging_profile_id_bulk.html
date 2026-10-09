@@ -3,21 +3,29 @@
 <head>
   <meta charset="utf-8">
   <title>{% trans "Bridging Profile IDs" %}</title>
-  {% include "clm/includes/bridging_profile_id_style.html" %}
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    @page { size: A4; margin: 10mm; }
-    body { padding: 16px; background: white; }
-    @media print { body { padding: 0; } }
-    .sheet { break-inside: avoid; page-break-inside: avoid; }
-    .photo { position: absolute; }
-    .toolbar { max-width: 900px; }
-    @media print { .toolbar { display: none; } }
-    .sheet { margin: 0 0 5mm; break-after: auto; page-break-after: auto; }
-    .card { height: auto; min-height: 120mm; padding: 5mm; box-shadow: none; }
-    .photo { top: 5mm; left: 5mm; width: 32mm; height: 30mm; }
-    .details { margin-top: 28mm; font-size: 14px; line-height: 1.5; }
-    .details .title { font-size: 18px; }
-    .details .subtitle { font-size: 12px; }
+    * { box-sizing: border-box; }
+    @page { size: A4 portrait; margin: 10mm; }
+    body { margin: 0; padding: 16px; color: #000; background: #fff; font-family: Arial, sans-serif; }
+    .toolbar { max-width: 190mm; margin: 0 auto 16px; font-size: 14px; }
+    .toolbar button { padding: 8px 12px; cursor: pointer; }
+    .hint { margin-left: 8px; }
+    .document-title { max-width: 190mm; margin: 0 auto 5mm; text-align: center; font-size: 11pt; }
+    .sheet { max-width: 190mm; margin: 0 auto 2mm; break-inside: avoid; page-break-inside: avoid; }
+    .profile-row { display: flex; align-items: center; gap: 3mm; padding: 2mm; border: 1px solid #000; }
+    .photo { flex: 0 0 18mm; width: 18mm; height: 20mm; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 7pt; border: 1px solid #aaa; overflow: hidden; }
+    .photo img { width: 100%; height: 100%; object-fit: contain; }
+    .profile-details { flex: 1; min-width: 0; font-size: 9pt; line-height: 1.6; }
+    .profile-line { display: flex; flex-wrap: wrap; column-gap: 3mm; }
+    .profile-line span { overflow-wrap: anywhere; }
+    .profile-line .name { flex: 1; min-width: 35mm; text-align: right; }
+    @media print {
+      body { padding: 0; }
+      .toolbar { display: none; }
+      .sheet { max-width: none; }
+      .document-title { max-width: none; }
+    }
   </style>
 </head>
 <body>
@@ -25,9 +33,38 @@
     <button type="button" class="btn" id="print-profiles">{% trans "Print / Save as PDF" %}</button>
     <span class="hint">{% trans 'Choose "Save as PDF" in the print dialog to download this list.' %}</span>
   </div>
+  <h1 class="document-title" dir="rtl">الامتحان الاستثنائي لطلاب التعليم الغير نظامي</h1>
   {% for item in cards %}
     <div class="sheet">
-      {% include "clm/includes/bridging_profile_id_card.html" with bridging=item.bridging card=item.card %}
+      <div class="profile-row" data-registration-id="{{ item.bridging.pk }}">
+        <div class="photo">
+          {% if item.card.has_picture %}
+            <img src="{% if item.card.picture_data %}{{ item.card.picture_data }}{% else %}{% url 'clm:bridging_profile_picture_file' item.bridging.pk %}{% endif %}"
+                 alt="{{ item.card.full_name }}"
+                 onerror="this.hidden=true; this.nextElementSibling.hidden=false;">
+            <span hidden>{% trans "No photo available" %}</span>
+          {% else %}
+            <span>{% trans "No photo available" %}</span>
+          {% endif %}
+        </div>
+        <div class="profile-details">
+          <div class="profile-line">
+            <span><strong>{{ item.card.round }}</strong></span>
+            <span>ID: {{ item.card.id }}</span>
+            <span>NGO: {{ item.card.ngo }}</span>
+            <span class="name" dir="rtl"><strong>الاسم الثلاثي:</strong> {{ item.card.full_name }}</span>
+          </div>
+          <div class="profile-line">
+            <span>Date of Birth: {{ item.card.birthday }}</span>
+            <span>Place of Birth: {{ item.card.place_of_birth }}</span>
+            <span>Nationality: {{ item.card.nationality }}</span>
+          </div>
+          <div class="profile-line">
+            <span>Governorate: {{ item.card.governorate }}</span>
+            <span>Physical difficulties: {{ item.card.physical_difficulties }}</span>
+          </div>
+        </div>
+      </div>
     </div>
   {% endfor %}
   <script>
