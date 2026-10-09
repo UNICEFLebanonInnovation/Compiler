@@ -8,6 +8,10 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         build-essential \
         libpq-dev \
+        libpango-1.0-0 \
+        libpangoft2-1.0-0 \
+        libharfbuzz-subset0 \
+        fonts-dejavu-core \
         curl && \
     apt-get install -y --no-install-recommends \
         openssh-server --option=Dpkg::Options::="--force-confdef" \
