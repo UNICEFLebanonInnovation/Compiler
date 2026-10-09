@@ -188,7 +188,15 @@ class PlaceholderFilterSet(FilterSet):
         self.form.helper.layout = Layout(
             *all_fields,
             ButtonHolder(Submit("submit", "Filter", css_class="btn btn-primary"),
-                         HTML('<a href="javascript:void(0);"  title="Download" class="btn btn-success download-report" onclick="checkRoundBeforeExport(event)">Export</a>')
+                         HTML('<a href="javascript:void(0);"  title="Download" class="btn btn-success download-report" onclick="checkRoundBeforeExport(event)">Export</a>'),
+                         HTML("""{% load i18n %}
+{% if request.user.is_superuser %}
+<a href="{% url 'clm:bridging_profile_id_bulk' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}"
+   target="_blank" rel="noopener" class="btn-icon btn btn-primary"
+   title="{% trans 'Generate one PDF with a profile ID page for every child in the current list' %}">
+  <i class="fa fa-id-card btn-icon-wrapper"> </i>{% trans "Generate Profile IDs (PDF)" %}</a>
+{% endif %}
+""")
             )
         )
         for name, field in self.form.fields.items():
