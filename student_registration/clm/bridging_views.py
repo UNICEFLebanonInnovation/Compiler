@@ -518,7 +518,10 @@ class BridgingBulkProfileIdView(LoginRequiredMixin, GroupRequiredMixin, View):
             return HttpResponseBadRequest('Please select a valid round before exporting profile IDs.')
         get_object_or_404(CLMRound, pk=round_id)
         cards = []
-        for bridging in self.get_registrations(round_id).iterator():
+        # Finish the database query before opening photos in remote storage.
+        # A server-side iterator can time out between fetches while photos load.
+        registrations = list(self.get_registrations(round_id))
+        for bridging in registrations:
             card = bridging_profile_id_card(bridging)
             if card['has_picture']:
                 try:

@@ -293,3 +293,29 @@ def test_picture_endpoint_returns_404_for_storage_failure(bridging_client, regis
     monkeypatch.setattr(ImageFieldFile, 'open', fail_open)
     response = bridging_client.get('/clm/bridging-profile-picture/{}/image/'.format(registration.pk))
     assert response.status_code == 404
+
+
+def test_bulk_profile_ids_finishes_query_before_reading_photos(profile_export_client, registration, monkeypatch):
+    from student_registration.clm.bridging_views import BridgingBulkProfileIdView
+    from django.db.models.fields.files import ImageFieldFile
+    registration.profile_picture = 'missing/child.png'
+    query_state = {'complete': False, 'photo_reads': 0}
+
+    class Registrations:
+        def __iter__(self):
+            yield registration
+            yield registration
+            query_state['complete'] = True
+
+    def read_photo(*args, **kwargs):
+        assert query_state['complete'], 'Photo storage accessed while database results are pending'
+        query_state['photo_reads'] += 1
+        raise FileNotFoundError('missing')
+
+    monkeypatch.setattr(BridgingBulkProfileIdView, 'get_registrations',
+                        lambda self, round_id: Registrations())
+    monkeypatch.setattr(ImageFieldFile, 'open', read_photo)
+    response = profile_export_client.get('/clm/bridging-profile-ids/', {'round': registration.round_id})
+    assert response.status_code == 200
+    assert query_state['photo_reads'] == 2
+    assert response.content.decode('utf-8').count('class="sheet"') == 2
