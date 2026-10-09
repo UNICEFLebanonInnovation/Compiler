@@ -483,6 +483,66 @@ class BridgingProfileIdView(LoginRequiredMixin,
         return context
 
 
+
+class BridgingBulkProfileIdView(LoginRequiredMixin, GroupRequiredMixin, View):
+    """Download profile IDs for the selected round, with Export's access scope."""
+    group_required = [u"CLM_Bridging"]
+
+    def get_registrations(self, round_id):
+        user = self.request.user
+        queryset = Bridging.objects.filter(round_id=round_id, deleted=False)
+        if not has_group(user, 'CLM_BRIDGING_ALL') and not user.is_staff:
+            if user.partner:
+                queryset = queryset.filter(partner_id=user.partner_id)
+                if user.school:
+                    queryset = queryset.filter(school_id=user.school_id)
+            else:
+                queryset = queryset.none()
+        return queryset.select_related(
+            'student', 'student__nationality', 'round', 'partner',
+            'governorate', 'disability',
+        ).order_by('student__first_name', 'student__father_name', 'student__last_name')
+
+    def get(self, request, *args, **kwargs):
+        from base64 import b64encode
+        from PIL import Image
+        from django.template.loader import render_to_string
+        from weasyprint import HTML
+
+        round_id = request.GET.get('round', '')
+        if not round_id.isdecimal():
+            return HttpResponseBadRequest('Please select a valid round before exporting profile IDs.')
+        get_object_or_404(CLMRound, pk=round_id)
+        cards = []
+        for bridging in self.get_registrations(round_id).iterator():
+            card = bridging_profile_id_card(bridging)
+            if card['has_picture']:
+                try:
+                    with bridging.profile_picture.open('rb') as picture:
+                        with Image.open(picture) as image:
+                            image.thumbnail((360, 320))
+                            output = io.BytesIO()
+                            image.convert('RGB').save(output, format='PNG')
+                    card['picture_data'] = 'data:image/png;base64,' + b64encode(output.getvalue()).decode('ascii')
+                except (OSError, ValueError):
+                    logging.warning('Unable to read profile picture for Bridging %s', bridging.pk)
+                    card['has_picture'] = False
+            cards.append({'bridging': bridging, 'card': card})
+        if not cards:
+            return HttpResponse('No bridging records found for the selected round.', status=404)
+        html = render_to_string('clm/bridging_profile_id_bulk.html', {'cards': cards})
+        # All pictures are embedded; the PDF renderer must never fetch remote URLs.
+        def embedded_resources_only(url, *args, **kwargs):
+            from weasyprint import default_url_fetcher
+            if not url.startswith('data:image/png;base64,'):
+                raise ValueError('External PDF resources are not allowed')
+            return default_url_fetcher(url, *args, **kwargs)
+        pdf = HTML(string=html, url_fetcher=embedded_resources_only).write_pdf()
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="bridging-profile-ids-round-{}.pdf"'.format(round_id)
+        return response
+
+
 class ExportStorage(AzureStorage):
     """Azure storage backend dedicated for exported files."""
     location = "export"

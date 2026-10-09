@@ -1,0 +1,25 @@
+{% load i18n %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{% trans "Bridging Profile IDs" %}</title>
+  {% include "clm/includes/bridging_profile_id_style.html" %}
+  <style>
+    @page { size: A4; margin: 10mm; }
+    body { padding: 0; background: white; }
+    .sheet { margin: 0 0 5mm; break-after: auto; page-break-after: auto; }
+    .card { height: auto; min-height: 120mm; padding: 5mm; box-shadow: none; }
+    .photo { top: 5mm; left: 5mm; width: 32mm; height: 30mm; }
+    .details { margin-top: 28mm; font-size: 14px; line-height: 1.5; }
+    .details .title { font-size: 18px; }
+    .details .subtitle { font-size: 12px; }
+  </style>
+</head>
+<body>
+  {% for item in cards %}
+    <div class="sheet">
+      {% include "clm/includes/bridging_profile_id_card.html" with bridging=item.bridging card=item.card %}
+    </div>
+  {% endfor %}
+</body>
+</html>

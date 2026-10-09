@@ -119,6 +119,9 @@
 {% endif %}
 {% endif %}
 
+<a href="#" onclick="checkRoundBeforeExport(event)" class="download-report btn-icon btn btn-success"><i class="fa fa-download btn-icon-wrapper"></i>{% trans "Export" %}</a>
+<button type="button" onclick="generateProfileIds(event)" class="btn-icon btn btn-primary"><i class="fa fa-id-card btn-icon-wrapper"></i>{% trans "Generate Profile IDs (PDF)" %}</button>
+<span class="downloading-message" style="display: none;">{% trans "Preparing export..." %}</span>
                         </div>
                         </div>
 </div>
@@ -181,6 +184,16 @@
         var user_token = '{{ user_token }}';
         var href_full_path = '{{ request.build_absolute_uri }}';
         var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
+
+        function generateProfileIds(event) {
+            event.preventDefault();
+            var round = $("#id_round").val();
+            if (!round) {
+                alert("Round is not selected. Please select a round before exporting data.");
+                return;
+            }
+            window.open("{% url 'clm:bridging_profile_id_bulk' %}?round=" + encodeURIComponent(round), "_blank", "noopener");
+        }
 
         function checkRoundBeforeExport(event) {
             event.preventDefault();
