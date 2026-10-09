@@ -261,3 +261,35 @@ def test_bulk_profile_ids_school_scope(profile_export_client, registration):
     assert list(view.get_registrations(registration.round_id)) == [registration]
     user.is_staff = True
     assert view.get_registrations(registration.round_id).count() == 2
+
+
+@pytest.mark.parametrize('error', [FileNotFoundError('missing'), OSError('unreadable'), RuntimeError('storage unavailable')])
+def test_bulk_profile_ids_continues_after_picture_failure(profile_export_client, registration, monkeypatch, error):
+    from django.db.models.fields.files import ImageFieldFile
+    registration.profile_picture = 'missing/child.png'
+    registration.save()
+    another = Bridging.objects.create(student=registration.student, round=registration.round,
+                                      partner=registration.partner)
+    def fail_open(*args, **kwargs):
+        raise error
+    monkeypatch.setattr(ImageFieldFile, 'open', fail_open)
+    response = profile_export_client.get('/clm/bridging-profile-ids/', {'round': registration.round_id})
+    assert response.status_code == 200
+    html = response.content.decode('utf-8')
+    assert 'data-registration-id="{}"'.format(registration.pk) in html
+    assert 'data-registration-id="{}"'.format(another.pk) in html
+    assert 'No photo available' in html
+    assert '/clm/bridging-profile-picture/{}/image/'.format(registration.pk) not in html
+    assert 'Print / Save as PDF' in html
+
+
+@pytest.mark.parametrize('error', [FileNotFoundError('missing'), RuntimeError('storage unavailable')])
+def test_picture_endpoint_returns_404_for_storage_failure(bridging_client, registration, monkeypatch, error):
+    from django.db.models.fields.files import ImageFieldFile
+    registration.profile_picture = 'missing/child.png'
+    registration.save()
+    def fail_open(*args, **kwargs):
+        raise error
+    monkeypatch.setattr(ImageFieldFile, 'open', fail_open)
+    response = bridging_client.get('/clm/bridging-profile-picture/{}/image/'.format(registration.pk))
+    assert response.status_code == 404

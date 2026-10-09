@@ -409,8 +409,14 @@ class BridgingProfilePictureFileView(LoginRequiredMixin,
             raise Http404("Profile picture not found")
 
         content_type = mimetypes.guess_type(bridging.profile_picture.name)[0]
+        try:
+            picture = bridging.profile_picture.open('rb')
+        except Exception:
+            # Storage backends can raise their own missing-file/network exceptions.
+            logging.warning('Unable to open profile picture for Bridging %s', bridging.pk)
+            raise Http404("Profile picture not found")
         return FileResponse(
-            bridging.profile_picture.open('rb'),
+            picture,
             content_type=content_type or 'application/octet-stream',
         )
 
@@ -522,7 +528,8 @@ class BridgingBulkProfileIdView(LoginRequiredMixin, GroupRequiredMixin, View):
                             output = io.BytesIO()
                             image.convert('RGB').save(output, format='PNG')
                     card['picture_data'] = 'data:image/png;base64,' + b64encode(output.getvalue()).decode('ascii')
-                except (OSError, ValueError):
+                except Exception:
+                    # A photo failure must not prevent exporting the remaining profiles.
                     logging.warning('Unable to read profile picture for Bridging %s', bridging.pk)
                     card['has_picture'] = False
             cards.append({'bridging': bridging, 'card': card})

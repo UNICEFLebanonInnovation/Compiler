@@ -4,9 +4,10 @@ One Dirasa child profile ID card. Expects `card` (from bridging_profile_id_card)
 <div class="card" id="profile-id-card-{{ bridging.pk }}" data-registration-id="{{ bridging.pk }}">
   <div class="photo">
     {% if card.has_picture %}
-      <img src="{% if card.picture_data %}{{ card.picture_data }}{% else %}{% url 'clm:bridging_profile_picture_file' bridging.pk %}{% endif %}" alt="{{ card.full_name }}">
+      <img src="{% if card.picture_data %}{{ card.picture_data }}{% else %}{% url 'clm:bridging_profile_picture_file' bridging.pk %}{% endif %}" alt="{{ card.full_name }}" onerror="this.hidden=true; this.nextElementSibling.hidden=false;">
+      <span hidden>No photo available</span>
     {% else %}
-      picture
+      No photo available
     {% endif %}
   </div>
   <div class="details">
