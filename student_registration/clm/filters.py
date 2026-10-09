@@ -185,12 +185,21 @@ class PlaceholderFilterSet(FilterSet):
         # self.form.helper.add_input(Submit("submit", "Filter"))
         # self.form.helper.add_input(Rest("Rest", "Cancel"))
         all_fields = list(self.form.fields)  # -> ['type', 'partner', 'round', ...]
-        self.form.helper.layout = Layout(
-            *all_fields,
-            ButtonHolder(Submit("submit", "Filter", css_class="btn btn-primary"),
-                         HTML('<a href="javascript:void(0);"  title="Download" class="btn btn-success download-report" onclick="checkRoundBeforeExport(event)">Export</a>')
-            )
+        actions = ButtonHolder(
+            Submit("submit", "Filter", css_class="btn btn-primary"),
+            HTML('<a href="javascript:void(0);"  title="Download" class="btn btn-success download-report" onclick="checkRoundBeforeExport(event)">Export</a>'),
         )
+        if self._meta.model is Bridging:
+            actions.append(HTML("""{% load i18n %}
+{% if request.user.is_superuser %}
+<a href="{% url 'clm:bridging_profile_id_bulk' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}"
+   target="_blank" rel="noopener" class="btn-icon btn btn-primary"
+   onclick="checkRoundBeforeProfileIds(event)"
+   title="{% trans 'Download profile IDs with photos for the selected round' %}">
+  <i class="fa fa-id-card btn-icon-wrapper"> </i>{% trans "Generate Profile IDs (PDF)" %}</a>
+{% endif %}
+"""))
+        self.form.helper.layout = Layout(*all_fields, actions)
         for name, field in self.form.fields.items():
             label = field.label or name.replace('_', ' ').title()
             field.label = ''

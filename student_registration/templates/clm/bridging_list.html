@@ -119,8 +119,6 @@
 {% endif %}
 {% endif %}
 
-<a href="#" onclick="checkRoundBeforeExport(event)" class="download-report btn-icon btn btn-success"><i class="fa fa-download btn-icon-wrapper"></i>{% trans "Export" %}</a>
-<button type="button" onclick="generateProfileIds(event)" class="btn-icon btn btn-primary"><i class="fa fa-id-card btn-icon-wrapper"></i>{% trans "Generate Profile IDs (PDF)" %}</button>
 <span class="downloading-message" style="display: none;">{% trans "Preparing export..." %}</span>
                         </div>
                         </div>
@@ -185,7 +183,7 @@
         var href_full_path = '{{ request.build_absolute_uri }}';
         var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
 
-        function generateProfileIds(event) {
+        function checkRoundBeforeProfileIds(event) {
             event.preventDefault();
             var round = $("#id_round").val();
             if (!round) {
