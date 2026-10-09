@@ -182,19 +182,6 @@
         var href_full_path = '{{ request.build_absolute_uri }}';
         var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
 
-        function checkRoundBeforeProfileIds(event) {
-            var round = $("#id_round").val();
-            if (!round) {
-                event.preventDefault();
-                alert("Round is not selected. Please select a round before generating profile IDs.");
-                return;
-            }
-
-            var url = new URL(event.currentTarget.href, window.location.href);
-            url.searchParams.set("round", round);
-            event.currentTarget.href = url.toString();
-        }
-
         function checkRoundBeforeExport(event) {
             event.preventDefault();
 
