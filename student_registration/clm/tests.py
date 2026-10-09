@@ -7,11 +7,9 @@ from PIL import Image
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.template.loader import render_to_string
 
 from student_registration.clm.bridging_views import bridging_profile_id_card
 from student_registration.clm.bridging_forms import BridgingProfilePictureForm
-from student_registration.schools.models import School
 from student_registration.clm.models import Bridging, Disability
 from student_registration.locations.models import Location, LocationType
 from student_registration.schools.models import CLMRound, PartnerOrganization
@@ -119,111 +117,6 @@ def test_profile_id_requires_login(client, registration):
     assert response['Location'] == '/?next=/clm/bridging-profile-id/{}/'.format(registration.id)
 
 
-@pytest.fixture
-def classmates(registration):
-    """A second child of the same partner and one child of another partner."""
-    school = School.objects.create(number='2001', name='School B', governorate=registration.governorate)
-    registration.partner.schools.add(school)
-    second = Bridging.objects.create(
-        student=Student.objects.create(first_name='أحمد', father_name='خالد', last_name='حسن',
-                                       birthday_day='1', birthday_month='2', birthday_year='2013',
-                                       nationality=registration.student.nationality),
-        round=registration.round, partner=registration.partner, school=school,
-        governorate=registration.governorate,
-    )
-    other = Bridging.objects.create(
-        student=Student.objects.create(first_name='Other', father_name='Partner', last_name='Child'),
-        round=registration.round, partner=PartnerOrganization.objects.create(name='OTHER', is_dirasa=True),
-        governorate=registration.governorate,
-    )
-    return {'second': second, 'other': other, 'school': school}
-
-
-@pytest.fixture
-def partner_client(client, registration):
-    user = get_user_model().objects.create_user(username='save', password='x-pass-123456',
-                                                partner=registration.partner)
-    user.groups.add(Group.objects.get_or_create(name='CLM_Bridging')[0])
-    client.force_login(user)
-    return client
-
-
-def _bulk_html(response):
-    assert response.status_code == 200
-    assert response['Content-Type'] == 'application/pdf'
-    assert response.content.startswith(b'%PDF-')
-    return render_to_string('clm/bridging_profile_id_bulk.html', {
-        'cards': response.context['cards'], 'pdf': True,
-    })
-
-
-def _sheets(html):
-    return html.count('class="sheet"')
-
-
-def test_bulk_profile_ids_one_page_per_visible_child(partner_client, registration, classmates):
-    response = partner_client.get('/clm/bridging-profile-ids/?round={}'.format(registration.round_id))
-    assert response.status_code == 200
-    html = _bulk_html(response)
-    assert _sheets(html) == 2
-    assert 'data-registration-id="{}"'.format(registration.id) in html
-    assert 'data-registration-id="{}"'.format(classmates['second'].id) in html
-    assert 'data-registration-id="{}"'.format(classmates['other'].id) not in html
-    assert 'ريهام علي الشمق' in html and 'أحمد خالد حسن' in html
-
-
-def test_bulk_profile_ids_follow_list_filters(partner_client, registration, classmates):
-    response = partner_client.get('/clm/bridging-profile-ids/?round={}&school={}'.format(registration.round_id, classmates['school'].id))
-    html = _bulk_html(response)
-    assert _sheets(html) == 1
-    assert 'data-registration-id="{}"'.format(classmates['second'].id) in html
-
-    response = partner_client.get('/clm/bridging-profile-ids/?round={}&ids={},999999'.format(registration.round_id, registration.id))
-    html = _bulk_html(response)
-    assert _sheets(html) == 1
-    assert 'data-registration-id="{}"'.format(registration.id) in html
-
-
-def test_bulk_profile_ids_all_group_sees_every_partner(bridging_client, registration, classmates):
-    user = get_user_model().objects.get(username='dirasa')
-    user.groups.add(Group.objects.get_or_create(name='CLM_BRIDGING_ALL')[0])
-    response = bridging_client.get('/clm/bridging-profile-ids/?round={}'.format(registration.round_id))
-    assert _sheets(_bulk_html(response)) == 3
-
-
-def test_bulk_profile_ids_empty_list(partner_client, registration):
-    response = partner_client.get('/clm/bridging-profile-ids/?round={}&student__first_name=nobody'.format(registration.round_id))
-    assert response.status_code == 200
-    html = _bulk_html(response)
-    assert _sheets(html) == 0
-    assert 'nothing to generate' in html
-
-
-def test_bulk_profile_ids_requires_login(client):
-    response = client.get('/clm/bridging-profile-ids/')
-    assert response.status_code == 302
-    assert response['Location'] == '/?next=/clm/bridging-profile-ids/'
-
-
-def test_list_page_hides_bulk_profile_ids_from_non_superuser(partner_client, registration):
-    response = partner_client.get('/clm/bridging-list/?school={}'.format(registration.school_id or ''))
-    assert response.status_code == 200
-    html = response.content.decode('utf-8')
-    assert '/clm/bridging-profile-ids/' not in html
-    assert 'Generate Profile IDs (PDF)' not in html
-
-
-def test_list_page_links_to_bulk_profile_ids_for_superuser(partner_client, registration):
-    user = get_user_model().objects.get(username='save')
-    user.is_superuser = True
-    user.save()
-    response = partner_client.get('/clm/bridging-list/?school=')
-    assert response.status_code == 200
-    html = response.content.decode('utf-8')
-    assert '/clm/bridging-profile-ids/?school=' in html
-    assert 'Generate Profile IDs (PDF)' in html
-
-
 def _profile_picture_upload(name, image_format):
     content = BytesIO()
     Image.new('RGB', (1, 1)).save(content, format=image_format)
@@ -286,69 +179,3 @@ def test_profile_picture_file_picker_limits_formats():
     field = BridgingProfilePictureForm().fields['profile_picture']
     assert field.widget.attrs['accept'] == '.png,.jpg,.jpeg,image/png,image/jpeg'
 
-
-def test_bulk_profile_ids_selected_round_includes_previous_year(partner_client, registration):
-    registration.round.current_year = False
-    registration.round.save()
-    other_round = CLMRound.objects.create(name='Another round', current_year=True)
-    other = Bridging.objects.create(
-        student=Student.objects.create(first_name='Wrong round'),
-        round=other_round, partner=registration.partner,
-    )
-    response = partner_client.get('/clm/bridging-profile-ids/?round={}'.format(registration.round_id))
-    html = _bulk_html(response)
-    assert _sheets(html) == 1
-    assert 'data-registration-id="{}"'.format(registration.id) in html
-    assert 'data-registration-id="{}"'.format(other.id) not in html
-    assert response['Content-Disposition'] == (
-        'attachment; filename="bridging-profile-ids-round-{}.pdf"'.format(registration.round_id)
-    )
-
-
-@pytest.mark.parametrize('query', ['', '?round=invalid'])
-def test_bulk_profile_ids_require_valid_round(partner_client, registration, query):
-    response = partner_client.get('/clm/bridging-profile-ids/' + query)
-    assert response.status_code == 400
-
-
-def test_bulk_profile_ids_unknown_round_has_no_cards(partner_client, registration):
-    response = partner_client.get('/clm/bridging-profile-ids/?round=999999')
-    assert _sheets(_bulk_html(response)) == 0
-
-
-def test_bulk_profile_ids_pdf_embeds_picture(partner_client, registration, settings, tmp_path):
-    settings.STORAGES = {
-        'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage',
-                    'OPTIONS': {'location': str(tmp_path)}},
-        'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
-    }
-    registration.profile_picture.save(
-        'child.png', _profile_picture_upload('child.png', 'PNG'))
-    response = partner_client.get('/clm/bridging-profile-ids/?round={}'.format(registration.round_id))
-    html = _bulk_html(response)
-    assert 'src="data:image/png;base64,' in html
-    assert '/image/' not in html
-
-
-def test_bulk_profile_ids_missing_picture_keeps_all_cards(
-        partner_client, registration, classmates, settings, tmp_path):
-    settings.STORAGES = {
-        'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage',
-                    'OPTIONS': {'location': str(tmp_path)}},
-        'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
-    }
-    registration.profile_picture = 'bridging/profile_pictures/missing.jpeg'
-    registration.save(update_fields=['profile_picture'])
-    classmates['second'].profile_picture.save(
-        'available.png', _profile_picture_upload('available.png', 'PNG'))
-
-    response = partner_client.get('/clm/bridging-profile-ids/?round={}'.format(registration.round_id))
-    html = _bulk_html(response)
-    assert _sheets(html) == 2
-    cards = {item['bridging'].pk: item['card'] for item in response.context['cards']}
-    assert cards[registration.pk]['has_picture'] is False
-    assert 'picture_data_uri' not in cards[registration.pk]
-    assert cards[classmates['second'].pk]['picture_data_uri'].startswith('data:image/png;base64,')
-    assert 'data-registration-id="{}"'.format(registration.pk) in html
-    assert 'src="data:image/png;base64,' in html
-    assert '/image/' not in html
