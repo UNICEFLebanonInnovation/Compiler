@@ -1,0 +1,24 @@
+{% load i18n %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BMA | {% trans "Profile ID" %} - {{ card.full_name }}</title>
+  {% include "clm/includes/bridging_profile_id_style.html" %}
+</head>
+<body>
+  <div class="toolbar">
+    <button type="button" class="btn" onclick="window.print()">{% trans "Print / Save as PDF" %}</button>
+    <a class="btn secondary" href="{% url 'mscc:profile_picture' object.pk %}">{% trans "Profile Picture" %}</a>
+    <a class="btn secondary" href="{% url 'mscc:list' %}">{% trans "MSCC List" %}</a>
+    <span class="spacer"></span>
+    {% if not card.has_picture %}
+      <span class="hint">{% trans "No profile picture has been uploaded for this child." %}</span>
+    {% endif %}
+  </div>
+
+  <div class="sheet">
+    {% include "mscc/includes/profile_id_card.html" with registration=object card=card %}
+  </div>
+</body>
+</html>

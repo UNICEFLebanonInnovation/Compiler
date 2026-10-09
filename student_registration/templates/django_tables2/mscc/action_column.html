@@ -11,6 +11,16 @@
         <a type="button" href="{% url 'mscc:child_profile' record.id %}" tabindex="0" class="dropdown-item">
           <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-contact btn-icon-wrapper"> </i></button>
           {% trans "View Profile" %}</a>
+        <a href="{% url 'mscc:profile_id' record.id %}" tabindex="0" class="dropdown-item" target="_blank" rel="noopener">
+          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="fa fa-id-card"></i></button>
+          {% trans "Profile ID" %}
+        </a>
+        {% if not user.partner or not user.partner.is_world_learning %}
+        <a href="{% url 'mscc:profile_picture' record.id %}" tabindex="0" class="dropdown-item">
+          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="fa fa-image"></i></button>
+          {% trans "Profile Picture" %}
+        </a>
+        {% endif %}
        {% if user|has_group:"MSCC_CENTER" and  user.center %}
         <a type="button" href="{% url 'mscc:child_edit' record.id %}" tabindex="0" class="dropdown-item">
           <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-create btn-icon-wrapper"> </i></button>
@@ -203,4 +213,3 @@
 
     </div>
 </div>
-

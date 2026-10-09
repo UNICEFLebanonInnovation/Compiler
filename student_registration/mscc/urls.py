@@ -2,11 +2,16 @@ from __future__ import absolute_import, unicode_literals
 
 from django.urls import re_path
 
+from . import profile_views
 from . import views, education_view, services_view, attendance_views
 
 app_name = 'mscc'
 
 urlpatterns = [
+    re_path(r'^profile-picture/(?P<pk>\d+)/$', profile_views.ProfilePictureView.as_view(), name='profile_picture'),
+    re_path(r'^profile-picture/(?P<pk>\d+)/file/$', profile_views.ProfilePictureFileView.as_view(), name='profile_picture_file'),
+    re_path(r'^profile-id/(?P<pk>\d+)/$', profile_views.ProfileIdView.as_view(), name='profile_id'),
+
 
     re_path(
         r'^public-school-lookup/$',

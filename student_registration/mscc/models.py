@@ -169,6 +169,12 @@ class Registration(TimeStampedModel):
         on_delete=models.SET_NULL,
         verbose_name=_('Child')
     )
+    profile_picture = models.ImageField(
+        upload_to='mscc/profile_pictures/',
+        blank=True,
+        null=True,
+        verbose_name=_('Profile Picture'),
+    )
     child_outreach = models.IntegerField(blank=True, null=True)
     student_old = models.IntegerField(blank=True, null=True)
     partner = models.ForeignKey(
