@@ -2,6 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import json
+import base64
 from datetime import datetime
 
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View, DetailView
@@ -29,6 +30,7 @@ from django.views.generic.detail import SingleObjectMixin
 from django.db.models import Q, Sum, Avg, F, Func, When
 from django.urls import reverse
 from django.shortcuts import render, get_object_or_404
+from django.template.loader import render_to_string
 
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
@@ -149,12 +151,12 @@ class BridgingPage(LoginRequiredMixin,
     template_name = 'clm/index.html'
 
 
-def bridging_list_queryset(request):
-    """Current-year Dirasa registrations the user may see, ordered like the Dirasa list."""
+def bridging_list_queryset(request, round_id=None):
+    """Visible Dirasa registrations, for the current year or a specific round."""
     is_world_learning = bool(request.user.partner and request.user.partner.is_world_learning)
 
     qs = (
-        Bridging.objects.filter(round__current_year=True, deleted=False)
+        Bridging.objects.filter(deleted=False)
         .select_related(
             "student",
             "student__nationality",
@@ -171,6 +173,11 @@ def bridging_list_queryset(request):
             "student__last_name",
         )
     )
+
+    if round_id is None:
+        qs = qs.filter(round__current_year=True)
+    else:
+        qs = qs.filter(round_id=round_id)
 
     if (
         not has_group(request.user, "CLM_BRIDGING_ALL")
@@ -486,25 +493,29 @@ class BridgingProfileIdView(LoginRequiredMixin,
 class BridgingBulkProfileIdView(LoginRequiredMixin,
                                 GroupRequiredMixin,
                                 TemplateView):
-    """One printable document with a profile ID card per child, one child per page.
+    """One PDF with a profile ID card per child, one child per page.
 
     Requires the selected round and applies the other Dirasa list filters.
-    An optional
-    ``ids`` parameter (comma separated registration ids) narrows it further.
+    An optional ``ids`` parameter (comma separated registration ids) narrows it further.
     """
     template_name = 'clm/bridging_profile_id_bulk.html'
     group_required = [u"CLM_Bridging"]
 
     def get(self, request, *args, **kwargs):
-        if not request.GET.get('round'):
+        if not request.GET.get('round', '').isdigit():
             return HttpResponseBadRequest(
                 "Round is not selected. Please select a round before generating profile IDs.")
         return super(BridgingBulkProfileIdView, self).get(request, *args, **kwargs)
 
     def get_registrations(self):
-        queryset = bridging_list_queryset(self.request).select_related('partner', 'disability')
+        round_id = int(self.request.GET['round'])
+        queryset = bridging_list_queryset(self.request, round_id=round_id).select_related('partner', 'disability')
         filterset = bridging_filterset_class(self.request.user)(
             self.request.GET, queryset=queryset, request=self.request)
+        # The selected round can be from an earlier year, just like Export.
+        round_queryset = CLMRound.objects.filter(pk=round_id)
+        filterset.filters['round'].queryset = round_queryset
+        filterset.form.fields['round'].queryset = round_queryset
         if not filterset.form.is_valid():
             return queryset.none()
         round = filterset.form.cleaned_data.get('round')
@@ -512,19 +523,39 @@ class BridgingBulkProfileIdView(LoginRequiredMixin,
             return queryset.none()
         queryset = filterset.qs.filter(round=round)
 
-        ids = [value for value in self.request.GET.get('ids', '').split(',') if value.strip().isdigit()]
+        # No ids parameter means all matching registrations in the selected round.
+        ids = [int(value.strip()) for value in self.request.GET.get('ids', '').split(',')
+               if value.strip().isdigit()]
         if ids:
             queryset = queryset.filter(id__in=ids)
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super(BridgingBulkProfileIdView, self).get_context_data(**kwargs)
-        context['cards'] = [
-            {'bridging': bridging, 'card': bridging_profile_id_card(bridging)}
-            for bridging in self.get_registrations()
-        ]
-        context['list_url'] = '{}?{}'.format(reverse('clm:bridging_list'), self.request.GET.urlencode())
+        cards = []
+        for bridging in self.get_registrations():
+            card = bridging_profile_id_card(bridging)
+            if card['has_picture']:
+                # Embed storage bytes; the PDF renderer cannot authenticate to
+                # the protected profile-picture HTTP endpoint.
+                with bridging.profile_picture.open('rb') as picture:
+                    content_type = mimetypes.guess_type(picture.name)[0] or 'image/jpeg'
+                    card['picture_data_uri'] = 'data:{};base64,{}'.format(
+                        content_type, base64.b64encode(picture.read()).decode('ascii'))
+            cards.append({'bridging': bridging, 'card': card})
+        context['cards'] = cards
+        context['pdf'] = True
         return context
+
+    def render_to_response(self, context, **response_kwargs):
+        from weasyprint import HTML
+
+        html = render_to_string(self.template_name, context, request=self.request)
+        pdf = HTML(string=html).write_pdf()
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="bridging-profile-ids-round-{}.pdf"'.format(
+            int(self.request.GET['round']))
+        return response
 
 
 class ExportStorage(AzureStorage):
