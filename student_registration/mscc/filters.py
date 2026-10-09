@@ -43,7 +43,15 @@ class PlaceholderFilterSet(FilterSet):
         self.form.helper.layout = Layout(
             *all_fields,
             ButtonHolder(Submit("submit", "Filter", css_class="btn btn-primary"),
-                         HTML('<a href="" title="Async Download" class="btn btn-success download-report-async">Export</a>')
+                         HTML('<a href="" title="Async Download" class="btn btn-success download-report-async">Export</a>'),
+                         HTML("""{% load i18n %}
+{% if request.user.is_superuser and request.resolver_match.url_name == 'list' %}
+<a href="{% url 'mscc:profile_id_bulk' %}" target="_blank" rel="noopener"
+   class="btn-icon btn btn-primary" onclick="checkRoundBeforeMsccProfileIds(event)">
+  <i class="fa fa-id-card btn-icon-wrapper"></i>{% trans "Generate Profile IDs (PDF)" %}
+</a>
+{% endif %}
+""")
             )
         )
         for name, field in self.form.fields.items():

@@ -72,3 +72,69 @@ class ProfileAccessTests(SimpleTestCase):
         self.assertEqual(card['birthday'], '')
         self.assertEqual(card['full_name'], '')
         self.assertFalse(card['has_picture'])
+
+
+class BulkProfileTests(SimpleTestCase):
+    def view(self, parameters):
+        from student_registration.mscc.profile_views import BulkProfileIdView
+        view = BulkProfileIdView()
+        view.request = SimpleNamespace(GET=parameters)
+        return view
+
+    def test_missing_and_invalid_cycle(self):
+        for parameters in ({}, {'round': 'bad'}):
+            view = self.view(parameters)
+            self.assertEqual(view.get(view.request).status_code, 400)
+
+    def test_cycle_name_and_nationality_filters(self):
+        view = self.view({'round': '24', 'first_name': 'أحمد', 'nationality': '2'})
+        qs = Mock()
+        for method in ('exclude', 'filter', 'only', 'order_by'):
+            getattr(qs, method).return_value = qs
+        with patch.object(view, 'get_queryset', return_value=qs):
+            view.get_registrations('24')
+        qs.exclude.assert_called_once_with(type='TLS')
+        self.assertIn(({'round_id': '24'}), [call.kwargs for call in qs.filter.call_args_list])
+        self.assertIn(({'child__first_name__icontains': 'أحمد'}), [call.kwargs for call in qs.filter.call_args_list])
+        self.assertIn(({'child__nationality_id': '2'}), [call.kwargs for call in qs.filter.call_args_list])
+
+    def test_no_cycle_filter(self):
+        view = self.view({'round': 'no_round'})
+        qs = Mock()
+        for method in ('exclude', 'filter', 'only', 'order_by'):
+            getattr(qs, method).return_value = qs
+        with patch.object(view, 'get_queryset', return_value=qs):
+            view.get_registrations('no_round')
+        qs.filter.assert_called_once_with(round__isnull=True)
+
+    def test_printable_page_does_not_open_picture_storage(self):
+        view = self.view({'round': '24'})
+        picture = Mock()
+        registration = SimpleNamespace(
+            child=None, center=None, round=None, partner=None, pk=12,
+            child_fullname='Child Name', profile_picture=picture,
+        )
+        qs = Mock()
+        qs.iterator.return_value = iter([registration])
+        with patch.object(view, 'get_registrations', return_value=qs), patch(
+                'student_registration.mscc.profile_views.get_object_or_404'):
+            response = view.get(view.request)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Child Name')
+        self.assertContains(response, '/mscc/profile-picture/12/file/')
+        self.assertContains(response, 'No photo available')
+        self.assertContains(response, 'Print / Save as PDF')
+        picture.open.assert_not_called()
+        qs.iterator.assert_called_once_with(chunk_size=250)
+
+
+    def test_missing_picture_does_not_raise_server_error(self):
+        from django.http import Http404
+        from student_registration.mscc.profile_views import ProfilePictureFileView
+        picture = Mock()
+        picture.open.side_effect = FileNotFoundError('missing')
+        view = ProfilePictureFileView()
+        with patch.object(view, 'get_object', return_value=SimpleNamespace(
+                pk=12, profile_picture=picture)):
+            with self.assertRaises(Http404):
+                view.get(SimpleNamespace())

@@ -254,6 +254,28 @@
 {% endblock %}
 
 {% block extra_js %}
+    <script>
+      function checkRoundBeforeMsccProfileIds(event) {
+        event.preventDefault();
+        var round = document.getElementById('id_round').value;
+        if (!round) {
+          alert('Cycle is not selected. Please select a cycle before exporting data.');
+          return;
+        }
+        var params = new URLSearchParams({round: round});
+        [
+          ['nationality', 'id_child__nationality'],
+          ['first_name', 'id_child__first_name'],
+          ['father_name', 'id_child__father_name'],
+          ['last_name', 'id_child__last_name'],
+          ['mother_fullname', 'id_child__mother_fullname']
+        ].forEach(function (field) {
+          var input = document.getElementById(field[1]);
+          if (input && input.value) params.set(field[0], input.value);
+        });
+        window.open("{% url 'mscc:profile_id_bulk' %}?" + params.toString(), '_blank', 'noopener');
+      }
+    </script>
 
     <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/mscc/list.js' %}?v=20"></script>
