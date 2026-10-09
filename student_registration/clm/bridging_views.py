@@ -507,35 +507,31 @@ class BridgingBulkProfileIdView(LoginRequiredMixin, GroupRequiredMixin, View):
         return queryset.select_related(
             'student', 'student__nationality', 'round', 'partner',
             'governorate', 'disability',
-        ).order_by('student__first_name', 'student__father_name', 'student__last_name')
+        ).only(
+            'id', 'profile_picture',
+            'student__id', 'student__first_name', 'student__father_name',
+            'student__last_name', 'student__birthday_day', 'student__birthday_month',
+            'student__birthday_year', 'student__place_of_birth',
+            'student__nationality__id', 'student__nationality__name',
+            'student__nationality__name_en', 'round__id', 'round__name',
+            'partner__id', 'partner__name', 'governorate__id',
+            'governorate__name', 'governorate__name_en',
+            'disability__id', 'disability__name', 'disability__name_en',
+        ).order_by('student__first_name', 'student__father_name', 'student__last_name', 'pk')
 
     def get(self, request, *args, **kwargs):
-        from base64 import b64encode
-        from PIL import Image
-
         round_id = request.GET.get('round', '')
         if not round_id.isdecimal():
             return HttpResponseBadRequest('Please select a valid round before exporting profile IDs.')
         get_object_or_404(CLMRound, pk=round_id)
         cards = []
-        # Finish the database query before opening photos in remote storage.
-        # A server-side iterator can time out between fetches while photos load.
-        registrations = list(self.get_registrations(round_id))
-        for bridging in registrations:
-            card = bridging_profile_id_card(bridging)
-            if card['has_picture']:
-                try:
-                    with bridging.profile_picture.open('rb') as picture:
-                        with Image.open(picture) as image:
-                            image.thumbnail((360, 320))
-                            output = io.BytesIO()
-                            image.convert('RGB').save(output, format='PNG')
-                    card['picture_data'] = 'data:image/png;base64,' + b64encode(output.getvalue()).decode('ascii')
-                except Exception:
-                    # A photo failure must not prevent exporting the remaining profiles.
-                    logging.warning('Unable to read profile picture for Bridging %s', bridging.pk)
-                    card['has_picture'] = False
-            cards.append({'bridging': bridging, 'card': card})
+        # Fetch only profile fields in small chunks. No photo/storage I/O occurs
+        # while the database cursor is open, and model instances aren't retained.
+        for bridging in self.get_registrations(round_id).iterator(chunk_size=250):
+            cards.append({
+                'bridging': {'pk': bridging.pk},
+                'card': bridging_profile_id_card(bridging),
+            })
         if not cards:
             return HttpResponse('No bridging records found for the selected round.', status=404)
         return render(request, 'clm/bridging_profile_id_bulk.html', {'cards': cards})

@@ -228,7 +228,7 @@ def test_bulk_profile_ids_no_partner_cannot_export(bridging_client, registration
 def test_bulk_profile_ids_requires_login(client):
     assert client.get('/clm/bridging-profile-ids/?round=1').status_code == 302
 
-def test_bulk_profile_ids_embeds_picture(profile_export_client, registration, settings, tmp_path, monkeypatch):
+def test_bulk_profile_ids_links_picture(profile_export_client, registration, settings, tmp_path, monkeypatch):
     settings.STORAGES = {
         'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage',
                     'OPTIONS': {'location': str(tmp_path)}},
@@ -238,7 +238,7 @@ def test_bulk_profile_ids_embeds_picture(profile_export_client, registration, se
     response = profile_export_client.get('/clm/bridging-profile-ids/', {'round': registration.round_id})
     assert response.status_code == 200
     html = response.content.decode('utf-8')
-    assert 'data:image/png;base64,' in html
+    assert '/clm/bridging-profile-picture/{}/image/'.format(registration.pk) in html
     assert 'ريهام علي الشمق' in html
     assert 'Nationality: Syrian' in html
 
@@ -279,7 +279,7 @@ def test_bulk_profile_ids_continues_after_picture_failure(profile_export_client,
     assert 'data-registration-id="{}"'.format(registration.pk) in html
     assert 'data-registration-id="{}"'.format(another.pk) in html
     assert 'No photo available' in html
-    assert '/clm/bridging-profile-picture/{}/image/'.format(registration.pk) not in html
+    assert '/clm/bridging-profile-picture/{}/image/'.format(registration.pk) in html
     assert 'Print / Save as PDF' in html
 
 
@@ -295,27 +295,16 @@ def test_picture_endpoint_returns_404_for_storage_failure(bridging_client, regis
     assert response.status_code == 404
 
 
-def test_bulk_profile_ids_finishes_query_before_reading_photos(profile_export_client, registration, monkeypatch):
-    from student_registration.clm.bridging_views import BridgingBulkProfileIdView
+def test_bulk_profile_ids_does_not_read_photo_storage(profile_export_client, registration, monkeypatch):
     from django.db.models.fields.files import ImageFieldFile
     registration.profile_picture = 'missing/child.png'
-    query_state = {'complete': False, 'photo_reads': 0}
-
-    class Registrations:
-        def __iter__(self):
-            yield registration
-            yield registration
-            query_state['complete'] = True
-
-    def read_photo(*args, **kwargs):
-        assert query_state['complete'], 'Photo storage accessed while database results are pending'
-        query_state['photo_reads'] += 1
-        raise FileNotFoundError('missing')
-
-    monkeypatch.setattr(BridgingBulkProfileIdView, 'get_registrations',
-                        lambda self, round_id: Registrations())
-    monkeypatch.setattr(ImageFieldFile, 'open', read_photo)
+    registration.save()
+    photo_reads = []
+    def fail_if_opened(*args, **kwargs):
+        photo_reads.append(True)
+        raise RuntimeError('Bulk rendering must not read storage')
+    monkeypatch.setattr(ImageFieldFile, 'open', fail_if_opened)
     response = profile_export_client.get('/clm/bridging-profile-ids/', {'round': registration.round_id})
     assert response.status_code == 200
-    assert query_state['photo_reads'] == 2
-    assert response.content.decode('utf-8').count('class="sheet"') == 2
+    assert photo_reads == []
+    assert '/clm/bridging-profile-picture/{}/image/'.format(registration.pk) in response.content.decode('utf-8')
