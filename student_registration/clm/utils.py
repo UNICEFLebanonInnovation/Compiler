@@ -128,8 +128,11 @@ def is_allowed_edit(programme):
             return True
 
         if programme == 'Bridging':
-            current_round = current_round.get(current_year=True).order_by("-id").first()
-            if current_round.start_date_bridging_edit < current < current_round.end_date_bridging_edit:
+            current_round = current_round.filter(current_year=True).order_by("-id").first()
+            if (current_round is not None
+                    and current_round.start_date_bridging_edit is not None
+                    and current_round.end_date_bridging_edit is not None
+                    and current_round.start_date_bridging_edit < current < current_round.end_date_bridging_edit):
                 return True
             return False
 

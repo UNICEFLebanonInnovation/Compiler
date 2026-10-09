@@ -308,3 +308,33 @@ def test_bulk_profile_ids_does_not_read_photo_storage(profile_export_client, reg
     assert response.status_code == 200
     assert photo_reads == []
     assert '/clm/bridging-profile-picture/{}/image/'.format(registration.pk) in response.content.decode('utf-8')
+
+@pytest.mark.parametrize('period', ['open', 'closed', 'missing'])
+def test_bridging_edit_uses_latest_current_round(period):
+    from datetime import date, timedelta
+    from student_registration.clm.utils import is_allowed_edit
+
+    CLMRound.objects.update(current_year=False)
+    today = date.today()
+    CLMRound.objects.create(
+        name='Older current round', current_year=True,
+        start_date_bridging_edit=today - timedelta(days=10),
+        end_date_bridging_edit=today - timedelta(days=5),
+    )
+    start, end = {
+        'open': (today - timedelta(days=1), today + timedelta(days=1)),
+        'closed': (today - timedelta(days=5), today - timedelta(days=1)),
+        'missing': (None, None),
+    }[period]
+    CLMRound.objects.create(
+        name='Latest current round', current_year=True,
+        start_date_bridging_edit=start, end_date_bridging_edit=end,
+    )
+    assert is_allowed_edit('Bridging') is (period == 'open')
+
+
+def test_bridging_edit_without_current_round():
+    from student_registration.clm.utils import is_allowed_edit
+
+    CLMRound.objects.update(current_year=False)
+    assert is_allowed_edit('Bridging') is False
