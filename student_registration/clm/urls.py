@@ -332,11 +332,6 @@ urlpatterns = [
         name='bridging_profile_picture_file'
     ),
     re_path(
-        r'^bridging-profile-ids/$',
-        view=bridging_views.BridgingBulkProfileIdView.as_view(),
-        name='bridging_profile_id_bulk'
-    ),
-    re_path(
         r'^bridging-profile-id/(?P<pk>[\w.@+-]+)/$',
         view=bridging_views.BridgingProfileIdView.as_view(),
         name='bridging_profile_id'
