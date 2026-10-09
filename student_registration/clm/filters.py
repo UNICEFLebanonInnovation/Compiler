@@ -188,7 +188,9 @@ class PlaceholderFilterSet(FilterSet):
         self.form.helper.layout = Layout(
             *all_fields,
             ButtonHolder(Submit("submit", "Filter", css_class="btn btn-primary"),
-                         HTML('<a href="javascript:void(0);"  title="Download" class="btn btn-success download-report" onclick="checkRoundBeforeExport(event)">Export</a>')
+                         HTML('<a href="javascript:void(0);"  title="Download" class="btn btn-success download-report" onclick="checkRoundBeforeExport(event)">Export</a>'),
+                         *([HTML('{% include "clm/includes/bridging_profile_id_action.html" %}')]
+                           if self._meta.model is Bridging else [])
             )
         )
         for name, field in self.form.fields.items():

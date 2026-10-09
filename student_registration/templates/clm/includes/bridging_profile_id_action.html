@@ -1,0 +1,2 @@
+{% if request.user.is_superuser %}
+<a href="{% url 'clm:bridging_profile_id_bulk' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}
