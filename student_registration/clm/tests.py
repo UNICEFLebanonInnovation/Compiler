@@ -328,3 +328,27 @@ def test_bulk_profile_ids_pdf_embeds_picture(partner_client, registration, setti
     html = _bulk_html(response)
     assert 'src="data:image/png;base64,' in html
     assert '/image/' not in html
+
+
+def test_bulk_profile_ids_missing_picture_keeps_all_cards(
+        partner_client, registration, classmates, settings, tmp_path):
+    settings.STORAGES = {
+        'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage',
+                    'OPTIONS': {'location': str(tmp_path)}},
+        'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+    }
+    registration.profile_picture = 'bridging/profile_pictures/missing.jpeg'
+    registration.save(update_fields=['profile_picture'])
+    classmates['second'].profile_picture.save(
+        'available.png', _profile_picture_upload('available.png', 'PNG'))
+
+    response = partner_client.get('/clm/bridging-profile-ids/?round={}'.format(registration.round_id))
+    html = _bulk_html(response)
+    assert _sheets(html) == 2
+    cards = {item['bridging'].pk: item['card'] for item in response.context['cards']}
+    assert cards[registration.pk]['has_picture'] is False
+    assert 'picture_data_uri' not in cards[registration.pk]
+    assert cards[classmates['second'].pk]['picture_data_uri'].startswith('data:image/png;base64,')
+    assert 'data-registration-id="{}"'.format(registration.pk) in html
+    assert 'src="data:image/png;base64,' in html
+    assert '/image/' not in html
