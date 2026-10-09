@@ -1,5 +1,7 @@
 from __future__ import unicode_literals, absolute_import, division
 
+from student_registration.profile_widgets import ProfilePictureInput
+
 from django.utils.translation import gettext as _
 from django import forms
 from django.urls import reverse
@@ -2111,6 +2113,13 @@ class BridgingForm(CommonForm):
 class BridgingProfilePictureForm(forms.ModelForm):
     """Upload or replace the profile picture stored on a Bridging record."""
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.pk:
+            self.fields['profile_picture'].widget.download_url = reverse(
+                'clm:bridging_profile_picture_file', kwargs={'pk': self.instance.pk}
+            )
+
     def clean_profile_picture(self):
         picture = self.cleaned_data.get('profile_picture')
         if picture and 'profile_picture' in self.files:
@@ -2128,7 +2137,7 @@ class BridgingProfilePictureForm(forms.ModelForm):
         model = Bridging
         fields = ('profile_picture',)
         widgets = {
-            'profile_picture': forms.ClearableFileInput(
+            'profile_picture': ProfilePictureInput(
                 attrs={'accept': '.png,.jpg,.jpeg,image/png,image/jpeg'}
             ),
         }
