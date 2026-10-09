@@ -122,7 +122,7 @@ class BulkProfileIdView(ProfileRegistrationMixin, View):
         return queryset.only(
             'id', 'profile_picture', 'child__id', 'child__first_name',
             'child__father_name', 'child__last_name', 'child__birthday_day',
-            'child__birthday_month', 'child__birthday_year', 'child__place_of_birth',
+            'child__birthday_month', 'child__birthday_year',
             'child__nationality__id', 'child__nationality__name', 'child__nationality__name_en',
             'child__disability__id', 'child__disability__name', 'child__disability__name_en',
             'round__id', 'round__name', 'partner__id', 'partner__name',

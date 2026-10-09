@@ -138,3 +138,26 @@ class BulkProfileTests(SimpleTestCase):
                 pk=12, profile_picture=picture)):
             with self.assertRaises(Http404):
                 view.get(SimpleNamespace())
+
+
+    def test_bulk_profile_queryset_compiles_with_real_model_fields(self):
+        # Compile the real ORM query without executing it. Mock-only queryset
+        # tests don't catch nonexistent fields passed to only().
+        view = self.view({'round': '24'})
+        view.request.user = SimpleNamespace(partner=None, partner_id=None, center_id=None)
+        with patch('student_registration.mscc.profile_views.has_group', return_value=True):
+            sql, parameters = view.get_registrations('24').query.sql_with_params()
+        self.assertTrue(sql)
+        self.assertNotIn('place_of_birth', sql)
+
+    def test_card_tolerates_child_without_birthplace(self):
+        child = SimpleNamespace(
+            birthday_day='5', birthday_month='6', birthday_year='2015',
+            nationality=None, disability=None,
+        )
+        card = registration_profile_id_card(SimpleNamespace(
+            child=child, center=None, round=None, partner=None, pk=12,
+            child_fullname='Child Name', profile_picture=None,
+        ))
+        self.assertEqual(card['place_of_birth'], '')
+        self.assertEqual(card['birthday'], '5/6/15')
