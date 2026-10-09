@@ -538,10 +538,17 @@ class BridgingBulkProfileIdView(LoginRequiredMixin,
             if card['has_picture']:
                 # Embed storage bytes; the PDF renderer cannot authenticate to
                 # the protected profile-picture HTTP endpoint.
-                with bridging.profile_picture.open('rb') as picture:
-                    content_type = mimetypes.guess_type(picture.name)[0] or 'image/jpeg'
-                    card['picture_data_uri'] = 'data:{};base64,{}'.format(
-                        content_type, base64.b64encode(picture.read()).decode('ascii'))
+                try:
+                    with bridging.profile_picture.open('rb') as picture:
+                        content_type = mimetypes.guess_type(picture.name)[0] or 'image/jpeg'
+                        card['picture_data_uri'] = 'data:{};base64,{}'.format(
+                            content_type, base64.b64encode(picture.read()).decode('ascii'))
+                except FileNotFoundError:
+                    # A saved filename does not guarantee the upload exists
+                    # in this environment. Keep the card and its placeholder.
+                    card['has_picture'] = False
+                    logging.warning(
+                        "Missing profile picture for Bridging registration %s", bridging.pk)
             cards.append({'bridging': bridging, 'card': card})
         context['cards'] = cards
         context['pdf'] = True
