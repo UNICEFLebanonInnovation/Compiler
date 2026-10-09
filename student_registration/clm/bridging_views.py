@@ -485,7 +485,7 @@ class BridgingProfileIdView(LoginRequiredMixin,
 
 
 class BridgingBulkProfileIdView(LoginRequiredMixin, GroupRequiredMixin, View):
-    """Download profile IDs for the selected round, with Export's access scope."""
+    """Printable profile list for the selected round, with Export's access scope."""
     group_required = [u"CLM_Bridging"]
 
     def get_registrations(self, round_id):
@@ -506,8 +506,6 @@ class BridgingBulkProfileIdView(LoginRequiredMixin, GroupRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         from base64 import b64encode
         from PIL import Image
-        from django.template.loader import render_to_string
-        from weasyprint import HTML
 
         round_id = request.GET.get('round', '')
         if not round_id.isdecimal():
@@ -530,17 +528,7 @@ class BridgingBulkProfileIdView(LoginRequiredMixin, GroupRequiredMixin, View):
             cards.append({'bridging': bridging, 'card': card})
         if not cards:
             return HttpResponse('No bridging records found for the selected round.', status=404)
-        html = render_to_string('clm/bridging_profile_id_bulk.html', {'cards': cards})
-        # All pictures are embedded; the PDF renderer must never fetch remote URLs.
-        def embedded_resources_only(url, *args, **kwargs):
-            from weasyprint import default_url_fetcher
-            if not url.startswith('data:image/png;base64,'):
-                raise ValueError('External PDF resources are not allowed')
-            return default_url_fetcher(url, *args, **kwargs)
-        pdf = HTML(string=html, url_fetcher=embedded_resources_only).write_pdf()
-        response = HttpResponse(pdf, content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="bridging-profile-ids-round-{}.pdf"'.format(round_id)
-        return response
+        return render(request, 'clm/bridging_profile_id_bulk.html', {'cards': cards})
 
 
 class ExportStorage(AzureStorage):

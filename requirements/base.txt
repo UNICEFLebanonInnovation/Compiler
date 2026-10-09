@@ -96,6 +96,3 @@ django-storages==1.14.2
 six==1.17.0
 firebase-admin==6.8.0
 azure-monitor-opentelemetry==1.8.1
-
-# HTML profile ID PDF export with Arabic text support
-weasyprint==66.0

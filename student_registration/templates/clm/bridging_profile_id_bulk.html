@@ -6,7 +6,12 @@
   {% include "clm/includes/bridging_profile_id_style.html" %}
   <style>
     @page { size: A4; margin: 10mm; }
-    body { padding: 0; background: white; }
+    body { padding: 16px; background: white; }
+    @media print { body { padding: 0; } }
+    .sheet { break-inside: avoid; page-break-inside: avoid; }
+    .photo { position: absolute; }
+    .toolbar { max-width: 900px; }
+    @media print { .toolbar { display: none; } }
     .sheet { margin: 0 0 5mm; break-after: auto; page-break-after: auto; }
     .card { height: auto; min-height: 120mm; padding: 5mm; box-shadow: none; }
     .photo { top: 5mm; left: 5mm; width: 32mm; height: 30mm; }
@@ -16,10 +21,32 @@
   </style>
 </head>
 <body>
+  <div class="toolbar">
+    <button type="button" class="btn" id="print-profiles">{% trans "Print / Save as PDF" %}</button>
+    <span class="hint">{% trans 'Choose "Save as PDF" in the print dialog to download this list.' %}</span>
+  </div>
   {% for item in cards %}
     <div class="sheet">
       {% include "clm/includes/bridging_profile_id_card.html" with bridging=item.bridging card=item.card %}
     </div>
   {% endfor %}
+  <script>
+    document.getElementById('print-profiles').addEventListener('click', async function () {
+      this.disabled = true;
+      try {
+        await Promise.all(Array.from(document.images).map(function (image) {
+          if (image.complete) return Promise.resolve();
+          return new Promise(function (resolve) {
+            image.addEventListener('load', resolve, {once: true});
+            image.addEventListener('error', resolve, {once: true});
+          });
+        }));
+        if (document.fonts && document.fonts.ready) await document.fonts.ready;
+        window.print();
+      } finally {
+        this.disabled = false;
+      }
+    });
+  </script>
 </body>
 </html>

@@ -197,7 +197,6 @@ def test_bulk_profile_ids_requires_round(profile_export_client):
 
 def test_bulk_profile_ids_selected_round_and_access(profile_export_client, registration, monkeypatch):
     from student_registration.clm import bridging_views
-    from weasyprint import HTML
 
     other_round = CLMRound.objects.create(name='Other', current_year=True)
     Bridging.objects.create(student=registration.student, partner=registration.partner, round=other_round)
@@ -213,16 +212,11 @@ def test_bulk_profile_ids_selected_round_and_access(profile_export_client, regis
         rendered['ids'] = list(queryset.values_list('pk', flat=True))
         return queryset
 
-    def fake_pdf(renderer, *args, **kwargs):
-        rendered['html'] = renderer
-        return b'%PDF-1.7 test'
-
     monkeypatch.setattr(bridging_views.BridgingBulkProfileIdView, 'get_registrations', capture_registrations)
-    monkeypatch.setattr(HTML, 'write_pdf', fake_pdf)
     response = profile_export_client.get('/clm/bridging-profile-ids/', {'round': registration.round_id})
     assert response.status_code == 200
-    assert response['Content-Type'] == 'application/pdf'
-    assert 'attachment;' in response['Content-Disposition']
+    assert response['Content-Type'].startswith('text/html')
+    assert 'Print / Save as PDF' in response.content.decode('utf-8')
     assert rendered['ids'] == [registration.pk]
 
 
@@ -235,26 +229,18 @@ def test_bulk_profile_ids_requires_login(client):
     assert client.get('/clm/bridging-profile-ids/?round=1').status_code == 302
 
 def test_bulk_profile_ids_embeds_picture(profile_export_client, registration, settings, tmp_path, monkeypatch):
-    from weasyprint import HTML
     settings.STORAGES = {
         'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage',
                     'OPTIONS': {'location': str(tmp_path)}},
         'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
     }
     registration.profile_picture.save('child.png', _profile_picture_upload('child.png', 'PNG'))
-    html = []
-    # Capture the exact document passed to the PDF renderer.
-    original_init = HTML.__init__
-    def capture_html(renderer, *args, **kwargs):
-        html.append(kwargs['string'])
-        original_init(renderer, *args, **kwargs)
-    monkeypatch.setattr(HTML, '__init__', capture_html)
-    monkeypatch.setattr(HTML, 'write_pdf', lambda *args, **kwargs: b'%PDF-1.7 test')
     response = profile_export_client.get('/clm/bridging-profile-ids/', {'round': registration.round_id})
     assert response.status_code == 200
-    assert 'data:image/png;base64,' in html[0]
-    assert 'ريهام علي الشمق' in html[0]
-    assert 'Nationality: Syrian' in html[0]
+    html = response.content.decode('utf-8')
+    assert 'data:image/png;base64,' in html
+    assert 'ريهام علي الشمق' in html
+    assert 'Nationality: Syrian' in html
 
 
 def test_bulk_profile_ids_school_scope(profile_export_client, registration):
