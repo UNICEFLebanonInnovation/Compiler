@@ -488,18 +488,29 @@ class BridgingBulkProfileIdView(LoginRequiredMixin,
                                 TemplateView):
     """One printable document with a profile ID card per child, one child per page.
 
-    Takes the same filters as the Dirasa list, so the button on the list page
-    generates cards for exactly the children currently listed. An optional
+    Requires the selected round and applies the other Dirasa list filters.
+    An optional
     ``ids`` parameter (comma separated registration ids) narrows it further.
     """
     template_name = 'clm/bridging_profile_id_bulk.html'
     group_required = [u"CLM_Bridging"]
 
+    def get(self, request, *args, **kwargs):
+        if not request.GET.get('round'):
+            return HttpResponseBadRequest(
+                "Round is not selected. Please select a round before generating profile IDs.")
+        return super(BridgingBulkProfileIdView, self).get(request, *args, **kwargs)
+
     def get_registrations(self):
         queryset = bridging_list_queryset(self.request).select_related('partner', 'disability')
         filterset = bridging_filterset_class(self.request.user)(
             self.request.GET, queryset=queryset, request=self.request)
-        queryset = filterset.qs  # like the list page: invalid filters list nothing
+        if not filterset.form.is_valid():
+            return queryset.none()
+        round = filterset.form.cleaned_data.get('round')
+        if round is None:
+            return queryset.none()
+        queryset = filterset.qs.filter(round=round)
 
         ids = [value for value in self.request.GET.get('ids', '').split(',') if value.strip().isdigit()]
         if ids:
