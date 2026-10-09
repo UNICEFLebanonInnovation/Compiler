@@ -193,6 +193,7 @@ class PlaceholderFilterSet(FilterSet):
 {% if request.user.is_superuser %}
 <a href="{% url 'clm:bridging_profile_id_bulk' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}"
    target="_blank" rel="noopener" class="btn-icon btn btn-primary"
+   onclick="checkRoundBeforeProfileIds(event)"
    title="{% trans 'Generate one PDF with a profile ID page for every child in the current list' %}">
   <i class="fa fa-id-card btn-icon-wrapper"> </i>{% trans "Generate Profile IDs (PDF)" %}</a>
 {% endif %}
