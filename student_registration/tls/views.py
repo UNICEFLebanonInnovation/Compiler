@@ -44,7 +44,7 @@ class TLSProfileView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         instance = Registration.objects.get(id=self.kwargs['pk'])
         generate_services(instance.child.age, instance)
-        current_tab = self.request.GET.get('current_tab', 'info')
+        current_tab = 'services' if self.request.GET.get('current_tab') == 'services' else 'info'
 
         rounds_registered = EducationService.objects.filter(
             registration__child_id=instance.child.id,
@@ -201,7 +201,7 @@ class TLSEducationServiceFormView(LoginRequiredMixin, GroupRequiredMixin, FormVi
         return TLS_PACKAGE_TYPE or DEFAULT_PACKAGE_TYPE
 
     def get_success_url(self):
-        return reverse('tls:child_profile', kwargs={'pk': self.kwargs['registry']})
+        return reverse('tls:child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
 
     def get_context_data(self, **kwargs):
         if 'form' not in kwargs:
@@ -389,3 +389,4 @@ def export_list_background(request):
     )
     queue_filtered_tls_export(export_record.id, round_id)
     return JsonResponse({'status': 'started', 'export_id': export_record.id})
+

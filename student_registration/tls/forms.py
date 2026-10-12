@@ -968,9 +968,9 @@ class ReferralForm(forms.ModelForm):
 
         super(ReferralForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('mscc:referral_add', kwargs={'registry': registry})
+        form_action = reverse('tls:referral_add', kwargs={'registry': registry})
         if pk:
-            form_action = reverse('mscc:referral_edit',
+            form_action = reverse('tls:referral_edit',
                                   kwargs={'registry': registry, 'pk': pk})
 
         education_program = get_education_service(registry)
@@ -1122,3 +1122,4 @@ class ReferralForm(forms.ModelForm):
             'recommended_learning_path',
             'dropout_date',
         )
+

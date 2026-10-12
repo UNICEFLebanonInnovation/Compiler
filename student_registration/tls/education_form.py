@@ -272,9 +272,9 @@ class DiagnosticAssessmentForm(forms.ModelForm):
 
         super(DiagnosticAssessmentForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('mscc:service_diagnostic_assessment_add', kwargs={'registry': registry})
+        form_action = reverse('tls:service_diagnostic_assessment_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:service_diagnostic_assessment_edit',
+            form_action = reverse('tls:service_diagnostic_assessment_edit',
                                   kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
@@ -470,9 +470,9 @@ class EducationAssessmentForm(forms.ModelForm):
 
         super(EducationAssessmentForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('mscc:service_education_assessment_add', kwargs={'registry': registry})
+        form_action = reverse('tls:service_education_assessment_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:service_education_assessment_edit',
+            form_action = reverse('tls:service_education_assessment_edit',
                                   kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
@@ -952,9 +952,9 @@ class EducationRSServiceForm(forms.ModelForm):
 
         super(EducationRSServiceForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('mscc:service_education_rs_add', kwargs={'registry': registry})
+        form_action = reverse('tls:service_education_rs_add', kwargs={'registry': registry})
         if pk:
-            form_action = reverse('mscc:service_education_rs_edit',
+            form_action = reverse('tls:service_education_rs_edit',
                                   kwargs={'registry': registry, 'pk': pk})
 
         self.helper = FormHelper()
@@ -1129,10 +1129,10 @@ class EducationGradingForm(forms.ModelForm):
         provide_french_language = getattr(center, 'provide_french_language', None) == "Yes"
         self.provide_french_language = provide_french_language
 
-        form_action = reverse('mscc:service_education_grading_add',
+        form_action = reverse('tls:service_education_grading_add',
                               kwargs={'registry': registry, 'programme_type': programme_type})
         if instance:
-            form_action = reverse('mscc:service_education_grading_edit',
+            form_action = reverse('tls:service_education_grading_edit',
                                   kwargs={'registry': registry, 'programme_type': programme_type, 'pre_post': pre_post,
                                           'pk': instance})
 
@@ -1828,10 +1828,10 @@ class WLBLNAssessmentForm(forms.ModelForm):
                 if not field_name.startswith('french_')
             }
 
-        form_action = reverse('mscc:wl_bln_assessment_add',
+        form_action = reverse('tls:wl_bln_assessment_add',
                               kwargs={'registry': registry, 'programme_type': programme_type})
         if instance:
-            form_action = reverse('mscc:wl_bln_assessment_edit',
+            form_action = reverse('tls:wl_bln_assessment_edit',
                                   kwargs={'registry': registry, 'programme_type': programme_type,
                                           'pre_post': pre_post, 'pk': instance})
 
@@ -2070,10 +2070,10 @@ class TarlGradingForm(forms.ModelForm):
         if not provide_french_language:
             self.fields.pop('french_level_reached', None)
 
-        form_action = reverse('mscc:service_tarl_grading_add',
+        form_action = reverse('tls:service_tarl_grading_add',
                               kwargs={'registry': registry, 'programme_type': programme_type, 'pre_post': pre_post})
         if instance:
-            form_action = reverse('mscc:service_tarl_grading_edit',
+            form_action = reverse('tls:service_tarl_grading_edit',
                                   kwargs={'registry': registry, 'programme_type': programme_type, 'pre_post': pre_post,
                                           'pk': instance})
 
@@ -2262,10 +2262,10 @@ class YouthScoringForm(forms.ModelForm):
 
         super(YouthScoringForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('mscc:service_youth_scoring_add',
+        form_action = reverse('tls:service_youth_scoring_add',
                               kwargs={'registry': registry, 'programme_type': programme_type})
         if instance:
-            form_action = reverse('mscc:service_youth_scoring_edit',
+            form_action = reverse('tls:service_youth_scoring_edit',
                                   kwargs={'registry': registry, 'programme_type': programme_type, 'pre_post': pre_post,
                                           'pk': instance})
 
@@ -2535,7 +2535,7 @@ class EducationSchoolGradingForm(forms.ModelForm):
 
         super(EducationSchoolGradingForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('mscc:service_school_grading',
+        form_action = reverse('tls:service_school_grading',
                               kwargs={'registry': registry, 'programme_type': programme_type, 'pk': instance})
 
         if programme_type in ["RS Grade 7", "RS Grade 8", "RS Grade 9", "YFS Level 1 - RS Grade 9", "YFS Level 2 - RS Grade 9"]:
@@ -2666,3 +2666,4 @@ def field_init(field, label_name, max_number):
     field.label = "{} / {}".format(label_name, str(max_number))
     field.widget.attrs['max'] = max_number
     field.required = True
+

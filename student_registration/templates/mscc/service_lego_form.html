@@ -1,4 +1,4 @@
-{% extends "mscc/base.html" %}
+{% extends service_base_template|default:"mscc/base.html" %}
 {% load static i18n %}
 {% load crispy_forms_tags %}
 {% load static i18n %}
@@ -31,10 +31,10 @@
                       <nav class="" aria-label="breadcrumb">
                           <ol class="breadcrumb">
                               <li class="breadcrumb-item">
-                                  <a href="{% url 'mscc:list' %}">Home</a>
+                                  <a href="{% url service_namespace|default:"mscc"|add:":list" %}">Home</a>
                               </li>
                               <li class="breadcrumb-item">
-                                    <a href="{% url 'mscc:child_profile' registry %}?current_tab=services">{% get_child_fullname registry %}</a>
+                                    <a href="{% url service_namespace|default:"mscc"|add:":child_profile" registry %}?current_tab=services">{% get_child_fullname registry %}</a>
                               </li>
                                <li class="breadcrumb-item">
                                      LEGO
@@ -59,7 +59,7 @@
         <div class="divider"></div>
 
         <div class="clearfix">
-            <a href="{% url 'mscc:list' %}" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
+            <a href="{% url service_namespace|default:"mscc"|add:":list" %}" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
         </div>
     </div>
 </div>
@@ -73,3 +73,4 @@
     <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
 
 {% endblock %}
+
