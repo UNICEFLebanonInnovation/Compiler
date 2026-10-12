@@ -19,9 +19,10 @@ from crispy_forms.bootstrap import (
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, Reset
 from dal import autocomplete
 
-from student_registration.mscc.templatetags.simple_tags import get_service
+from student_registration.tls.templatetags.simple_tags import get_service
 from student_registration.tls.utils import DEFAULT_PACKAGE_TYPE, validate_date
-from .models import (
+from .models import EDUCATION_PROGRAM
+from student_registration.mscc.models import (
     Registration,
     EducationAssessment,
     EducationService,
@@ -30,10 +31,10 @@ from .models import (
     EducationRSService,
     EducationProgrammeAssessment,
     EducationProgrammeWLAssessment,
+    EducationProgrammeSummerRSAssessment,
     TarlAssessment,
     YES_NO,
-    Round,
-    EDUCATION_PROGRAM
+    Round
 )
 from student_registration.schools.models import (
     School,
@@ -41,6 +42,74 @@ from student_registration.schools.models import (
 )
 from .utils import update_child_attendance
 
+
+def _summer_subject(label, total, components):
+    return {'label': _(label), 'total': total,
+            'components': tuple((name, _(component_label), maximum)
+                                for name, component_label, maximum in components)}
+
+
+# Component-level scoring for Summer Remedial Support assessments.
+SUMMER_RS_PROGRAMME_CONFIG = {
+    'Summer RS Grade 1': {
+        'english_grade': _summer_subject('English', 40, [('english_letter_sound','Letter Sound',10),('english_familiar_words','Familiar Words',5),('english_picture_word_matching','Picture word matching',5),('english_reading_comprehension_text_1','Reading comprehension text 1',5),('english_reading_comprehension_text_2','Reading comprehension text 2',5),('english_letter_dictation','Letter Dictation',5),('english_word_dictation','Word Dictation',5)]),
+        'french_grade': _summer_subject('French', 40, [('french_letter_sound','Letter Sound',10),('french_familiar_words','Familiar Words',5),('french_picture_word_matching','Picture word matching',5),('french_reading_comprehension_text_1','Reading comprehension text 1',5),('french_reading_comprehension_text_2','Reading comprehension text 2',5),('french_letter_dictation','Letter Dictation',5),('french_word_dictation','Word Dictation',5)]),
+        'arabic_grade': _summer_subject('Arabic', 50, [('arabic_letter_sound','Letter Sound',10),('arabic_alphabet_vowel','Alphabet letters with vowel',5),('arabic_alphabet_long_vowel','Alphabet letters with long vowel',5),('arabic_familiar_words','Familiar Words',5),('arabic_picture_word_matching','Picture word matching',5),('arabic_reading_comprehension_text_1','Reading comprehension text 1',5),('arabic_reading_comprehension_text_2','Reading comprehension text 2',5),('arabic_letter_dictation','Letter Dictation',5),('arabic_word_dictation','Word Dictation',5)]),
+        'math_grade': _summer_subject('Math', 34, [('math_natural_numbers','Natural Numbers',10),('math_addition_words','Addition',8),('math_subtraction','Subtraction',4),('math_location','Location',4),('math_plane_figures','Plane Figures',4),('math_solid_figures','Solid figures',2),('math_length','Length',2)]),
+        'science_grade': _summer_subject('Science',20,[('science_total_score','Total science score',20)]),
+    },
+    'Summer RS Grade 2': {
+        'english_grade': _summer_subject('English',40,[('english_letter_sound','Letter Sound',10),('english_familiar_words','Familiar Words',5),('english_picture_word_matching','Picture word matching',5),('english_reading_comprehension_text_1','Reading comprehension text 1',5),('english_reading_comprehension_text_2','Reading comprehension text 2',5),('english_word_dictation','Word Dictation',5),('english_picture_naming','Picture Naming',5)]),
+        'french_grade': _summer_subject('French',40,[('french_letter_sound','Letter Sound',10),('french_familiar_words','Familiar Words',5),('french_picture_word_matching','Picture word matching',5),('french_reading_comprehension_text_1','Reading comprehension text 1',5),('french_reading_comprehension_text_2','Reading comprehension text 2',5),('french_word_dictation','Word Dictation',5),('french_picture_naming','Picture Naming',5)]),
+        'arabic_grade': _summer_subject('Arabic',50,[('arabic_letter_sound','Letter Sound',10),('arabic_alphabet_vowel','Alphabet letters with vowel',5),('arabic_alphabet_long_vowel','Alphabet letters with long vowel',5),('arabic_familiar_words','Familiar Words',5),('arabic_picture_word_matching','Picture word matching',5),('arabic_reading_comprehension_text_1','Reading comprehension text 1',5),('arabic_reading_comprehension_text_2','Reading comprehension text 2',5),('arabic_word_dictation','Word Dictation',5),('arabic_picture_naming','Picture Naming',5)]),
+        'math_grade': _summer_subject('Math',34,[('math_natural_numbers','Natural Numbers',8),('math_addition_words','Addition',6),('math_subtraction','Subtraction',6),('math_location','Location',3),('math_plane_figures','Plane Figures',3),('math_length','Length',3),('math_multiplication','Multiplication',5)]),
+        'science_grade': _summer_subject('Science',20,[('science_total_score','Total science score',20)]),
+    },
+}
+
+for grade, language_totals, math_total, math_components, include_science in (
+    (5, (32,32,34), 58, [('math_natural_numbers','Natural Numbers',10),('math_fractions','Fractions',6),('math_decimals','Decimals',6),('math_addition_words','Addition',5),('math_subtraction','Subtraction',5),('math_multiplication','Multiplication',5),('math_division','Division',5),('math_location','Location',2),('math_plane_figures','Plane figures',5),('math_measurement_angles','Measurement angles',3),('math_measurement_length','Measurement - Length',3),('math_measurement_area','Measurement - Area',3)], True),
+    (6, (32,32,34), 58, [('math_natural_numbers','Natural Numbers',5),('math_fractions','Fractions',4),('math_decimals','Decimals',4),('math_multiplication','Multiplication',5),('math_division','Division',5),('math_location','Location',4),('math_plane_figures','Plane figures',9),('math_measurement_angles','Measurement angles',3),('math_measurement_area','Measurement - Area',2),('math_integers','Integers',4),('math_percentage','Percentage',4),('math_algebraic_expressions','Algebraic expressions',4),('math_transformation','Transformation',5)], True),
+    (7, (42,40,40), 40, [('math_natural_numbers','Natural Numbers',3),('math_fractions_and_decimals','Fractions and decimals',3),('math_operations','Operations',7),('math_proportionality','Proportionality',3),('math_algebraic_expressions_and_equations','Algebraic Expressions and Equations',6),('math_geometry','Geometry',18)], False),
+    (8, (42,40,40), 50, [('math_natural_numbers','Natural Numbers',7),('math_fractions_and_decimals','Fractions and decimals',4),('math_operations','Operations',9),('math_geometry','Geometry',19),('math_equations_and_inequalities','Equations and Inequalities',4),('math_algebraic_expressions','Algebraic expressions',7)], False),
+    (9, (42,40,40), 50, [('math_operations','Operations',5),('math_geometry','Geometry',15),('math_equations_and_inequalities','Equations and Inequalities',4),('math_algebraic_expressions','Algebraic expressions',13),('math_rational_and_irrational_numbers','Rational and Irrational Numbers',4),('math_linear_functions_and_proportionality','Linear Functions and Proportionality',9)], False),
+):
+    config = {
+        'english_grade': _summer_subject('English', language_totals[0], [('english_reading_comprehension','Reading comprehension',language_totals[0]-20),('english_writing_expression','Writing Expression',20)]),
+        'french_grade': _summer_subject('French', language_totals[1], [('french_comprehension_ecrite','Comprehension Ecrite',language_totals[1]-20),('french_production_ecrite','Production Ecrite',20)]),
+        'arabic_grade': _summer_subject('Arabic', language_totals[2], [('arabic_reading_comprehension','Reading Comprehension',language_totals[2]-20),('arabic_writing_expression','Writing Expression',20)]),
+        'math_grade': _summer_subject('Math', math_total, math_components),
+    }
+    if include_science:
+        config['science_grade'] = _summer_subject('Science',20,[('science_total_score','Total Science scores',20)])
+    SUMMER_RS_PROGRAMME_CONFIG['Summer RS Grade {}'.format(grade)] = config
+
+SUMMER_RS_PROGRAMME_CONFIG['Summer RS Grade 3'] = {
+    'english_grade': _summer_subject('English', 40, [
+        ('english_letter_sound', 'Letter Sound', 10),
+        ('english_familiar_words', 'Familiar Words', 5),
+        ('english_reading_comprehension', 'Reading Comprehension', 15),
+        ('english_writing_expression', 'Writing', 10),
+    ]),
+    'french_grade': _summer_subject('French', 40, [
+        ('french_letter_sound', 'Letter Sound', 10),
+        ('french_familiar_words', 'Familiar Words', 5),
+        ('french_comprehension_ecrite', 'Reading Comprehension', 15),
+        ('french_production_ecrite', 'Writing', 10),
+    ]),
+}
+SUMMER_RS_PROGRAMME_CONFIG['Summer RS Grade 4'] = {
+    'english_grade': _summer_subject('English', 32, [
+        ('english_reading_comprehension', 'Reading Comprehension', 12),
+        ('english_writing_expression', 'Writing', 20),
+    ]),
+    'french_grade': _summer_subject('French', 32, [
+        ('french_comprehension_ecrite', 'Reading Comprehension', 12),
+        ('french_production_ecrite', 'Writing', 20),
+    ]),
+}
+
+SUMMER_RS_PROGRAMMES = frozenset(SUMMER_RS_PROGRAMME_CONFIG)
 
 WL_BLN_PROGRAMME_CONFIG = {
     "BLN Level 1": {
@@ -184,7 +253,7 @@ WL_BLN_PROGRAMME_CONFIG = {
 }
 
 
-def wl_bln_numeric_field(label, readonly=False):
+def grading_numeric_field(label, readonly=False):
     attrs = {'step': '0.01', 'min': '0'}
     if readonly:
         attrs['readonly'] = 'readonly'
@@ -199,13 +268,13 @@ def wl_bln_numeric_field(label, readonly=False):
     )
 
 
-def wl_bln_json_safe(data):
+def grading_json_safe(data):
     if isinstance(data, Decimal):
         return float(data)
     if isinstance(data, dict):
-        return {key: wl_bln_json_safe(value) for key, value in data.items()}
+        return {key: grading_json_safe(value) for key, value in data.items()}
     if isinstance(data, (list, tuple)):
-        return [wl_bln_json_safe(value) for value in data]
+        return [grading_json_safe(value) for value in data]
     return data
 
 
@@ -272,9 +341,9 @@ class DiagnosticAssessmentForm(forms.ModelForm):
 
         super(DiagnosticAssessmentForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('mscc:service_diagnostic_assessment_add', kwargs={'registry': registry})
+        form_action = reverse('tls:service_diagnostic_assessment_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:service_diagnostic_assessment_edit',
+            form_action = reverse('tls:service_diagnostic_assessment_edit',
                                   kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
@@ -470,9 +539,9 @@ class EducationAssessmentForm(forms.ModelForm):
 
         super(EducationAssessmentForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('mscc:service_education_assessment_add', kwargs={'registry': registry})
+        form_action = reverse('tls:service_education_assessment_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:service_education_assessment_edit',
+            form_action = reverse('tls:service_education_assessment_edit',
                                   kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
@@ -952,9 +1021,9 @@ class EducationRSServiceForm(forms.ModelForm):
 
         super(EducationRSServiceForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('mscc:service_education_rs_add', kwargs={'registry': registry})
+        form_action = reverse('tls:service_education_rs_add', kwargs={'registry': registry})
         if pk:
-            form_action = reverse('mscc:service_education_rs_edit',
+            form_action = reverse('tls:service_education_rs_edit',
                                   kwargs={'registry': registry, 'pk': pk})
 
         self.helper = FormHelper()
@@ -1129,10 +1198,10 @@ class EducationGradingForm(forms.ModelForm):
         provide_french_language = getattr(center, 'provide_french_language', None) == "Yes"
         self.provide_french_language = provide_french_language
 
-        form_action = reverse('mscc:service_education_grading_add',
+        form_action = reverse('tls:service_education_grading_add',
                               kwargs={'registry': registry, 'programme_type': programme_type})
         if instance:
-            form_action = reverse('mscc:service_education_grading_edit',
+            form_action = reverse('tls:service_education_grading_edit',
                                   kwargs={'registry': registry, 'programme_type': programme_type, 'pre_post': pre_post,
                                           'pk': instance})
 
@@ -1261,7 +1330,36 @@ class EducationGradingForm(forms.ModelForm):
             self.fields['english_grade'].hidden_widget()
             self.fields['french_grade'].hidden_widget()
 
+        if programme_type in ["Summer RS Grade 7", "Summer RS Grade 8", "Summer RS Grade 9", "YFS Level 1 - Summer RS Grade 9", "YFS Level 2 - Summer RS Grade 9"]:
+            field_init(self.fields['arabic_grade'], 'Arabic Language', 20)
+            field_init(self.fields['language_grade'], 'Foreign Language', 20)
+            field_init(self.fields['math_grade'], 'Mathematics', 20)
+            field_init(self.fields['biology_grade'], 'Biology', 20)
+            field_init(self.fields['chemistry_grade'], 'Chemistry', 20)
+            field_init(self.fields['physics_grade'], 'Physics', 20)
+            self.fields['science_grade'].hidden_widget()
+            self.fields['social_emotional_grade'].hidden_widget()
+            self.fields['psychomotor_grade'].hidden_widget()
+            self.fields['artistic_grade'].hidden_widget()
+            self.fields['english_grade'].hidden_widget()
+            self.fields['french_grade'].hidden_widget()
+
         if programme_type in ["RS Grade 1", "RS Grade 2", "RS Grade 3", "RS Grade 4", "RS Grade 5", "RS Grade 6"]:
+            field_init(self.fields['arabic_grade'], 'Arabic Language', 20)
+            field_init(self.fields['language_grade'], 'Foreign Language', 20)
+            field_init(self.fields['math_grade'], 'Mathematics', 20)
+            field_init(self.fields['science_grade'], 'Science', 20)
+
+            self.fields['biology_grade'].hidden_widget()
+            self.fields['chemistry_grade'].hidden_widget()
+            self.fields['physics_grade'].hidden_widget()
+            self.fields['social_emotional_grade'].hidden_widget()
+            self.fields['psychomotor_grade'].hidden_widget()
+            self.fields['artistic_grade'].hidden_widget()
+            self.fields['english_grade'].hidden_widget()
+            self.fields['french_grade'].hidden_widget()
+
+        if programme_type in ["Summer RS Grade 1", "Summer RS Grade 2", "Summer RS Grade 3", "Summer RS Grade 4", "Summer RS Grade 5", "Summer RS Grade 6"]:
             field_init(self.fields['arabic_grade'], 'Arabic Language', 20)
             field_init(self.fields['language_grade'], 'Foreign Language', 20)
             field_init(self.fields['math_grade'], 'Mathematics', 20)
@@ -1545,7 +1643,104 @@ class EducationGradingForm(forms.ModelForm):
                 ),
             )
 
+        if programme_type in ["Summer RS Grade 7", "Summer RS Grade 8", "Summer RS Grade 9", "YFS Level 1 - Summer RS Grade 9", "YFS Level 2 - Summer RS Grade 9"]:
+            self.helper.layout = Layout(
+                Div(
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('participation', css_class='col-md-4'),
+                        css_class='row card-body ' + display_post_fields_css
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('barriers', css_class='col-md-8'),
+                        Div('barriers_other', css_class='col-md-3'),
+                        css_class='row card-body ' + display_post_fields_css
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">3</span>'),
+                        Div('post_test_done', css_class='col-md-5'),
+                        HTML('<span class="badge-form-2 badge-pill">4</span>'),
+                        Div('school_year_completed', css_class='col-md-5'),
+                        css_class='row card-body ' + display_post_fields_css
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">' + str(1 + ctr) + '</span>'),
+                        Div('arabic_grade', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill">' + str(2 + ctr) + '</span>'),
+                        Div('language_grade', css_class='col-md-4'),
+                        css_class='row card-body ' + grade_field_css + display_pre_fields_css
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">' + str(3 + ctr) + '</span>'),
+                        Div('math_grade', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill">' + str(4 + ctr) + '</span>'),
+                        Div('biology_grade', css_class='col-md-4'),
+                        css_class='row card-body ' + grade_field_css + display_pre_fields_css
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">' + str(5 + ctr) + '</span>'),
+                        Div('chemistry_grade', css_class='col-md-4'),
+                        HTML('<span class="' + badge_css + ' badge-pill">' + str(6 + ctr) + '</span>'),
+                        Div('physics_grade', css_class='col-md-4'),
+                        css_class='row card-body ' + grade_field_css + display_pre_fields_css
+                    ),
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    ),
+                    css_id='step-1'
+                ),
+            )
+
         if programme_type in ["RS Grade 1", "RS Grade 2", "RS Grade 3", "RS Grade 4", "RS Grade 5", "RS Grade 6"]:
+            self.helper.layout = Layout(
+                Div(
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('participation', css_class='col-md-4'),
+                        css_class='row card-body ' + display_post_fields_css
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('barriers', css_class='col-md-8'),
+                        Div('barriers_other', css_class='col-md-3'),
+                        css_class='row card-body ' + display_post_fields_css
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">3</span>'),
+                        Div('post_test_done', css_class='col-md-5'),
+                        HTML('<span class="badge-form-2 badge-pill">4</span>'),
+                        Div('school_year_completed', css_class='col-md-5'),
+                        css_class='row card-body ' + display_post_fields_css
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">' + str(1 + ctr) + '</span>'),
+                        Div('arabic_grade', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill">' + str(2 + ctr) + '</span>'),
+                        Div('language_grade', css_class='col-md-4'),
+                        css_class='row card-body ' + grade_field_css + display_pre_fields_css
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">' + str(3 + ctr) + '</span>'),
+                        Div('math_grade', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill">' + str(4 + ctr) + '</span>'),
+                        Div('science_grade', css_class='col-md-4'),
+                        css_class='row card-body ' + grade_field_css + display_pre_fields_css
+                    ),
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    ),
+                    css_id='step-1'
+                ),
+            )
+
+        if programme_type in ["Summer RS Grade 1", "Summer RS Grade 2", "Summer RS Grade 3", "Summer RS Grade 4", "Summer RS Grade 5", "Summer RS Grade 6"]:
             self.helper.layout = Layout(
                 Div(
                     Div(
@@ -1663,30 +1858,6 @@ class EducationGradingForm(forms.ModelForm):
                 "psychomotor_grade": 42,
                 "artistic_grade": 16,
             },
-            "RS Grade 7": {
-                "arabic_grade": 20,
-                "language_grade": 20,
-                "math_grade": 20,
-                "biology_grade": 20,
-                "chemistry_grade": 20,
-                "physics_grade": 20,
-            },
-            "RS Grade 8": {
-                "arabic_grade": 20,
-                "language_grade": 20,
-                "math_grade": 20,
-                "biology_grade": 20,
-                "chemistry_grade": 20,
-                "physics_grade": 20,
-            },
-            "RS Grade 9": {
-                "arabic_grade": 20,
-                "language_grade": 20,
-                "math_grade": 20,
-                "biology_grade": 20,
-                "chemistry_grade": 20,
-                "physics_grade": 20,
-            },
             "YFS Level 1 - RS Grade 9": {
                 "arabic_grade": 20,
                 "language_grade": 20,
@@ -1739,6 +1910,90 @@ class EducationGradingForm(forms.ModelForm):
                 "math_grade": 20,
                 "science_grade": 20,
             },
+            "RS Grade 7": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "biology_grade": 20,
+                "chemistry_grade": 20,
+                "physics_grade": 20,
+            },
+            "RS Grade 8": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "biology_grade": 20,
+                "chemistry_grade": 20,
+                "physics_grade": 20,
+            },
+            "RS Grade 9": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "biology_grade": 20,
+                "chemistry_grade": 20,
+                "physics_grade": 20,
+            },
+            "Summer RS Grade 1": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "science_grade": 20,
+            },
+            "Summer RS Grade 2": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "science_grade": 20,
+            },
+            "Summer RS Grade 3": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "science_grade": 20,
+            },
+            "Summer RS Grade 4": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "science_grade": 20,
+            },
+            "Summer RS Grade 5": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "science_grade": 20,
+            },
+            "Summer RS Grade 6": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "science_grade": 20,
+            },
+            "Summer RS Grade 7": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "biology_grade": 20,
+                "chemistry_grade": 20,
+                "physics_grade": 20,
+            },
+            "Summer RS Grade 8": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "biology_grade": 20,
+                "chemistry_grade": 20,
+                "physics_grade": 20,
+            },
+            "Summer RS Grade 9": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "biology_grade": 20,
+                "chemistry_grade": 20,
+                "physics_grade": 20,
+            },
         }
 
         if programme_type in thresholds:
@@ -1764,41 +2019,322 @@ class EducationGradingForm(forms.ModelForm):
         )
 
 
+class SummerRSAssessmentForm(forms.ModelForm):
+    programme_type = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    english_letter_sound = grading_numeric_field(_('Letter Sound'))
+    english_familiar_words = grading_numeric_field(_('Familiar Words'))
+    english_picture_word_matching = grading_numeric_field(_('Picture word matching'))
+    english_reading_comprehension_text_1 = grading_numeric_field(_('Reading comprehension text 1'))
+    english_reading_comprehension_text_2 = grading_numeric_field(_('Reading comprehension text 2'))
+    english_letter_dictation = grading_numeric_field(_('Letter Dictation'))
+    english_word_dictation = grading_numeric_field(_('Word Dictation'))
+    english_picture_naming = grading_numeric_field(_('Picture Naming'))
+    english_reading_comprehension = grading_numeric_field(_('Reading Comprehension'))
+    english_writing_expression = grading_numeric_field(_('Writing'))
+    english_grade = grading_numeric_field(_('English'), readonly=True)
+
+    french_letter_sound = grading_numeric_field(_('Letter Sound'))
+    french_familiar_words = grading_numeric_field(_('Familiar Words'))
+    french_picture_word_matching = grading_numeric_field(_('Picture word matching'))
+    french_reading_comprehension_text_1 = grading_numeric_field(_('Reading comprehension text 1'))
+    french_reading_comprehension_text_2 = grading_numeric_field(_('Reading comprehension text 2'))
+    french_letter_dictation = grading_numeric_field(_('Letter Dictation'))
+    french_word_dictation = grading_numeric_field(_('Word Dictation'))
+    french_picture_naming = grading_numeric_field(_('Picture Naming'))
+    french_comprehension_ecrite = grading_numeric_field(_('Comprehension Ecrite'))
+    french_production_ecrite = grading_numeric_field(_('Production Ecrite'))
+    french_grade = grading_numeric_field(_('French'), readonly=True)
+
+    arabic_letter_sound = grading_numeric_field(_('Letter Sound'))
+    arabic_alphabet_vowel = grading_numeric_field(_('Alphabet letters with vowel'))
+    arabic_alphabet_long_vowel = grading_numeric_field(_('Alphabet letters with long vowel'))
+    arabic_familiar_words = grading_numeric_field(_('Familiar Words'))
+    arabic_picture_word_matching = grading_numeric_field(_('Picture word matching'))
+    arabic_reading_comprehension_text_1 = grading_numeric_field(_('Reading comprehension text 1'))
+    arabic_reading_comprehension_text_2 = grading_numeric_field(_('Reading comprehension text 2'))
+    arabic_letter_dictation = grading_numeric_field(_('Letter Dictation'))
+    arabic_word_dictation = grading_numeric_field(_('Word Dictation'))
+    arabic_picture_naming = grading_numeric_field(_('Picture Naming'))
+    arabic_reading_comprehension = grading_numeric_field(_('Reading Comprehension'))
+    arabic_writing_expression = grading_numeric_field(_('Writing Expression'))
+    arabic_grade = grading_numeric_field(_('Arabic'), readonly=True)
+
+    math_natural_numbers = grading_numeric_field(_('Natural Numbers'))
+    math_addition_words = grading_numeric_field(_('Addition'))
+    math_subtraction = grading_numeric_field(_('Subtraction'))
+    math_location = grading_numeric_field(_('Location'))
+    math_plane_figures = grading_numeric_field(_('Plane figures'))
+    math_solid_figures = grading_numeric_field(_('Solid figures'))
+    math_length = grading_numeric_field(_('Length'))
+    math_multiplication = grading_numeric_field(_('Multiplication'))
+    math_fractions = grading_numeric_field(_('Fractions'))
+    math_decimals = grading_numeric_field(_('Decimals'))
+    math_division = grading_numeric_field(_('Division'))
+    math_measurement_angles = grading_numeric_field(_('Measurement angles'))
+    math_measurement_length = grading_numeric_field(_('Measurement - Length'))
+    math_measurement_area = grading_numeric_field(_('Measurement - Area'))
+    math_integers = grading_numeric_field(_('Integers'))
+    math_percentage = grading_numeric_field(_('Percentage'))
+    math_algebraic_expressions = grading_numeric_field(_('Algebraic expressions'))
+    math_transformation = grading_numeric_field(_('Transformation'))
+    math_fractions_and_decimals = grading_numeric_field(_('Fractions and decimals'))
+    math_operations = grading_numeric_field(_('Operations'))
+    math_proportionality = grading_numeric_field(_('Proportionality'))
+    math_algebraic_expressions_and_equations = grading_numeric_field(_('Algebraic Expressions and Equations'))
+    math_geometry = grading_numeric_field(_('Geometry'))
+    math_equations_and_inequalities = grading_numeric_field(_('Equations and Inequalities'))
+    math_rational_and_irrational_numbers = grading_numeric_field(_('Rational and Irrational Numbers'))
+    math_linear_functions_and_proportionality = grading_numeric_field(_('Linear Functions and Proportionality'))
+    math_grade = grading_numeric_field(_('Math'), readonly=True)
+
+    science_total_score = grading_numeric_field(_('Total Science scores'))
+    science_grade = grading_numeric_field(_('Science'), readonly=True)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        registry = kwargs.pop('registry', None)
+        programme_type = kwargs.pop('programme_type', None)
+        pre_post = kwargs.pop('pre_post', None) or 'pre'
+        instance = kwargs.pop('instance', None)
+
+        super(SummerRSAssessmentForm, self).__init__(*args, **kwargs)
+
+        self.pre_post = pre_post
+        self.programme_type = programme_type
+        self.programme_config = SUMMER_RS_PROGRAMME_CONFIG.get(programme_type, {})
+
+        center = getattr(getattr(self.request, 'user', None), 'center', None)
+        provide_french_language = getattr(center, 'provide_french_language', None)
+        if provide_french_language == "Yes":
+            self.programme_config = {
+                field_name: config
+                for field_name, config in self.programme_config.items()
+                if not field_name.startswith('english_')
+            }
+        else:
+            self.programme_config = {
+                field_name: config
+                for field_name, config in self.programme_config.items()
+                if not field_name.startswith('french_')
+            }
+
+        form_action = reverse('tls:summer_rs_assessment_add',
+                              kwargs={'registry': registry, 'programme_type': programme_type})
+        if instance:
+            form_action = reverse('tls:summer_rs_assessment_edit',
+                                  kwargs={'registry': registry, 'programme_type': programme_type,
+                                          'pre_post': pre_post, 'pk': instance})
+
+        if programme_type:
+            self.fields['programme_type'].initial = programme_type
+
+        active_fields = {'programme_type'}
+        total_labels = {}
+
+        for total_field, subject_config in self.programme_config.items():
+            active_fields.add(total_field)
+            total_labels[total_field] = self.fields[total_field].label
+            self.fields[total_field].label = ''
+            self.fields[total_field].widget.attrs.update({
+                'data-wl-bln-total-field': total_field,
+                'readonly': 'readonly',
+            })
+            for component_name, _label, max_score in subject_config['components']:
+                active_fields.add(component_name)
+                self.fields[component_name].label = mark_safe(
+                    '{0} / <strong class="text-primary">{1}</strong>'.format(
+                        self.fields[component_name].label,
+                        max_score,
+                    )
+                )
+                self.fields[component_name].widget.attrs.update({
+                    'data-wl-bln-component': '1',
+                    'data-wl-bln-total-target': total_field,
+                    'step': '0.01',
+                    'min': '0',
+                })
+
+        for field_name, field in self.fields.items():
+            if field_name not in active_fields:
+                field.widget = forms.HiddenInput()
+                field.required = False
+
+        self._set_initial_totals()
+
+        score_section_css = 'wl-bln-score-field'
+
+        layout_items = []
+
+        for index, (total_field, subject_config) in enumerate(self.programme_config.items(), start=1):
+            layout_items.append(
+                HTML(
+                    '<div class="card-body {0}">'
+                    '<h5 class="mb-3 d-flex align-items-center">'
+                    '<span class="badge-form badge-pill mr-2">{1}</span>'
+                    '{2} / {3}'
+                    '</h5>'
+                    '</div>'.format(
+                        score_section_css,
+                        index,
+                        subject_config['label'],
+                        subject_config['total'],
+                    )
+                )
+            )
+            components = list(subject_config['components'])
+            for start in range(0, len(components), 2):
+                row_fields = []
+                for component_name, _component_label, max_score in components[start:start + 2]:
+                    row_fields.append(
+                        Div(
+                            Field(component_name, placeholder='0'),
+                            css_class='col-md-5'
+                        )
+                    )
+                layout_items.append(
+                    Div(
+                        *row_fields,
+                        css_class='row card-body {}'.format(score_section_css)
+                    )
+                )
+            total_value = self.data.get(total_field) if self.is_bound else self.fields[total_field].initial or 0
+            layout_items.append(
+                Div(
+                    Div(
+                        HTML(
+                            '<label class="form-label font-weight-bold mb-0">{0}</label>'.format(
+                                total_labels[total_field],
+                            )
+                        ),
+                        css_class='col-md-3 d-flex align-items-center'
+                    ),
+                    Div(
+                        HTML(
+                            '<input type="number" name="{0}" value="{1}" class="numberinput form-control" '
+                            'id="id_{0}" readonly="readonly" step="0.01" min="0" data-wl-bln-total-field="{0}">'.format(
+                                total_field,
+                                total_value,
+                            )
+                        ),
+                        css_class='col-md-2'
+                    ),
+                    css_class='row card-body {} align-items-center'.format(score_section_css)
+                )
+            )
+
+        layout_items.append(
+            FormActions(
+                Submit('save', 'Save',
+                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                Reset('reset', 'Reset',
+                      css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+            )
+        )
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(Div(*layout_items, css_id='step-1'))
+
+    def _score_source(self):
+        if self.is_bound:
+            return self.data
+        if self.initial:
+            return self.initial
+        return {}
+
+    def _set_initial_totals(self):
+        source = self._score_source()
+        for total_field, subject_config in self.programme_config.items():
+            total = Decimal('0')
+            for component_name, _label, _max_score in subject_config['components']:
+                try:
+                    total += Decimal(str(source.get(component_name) or 0))
+                except (TypeError, ValueError):
+                    total += Decimal('0')
+            self.fields[total_field].initial = total
+
+    def clean(self):
+        cleaned_data = super(SummerRSAssessmentForm, self).clean()
+        programme_type = cleaned_data.get('programme_type') or self.programme_type
+        programme_config = self.programme_config or SUMMER_RS_PROGRAMME_CONFIG.get(programme_type, {})
+
+
+        for total_field, subject_config in programme_config.items():
+            total = Decimal('0')
+            for component_name, _component_label, max_score in subject_config['components']:
+                value = cleaned_data.get(component_name)
+                if value in (None, ''):
+                    self.add_error(component_name, 'This field is required')
+                    value = Decimal('0')
+                if value is not None and value not in ('',):
+                    if value > max_score:
+                        self.add_error(component_name, 'Max value is {0}'.format(max_score))
+                    total += value or Decimal('0')
+                cleaned_data[component_name] = value or Decimal('0')
+            cleaned_data[total_field] = total
+
+        return cleaned_data
+
+    def save(self, request=None, instance=None, registry=None, programme_type=None, pre_post=None):
+        cleaned_data = grading_json_safe(self.cleaned_data.copy())
+        if not instance:
+            instance = EducationProgrammeSummerRSAssessment.objects.create(registration_id=registry)
+        else:
+            instance = EducationProgrammeSummerRSAssessment.objects.get(id=instance)
+
+        if pre_post == 'post':
+            instance.post_test = cleaned_data
+        else:
+            instance.pre_test = cleaned_data
+
+        instance.programme_type = programme_type
+        instance.save()
+
+        messages.success(request, _('Your data has been sent successfully to the server'))
+        return instance
+
+    class Meta:
+        model = EducationProgrammeSummerRSAssessment
+        fields = ('programme_type',)
+
+
 class WLBLNAssessmentForm(forms.ModelForm):
     programme_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
-    english_letter_sound = wl_bln_numeric_field(_('English - Letter Sound'))
-    english_familiar_words = wl_bln_numeric_field(_('English - Familiar Words'))
-    english_sentence = wl_bln_numeric_field(_('English - Sentence'))
-    english_paragraph = wl_bln_numeric_field(_('English - Paragraph'))
-    english_dictation = wl_bln_numeric_field(_('English - Dictation'))
-    english_reading_comprehension = wl_bln_numeric_field(_('English - Reading Comprehension'))
-    english_grade = wl_bln_numeric_field(_('English Total'), readonly=True)
+    english_letter_sound = grading_numeric_field(_('English - Letter Sound'))
+    english_familiar_words = grading_numeric_field(_('English - Familiar Words'))
+    english_sentence = grading_numeric_field(_('English - Sentence'))
+    english_paragraph = grading_numeric_field(_('English - Paragraph'))
+    english_dictation = grading_numeric_field(_('English - Dictation'))
+    english_reading_comprehension = grading_numeric_field(_('English - Reading Comprehension'))
+    english_grade = grading_numeric_field(_('English Total'), readonly=True)
 
-    french_letter_sound = wl_bln_numeric_field(_('French - Letter Sound'))
-    french_familiar_words = wl_bln_numeric_field(_('French - Familiar Words'))
-    french_sentence = wl_bln_numeric_field(_('French - Sentence'))
-    french_paragraph = wl_bln_numeric_field(_('French - Paragraph'))
-    french_dictation = wl_bln_numeric_field(_('French - Dictation'))
-    french_reading_comprehension = wl_bln_numeric_field(_('French - Reading Comprehension'))
-    french_grade = wl_bln_numeric_field(_('French Total'), readonly=True)
+    french_letter_sound = grading_numeric_field(_('French - Letter Sound'))
+    french_familiar_words = grading_numeric_field(_('French - Familiar Words'))
+    french_sentence = grading_numeric_field(_('French - Sentence'))
+    french_paragraph = grading_numeric_field(_('French - Paragraph'))
+    french_dictation = grading_numeric_field(_('French - Dictation'))
+    french_reading_comprehension = grading_numeric_field(_('French - Reading Comprehension'))
+    french_grade = grading_numeric_field(_('French Total'), readonly=True)
 
-    arabic_letter_sound = wl_bln_numeric_field(_('Arabic - Letter Sound'))
-    arabic_alphabet_vowel = wl_bln_numeric_field(_('Arabic - Alphabet letters with vowel'))
-    arabic_alphabet_long_vowel = wl_bln_numeric_field(_('Arabic - Alphabet letters with long vowel'))
-    arabic_familiar_words = wl_bln_numeric_field(_('Arabic - Familiar Words'))
-    arabic_sentence = wl_bln_numeric_field(_('Arabic - Sentence'))
-    arabic_paragraph = wl_bln_numeric_field(_('Arabic - Paragraph'))
-    arabic_reading_comprehension = wl_bln_numeric_field(_('Arabic - Reading Comprehension'))
-    arabic_dictation = wl_bln_numeric_field(_('Arabic - Dictation'))
-    arabic_grade = wl_bln_numeric_field(_('Arabic Total'), readonly=True)
+    arabic_letter_sound = grading_numeric_field(_('Arabic - Letter Sound'))
+    arabic_alphabet_vowel = grading_numeric_field(_('Arabic - Alphabet letters with vowel'))
+    arabic_alphabet_long_vowel = grading_numeric_field(_('Arabic - Alphabet letters with long vowel'))
+    arabic_familiar_words = grading_numeric_field(_('Arabic - Familiar Words'))
+    arabic_sentence = grading_numeric_field(_('Arabic - Sentence'))
+    arabic_paragraph = grading_numeric_field(_('Arabic - Paragraph'))
+    arabic_reading_comprehension = grading_numeric_field(_('Arabic - Reading Comprehension'))
+    arabic_dictation = grading_numeric_field(_('Arabic - Dictation'))
+    arabic_grade = grading_numeric_field(_('Arabic Total'), readonly=True)
 
-    math_natural_numbers = wl_bln_numeric_field(_('Math - Natural Numbers'))
-    math_addition_words = wl_bln_numeric_field(_('Math - Addition'))
-    math_subtraction = wl_bln_numeric_field(_('Math - Subtraction'))
-    math_multiplication = wl_bln_numeric_field(_('Math - Multiplication'))
-    math_division = wl_bln_numeric_field(_('Math - Division'))
-    math_grade = wl_bln_numeric_field(_('Math Total'), readonly=True)
+    math_natural_numbers = grading_numeric_field(_('Math - Natural Numbers'))
+    math_addition_words = grading_numeric_field(_('Math - Addition'))
+    math_subtraction = grading_numeric_field(_('Math - Subtraction'))
+    math_multiplication = grading_numeric_field(_('Math - Multiplication'))
+    math_division = grading_numeric_field(_('Math - Division'))
+    math_grade = grading_numeric_field(_('Math Total'), readonly=True)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -1828,10 +2364,10 @@ class WLBLNAssessmentForm(forms.ModelForm):
                 if not field_name.startswith('french_')
             }
 
-        form_action = reverse('mscc:wl_bln_assessment_add',
+        form_action = reverse('tls:wl_bln_assessment_add',
                               kwargs={'registry': registry, 'programme_type': programme_type})
         if instance:
-            form_action = reverse('mscc:wl_bln_assessment_edit',
+            form_action = reverse('tls:wl_bln_assessment_edit',
                                   kwargs={'registry': registry, 'programme_type': programme_type,
                                           'pre_post': pre_post, 'pk': instance})
 
@@ -1987,7 +2523,7 @@ class WLBLNAssessmentForm(forms.ModelForm):
         return cleaned_data
 
     def save(self, request=None, instance=None, registry=None, programme_type=None, pre_post=None):
-        cleaned_data = wl_bln_json_safe(self.cleaned_data.copy())
+        cleaned_data = grading_json_safe(self.cleaned_data.copy())
         if not instance:
             instance = EducationProgrammeWLAssessment.objects.create(registration_id=registry)
         else:
@@ -2063,19 +2599,45 @@ class TarlGradingForm(forms.ModelForm):
 
         super(TarlGradingForm, self).__init__(*args, **kwargs)
 
-        center = getattr(getattr(self.request, 'user', None), 'center', None)
-        provide_french_language = getattr(center, 'provide_french_language', None) == "Yes"
-        self.require_french_language = provide_french_language
+        summer_rs_programmes = [
+            "Summer RS Grade 3",
+            "Summer RS Grade 4",
+            "Summer RS Grade 5",
+            "Summer RS Grade 6",
+        ]
 
-        if not provide_french_language:
+        center = getattr(getattr(self.request, 'user', None), 'center', None)
+        provide_french_language = (
+            getattr(center, 'provide_french_language', None) == "Yes"
+        )
+
+        show_french_language = (
+            provide_french_language
+            or programme_type in summer_rs_programmes
+        )
+
+        if not show_french_language:
             self.fields.pop('french_level_reached', None)
 
-        form_action = reverse('mscc:service_tarl_grading_add',
-                              kwargs={'registry': registry, 'programme_type': programme_type, 'pre_post': pre_post})
+        form_action = reverse(
+            'tls:service_tarl_grading_add',
+            kwargs={
+                'registry': registry,
+                'programme_type': programme_type,
+                'pre_post': pre_post
+            }
+        )
+
         if instance:
-            form_action = reverse('mscc:service_tarl_grading_edit',
-                                  kwargs={'registry': registry, 'programme_type': programme_type, 'pre_post': pre_post,
-                                          'pk': instance})
+            form_action = reverse(
+                'tls:service_tarl_grading_edit',
+                kwargs={
+                    'registry': registry,
+                    'programme_type': programme_type,
+                    'pre_post': pre_post,
+                    'pk': instance
+                }
+            )
 
         if programme_type:
             self.fields['programme_type'].initial = programme_type
@@ -2083,11 +2645,12 @@ class TarlGradingForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
+
         tarl_blocks = [
             Div(
                 HTML('<span class="badge-form badge-pill">1</span>'),
                 Div('test_taken', css_class='col-md-4'),
-                css_class='row card-body '
+                css_class='row card-body'
             ),
             Div(
                 HTML('<span class="badge-form badge-pill">2</span>'),
@@ -2096,11 +2659,14 @@ class TarlGradingForm(forms.ModelForm):
             ),
         ]
 
-        if provide_french_language:
+        if show_french_language:
             tarl_blocks.append(
                 Div(
                     HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('french_level_reached', css_class='col-md-4 tarl-dependent'),
+                    Div(
+                        'french_level_reached',
+                        css_class='col-md-4 tarl-dependent  tarl-optional'
+                    ),
                     css_class='row card-body'
                 )
             )
@@ -2108,18 +2674,36 @@ class TarlGradingForm(forms.ModelForm):
         tarl_blocks.append(
             Div(
                 HTML('<span class="badge-form badge-pill">4</span>'),
-                Div('math_level_reached', css_class='col-md-4 tarl-dependent'),
-                Div('word_problem_q1', css_class='col-md-3 tarl-dependent tarl-word-problem'),
-                Div('word_problem_q2', css_class='col-md-3 tarl-dependent tarl-word-problem'),
+                Div(
+                    'math_level_reached',
+                    css_class='col-md-4 tarl-dependent'
+                ),
+                Div(
+                    'word_problem_q1',
+                    css_class='col-md-3 tarl-dependent tarl-word-problem'
+                ),
+                Div(
+                    'word_problem_q2',
+                    css_class='col-md-3 tarl-dependent tarl-word-problem'
+                ),
                 css_class='row card-body'
             )
         )
+
         tarl_blocks.append(
             FormActions(
-                Submit('save', 'Save',
-                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                Reset('reset', 'Reset',
-                      css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                Submit(
+                    'save',
+                    'Save',
+                    css_class='btn-shadow btn-wide float-right btn-pill mr-3 '
+                              'btn-hover-shine btn btn-success'
+                ),
+                Reset(
+                    'reset',
+                    'Reset',
+                    css_class='btn-shadow btn-wide float-right btn-pill mr-3 '
+                              'btn-hover-shine btn btn-warning'
+                ),
             )
         )
 
@@ -2137,8 +2721,6 @@ class TarlGradingForm(forms.ModelForm):
             'arabic_level_reached',
             'math_level_reached',
         ]
-        if self.require_french_language:
-            required_fields.append('french_level_reached')
         if test_taken == 'Yes':
             for field in required_fields:
                 if not cleaned_data.get(field):
@@ -2262,10 +2844,10 @@ class YouthScoringForm(forms.ModelForm):
 
         super(YouthScoringForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('mscc:service_youth_scoring_add',
+        form_action = reverse('tls:service_youth_scoring_add',
                               kwargs={'registry': registry, 'programme_type': programme_type})
         if instance:
-            form_action = reverse('mscc:service_youth_scoring_edit',
+            form_action = reverse('tls:service_youth_scoring_edit',
                                   kwargs={'registry': registry, 'programme_type': programme_type, 'pre_post': pre_post,
                                           'pk': instance})
 
@@ -2413,13 +2995,13 @@ class YouthScoringForm(forms.ModelForm):
     def save(self, request=None, instance=None, registry=None, programme_type=None, pre_post=None):
         if not instance:
             instance = EducationProgrammeAssessment.objects.create(registration_id=registry)
-            instance.pre_test = request.POST
+            instance.youth_pre_test = request.POST
         else:
             instance = EducationProgrammeAssessment.objects.get(id=instance)
             if pre_post == "pre":
-                instance.pre_test = request.POST
+                instance.youth_pre_test = request.POST
             if pre_post == "post":
-                instance.post_test = request.POST
+                instance.youth_post_test = request.POST
 
         instance.programme_type = programme_type
         instance.save()
@@ -2535,7 +3117,7 @@ class EducationSchoolGradingForm(forms.ModelForm):
 
         super(EducationSchoolGradingForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('mscc:service_school_grading',
+        form_action = reverse('tls:service_school_grading',
                               kwargs={'registry': registry, 'programme_type': programme_type, 'pk': instance})
 
         if programme_type in ["RS Grade 7", "RS Grade 8", "RS Grade 9", "YFS Level 1 - RS Grade 9", "YFS Level 2 - RS Grade 9"]:
@@ -2547,7 +3129,26 @@ class EducationSchoolGradingForm(forms.ModelForm):
             field_init(self.fields['physics_grade'], 'Physics', 20)
             self.fields['science_grade'].hidden_widget()
 
+        if programme_type in ["Summer RS Grade 7", "Summer RS Grade 8", "Summer RS Grade 9", "YFS Level 1 - Summer RS Grade 9", "YFS Level 2 - Summer RS Grade 9"]:
+            field_init(self.fields['arabic_grade'], 'Arabic Language', 20)
+            field_init(self.fields['language_grade'], 'Foreign Language', 20)
+            field_init(self.fields['math_grade'], 'Mathematics', 20)
+            field_init(self.fields['biology_grade'], 'Biology', 20)
+            field_init(self.fields['chemistry_grade'], 'Chemistry', 20)
+            field_init(self.fields['physics_grade'], 'Physics', 20)
+            self.fields['science_grade'].hidden_widget()
+
         if programme_type in ["RS Grade 1", "RS Grade 2", "RS Grade 3", "RS Grade 4", "RS Grade 5", "RS Grade 6"]:
+            field_init(self.fields['arabic_grade'], 'Arabic Language', 20)
+            field_init(self.fields['language_grade'], 'Foreign Language', 20)
+            field_init(self.fields['math_grade'], 'Mathematics', 20)
+            field_init(self.fields['science_grade'], 'Science', 20)
+
+            self.fields['biology_grade'].hidden_widget()
+            self.fields['chemistry_grade'].hidden_widget()
+            self.fields['physics_grade'].hidden_widget()
+
+        if programme_type in ["Summer RS Grade 1", "Summer RS Grade 2", "Summer RS Grade 3", "Summer RS Grade 4", "Summer RS Grade 5", "Summer RS Grade 6"]:
             field_init(self.fields['arabic_grade'], 'Arabic Language', 20)
             field_init(self.fields['language_grade'], 'Foreign Language', 20)
             field_init(self.fields['math_grade'], 'Mathematics', 20)
@@ -2596,7 +3197,69 @@ class EducationSchoolGradingForm(forms.ModelForm):
                 ),
             )
 
+        if programme_type in ["Summer RS Grade 7", "Summer RS Grade 8", "Summer RS Grade 9", "YFS Level 1 - Summer RS Grade 9", "YFS Level 2 - Summer RS Grade 9"]:
+            self.helper.layout = Layout(
+                Div(
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('arabic_grade', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('language_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('math_grade', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('biology_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">5</span>'),
+                        Div('chemistry_grade', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill">6</span>'),
+                        Div('physics_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    ),
+                    css_id='step-1'
+                ),
+            )
+
         if programme_type in ["RS Grade 1", "RS Grade 2", "RS Grade 3", "RS Grade 4", "RS Grade 5", "RS Grade 6"]:
+            self.helper.layout = Layout(
+                Div(
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('arabic_grade', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('language_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('math_grade', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('science_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    ),
+                    css_id='step-1'
+                ),
+            )
+
+        if programme_type in ["Summer RS Grade 1", "Summer RS Grade 2", "Summer RS Grade 3", "Summer RS Grade 4", "Summer RS Grade 5", "Summer RS Grade 6"]:
             self.helper.layout = Layout(
                 Div(
                     Div(

@@ -29,7 +29,7 @@ from student_registration.backends.utils import ExportStorage
 from .education_form import EducationServiceForm
 from .filters import FullFilter, MainFilter
 from .forms import MainForm
-from .models import EducationService, ProvidedServices, Registration, Round
+from student_registration.mscc.models import EducationService, ProvidedServices, Registration, Round
 from .serializers import MainSerializer
 from .tables import BootstrapTable, FullTable, PartnerTable, TLSMainTable, YouthMainTable
 from .utils import DEFAULT_PACKAGE_TYPE, generate_services, to_array
@@ -45,6 +45,8 @@ class TLSProfileView(LoginRequiredMixin, TemplateView):
         instance = Registration.objects.get(id=self.kwargs['pk'])
         generate_services(instance.child.age, instance)
         current_tab = self.request.GET.get('current_tab', 'info')
+        if current_tab not in ('info', 'services'):
+            current_tab = 'info'
 
         rounds_registered = EducationService.objects.filter(
             registration__child_id=instance.child.id,
@@ -201,7 +203,7 @@ class TLSEducationServiceFormView(LoginRequiredMixin, GroupRequiredMixin, FormVi
         return TLS_PACKAGE_TYPE or DEFAULT_PACKAGE_TYPE
 
     def get_success_url(self):
-        return reverse('tls:child_profile', kwargs={'pk': self.kwargs['registry']})
+        return reverse('tls:child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
 
     def get_context_data(self, **kwargs):
         if 'form' not in kwargs:

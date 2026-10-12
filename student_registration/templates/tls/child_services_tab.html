@@ -18,9 +18,9 @@
                                                     <h5 class="menu-header-title">Retention Support
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="{% url 'mscc:service_education_rs_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit The RS Service Data">Edit</a>
+                                                              <a href="{% url 'tls:service_education_rs_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit The RS Service Data">Edit</a>
                                                             {% else %}
-                                                              <a href="{% url 'mscc:service_education_rs_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The RS Service Data">Add</a>
+                                                              <a href="{% url 'tls:service_education_rs_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The RS Service Data">Add</a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
@@ -165,9 +165,9 @@
                                           <div class="tab-pane active show" id="tab-animated-11" role="tabpanel">
                                                     <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                       {% if result %}
-                                                        <a href="{% url 'mscc:service_education_grading_edit' instance.id result1.education_program 'pre' result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Pre Grades">Edit</a>
+                                                        <a href="{% url 'tls:service_education_grading_edit' instance.id result1.education_program 'pre' result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Pre Grades">Edit</a>
                                                       {% else %}
-                                                        <a href="{% url 'mscc:service_education_grading_add' instance.id result1.education_program %}" data-toggle="tooltip" data-placement="top" data-original-title="Add Education Pre Grades">Add</a>
+                                                        <a href="{% url 'tls:service_education_grading_add' instance.id result1.education_program %}" data-toggle="tooltip" data-placement="top" data-original-title="Add Education Pre Grades">Add</a>
                                                       {% endif %}
                                                     </div>
 
@@ -502,7 +502,7 @@
                                           <div class="tab-pane" id="tab-animated-14" role="tabpanel">
                                               <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                   {% if result %}
-                                                    <a href="{% url 'mscc:service_education_grading_edit' instance.id result1.education_program 'mid' result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Mid Grades">Edit</a>
+                                                    <a href="{% url 'tls:service_education_grading_edit' instance.id result1.education_program 'mid' result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Mid Grades">Edit</a>
                                                   {% endif %}
                                               </div>
                                               <div class="scroll-area-sm" style="height: 200px;">
@@ -526,7 +526,7 @@
                                           <div class="tab-pane" id="tab-animated-12" role="tabpanel">
                                                     <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                       {% if result %}
-                                                        <a href="{% url 'mscc:service_education_grading_edit' instance.id result1.education_program 'post' result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Post Grades">Edit</a>
+                                                        <a href="{% url 'tls:service_education_grading_edit' instance.id result1.education_program 'post' result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Post Grades">Edit</a>
                                                       {% endif %}
                                                     </div>
 
@@ -1388,7 +1388,7 @@
                                           <div class="tab-pane" id="tab-animated-16" role="tabpanel">
                                                     <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                      {% if result %}
-                                                       <a href="{% url 'mscc:service_school_grading' instance.id result1.education_program result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education School Grades">Edit</a>
+                                                       <a href="{% url 'tls:service_school_grading' instance.id result1.education_program result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education School Grades">Edit</a>
                                                       {% endif %}
                                                     </div>
 
@@ -1451,7 +1451,7 @@
                                           <div class="tab-pane" id="tab-animated-17" role="tabpanel">
                                                     <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                      {% if result %}
-                                                        <a href="{% url 'mscc:service_school_grading' instance.id result1.education_program result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education School Grades">Edit</a>
+                                                        <a href="{% url 'tls:service_school_grading' instance.id result1.education_program result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education School Grades">Edit</a>
                                                       {% endif %}
                                                     </div>
                                                 <div class="scroll-area-sm" style="height: 200px;">
@@ -1532,18 +1532,18 @@
                 <div class="tab-content">
                     <div class="tab-pane active show" id="tab-animated-summer-1" role="tabpanel">
                         <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
-                            {% if summer_result %}<a href="{% url 'mscc:summer_rs_assessment_edit' instance.id result1.education_program 'pre' summer_result.id %}">Edit</a>{% else %}<a href="{% url 'mscc:summer_rs_assessment_add' instance.id result1.education_program %}">Add</a>{% endif %}
+                            {% if summer_result %}<a href="{% url 'tls:summer_rs_assessment_edit' instance.id result1.education_program 'pre' summer_result.id %}">Edit</a>{% else %}<a href="{% url 'tls:summer_rs_assessment_add' instance.id result1.education_program %}">Add</a>{% endif %}
                         </div>
-                        {% include 'mscc/includes/summer_rs_assessment_scores.html' with assessment_period='pre' %}
+                        {% include 'tls/includes/summer_rs_assessment_scores.html' with assessment_period='pre' %}
                     </div>
                     <div class="tab-pane" id="tab-animated-summer-2" role="tabpanel">
                         <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
-                            {% if summer_result %}<a href="{% url 'mscc:summer_rs_assessment_edit' instance.id result1.education_program 'post' summer_result.id %}">Edit</a>{% else %}<span style="font-size:14px;">Available after saving pre grading</span>{% endif %}
+                            {% if summer_result %}<a href="{% url 'tls:summer_rs_assessment_edit' instance.id result1.education_program 'post' summer_result.id %}">Edit</a>{% else %}<span style="font-size:14px;">Available after saving pre grading</span>{% endif %}
                         </div>
-                        {% include 'mscc/includes/summer_rs_assessment_scores.html' with assessment_period='post' %}
+                        {% include 'tls/includes/summer_rs_assessment_scores.html' with assessment_period='post' %}
                     </div>
                     <div class="tab-pane" id="tab-animated-summer-3" role="tabpanel">
-                        {% include 'mscc/includes/summer_rs_assessment_scores.html' with assessment_period='improvement' %}
+                        {% include 'tls/includes/summer_rs_assessment_scores.html' with assessment_period='improvement' %}
                     </div>
                 </div>
                 <ul class="nav flex-column"><li class="nav-item-btn text-center pt-4 pb-3 nav-item"></li></ul>
@@ -1586,9 +1586,9 @@
                     <div class="tab-pane active show" id="tab-animated-wl-1" role="tabpanel">
                         <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                             {% if wl_result %}
-                                <a href="{% url 'mscc:wl_bln_assessment_edit' instance.id result1.education_program 'pre' wl_result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit WL BLN Pre Assessment">Edit</a>
+                                <a href="{% url 'tls:wl_bln_assessment_edit' instance.id result1.education_program 'pre' wl_result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit WL BLN Pre Assessment">Edit</a>
                             {% else %}
-                                <a href="{% url 'mscc:wl_bln_assessment_add' instance.id result1.education_program %}" data-toggle="tooltip" data-placement="top" data-original-title="Add WL BLN Pre Assessment">Add</a>
+                                <a href="{% url 'tls:wl_bln_assessment_add' instance.id result1.education_program %}" data-toggle="tooltip" data-placement="top" data-original-title="Add WL BLN Pre Assessment">Add</a>
                             {% endif %}
                         </div>
                         <div class="scroll-area-sm" style="height: 200px;">
@@ -1672,7 +1672,7 @@
                     <div class="tab-pane" id="tab-animated-wl-2" role="tabpanel">
                         <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                             {% if wl_result %}
-                                <a href="{% url 'mscc:wl_bln_assessment_edit' instance.id result1.education_program 'post' wl_result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit WL BLN Post Assessment">Edit</a>
+                                <a href="{% url 'tls:wl_bln_assessment_edit' instance.id result1.education_program 'post' wl_result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit WL BLN Post Assessment">Edit</a>
                             {% else %}
                                 <span style="font-size:14px;">Available after saving pre grading</span>
                             {% endif %}
@@ -1883,9 +1883,9 @@
                                            <div class="tab-pane active show" id="tab-animated-tarl-1" role="tabpanel">
                                                     <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                      {% if tarl_result %}
-                                                        <a href="{% url 'mscc:service_tarl_grading_edit' instance.id result1.education_program 'pre' tarl_result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit TARL Pre Grades">Edit</a>
+                                                        <a href="{% url 'tls:service_tarl_grading_edit' instance.id result1.education_program 'pre' tarl_result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit TARL Pre Grades">Edit</a>
                                                       {% else %}
-                                                        <a href="{% url 'mscc:service_tarl_grading_add' instance.id result1.education_program 'pre' %}" data-toggle="tooltip" data-placement="top" data-original-title="Add Pre TARL Assessment">Add</a>
+                                                        <a href="{% url 'tls:service_tarl_grading_add' instance.id result1.education_program 'pre' %}" data-toggle="tooltip" data-placement="top" data-original-title="Add Pre TARL Assessment">Add</a>
                                                       {% endif %}
                                                     </div>
 
@@ -1951,7 +1951,7 @@
                                            <div class="tab-pane" id="tab-animated-tarl-2" role="tabpanel">
                                                     <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                      {% if tarl_result %}
-                                                        <a href="{% url 'mscc:service_tarl_grading_edit' instance.id result1.education_program 'mid' tarl_result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit TARL Mid Grades">Edit</a>
+                                                        <a href="{% url 'tls:service_tarl_grading_edit' instance.id result1.education_program 'mid' tarl_result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit TARL Mid Grades">Edit</a>
                                                       {% endif %}
                                                     </div>
 
@@ -2017,7 +2017,7 @@
                                            <div class="tab-pane" id="tab-animated-tarl-3" role="tabpanel">
                                                     <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                      {% if tarl_result %}
-                                                        <a href="{% url 'mscc:service_tarl_grading_edit' instance.id result1.education_program 'post' tarl_result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit TARL Post Grades">Edit</a>
+                                                        <a href="{% url 'tls:service_tarl_grading_edit' instance.id result1.education_program 'post' tarl_result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit TARL Post Grades">Edit</a>
                                                       {% endif %}
                                                     </div>
 
@@ -2155,9 +2155,9 @@
                                           <div class="tab-pane active show" id="tab-animated-111" role="tabpanel">
                                                     <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                      {% if result %}
-                                                        <a href="{% url 'mscc:service_youth_scoring_edit' instance.id result1.education_program 'pre' result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Pre Grades">Edit</a>
+                                                        <a href="{% url 'tls:service_youth_scoring_edit' instance.id result1.education_program 'pre' result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Pre Grades">Edit</a>
                                                       {% else %}
-                                                        <a href="{% url 'mscc:service_youth_scoring_add' instance.id result1.education_program %}" data-toggle="tooltip" data-placement="top" data-original-title="Add Education Pre Grades">Add</a>
+                                                        <a href="{% url 'tls:service_youth_scoring_add' instance.id result1.education_program %}" data-toggle="tooltip" data-placement="top" data-original-title="Add Education Pre Grades">Add</a>
                                                       {% endif %}
                                                     </div>
 
@@ -2291,7 +2291,7 @@
                                           <div class="tab-pane" id="tab-animated-121" role="tabpanel">
                                                     <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                       {% if result %}
-                                                        <a href="{% url 'mscc:service_youth_scoring_edit' instance.id result1.education_program 'post' result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Post Grades">Edit</a>
+                                                        <a href="{% url 'tls:service_youth_scoring_edit' instance.id result1.education_program 'post' result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Post Grades">Edit</a>
                                                       {% endif %}
                                                     </div>
 
@@ -2565,9 +2565,9 @@
                                                     <h5 class="menu-header-title">Digital Component
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="{% url 'mscc:service_digital_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit The Digital Component Data">Edit</a>
+                                                              <a href="{% url 'tls:service_digital_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit The Digital Component Data">Edit</a>
                                                             {% else %}
-                                                              <a href="{% url 'mscc:service_digital_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Digital Component Data">Add</a>
+                                                              <a href="{% url 'tls:service_digital_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Digital Component Data">Add</a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
@@ -2780,9 +2780,9 @@
                                             <div class="tab-pane active show" id="tab-animated-22" role="tabpanel">
                                                <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                     {% if result %}
-                                                        <a href="{% url 'mscc:service_health_nutrition_edit' instance.id instance.child.age result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Health & Nutrition Data">Edit</a>
+                                                        <a href="{% url 'tls:service_health_nutrition_edit' instance.id instance.child.age result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Health & Nutrition Data">Edit</a>
                                                     {% else %}
-                                                        <a href="{% url 'mscc:service_health_nutrition_add' instance.id instance.child.age %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Health & Nutrition Data">Add</a>
+                                                        <a href="{% url 'tls:service_health_nutrition_add' instance.id instance.child.age %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Health & Nutrition Data">Add</a>
                                                     {% endif %}
                                                </div>
                                                 <div class="scroll-area-sm" style="height: 222px;">
@@ -2926,9 +2926,9 @@
                                             <div class="tab-pane" id="tab-animated-23" role="tabpanel">
                                                <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                     {% if result %}
-                                                        <a href="{% url 'mscc:service_health_nutrition_edit' instance.id instance.child.age result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Health & Nutrition Session">Edit</a>
+                                                        <a href="{% url 'tls:service_health_nutrition_edit' instance.id instance.child.age result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Health & Nutrition Session">Edit</a>
                                                     {% else %}
-                                                        <a href="{% url 'mscc:service_health_nutrition_add' instance.id instance.child.age %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Health & Nutrition Session">Add</a>
+                                                        <a href="{% url 'tls:service_health_nutrition_add' instance.id instance.child.age %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Health & Nutrition Session">Add</a>
                                                     {% endif %}
                                                </div>
                                                 <div class="scroll-area-sm" style="height: 222px;">
@@ -3007,9 +3007,9 @@
                                             <div class="tab-pane" id="tab-animated-29" role="tabpanel">
                                                <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                     {% if result %}
-                                                        <a href="{% url 'mscc:service_health_nutrition_referral_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Health & Nutrition Referral">Edit</a>
+                                                        <a href="{% url 'tls:service_health_nutrition_referral_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Health & Nutrition Referral">Edit</a>
                                                     {% else %}
-                                                        <a href="{% url 'mscc:service_health_nutrition_referral_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Health & Nutrition Referral">Add</a>
+                                                        <a href="{% url 'tls:service_health_nutrition_referral_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Health & Nutrition Referral">Add</a>
                                                     {% endif %}
                                                </div>
                                                 <div class="scroll-area-sm" style="height: 222px;">
@@ -3127,9 +3127,9 @@
                                                     <h5 class="menu-header-title">Adolescents Kit
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="{% url 'mscc:service_youth_kit_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Adolescents Kit Data">Edit</a>
+                                                              <a href="{% url 'tls:service_youth_kit_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Adolescents Kit Data">Edit</a>
                                                             {% else %}
-                                                              <a href="{% url 'mscc:service_youth_kit_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Adolescents Kit Data">Add</a>
+                                                              <a href="{% url 'tls:service_youth_kit_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Adolescents Kit Data">Add</a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
@@ -3358,9 +3358,9 @@
                                                     <h5 class="menu-header-title">Maharati
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="{% url 'mscc:service_youth_maharati_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Maharati Data">Edit</a>
+                                                              <a href="{% url 'tls:service_youth_maharati_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Maharati Data">Edit</a>
                                                             {% else %}
-                                                              <a href="{% url 'mscc:service_youth_maharati_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Maharati Data">Add</a>
+                                                              <a href="{% url 'tls:service_youth_maharati_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Maharati Data">Add</a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
@@ -3467,9 +3467,9 @@
                                                     <h5 class="menu-header-title">GIL
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="{% url 'mscc:service_youth_gil_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit the GIL Data">Edit</a>
+                                                              <a href="{% url 'tls:service_youth_gil_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit the GIL Data">Edit</a>
                                                             {% else %}
-                                                              <a href="{% url 'mscc:service_youth_gil_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The GIL Data">Add</a>
+                                                              <a href="{% url 'tls:service_youth_gil_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The GIL Data">Add</a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
@@ -3583,9 +3583,9 @@
                                                     <h5 class="menu-header-title">LEGO
                                                       <div style="float:right;">
                                                         {% if result %}
-                                                          <a href="{% url 'mscc:service_lego_edit' instance.id instance.child.age result.id %}" data-placement="top" data-original-title="Edit The Inclusion Data">Edit</a>
+                                                          <a href="{% url 'tls:service_lego_edit' instance.id instance.child.age result.id %}" data-placement="top" data-original-title="Edit The Inclusion Data">Edit</a>
                                                         {% else %}
-                                                          <a href="{% url 'mscc:service_lego_add' instance.id instance.child.age %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Inclusion Data">Add</a>
+                                                          <a href="{% url 'tls:service_lego_add' instance.id instance.child.age %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Inclusion Data">Add</a>
                                                         {% endif %}
                                                       </div>
                                                     </h5>
@@ -3669,9 +3669,9 @@
                                                     <h5 class="menu-header-title">PSS
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="{% url 'mscc:service_pss_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit The PSS Data">Edit</a>
+                                                              <a href="{% url 'tls:service_pss_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit The PSS Data">Edit</a>
                                                             {% else %}
-                                                              <a href="{% url 'mscc:service_pss_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add the PSS Data">Add</a>
+                                                              <a href="{% url 'tls:service_pss_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add the PSS Data">Add</a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
@@ -3841,7 +3841,7 @@
                                                 <div class="menu-header-content text-dark">
                                                     <h5 class="menu-header-title">Caregivers Package
                                                       <div style="float:right;">
-                                                                                                                        <a href="{% url 'mscc:service_follow_up_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Caregivers Package Data">Add</a>
+                                                                                                                        <a href="{% url 'tls:service_follow_up_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Caregivers Package Data">Add</a>
                                                       </div>
                                                     </h5>
                                                     <!--<h6 class="menu-header-subtitle">-->
@@ -3870,7 +3870,7 @@
                                             <div class="tab-pane active show" id="tab-animated-13" role="tabpanel">
                                               <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                   {% if result %}
-                                                  <a href="{% url 'mscc:service_follow_up_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit The Caregivers Package Data">Edit</a>
+                                                  <a href="{% url 'tls:service_follow_up_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit The Caregivers Package Data">Edit</a>
                                                   {% endif %}
                                               </div>
                                                 <div class="scroll-area-sm" style="{% if results|length > 1 %}height: 190px;{% else %}height: 222px;{% endif %}">
@@ -3989,7 +3989,7 @@
                                         <ul class="nav flex-column">
                                             <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
                                                 {% if results|length > 1 %}
-                                                <a href="{% url 'mscc:service_follow_up_view_all' instance.id %}" class="btn-shadow btn-wide btn-pill btn btn-dark show-view-all" data-toggle="modal" data-target=".bd-example-modal-lg">
+                                                <a href="{% url 'tls:service_follow_up_view_all' instance.id %}" class="btn-shadow btn-wide btn-pill btn btn-dark show-view-all" data-toggle="modal" data-target=".bd-example-modal-lg">
                                                     <span class="badge badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>
                                                     View All
                                                 </a>
@@ -4015,9 +4015,9 @@
                                                     <h5 class="menu-header-title">Inclusion
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="{% url 'mscc:service_inclusion_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit The Inclusion Data">Edit</a>
+                                                              <a href="{% url 'tls:service_inclusion_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit The Inclusion Data">Edit</a>
                                                             {% else %}
-                                                              <a href="{% url 'mscc:service_inclusion_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Inclusion Data">Add</a>
+                                                              <a href="{% url 'tls:service_inclusion_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Inclusion Data">Add</a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
@@ -4081,9 +4081,9 @@
                                                     <h5 class="menu-header-title">Referral
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="{% url 'mscc:referral_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Referral Data">Edit</a>
+                                                              <a href="{% url 'tls:referral_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Referral Data">Edit</a>
                                                             {% else %}
-                                                              <a href="{% url 'mscc:referral_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add the Referral Data">Add</a>
+                                                              <a href="{% url 'tls:referral_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add the Referral Data">Add</a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
@@ -4195,9 +4195,9 @@
                                                 <div class="scroll-area-sm" style="height: 222px;">
                                                        <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                           {% if result %}
-                                                              <a href="{% url 'mscc:service_youth_assessment_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit The Youth Assessment Data">Edit</a>
+                                                              <a href="{% url 'tls:service_youth_assessment_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit The Youth Assessment Data">Edit</a>
                                                             {% else %}
-                                                              <a href="{% url 'mscc:service_youth_assessment_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Youth Assessment Data">Add</a>
+                                                              <a href="{% url 'tls:service_youth_assessment_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Youth Assessment Data">Add</a>
                                                             {% endif %}
                                                     </div>
 
@@ -4293,9 +4293,9 @@
 
                                                   <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                           {% if result2 %}
-                                                              <a href="{% url 'mscc:service_youth_referral_edit' instance.id result2.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit The Youth Referral Data">Edit</a>
+                                                              <a href="{% url 'tls:service_youth_referral_edit' instance.id result2.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit The Youth Referral Data">Edit</a>
                                                             {% else %}
-                                                              <a href="{% url 'mscc:service_youth_referral_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Youth Referral Data">Add</a>
+                                                              <a href="{% url 'tls:service_youth_referral_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Youth Referral Data">Add</a>
                                                             {% endif %}
                                                     </div>
 
@@ -4346,9 +4346,9 @@
                                                     <h5 class="menu-header-title">Recreational
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="{% url 'mscc:service_recreational_edit' instance.id result.id %}">Edit</a>
+                                                              <a href="{% url 'tls:service_recreational_edit' instance.id result.id %}">Edit</a>
                                                             {% else %}
-                                                              <a href="{% url 'mscc:service_recreational_add' instance.id %}">Add</a>
+                                                              <a href="{% url 'tls:service_recreational_add' instance.id %}">Add</a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
