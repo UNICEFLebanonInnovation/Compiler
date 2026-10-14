@@ -116,14 +116,15 @@ def test_groupings_combine_main_dimensions_with_one_detail():
 def test_makani_counts_unique_children_of_the_year(makani, places):
     payload = education.PROGRAMMES['mscc'].build('2025')
     registrations = payload['blocks']['registrations']
-    assert table(registrations)[()] == [2]  # the girl (two partners) once, the boy without a round
-    assert table(registrations, 'partner') == {(makani['partner'].id,): [2], (makani['other'].id,): [1]}
-    assert table(registrations, 'governorate') == {(places['akkar'].id,): [2], (places['beirut'].id,): [1]}
-    assert table(registrations, 'age_group', 'sex') == {('6-9', 'Female'): [1], ('10-14', 'Male'): [1]}
+    # the girl (two partners) once; the boy without a round is in neither dashboard (pending_round)
+    assert table(registrations)[()] == [1]
+    assert payload['pending_round'] == 1
+    assert table(registrations, 'partner') == {(makani['partner'].id,): [1], (makani['other'].id,): [1]}
+    assert table(registrations, 'governorate') == {(places['akkar'].id,): [1], (places['beirut'].id,): [1]}
+    assert table(registrations, 'age_group', 'sex') == {('6-9', 'Female'): [1]}
     services = payload['blocks']['services']
-    assert table(services, 'service') == {('Child protection (PSS)',): [1], ('Education',): [2]}
-    assert table(payload['blocks']['education_programmes'], 'education_programme') == {
-        ('ABLN',): [1], ('BLN Level 1',): [1]}
+    assert table(services, 'service') == {('Child protection (PSS)',): [1], ('Education',): [1]}
+    assert table(payload['blocks']['education_programmes'], 'education_programme') == {('BLN Level 1',): [1]}
     assert table(payload['blocks']['sites'])[()] == [2]
     assert table(payload['blocks']['staff'], 'sex') == {('Female',): [1]}
     attendance = payload['blocks']['attendance']
@@ -132,6 +133,7 @@ def test_makani_counts_unique_children_of_the_year(makani, places):
 
     older = education.PROGRAMMES['mscc'].build('2024')
     assert table(older['blocks']['registrations'])[()] == [1]  # the round-less child is not in 2024
+    assert older['pending_round'] == 0  # counted in the current year's payload only
 
 
 def test_bridging_counts_children_tests_services_and_teachers(bridging):
@@ -164,7 +166,7 @@ def test_a_failing_block_does_not_stop_the_others(makani):
     with mock.patch.object(engine, 'figures_block', side_effect=flaky):
         payload = education.PROGRAMMES['mscc'].build('2025')
     assert payload['blocks']['attendance']['error'] == 'RuntimeError'
-    assert table(payload['blocks']['registrations'])[()] == [2]
+    assert table(payload['blocks']['registrations'])[()] == [1]
 
 
 def _service_client():
@@ -245,6 +247,45 @@ def test_a_failed_count_is_reported_and_a_lost_run_does_not_block(makani):
     assert FiguresRun.objects.get(pk=stuck.pk).status == FiguresRun.FAILED
 
 
+def test_a_run_masks_its_errors_and_stops_at_the_time_limit(makani):
+    """The run's error is read by NeuroDB: no quoted value and no SQL line. At the worker's soft time
+    limit the run finishes at once, naming the targets left, instead of being killed while "running"."""
+    from celery.exceptions import SoftTimeLimitExceeded
+
+    from student_registration.figures.models import FiguresRun
+
+    targets = [('mscc', '2024'), ('mscc', None), ('bridging', None), ('mscc', '2024')]
+    with mock.patch('student_registration.figures.tasks.run_figures.delay'):
+        run, _ = snapshots.start_run(targets, 'neurodb')
+    real, asked = snapshots.refresh, []
+
+    def refresh(programme, year=None):
+        asked.append((programme, year))
+        if len(asked) == 1:
+            raise RuntimeError('invalid input syntax for type integer: "Zaynab-Test"\nLINE 1: SELECT 900001')
+        if programme == 'bridging':
+            raise SoftTimeLimitExceeded()
+        return real(programme, year)
+
+    from django.db import connection
+
+    # the limit struck mid-query: the connection is reset before the run is saved (close stubbed here, to
+    # keep the test's transaction)
+    with mock.patch.object(snapshots, 'refresh', side_effect=refresh), \
+            mock.patch.object(connection, 'is_usable', return_value=False), \
+            mock.patch.object(connection, 'close') as closed:
+        snapshots.execute_run(run.pk)
+    closed.assert_called_once_with()
+    run.refresh_from_db()
+    assert asked == [('mscc', '2024'), ('mscc', None), ('bridging', None)]  # nothing after the limit
+    assert run.status == FiguresRun.SUCCEEDED and [c[:2] for c in run.counted] == [['mscc', '2025']]
+    assert run.finished_at is not None
+    assert run.error.splitlines() == [
+        'mscc 2024: RuntimeError: invalid input syntax for type integer: "..."',
+        'time limit reached; not counted: bridging current, mscc 2024']
+    assert 'Zaynab' not in run.error and '900001' not in run.error
+
+
 def test_only_the_service_account_reads(makani):
     client = APIClient()
     assert client.get('/api/figures/mscc/').status_code in (401, 403)
@@ -256,11 +297,101 @@ def test_only_the_service_account_reads(makani):
 
 def test_a_snapshot_of_an_older_format_is_counted_again(makani):
     snapshot = snapshots.refresh('mscc')
-    assert not snapshots.is_stale(snapshot)
-    FiguresSnapshot.objects.filter(pk=snapshot.pk).update(payload=dict(snapshot.payload, format=1))
-    assert snapshots.is_stale(snapshots.latest('mscc', '2025'))  # counted before the upgrade, however recent
+    assert not snapshots.is_stale(snapshot) and not snapshots.is_stale(snapshot, 'mscc')
+    FiguresSnapshot.objects.filter(pk=snapshot.pk).update(payload=dict(snapshot.payload, format=2))
+    assert snapshots.is_stale(snapshots.latest('mscc', '2025'), 'mscc')  # counted before the upgrade
     FiguresSnapshot.objects.filter(pk=snapshot.pk).update(payload={'year': '2025'})
     assert snapshots.is_stale(snapshots.latest('mscc', '2025'))
+    assert snapshots.is_stale(None, 'mscc')
+
+
+def test_a_past_year_is_counted_again_after_a_week(makani):
+    current, past = snapshots.refresh('mscc'), snapshots.refresh('mscc', '2024')
+    assert (current.year, past.year) == ('2025', '2024')
+    now = datetime.datetime.now(datetime.timezone.utc)
+    FiguresSnapshot.objects.update(created_at=now - datetime.timedelta(hours=30))
+    assert snapshots.is_stale(snapshots.latest('mscc', '2025'))  # the current year: after 26 hours
+    assert not snapshots.is_stale(snapshots.latest('mscc', '2024'))  # a past year: after 168 hours
+    FiguresSnapshot.objects.update(created_at=now - datetime.timedelta(hours=170))
+    assert snapshots.is_stale(snapshots.latest('mscc', '2024'))
+    assert snapshots.refresh('mscc', '1999') is None  # no such year: nothing counted
+
+
+def test_the_index_gives_the_format_and_staleness_of_each_year(makani):
+    client = _service_client()
+    snapshots.refresh('mscc')
+    index = {p['programme']: p for p in client.get('/api/figures/').json()['programmes']}
+    assert set(index) == {'mscc', 'bridging'}  # never youth: an older NeuroDB stores the index as education
+    mscc = index['mscc']
+    assert mscc['format_version'] == education.FORMAT_VERSION == 3 and mscc['current_year'] == '2025'
+    assert mscc['years'] == [
+        {'year': '2025', 'counted': True, 'format': 3, 'stale': False},
+        {'year': '2024', 'counted': False, 'format': None, 'stale': True},
+    ]
+    FiguresSnapshot.objects.filter(programme='mscc').update(payload={'format': 2, 'year': '2025'})
+    year = client.get('/api/figures/').json()['programmes'][0]['years'][0]
+    assert year == {'year': '2025', 'counted': True, 'format': 2, 'stale': True}
+    assert client.get('/api/figures/youth/').status_code == 404
+
+
+def test_a_run_counts_the_targets_it_is_given(makani, django_capture_on_commit_callbacks):
+    from student_registration.figures.models import FiguresRun
+    from student_registration.youth.models import Year
+
+    Year.objects.create(name='2026', current_year=True)
+    client = _service_client()
+    post = lambda body: client.post('/api/figures/runs/', body, format='json')  # noqa: E731
+    assert post({'targets': [['nope', None]]}).json()['detail'] == 'Unknown programme'
+    assert post({'targets': [['mscc', '1999']]}).status_code == 400
+    assert post({'targets': [['youth', '1999']]}).status_code == 400
+    assert post({'targets': []}).status_code == 400
+    assert post({'targets': 'mscc'}).status_code == 400
+    assert post({'targets': [['mscc', None]] * 21}).status_code == 400
+    assert post({'targets': [{'programme': 'mscc'}]}).status_code == 400
+    assert FiguresRun.objects.count() == 0
+    with mock.patch('student_registration.figures.tasks.run_figures.delay') as queued, \
+            django_capture_on_commit_callbacks(execute=True):
+        targets = [['mscc', 2024], ['mscc', None], ['youth', None], ['youth', 'all'], ['youth', '2026'],
+                   ['youth', 'all']]
+        response = post({'programme': 'nope', 'targets': targets})  # targets win over programme
+        assert response.status_code == 202
+        assert response.json()['targets'] == [['mscc', '2024'], ['mscc', None], ['youth', None], ['youth', 'all'],
+                                              ['youth', '2026']]
+        again = post({'targets': [['bridging', None]]})
+        assert again.status_code == 200 and again.json()['id'] == response.json()['id']  # the one already queued
+    queued.assert_called_once_with(response.json()['id'])
+    snapshots.execute_run(response.json()['id'])
+    run = FiguresRun.objects.get(pk=response.json()['id'])
+    assert run.status == FiguresRun.SUCCEEDED and run.error == ''
+    assert [c[:2] for c in run.counted] == [['mscc', '2024'], ['mscc', '2025'], ['youth', '2026'], ['youth', 'all'],
+                                            ['youth', '2026']]
+    stored = {(s.programme, s.year): s for s in FiguresSnapshot.objects.all()}
+    assert stored[('youth', 'all')].payload['format'] == 2 and stored[('youth', '2026')].payload['year'] == '2026'
+    assert not snapshots.is_stale(stored[('youth', 'all')]) and not snapshots.is_stale(stored[('mscc', '2024')])
+    assert {p['programme'] for p in client.get('/api/figures/').json()['programmes']} == {'mscc', 'bridging'}
+    assert client.get('/api/figures/youth/').status_code == 404
+    FiguresRun.objects.all().delete()
+    with mock.patch('student_registration.figures.tasks.run_figures.delay'):
+        assert post({'programme': 'youth'}).json()['targets'] == [['youth', None]]  # one programme: youth too
+        FiguresRun.objects.all().delete()
+        assert sorted(t[0] for t in post({}).json()['targets']) == ['bridging', 'mscc']  # no body: education only
+
+
+def test_the_command_counts_youth_too(makani):
+    from django.core.management import call_command
+    from django.core.management.base import CommandError
+    from student_registration.youth.models import Year
+
+    Year.objects.create(name='2026', current_year=True)
+    out = mock.MagicMock()
+    call_command('refresh_neurodb_figures', '--programme', 'youth', '--year', 'all', stdout=out)
+    call_command('refresh_neurodb_figures', '--programme', 'youth', stdout=out)
+    assert sorted(FiguresSnapshot.objects.filter(programme='youth').values_list('year', flat=True)) == ['2026', 'all']
+    with pytest.raises(CommandError, match='mscc: no such year'):
+        call_command('refresh_neurodb_figures', '--programme', 'mscc', '--year', 'all', stdout=out)
+    with pytest.raises(CommandError, match='bridging: no such year'):  # every programme: no Bridging round here
+        call_command('refresh_neurodb_figures', stdout=out)
+    assert FiguresSnapshot.objects.filter(programme='mscc', year='2025').exists()
 
 
 def test_refresh_keeps_the_last_three_snapshots(makani):
@@ -293,19 +424,21 @@ def test_the_counting_cursor_is_read_only_and_bounded():
 
 def test_makani_enrolment_cube_adds_up_to_the_registrations(makani, places):
     payload = education.PROGRAMMES['mscc'].build('2025')
-    assert payload['format'] == 2
+    assert payload['format'] == 3
     enrolment = payload['cubes']['enrolment']
     assert enrolment['dims'] == list(education.Makani.ENROLMENT)
     assert enrolment['measures'] == ['registrations', 'married', 'idp', 'counselling', 'immunized', 'screened',
-                                     'minimum_meals', 'vaccinated']
-    # three registrations of the year (the girl twice), where the unique count says two children
-    assert total(enrolment, 'registrations') == 3
-    assert table(payload['blocks']['registrations'])[()] == [2]
-    assert total(enrolment, 'registrations', partner=makani['partner'].id) == 2
+                                     'minimum_meals', 'vaccinated', 'immunized_record', 'immunized_child',
+                                     'screened_muac']  # no view: rule mode, no view_rows
+    # two registrations of the year (the girl twice), where the unique count says one child; the boy
+    # without a round is not counted
+    assert total(enrolment, 'registrations') == 2
+    assert table(payload['blocks']['registrations'])[()] == [1]
+    assert total(enrolment, 'registrations', partner=makani['partner'].id) == 1
     assert total(enrolment, 'registrations', governorate=places['beirut'].id) == 1
     assert total(enrolment, 'registrations', sex='Female') == 2
     assert total(enrolment, 'registrations', package='Walk-in') == 1
-    assert total(enrolment, 'registrations', programme='ABLN') == 1
+    assert total(enrolment, 'registrations', programme='ABLN') == 0  # the boy's
     assert total(enrolment, 'registrations', programme=None) == 1  # the second partner's: no education record
     assert all(isinstance(v, int) for row in enrolment['rows'] for v in row[len(enrolment['dims']):])
     assert enrolment['rows'] == sorted(enrolment['rows'], key=lambda r: tuple('' if v is None else str(v) for v in r))
@@ -340,14 +473,27 @@ def test_makani_uses_the_latest_education_and_health_records(makani):
     assert row['malnutrition'] == 'No malnutrition screening' and row['delay'] == 'No'
     assert (row['counselling'], row['immunized'], row['screened'], row['minimum_meals'], row['vaccinated']) == (
         1, 1, 1, 1, 1)  # counselling: any record; the others: the latest record
+    # the variants of the immunized and screened cards: each field of the latest record apart (its MUAC
+    # answer is blank; the older record's MUAC result does not count)
+    assert (row['immunized_record'], row['immunized_child'], row['screened_muac']) == (0, 1, 0)
     assert total(enrolment, 'screened') == 1 and total(enrolment, 'vaccinated') == 1
     assert records(enrolment, malnutrition='SAM (MUAC <11.5 cm)') == []
+
+    other = m.Registration.objects.get(partner=makani['other'], round=makani['current'], deleted=False)
+    health(registration=other, muac_malnutrition_screening='MAM', immunization_record_screened='yes')
+    enrolment = education.PROGRAMMES['mscc'].build('2025')['cubes']['enrolment']
+    [row] = records(enrolment, partner=makani['other'].id)
+    assert (row['immunized'], row['immunized_record'], row['immunized_child']) == (1, 1, 0)
+    assert (row['screened'], row['screened_muac']) == (1, 1)
+    assert (total(enrolment, 'immunized_record'), total(enrolment, 'immunized_child'),
+            total(enrolment, 'screened_muac')) == (1, 1, 1)
 
 
 def test_makani_normalises_the_slicers_and_lists_the_centers(makani, places):
     from student_registration.students.models import IDType
 
     unhcr = IDType.objects.create(name='UNHCR Registered', active=True)
+    m.Registration.objects.filter(child__gender='Male').update(round=makani['current'])  # counted only with a round
     Child.objects.filter(gender='Female', birthday_year='2016').update(
         main_caregiver='mother', marital_status='married', id_type=unhcr)
     Child.objects.filter(gender='Male').update(main_caregiver='FATHER')
@@ -420,7 +566,7 @@ def dirasa_more(bridging, places):
 
 def test_bridging_cubes_schools_and_trainings(bridging, dirasa_more, places):
     payload = education.PROGRAMMES['bridging'].build('Bridging 2025')
-    assert payload['format'] == 2
+    assert payload['format'] == 3
     enrolment = payload['cubes']['enrolment']
     assert enrolment['dims'] == list(education.Bridging.ENROLMENT)
     assert enrolment['measures'] == ['registrations', 'pre_tested', 'post_tested']
@@ -525,7 +671,7 @@ def test_a_failing_cube_does_not_stop_the_others(makani, bridging):
     assert failed['error'] == 'RuntimeError' and failed['rows'] == []
     assert failed['dims'] == list(education.Makani.ENROLMENT) and failed['measures'][0] == 'registrations'
     assert total(makani_payload['cubes']['staff'], 'staff') == 1
-    assert table(makani_payload['blocks']['registrations'])[()] == [2]
+    assert table(makani_payload['blocks']['registrations'])[()] == [1]
     assert bridging_payload['cubes']['teachers']['error'] == 'RuntimeError'
     assert total(bridging_payload['cubes']['enrolment'], 'registrations') == 2
     assert 'error' not in bridging_payload['outreach']['cubes']['id_type']

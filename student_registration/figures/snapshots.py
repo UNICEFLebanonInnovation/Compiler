@@ -3,6 +3,12 @@
 ``refresh(programme, year)`` counts in the database (engine.py) and stores the result. NeuroDB asks
 for a count (``start_run``: POST /api/figures/runs/), a Celery worker does it (``execute_run``) and
 NeuroDB polls the run until it is done: the schedule lives in NeuroDB, BMA keeps none.
+
+Programmes: ``programmes()`` are the education ones (Makani, Bridging), the only ones the education
+index and /api/figures/<programme>/ list; ``all_programmes()`` adds Youth, which a run may count (its
+snapshots are served by /api/youth/indicator-figures/). A snapshot is stale when it was counted in an
+older payload format of its programme, or is older than FIGURES_MAX_AGE_HOURS (the current period, and
+youth's "all") or FIGURES_PAST_MAX_AGE_HOURS (a past period: recounted weekly).
 """
 
 from __future__ import annotations
@@ -23,16 +29,25 @@ LOCK_SECONDS = 30 * 60
 
 
 def programmes():
+    """The education programmes: the only ones of the education index and /api/figures/<programme>/."""
     from . import education
 
     return education.PROGRAMMES
 
 
+def all_programmes():
+    """Every programme a run can count: the education ones and Youth."""
+    from .youth import Youth
+
+    return dict(programmes(), youth=Youth())
+
+
 def refresh(programme, year=None):
-    """Count ``programme`` for ``year`` (its current year when None) and store the snapshot."""
-    definition = programmes()[programme]
+    """Count ``programme`` for ``year`` (its current year when None) and store the snapshot; None when
+    there is no such year."""
+    definition = all_programmes()[programme]
     year = year or definition.current_year()
-    if year is None:
+    if year is None or not definition.has_year(year):
         return None
     started = time.monotonic()
     payload = definition.build(year)
@@ -54,15 +69,38 @@ def latest(programme, year):
     )
 
 
-def is_stale(snapshot):
-    """Missing, older than FIGURES_MAX_AGE_HOURS, or counted in an older payload format (after an
-    upgrade it needs counting again however recent it is). NeuroDB decides when to count."""
-    from .education import FORMAT_VERSION
-
-    if snapshot is None or (snapshot.payload or {}).get('format') != FORMAT_VERSION:
+def stale(definition, year, format_version, created_at, current_year=None):
+    """Whether a snapshot of ``definition``'s ``year`` counted at ``created_at`` in ``format_version`` must
+    be counted again: never counted, counted in an older format of its programme (after an upgrade,
+    however recent), or older than FIGURES_MAX_AGE_HOURS (the current period, and "all") or
+    FIGURES_PAST_MAX_AGE_HOURS (a past period). ``current_year``: the programme's, when known."""
+    if definition is None or created_at is None or format_version != definition.format_version:
         return True
-    hours = int(getattr(settings, 'FIGURES_MAX_AGE_HOURS', 26))
-    return snapshot.created_at < timezone.now() - datetime.timedelta(hours=hours)
+    current_year = definition.current_year() if current_year is None else current_year
+    if str(year) in (str(current_year), 'all'):
+        hours = int(getattr(settings, 'FIGURES_MAX_AGE_HOURS', 26))
+    else:
+        hours = int(getattr(settings, 'FIGURES_PAST_MAX_AGE_HOURS', 168))
+    return created_at < timezone.now() - datetime.timedelta(hours=hours)
+
+
+def is_stale(snapshot, programme=None):
+    """Whether ``snapshot`` (of ``programme``, by default its own) must be counted again (``stale``);
+    a missing snapshot is. NeuroDB decides when to count."""
+    if snapshot is None:
+        return True
+    definition = all_programmes().get(programme or snapshot.programme)
+    return stale(definition, snapshot.year, (snapshot.payload or {}).get('format'), snapshot.created_at)
+
+
+def counted_years(programme):
+    """{year: (format, counted at)} of the latest snapshot of each year, without reading the payloads."""
+    found = {}
+    rows = (FiguresSnapshot.objects.filter(programme=programme).order_by('year', '-created_at')
+            .values_list('year', 'payload__format', 'created_at'))
+    for year, format_version, created_at in rows:
+        found.setdefault(year, (format_version, created_at))
+    return found
 
 
 RUN_STALE_HOURS = 3  # a run still "queued" or "running" after this long was lost (worker restarted)
@@ -96,7 +134,14 @@ def start_run(targets, requested_by=''):
 
 
 def execute_run(run_id):
-    """Count every target of the run, one after the other; a failing target does not stop the others."""
+    """Count every target of the run, one after the other; a failing target does not stop the others.
+    The run's error (read by NeuroDB) gives each failure's class and first line, quoted text masked.
+    At the worker's soft time limit the run stops and names the targets left (they stay stale, so the
+    next run asks for them again) rather than going on until the hard limit kills it mid-count and
+    leaves it "running", which would hold every count back until RUN_STALE_HOURS."""
+    from celery.exceptions import SoftTimeLimitExceeded
+
+    from . import power_bi
     from .models import FiguresRun
 
     run = FiguresRun.objects.get(pk=run_id)
@@ -105,12 +150,20 @@ def execute_run(run_id):
     run.status, run.started_at = FiguresRun.RUNNING, timezone.now()
     run.save(update_fields=['status', 'started_at'])
     counted, errors = [], []
-    for programme, year in run.targets:
+    for position, (programme, year) in enumerate(run.targets):
         try:
             snapshot = refresh(programme, year or None)
+        except SoftTimeLimitExceeded:
+            _reset_interrupted_connections()  # the limit may have struck mid-query
+            left = run.targets[position:]
+            logger.warning('figures run %s: time limit reached, %d targets not counted', run.pk, len(left))
+            errors.append('time limit reached; not counted: %s' % ', '.join(
+                '%s %s' % (name, when or 'current') for name, when in left))
+            break
         except Exception as exc:  # recorded on the run
             logger.exception('figures run %s: %s %s failed', run.pk, programme, year)
-            errors.append('%s %s: %s: %s' % (programme, year or 'current', type(exc).__name__, exc))
+            errors.append('%s %s: %s: %s' % (programme, year or 'current', power_bi.error_class(exc),
+                                             power_bi.error_message(exc)))
             continue
         if snapshot is None:
             errors.append('%s %s: no such year' % (programme, year or 'current'))
@@ -121,3 +174,16 @@ def execute_run(run_id):
     run.finished_at = timezone.now()
     run.save(update_fields=['counted', 'error', 'status', 'finished_at'])
     return run
+
+
+def _reset_interrupted_connections():
+    """Close the run's and the counting's database connections when an interruption left them unusable
+    (a query still running): Django opens a new one for the next query, so the run can still be saved."""
+    from django.db import connections
+
+    from . import engine
+
+    for alias in {'default', engine.database_alias()}:
+        connection = connections[alias]
+        if connection.connection is not None and not connection.is_usable():
+            connection.close()

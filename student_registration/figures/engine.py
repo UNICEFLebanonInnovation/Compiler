@@ -52,21 +52,39 @@ def database_alias():
     return getattr(settings, 'FIGURES_DATABASE', 'default')
 
 
-@contextmanager
-def read_only_cursor():
-    """A cursor in a READ ONLY transaction with the counting limits (timeout, work_mem, no parallel
-    workers), on the figures database."""
-    alias = database_alias()
+def _limit(cursor):
+    """The counting limits, for the current transaction only: READ ONLY, a statement timeout, a bounded
+    work_mem and no parallel workers."""
     timeout = int(getattr(settings, 'FIGURES_STATEMENT_TIMEOUT_MS', 600000))
     work_mem = str(getattr(settings, 'FIGURES_WORK_MEM', '32MB'))
     workers = str(int(getattr(settings, 'FIGURES_PARALLEL_WORKERS', 0)))
+    cursor.execute('SET TRANSACTION READ ONLY')
+    cursor.execute("SELECT set_config('statement_timeout', %s, true)", [str(timeout)])
+    cursor.execute("SELECT set_config('work_mem', %s, true)", [work_mem])
+    # one CPU core: no parallel workers taken from the requests of the running system
+    cursor.execute("SELECT set_config('max_parallel_workers_per_gather', %s, true)", [workers])
+
+
+@contextmanager
+def read_only_transaction():
+    """The counting limits on the figures connection, for raw SQL and ORM queries alike; yields the
+    database alias. ORM querysets inside must use ``.using(alias)``.
+
+    Inside an outer transaction (a test, or a caller's atomic block) this is a savepoint: PostgreSQL gives
+    the outer transaction back its read-write state when the savepoint is released, so a write that
+    follows still works."""
+    alias = database_alias()
     with transaction.atomic(using=alias):
         with connections[alias].cursor() as cursor:
-            cursor.execute('SET TRANSACTION READ ONLY')
-            cursor.execute("SELECT set_config('statement_timeout', %s, true)", [str(timeout)])
-            cursor.execute("SELECT set_config('work_mem', %s, true)", [work_mem])
-            # one CPU core: no parallel workers taken from the requests of the running system
-            cursor.execute("SELECT set_config('max_parallel_workers_per_gather', %s, true)", [workers])
+            _limit(cursor)
+        yield alias
+
+
+@contextmanager
+def read_only_cursor():
+    """A cursor in a READ ONLY transaction with the counting limits, on the figures database."""
+    with read_only_transaction() as alias:
+        with connections[alias].cursor() as cursor:
             yield cursor
 
 

@@ -420,6 +420,22 @@ SPECTACULAR_SETTINGS = {
     # OTHER SETTINGS AS NEEDED
 }
 
+# NEURODB FIGURES: counting over the views the Power BI dashboards read (student_registration/figures/power_bi.py)
+# ------------------------------------------------------------------------------
+# Per programme (missing keys take these defaults):
+# - base: 'auto' (the view when its checks pass, else Compiler's own rule), 'view' (the view even when it has no
+#   rows for a period; existence and key still checked) or 'rule' (never read the view: a switch, no code change);
+# - deleted: 'exclude' (deleted registrations left out of the view's rows) or 'include';
+# - period (Makani): 'round_year' (rounds whose year is Y) or 'current_rounds' (rounds flagged current_year).
+FIGURES_POWER_BI = {
+    'mscc': {'base': 'auto', 'deleted': 'exclude', 'period': 'round_year'},
+    'bridging': {'base': 'auto', 'deleted': 'exclude'},
+    'youth': {'base': 'auto', 'deleted': 'exclude'},
+}
+FIGURES_POWER_BI_MIN_MATCH = 0.99  # the key check: share of the view's rows that must match the registrations
+FIGURES_POWER_BI_RELATED = True  # describe and count the related views (staff, teachers, no-round...)
+FIGURES_PAST_MAX_AGE_HOURS = 168  # a past year's snapshot is counted again after a week
+
 JAZZMIN_SETTINGS = {
     "site_title": "BMA",
     "site_header": "BMA-2",
