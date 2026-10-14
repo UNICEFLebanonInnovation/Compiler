@@ -16,11 +16,12 @@ holds a replica, and nothing is ever read back.
 | `students.Teacher` | `mscc.teacher` | `mscc.Teacher` |
 | `mscc.Registration` (with its `child.Child`) | `mscc.registration` | `mscc.Registration` |
 | `mscc.EducationService` (child education situation) | `mscc.education_service` | `mscc.EducationService` |
+| `mscc.EducationAssessment` (detailed pre/post) | `mscc.education_assessment` | `mscc.EducationAssessment` |
 | `mscc.EducationProgrammeAssessment` (grading) | `mscc.education_grading` | `mscc.EducationProgrammeAssessment` |
 | `mscc.Referral` | `mscc.referral` | `mscc.Referral` |
 | `attendances.MSCCAttendance` (+ `MSCCAttendanceChild`) | `attendances.mscc_attendance` | the same pair |
 
-Scope is the whole MSCC module: every record, every partner, every round.
+Scope covers the listed MSCC resources for every partner and round. Other sub-models are outside phase one unless added explicitly.
 
 ## How it works
 
@@ -36,10 +37,10 @@ tools, management commands.
 3. `datasync.flush_sync_outbox` runs on Celery beat every five minutes and
    re-sends anything that failed.
 
-The payload is built **at delivery time**, not at save time. Three
+The payload is built **at delivery time**, not at save time. The event's creation timestamp is sent as `source_modified`, and BMA-NFE ignores older events for the same source identity. Three
 consequences worth knowing:
 
-* a burst of edits to one record collapses into a single push;
+* every committed edit has its own durable outbox event (including edits while an earlier push is in flight);
 * what arrives is always the record's latest state;
 * an event whose record was deleted before delivery is abandoned, because the
   matching delete event carries the removal.
@@ -53,10 +54,7 @@ changing a teacher's training topics republishes the teacher.
 
 ## No shared primary keys
 
-The two databases were never seeded together, so nothing crosses the wire as a
-local id. Relations travel as natural keys — a round's name, a centre's
-P-code, a school's CERD number, a child's UNICEF unique id — and BMA-NFE
-resolves them into its own rows. See `docs/compiler_replication.md` in the
+The two databases have independent local primary keys. Compiler source IDs travel only as cross-system identifiers (`source_id`/BMA identity), never as BMA-NFE local foreign keys. BMA-NFE resolves Child, Registration, Center and Round by these source IDs; lookups such as nationality use their names. Partner organizations are adopted by name initially, then identified by their Compiler source ID. See `docs/compiler_replication.md` in the
 BMA-NFE repository for the resolution table and the full wire contract.
 
 ## Setup
