@@ -73,7 +73,7 @@ def build_wire_event(event):
         'resource': event.resource,
         'operation': event.operation,
         'source_id': event.source_id,
-        'source_modified': timezone.now().isoformat(),
+        'source_modified': event.created.isoformat(),
     }
 
     if event.operation == OPERATION_DELETE:

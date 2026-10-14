@@ -15,6 +15,7 @@ from student_registration.clm.models import Disability
 from student_registration.locations.models import Center
 from student_registration.mscc.models import (
     EducationService,
+    EducationAssessment,
     Referral,
     Registration,
     Round,
@@ -28,6 +29,7 @@ from ..constants import (
     OPERATION_UPSERT,
     RESOURCE_ATTENDANCE,
     RESOURCE_CENTER,
+    RESOURCE_EDUCATION_ASSESSMENT,
     RESOURCE_REGISTRATION,
     RESOURCE_TEACHER,
 )
@@ -89,7 +91,7 @@ class CaptureTests(TestCase):
         self.assertEqual(event.operation, OPERATION_UPSERT)
         self.assertEqual(event.status, STATUS_PENDING)
 
-    def test_repeated_saves_collapse_into_one_pending_event(self):
+    def test_each_save_gets_an_event_even_while_an_earlier_one_is_pending(self):
         registration = Registration.objects.create(have_labour='No')
         registration.have_labour = 'Yes - Morning'
         registration.save()
@@ -97,10 +99,10 @@ class CaptureTests(TestCase):
         registration.save()
 
         self.assertEqual(
-            SyncEvent.objects.filter(resource=RESOURCE_REGISTRATION).count(), 1
+            SyncEvent.objects.filter(resource=RESOURCE_REGISTRATION).count(), 3
         )
 
-    def test_a_failed_event_is_revived_by_a_new_save(self):
+    def test_a_failed_event_remains_retryable_and_new_save_gets_new_event(self):
         registration = Registration.objects.create(have_labour='No')
         event = SyncEvent.objects.get(resource=RESOURCE_REGISTRATION)
         event.status = STATUS_FAILED
@@ -111,8 +113,11 @@ class CaptureTests(TestCase):
         registration.save()
 
         event.refresh_from_db()
-        self.assertEqual(event.status, STATUS_PENDING)
-        self.assertIsNone(event.next_attempt)
+        self.assertEqual(event.status, STATUS_FAILED)
+        self.assertIsNotNone(event.next_attempt)
+        self.assertEqual(SyncEvent.objects.filter(resource=RESOURCE_REGISTRATION).count(), 2)
+        self.assertEqual(SyncEvent.objects.filter(resource=RESOURCE_REGISTRATION,
+                                                  status=STATUS_PENDING).count(), 1)
 
     def test_deleting_a_registration_queues_a_delete(self):
         registration = Registration.objects.create(have_labour='No')
@@ -229,6 +234,25 @@ class PayloadTests(TestCase):
         self.assertEqual(len(payload['children']), 1)
         self.assertEqual(
             payload['children'][0]['registration']['source_id'], registration.pk
+        )
+
+    def test_education_assessment_is_queued_with_registration_reference(self):
+        registration = Registration.objects.create(have_labour='No')
+        assessment = EducationAssessment.objects.create(
+            registration=registration, pre_arabic_grade=12,
+        )
+        event = SyncEvent.objects.get(resource=RESOURCE_EDUCATION_ASSESSMENT)
+        payload = build_wire_event(event)['payload']
+        self.assertEqual(event.source_id, str(assessment.pk))
+        self.assertEqual(payload['registration']['source_id'], registration.pk)
+        self.assertEqual(payload['fields']['pre_arabic_grade'], 12)
+
+    def test_event_source_modified_is_the_enqueue_time_not_retry_time(self):
+        Registration.objects.create(have_labour='No')
+        event = SyncEvent.objects.get(resource=RESOURCE_REGISTRATION)
+        self.assertEqual(
+            build_wire_event(event)['source_modified'],
+            event.created.isoformat(),
         )
 
     def test_deleted_record_produces_no_payload(self):

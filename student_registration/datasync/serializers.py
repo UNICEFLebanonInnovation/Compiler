@@ -27,6 +27,7 @@ from student_registration.attendances.models import (
 )
 from student_registration.locations.models import Center
 from student_registration.mscc.models import (
+    EducationAssessment,
     EducationProgrammeAssessment,
     EducationService,
     Referral,
@@ -39,6 +40,7 @@ from .constants import (
     RESOURCE_ATTENDANCE,
     RESOURCE_CENTER,
     RESOURCE_EDUCATION_SERVICE,
+    RESOURCE_EDUCATION_ASSESSMENT,
     RESOURCE_GRADING,
     RESOURCE_REFERRAL,
     RESOURCE_REGISTRATION,
@@ -329,6 +331,14 @@ def serialize_education_service(instance):
     }
 
 
+def serialize_education_assessment(instance):
+    """Replicate the detailed pre/post education assessment for a registration."""
+    return {
+        'fields': plain_fields(instance),
+        'registration': key_registration(instance.registration),
+    }
+
+
 def serialize_grading(instance):
     """Serialize a programme grading sheet."""
     return {
@@ -386,6 +396,7 @@ REGISTRY = (
     (Teacher, RESOURCE_TEACHER, serialize_teacher),
     (Registration, RESOURCE_REGISTRATION, serialize_registration),
     (EducationService, RESOURCE_EDUCATION_SERVICE, serialize_education_service),
+    (EducationAssessment, RESOURCE_EDUCATION_ASSESSMENT, serialize_education_assessment),
     (EducationProgrammeAssessment, RESOURCE_GRADING, serialize_grading),
     (Referral, RESOURCE_REFERRAL, serialize_referral),
     (MSCCAttendance, RESOURCE_ATTENDANCE, serialize_attendance),

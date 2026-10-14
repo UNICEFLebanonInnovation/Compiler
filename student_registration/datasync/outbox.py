@@ -7,8 +7,8 @@ built later, at delivery time, from the current state of the record. That has
 three useful consequences.
 
 * A partner's save is never slowed down or rolled back by the replication.
-* Several rapid edits to the same record collapse into a single push, because
-  a pending event for that record is reused rather than duplicated.
+* Every committed edit keeps a distinct event ID so edits made while a push
+  is in flight cannot be lost. The receiver ignores out-of-order old events.
 * What arrives in BMA-NFE is always the record's latest state, never a stale
   snapshot taken mid-transaction.
 
@@ -54,21 +54,9 @@ def enqueue(resource, source_id, operation=OPERATION_UPSERT, deliver=True):
 
     source_id = str(source_id)
 
-    if operation == OPERATION_UPSERT:
-        existing = SyncEvent.objects.deliverable().filter(
-            resource=resource, source_id=source_id, operation=OPERATION_UPSERT,
-        ).first()
-        if existing is not None:
-            # An undelivered push for this record is already queued; it will
-            # read the record's newest state, so there is nothing to add
-            # beyond clearing any retry backoff.
-            if existing.status == STATUS_FAILED or existing.next_attempt:
-                existing.status = STATUS_PENDING
-                existing.next_attempt = None
-                existing.save(update_fields=['status', 'next_attempt', 'modified'])
-            if deliver:
-                _schedule(existing)
-            return existing
+    # Never reuse an in-flight event: a save that happens during HTTP delivery
+    # must have its own durable event, otherwise its update can be lost.
+    # The dispatcher reads the latest committed model state for every event.
 
     event = SyncEvent.objects.create(
         resource=resource,
