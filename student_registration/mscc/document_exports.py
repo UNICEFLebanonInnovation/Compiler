@@ -1,8 +1,10 @@
-"""Generate the MSCC Excel export with each registration's profile photograph.
+"""Generate Excel exports with each registration's profile photograph.
 
-Each workbook row represents one registration. Child and registration IDs
+Each workbook row represents one registration. Person and registration IDs
 remain in every export so a child registered in several cycles can still be
-identified without losing the cycle or type of a particular record.
+identified without losing the cycle or type of a particular record. The MSCC
+profile is the default; other programmes (for example Dirasa) describe their
+own registration and person models with an ``ExportProfile``.
 """
 
 import datetime
@@ -32,10 +34,6 @@ _INVALID_XML_CHARACTERS = re.compile(
     '[\x00-\x08\x0b\x0c\x0e-\x1f\ud800-\udfff￾￿]'
 )
 
-_CHILD_EXCLUDED = frozenset({'id'})
-# The photograph has its own column, so the stored file name is not repeated.
-_REGISTRATION_EXCLUDED = frozenset({'id', 'child', 'profile_picture'})
-
 
 @dataclass(frozen=True)
 class ExportColumn:
@@ -51,11 +49,49 @@ class RegistrationSnapshot:
     photo_status: str
 
 
-_REQUIRED_COLUMNS = (
-    ExportColumn('registration_id', 'Registration ID', ('id',)),
-    ExportColumn('child_id', 'Child ID'),
-    ExportColumn('photograph', 'Photograph', ('photo', 'profile_picture')),
-    ExportColumn('photograph_status', 'Photograph status', ('photo_status',)),
+@dataclass(frozen=True)
+class ExportProfile:
+    """Describe which registration model, person relation and picture to export."""
+
+    registration_model: type
+    person_model: type
+    person_field: str
+    person_label: str
+    sheet_name: str
+    picture_field: str = 'profile_picture'
+
+    @property
+    def person_excluded(self):
+        return frozenset({'id'})
+
+    @property
+    def registration_excluded(self):
+        # The photograph has its own column, so the stored file name is not repeated.
+        return frozenset({'id', self.person_field, self.picture_field})
+
+    @property
+    def required_columns(self):
+        return (
+            ExportColumn('registration_id', 'Registration ID', ('id',)),
+            ExportColumn(
+                '{}_id'.format(self.person_field), '{} ID'.format(self.person_label),
+            ),
+            ExportColumn('photograph', 'Photograph', ('photo', self.picture_field)),
+            ExportColumn('photograph_status', 'Photograph status', ('photo_status',)),
+        )
+
+    @property
+    def full_name_column(self):
+        return ExportColumn(
+            '{}_full_name'.format(self.person_field),
+            '{} full name'.format(self.person_label),
+            ('{}_fullname'.format(self.person_field),),
+        )
+
+
+MSCC_PROFILE = ExportProfile(
+    registration_model=Registration, person_model=Child, person_field='child',
+    person_label='Child', sheet_name='Registered children',
 )
 
 
@@ -94,16 +130,21 @@ def _model_columns(model, prefix, excluded):
     return columns
 
 
-def export_columns(fields=None):
+def export_columns(fields=None, profile=MSCC_PROFILE):
     """Return stable, unambiguous headers, retaining identity and photo columns.
 
     Optional selectors accept field names, ``child__field`` /
     ``registration__field`` names, or the visible header. Unknown selectors
     do not accidentally fall back to exporting every stored field.
     """
-    child_columns = _model_columns(Child, 'child', _CHILD_EXCLUDED)
-    registration_columns = _model_columns(Registration, 'registration', _REGISTRATION_EXCLUDED)
-    used_labels = {column.label for column in _REQUIRED_COLUMNS + tuple(child_columns)}
+    required = profile.required_columns
+    person_columns = _model_columns(
+        profile.person_model, profile.person_field, profile.person_excluded,
+    )
+    registration_columns = _model_columns(
+        profile.registration_model, 'registration', profile.registration_excluded,
+    )
+    used_labels = {column.label for column in required + tuple(person_columns)}
     registration_columns = [
         ExportColumn(
             column.key,
@@ -112,9 +153,9 @@ def export_columns(fields=None):
         ) for column in registration_columns
     ]
     optional = [
-        ExportColumn('child_full_name', 'Child full name', ('child_fullname',)),
+        profile.full_name_column,
         ExportColumn('date_of_birth', 'Date of birth', ('birthday',)),
-    ] + child_columns + registration_columns
+    ] + person_columns + registration_columns
     if fields:
         if isinstance(fields, str):
             fields = [fields]
@@ -122,7 +163,7 @@ def export_columns(fields=None):
         optional = [column for column in optional if selected.intersection(
             (column.key, column.label) + column.aliases
         )]
-    return list(_REQUIRED_COLUMNS) + optional
+    return list(required) + optional
 
 
 def _choice_label(field, value):
@@ -159,13 +200,13 @@ def _field_values(instance, model, prefix, excluded):
     return values
 
 
-def _date_of_birth(child):
+def _date_of_birth(person):
     """Use the saved birthday components, including incomplete legacy dates."""
-    if child is None:
+    if person is None:
         return ''
-    year = _text(getattr(child, 'birthday_year', None))
-    month = _text(getattr(child, 'birthday_month', None))
-    day = _text(getattr(child, 'birthday_day', None))
+    year = _text(getattr(person, 'birthday_year', None))
+    month = _text(getattr(person, 'birthday_month', None))
+    day = _text(getattr(person, 'birthday_day', None))
     try:
         return datetime.date(int(year), int(month), int(day)).isoformat()
     except (ValueError, TypeError):
@@ -179,9 +220,9 @@ def _date_of_birth(child):
         return ', '.join(parts)
 
 
-def load_registration_photo(registration):
+def load_registration_photo(registration, picture_field='profile_picture'):
     """Load the registration's saved profile picture as a normalised PNG."""
-    picture = getattr(registration, 'profile_picture', None)
+    picture = getattr(registration, picture_field, None)
     if not picture:
         return None, PHOTO_MISSING
     try:
@@ -207,38 +248,44 @@ def load_registration_photo(registration):
         return None, PHOTO_UNAVAILABLE
 
 
-def registration_snapshot(registration):
+def registration_snapshot(registration, profile=MSCC_PROFILE):
     """Read one registration's values and its profile photograph once."""
-    child = registration.child
-    photo_data, photo_status = load_registration_photo(registration)
-    picture = getattr(registration, 'profile_picture', None)
+    person = getattr(registration, profile.person_field, None)
+    photo_data, photo_status = load_registration_photo(registration, profile.picture_field)
+    picture = getattr(registration, profile.picture_field, None)
     values = OrderedDict((
         ('registration_id', _text(registration.pk)),
-        ('child_id', _text(registration.child_id)),
+        ('{}_id'.format(profile.person_field), _text(
+            getattr(registration, '{}_id'.format(profile.person_field), None)
+        )),
         ('photograph', _text(picture.name if picture else None)),
         ('photograph_status', photo_status),
-        ('child_full_name', ' '.join(
-            _text(getattr(child, name, None)).strip()
+        (profile.full_name_column.key, ' '.join(
+            _text(getattr(person, name, None)).strip()
             for name in ('first_name', 'father_name', 'last_name')
-            if child is not None and getattr(child, name, None)
-        ) if child is not None else 'Child record unavailable'),
-        ('date_of_birth', _date_of_birth(child)),
+            if person is not None and getattr(person, name, None)
+        ) if person is not None else '{} record unavailable'.format(profile.person_label)),
+        ('date_of_birth', _date_of_birth(person)),
     ))
-    values.update(_field_values(child, Child, 'child', _CHILD_EXCLUDED))
-    values.update(_field_values(registration, Registration, 'registration', _REGISTRATION_EXCLUDED))
+    values.update(_field_values(
+        person, profile.person_model, profile.person_field, profile.person_excluded,
+    ))
+    values.update(_field_values(
+        registration, profile.registration_model, 'registration', profile.registration_excluded,
+    ))
     return RegistrationSnapshot(values, photo_data, photo_status)
 
 
-def build_children_workbook(registrations, fields=None):
+def build_children_workbook(registrations, fields=None, profile=MSCC_PROFILE):
     """Return an XLSX with each photograph contained in its registration row."""
-    columns = export_columns(fields)
+    columns = export_columns(fields, profile)
     destination = io.BytesIO()
     workbook = xlsxwriter.Workbook(destination, {
         'in_memory': True,
         'strings_to_formulas': False,
         'strings_to_urls': False,
     })
-    sheet = workbook.add_worksheet('Registered children')
+    sheet = workbook.add_worksheet(profile.sheet_name)
     heading = workbook.add_format({
         'bold': True, 'bg_color': '#164A68', 'font_color': '#FFFFFF',
         'text_wrap': True, 'valign': 'vcenter', 'border': 1,
@@ -257,7 +304,7 @@ def build_children_workbook(registrations, fields=None):
         if row >= 1048576:
             raise ValueError('The export exceeds the Excel worksheet row limit.')
         last_row = row
-        snapshot = registration_snapshot(registration)
+        snapshot = registration_snapshot(registration, profile)
         sheet.set_row(row, 108)
         for index, column in enumerate(columns):
             value = snapshot.values.get(column.key, '')
@@ -272,8 +319,10 @@ def build_children_workbook(registrations, fields=None):
             image_data = io.BytesIO(snapshot.photo_data)
             with Image.open(image_data) as image:
                 scale = min(112 / image.width, 136 / image.height, 1)
-            sheet.insert_image(row, 2, 'child_{}_registration_{}.png'.format(
-                registration.child_id, registration.pk,
+            sheet.insert_image(row, 2, '{}_{}_registration_{}.png'.format(
+                profile.person_field,
+                snapshot.values['{}_id'.format(profile.person_field)],
+                registration.pk,
             ), {
                 'image_data': image_data,
                 'x_offset': 4, 'y_offset': 4,

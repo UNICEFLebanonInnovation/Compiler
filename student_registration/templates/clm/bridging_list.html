@@ -167,7 +167,34 @@
 {% endblock %}
 
 {% block modal %}
-
+<div class="modal fade" id="bridgingExportModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{% trans "Export" %}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted small">
+          {% trans "Export the Dirasa students of the selected round. Excel includes each student's profile picture in the same row as their student and registration IDs and applies the current filters. CSV does not include photographs." %}
+        </p>
+        <div class="form-group">
+          <label for="bridging-export-format">{% trans "Format" %}</label>
+          <select id="bridging-export-format" class="form-control">
+            <option value="csv" selected>{% trans "CSV (text only)" %}</option>
+            <option value="xlsx">{% trans "Excel with photographs" %}</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "Cancel" %}</button>
+        <button type="button" class="btn btn-primary start-bridging-export" onclick="startBridgingExport(this)">{% trans "Start Export" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -193,9 +220,35 @@
             window.open("{% url 'clm:bridging_profile_id_bulk' %}?round=" + encodeURIComponent(round), "_blank", "noopener");
         }
 
+        function notifyExport(message) {
+            if (typeof showModal === 'function') {
+                showModal(message);
+            } else {
+                alert(message);
+            }
+        }
+
         function checkRoundBeforeExport(event) {
             event.preventDefault();
+            var round = $("#id_round").val();
+            if (!round) {
+                alert("Round is not selected. Please select a round before exporting data.");
+                return;
+            }
+            $('#bridgingExportModal').modal('show');
+        }
 
+        function startBridgingExport(button) {
+            var format = $('#bridging-export-format').val() || 'csv';
+            $('#bridgingExportModal').modal('hide');
+            if (format === 'xlsx') {
+                startBridgingPhotoExport(button);
+            } else {
+                startBridgingCsvExport();
+            }
+        }
+
+        function startBridgingCsvExport() {
             requestHeaders = getHeader();
             var round = $("#id_round").val();
 
@@ -229,6 +282,99 @@
                 $(".downloading-message").hide();
                 $('.download-report').removeClass('disabled');
             }
+        }
+
+        function startBridgingPhotoExport(button) {
+            // The Excel export embeds photographs, so it runs in the background
+            // and is polled from the export history until the file is stored.
+            var params = new URLSearchParams();
+            [
+                'round', 'student__first_name', 'student__father_name', 'student__last_name',
+                'student__mother_fullname', 'student__nationality', 'partner', 'school',
+                'governorate', 'district'
+            ].forEach(function (name) {
+                var value = $('#id_' + name).val();
+                if (value) params.set(name, value);
+            });
+
+            var $button = $(button);
+            var originalHtml = $button.html();
+            $button.prop('disabled', true).html(
+                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...'
+            );
+            $(".downloading-message").show();
+            $('.download-report').addClass('disabled');
+
+            $.ajax({
+                url: "{% url 'clm:bridging_export_photos' %}?" + params.toString(),
+                type: "GET",
+                headers: getHeader(),
+                success: function (data) {
+                    notifyExport('Export started. The download dialog will appear when ready.');
+                    pollBridgingExport(data.export_id);
+                },
+                error: function (xhr) {
+                    var reason = xhr && xhr.responseJSON && xhr.responseJSON.error;
+                    notifyExport(reason || 'Failed to start export. Please try again later.');
+                    $(".downloading-message").hide();
+                    $('.download-report').removeClass('disabled');
+                },
+                complete: function () {
+                    $button.prop('disabled', false).html(originalHtml);
+                }
+            });
+        }
+
+        function showBridgingExportReady(url) {
+            $(".downloading-message").hide();
+            $('.download-report').removeClass('disabled');
+            $('#alertModal').modal('hide');
+            var readyModal = $('#downloadReadyModal');
+            if (url && url !== '#' && readyModal.length) {
+                readyModal.find('.download-link').attr('href', url);
+                readyModal.modal('show');
+            } else if (url && url !== '#') {
+                window.open(url, '_blank');
+            } else {
+                notifyExport('Export is ready, but no download link was returned. Please check export history.');
+            }
+        }
+
+        function pollBridgingExport(exportId) {
+            if (!exportId) {
+                return;
+            }
+            var attempts = 0;
+            var maxAttempts = 120;
+            var interval = window.setInterval(function () {
+                attempts += 1;
+                $.ajax({
+                    url: '/backends/export-history-list/?export_id=' + encodeURIComponent(exportId),
+                    type: 'GET',
+                    headers: getHeader(),
+                    success: function (data) {
+                        var exportItem = data.exports && data.exports[0];
+                        if (!exportItem) {
+                            return;
+                        }
+                        if (exportItem.status === 'done') {
+                            window.clearInterval(interval);
+                            showBridgingExportReady(exportItem.url);
+                        } else if (exportItem.status === 'failed') {
+                            window.clearInterval(interval);
+                            $(".downloading-message").hide();
+                            $('.download-report').removeClass('disabled');
+                            notifyExport('Export failed. Please try again later.');
+                        }
+                    }
+                });
+                if (attempts >= maxAttempts) {
+                    window.clearInterval(interval);
+                    $(".downloading-message").hide();
+                    $('.download-report').removeClass('disabled');
+                    notifyExport('Export is still running. Please check export history in a few minutes.');
+                }
+            }, 3000);
         }
 
         $(document).ready(function() {
