@@ -143,7 +143,6 @@ def _generate_mscc_export(export_id, fields=None, file_format='csv'):
         logger.error("ExportHistory with id %s does not exist", export_id)
         return
     try:
-        user = export.created_by
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM vw_mscc_child")
         mscc_data = cursor.fetchall()
