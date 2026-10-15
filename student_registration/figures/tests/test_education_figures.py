@@ -114,6 +114,14 @@ def test_groupings_combine_main_dimensions_with_one_detail():
 
 
 def test_makani_counts_unique_children_of_the_year(makani, places):
+    # without a round too, of the same partner, but never waiting for a cycle: TLS, deleted, without a child
+    tls_child = Child.objects.create(first_name='Secret', gender='Male', birthday_year='2013')
+    m.Registration.objects.create(child=tls_child, partner=makani['partner'], center=makani['center'], type='TLS')
+    m.Registration.objects.create(child=tls_child, partner=makani['partner'], center=makani['center'], deleted=True)
+    m.Registration.objects.create(partner=makani['partner'], center=makani['center'], type='Core-Package')
+    # the partner of the round-less boy also counted in 2024
+    m.Registration.objects.create(child=tls_child, partner=makani['partner'], center=makani['center'],
+                                  round=m.Round.objects.get(year=2024), type='Core-Package')
     payload = education.PROGRAMMES['mscc'].build('2025')
     registrations = payload['blocks']['registrations']
     # the girl (two partners) once; the boy without a round is in neither dashboard (pending_round)
@@ -132,8 +140,10 @@ def test_makani_counts_unique_children_of_the_year(makani, places):
     assert table(attendance, 'month') == {('2025-03',): [2, 1]}
 
     older = education.PROGRAMMES['mscc'].build('2024')
-    assert table(older['blocks']['registrations'])[()] == [1]  # the round-less child is not in 2024
-    assert older['pending_round'] == 0  # counted in the current year's payload only
+    assert table(older['blocks']['registrations'])[()] == [2]  # the round-less child is not in 2024
+    # counted in the current year's payload only, although the boy's partner is counted in 2024 too
+    assert makani['partner'].id in {row[0] for row in table(older['blocks']['registrations'], 'partner')}
+    assert older['pending_round'] == 0
 
 
 def test_bridging_counts_children_tests_services_and_teachers(bridging):
@@ -249,41 +259,97 @@ def test_a_failed_count_is_reported_and_a_lost_run_does_not_block(makani):
 
 def test_a_run_masks_its_errors_and_stops_at_the_time_limit(makani):
     """The run's error is read by NeuroDB: no quoted value and no SQL line. At the worker's soft time
-    limit the run finishes at once, naming the targets left, instead of being killed while "running"."""
+    limit the run finishes at once, naming the targets left, instead of being killed while "running":
+    the limit strikes inside a count (here in a cube's query), where every part catches its own errors."""
     from celery.exceptions import SoftTimeLimitExceeded
 
     from student_registration.figures.models import FiguresRun
 
-    targets = [('mscc', '2024'), ('mscc', None), ('bridging', None), ('mscc', '2024')]
+    targets = [('mscc', '2024'), ('mscc', None), ('mscc', '2024'), ('bridging', None)]
     with mock.patch('student_registration.figures.tasks.run_figures.delay'):
         run, _ = snapshots.start_run(targets, 'neurodb')
-    real, asked = snapshots.refresh, []
+    real, asked, real_cube = snapshots.refresh, [], engine.cube
 
     def refresh(programme, year=None):
         asked.append((programme, year))
         if len(asked) == 1:
             raise RuntimeError('invalid input syntax for type integer: "Zaynab-Test"\nLINE 1: SELECT 900001')
-        if programme == 'bridging':
-            raise SoftTimeLimitExceeded()
         return real(programme, year)
+
+    def cube(*args):
+        if len(asked) == 3:  # the third target: the worker's limit strikes in the middle of the count
+            raise SoftTimeLimitExceeded()
+        return real_cube(*args)
 
     from django.db import connection
 
     # the limit struck mid-query: the connection is reset before the run is saved (close stubbed here, to
     # keep the test's transaction)
     with mock.patch.object(snapshots, 'refresh', side_effect=refresh), \
+            mock.patch.object(engine, 'cube', side_effect=cube), \
             mock.patch.object(connection, 'is_usable', return_value=False), \
             mock.patch.object(connection, 'close') as closed:
         snapshots.execute_run(run.pk)
     closed.assert_called_once_with()
     run.refresh_from_db()
-    assert asked == [('mscc', '2024'), ('mscc', None), ('bridging', None)]  # nothing after the limit
+    assert asked == [('mscc', '2024'), ('mscc', None), ('mscc', '2024')]  # nothing after the limit
     assert run.status == FiguresRun.SUCCEEDED and [c[:2] for c in run.counted] == [['mscc', '2025']]
     assert run.finished_at is not None
     assert run.error.splitlines() == [
         'mscc 2024: RuntimeError: invalid input syntax for type integer: "..."',
-        'time limit reached; not counted: bridging current, mscc 2024']
+        'time limit reached; not counted: mscc 2024, bridging current']
     assert 'Zaynab' not in run.error and '900001' not in run.error
+    assert not FiguresSnapshot.objects.filter(programme='mscc', year='2024').exists()  # never stored as fresh
+
+
+@pytest.mark.django_db(transaction=True)
+def test_the_time_limit_in_the_middle_of_a_query_stops_the_run_and_the_query(makani):
+    """The worker's real signal, in autocommit as in the worker, while a cube's query runs on the server:
+    the run stops at once, stores nothing, and the query is cancelled on the server (psycopg cancels by
+    itself only on KeyboardInterrupt)."""
+    import signal
+    import time
+
+    from celery.exceptions import SoftTimeLimitExceeded
+    from django.db import connection
+
+    from student_registration.figures.models import FiguresRun
+
+    with mock.patch('student_registration.figures.tasks.run_figures.delay'):
+        run, _ = snapshots.start_run([('mscc', '2025'), ('mscc', '2024')], 'neurodb')
+    real = engine.cube
+
+    def slow(sql, params, dimensions, measures):
+        if 'malnutrition' in dimensions:  # the enrolment cube: two rows of two seconds each
+            signal.setitimer(signal.ITIMER_REAL, 0.3)
+            sql = 'SELECT * FROM (%s) AS slow WHERE pg_sleep(2) IS NOT NULL' % sql
+        return real(sql, params, dimensions, measures)
+
+    def limit(signum, frame):
+        raise SoftTimeLimitExceeded()
+
+    previous = signal.signal(signal.SIGALRM, limit)
+    try:
+        with mock.patch.object(engine, 'cube', side_effect=slow):
+            snapshots.execute_run(run.pk)
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, previous)
+    run.refresh_from_db()
+    assert run.status == FiguresRun.FAILED and run.counted == []
+    assert run.error == 'time limit reached; not counted: mscc 2025, mscc 2024'
+    assert not FiguresSnapshot.objects.exists()
+    still = None
+    for _ in range(20):  # the cancel is handled by the server within moments, not after the 4 s query
+        with connection.cursor() as cursor:
+            # the query's text is cut in pg_stat_activity (track_activity_query_size): its wait tells it
+            cursor.execute("SELECT COUNT(*) FROM pg_stat_activity WHERE state = 'active' AND wait_event = %s "
+                           "AND pid <> pg_backend_pid() AND datname = current_database()", ['PgSleep'])
+            still = cursor.fetchone()[0]
+        if not still:
+            break
+        time.sleep(0.05)
+    assert still == 0
 
 
 def test_only_the_service_account_reads(makani):
@@ -315,6 +381,30 @@ def test_a_past_year_is_counted_again_after_a_week(makani):
     FiguresSnapshot.objects.update(created_at=now - datetime.timedelta(hours=170))
     assert snapshots.is_stale(snapshots.latest('mscc', '2024'))
     assert snapshots.refresh('mscc', '1999') is None  # no such year: nothing counted
+
+
+def test_a_change_of_the_power_bi_settings_makes_every_period_stale(makani, settings):
+    """The way back (base = rule), ``deleted`` and Makani's period rule decide which rows a snapshot
+    counted: after a change, past periods are counted again at the next run, not a week later."""
+    client = _service_client()
+    snapshots.refresh('mscc'), snapshots.refresh('mscc', '2024')
+
+    def stale():
+        index = {p['programme']: p for p in client.get('/api/figures/').json()['programmes']}
+        by_index = {y['year']: y['stale'] for y in index['mscc']['years']}
+        by_snapshot = {year: snapshots.is_stale(snapshots.latest('mscc', year)) for year in ('2025', '2024')}
+        assert by_index == by_snapshot
+        return by_index
+
+    assert stale() == {'2025': False, '2024': False}
+    settings.FIGURES_POWER_BI = {'mscc': {'base': 'rule'}}  # the kill switch
+    assert stale() == {'2025': True, '2024': True}
+    settings.FIGURES_POWER_BI = {'mscc': {'deleted': 'include'}}
+    assert stale() == {'2025': True, '2024': True}
+    settings.FIGURES_POWER_BI = {'mscc': {'period': 'current_rounds'}}  # the current year's rounds only
+    assert stale() == {'2025': True, '2024': False}
+    settings.FIGURES_POWER_BI = {'bridging': {'base': 'rule'}, 'youth': {'deleted': 'include'}}  # others'
+    assert stale() == {'2025': False, '2024': False}
 
 
 def test_the_index_gives_the_format_and_staleness_of_each_year(makani):

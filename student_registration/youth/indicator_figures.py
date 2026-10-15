@@ -249,10 +249,12 @@ def _figures(year: Year | None, population, alias: str, year_number: int):
     if population.joined and 'partner' in population.overrides:
         view_partner = dict(zip(population.ids, population.overrides['partner']))
 
+    # read a chunk at a time, the parameters (in view mode, the view's registration ids) bound on the server
+    sql, params = _enrolments(year, population, alias).query.sql_with_params()
     for (
         registration_id, adolescent_id, master_id, sub_id, donor_id, pd_id, partner_id, pd_partner_id,
         gov_id, district_id, home_gov_id, home_district_id, gender, birthday_year, nationality_id,
-    ) in _enrolments(year, population, alias).iterator(chunk_size=5000):
+    ) in engine.stream(sql, params):
         person = adolescent_id or ('r', registration_id)
         if not gov_id:  # "same location": the youth's registered address
             gov_id, district_id = home_gov_id, home_district_id

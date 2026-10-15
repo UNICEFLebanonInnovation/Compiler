@@ -61,6 +61,7 @@ from django.db.models import (
     Value,
     When,
 )
+from django.db.models.expressions import RawSQL
 from django.db.models.functions import Cast, Coalesce, Left, Lower, NullIf, Trim
 from django.utils import timezone
 
@@ -197,8 +198,15 @@ def select(queryset, fields, population=None, rid='id', overrides=None):
 
 
 def select_union(querysets, fields_list, population=None, rid='id', overrides=None):
-    """The same columns from several querysets, one after the other (UNION ALL)."""
+    """The same columns from several querysets, one after the other (UNION ALL). In view mode each queryset
+    is also restricted to the view's registrations by itself: PostgreSQL does not push the join with the
+    population (outside the UNION ALL) into its branches, so each branch would read its whole table, every
+    year's records, and the union of them all would be sorted before the join. The ids stay one bound
+    parameter (the population's array), never in the statement text."""
     population = _joined(population)
+    if population is not None:
+        ids = RawSQL('SELECT unnest(%s::int[])', [population.arrays()[0]])
+        querysets = [q.filter(**{rid + '__in': ids}) for q in querysets]
     first, *rest = [_annotate(q, f, rid if population else None) for q, f in zip(querysets, fields_list)]
     sql, params = first.union(*rest, all=True).query.sql_with_params()
     return _renamed(sql, params, fields_list[0], population, overrides)
@@ -208,8 +216,10 @@ def view_population(programme, period, **kwargs):
     """power_bi.population(), never failing the count: an unexpected error gives rule mode."""
     try:
         return power_bi.population(programme, period, **kwargs)
+    except engine.INTERRUPTS:  # the worker's time limit stops the whole count
+        raise
     except Exception as exc:  # recorded in the payload; the count goes on with the rule
-        logger.exception('figures %s %s: the view population failed', programme, period)
+        logger.error('figures %s %s: the view population failed: %s', programme, period, power_bi.error_line(exc))
         chosen = power_bi.options(programme)
         return power_bi.Population(view=power_bi.SOURCES[programme].view, deleted=chosen['deleted'],
                                    setting=chosen['base'], reason=power_bi.error_text('population', exc),
@@ -219,8 +229,10 @@ def view_population(programme, period, **kwargs):
 def power_bi_block(programme, period, population, before, counted, **kwargs):
     try:
         return power_bi.block(programme, period, population, before, counted, **kwargs)
+    except engine.INTERRUPTS:
+        raise
     except Exception as exc:  # the counts are still sent
-        logger.exception('figures %s %s: the power_bi block failed', programme, period)
+        logger.error('figures %s %s: the power_bi block failed: %s', programme, period, power_bi.error_line(exc))
         return power_bi.failed_block(programme, period, exc, kwargs.get('period_rule', ''))
 
 
@@ -228,8 +240,10 @@ def block(name, sql_params, dimensions, grouping_list, measures=engine.PEOPLE):
     sql, params = sql_params
     try:
         return engine.figures_block(sql, params, dimensions, grouping_list, measures)
+    except engine.INTERRUPTS:  # the worker's time limit is not one block's failure: the count stops
+        raise
     except Exception as exc:  # one block's failure (e.g. a timeout) leaves the others
-        logger.exception('figures block %s failed', name)
+        logger.error('figures block %s failed: %s', name, power_bi.error_line(exc))  # never exc_info: SPEC §7
         return {'measures': [m for m, _sql in measures], 'figures': [], 'error': type(exc).__name__}
 
 
@@ -237,8 +251,10 @@ def cube(name, sql_params, dimensions, measures):
     sql, params = sql_params
     try:
         return engine.cube(sql, params, dimensions, measures)
+    except engine.INTERRUPTS:  # the worker's time limit is not one cube's failure: the count stops
+        raise
     except Exception as exc:  # one cube's failure (e.g. a timeout) leaves the others
-        logger.exception('figures cube %s failed', name)
+        logger.error('figures cube %s failed: %s', name, power_bi.error_line(exc))  # never exc_info: SPEC §7
         return {'dims': list(dimensions), 'measures': [m for m, _sql in measures], 'rows': [],
                 'error': type(exc).__name__}
 
@@ -334,12 +350,16 @@ class Makani:
 
         return Round.objects.exclude(year=None)
 
-    def years(self):
-        return [str(y) for y in sorted(set(self._rounds().values_list('year', flat=True)), reverse=True)]
+    def years(self, alias=None):
+        rounds = self._rounds().using(alias) if alias else self._rounds()
+        return [str(y) for y in sorted(set(rounds.values_list('year', flat=True)), reverse=True)]
 
-    def current_year(self):
-        years = list(self._rounds().filter(current_year=True).values_list('year', flat=True))
-        years = years or [int(y) for y in self.years()]
+    def current_year(self, alias=None):
+        """The year of the rounds flagged current, else the latest; ``alias``: the figures connection, when
+        read in a count (under the counting limits)."""
+        rounds = self._rounds().using(alias) if alias else self._rounds()
+        years = list(rounds.filter(current_year=True).values_list('year', flat=True))
+        years = years or [int(y) for y in self.years(alias)]
         return str(max(years)) if years else None
 
     def has_year(self, year):
@@ -347,14 +367,15 @@ class Makani:
 
     def _period_rounds(self, year, period_rule):
         """The rounds of ``year``: rounds whose year is Y ('round_year'), or the rounds flagged current
-        ('current_rounds', the current year only)."""
+        ('current_rounds', the current year only). Read under the counting limits."""
         from student_registration.mscc.models import Round
 
-        if period_rule == 'current_rounds':
-            rounds = Round.objects.filter(current_year=True)
-        else:
-            rounds = self._rounds().filter(year=int(year))
-        return list(rounds.order_by('start_date', 'name'))
+        with engine.read_only_transaction() as alias:
+            if period_rule == 'current_rounds':
+                rounds = Round.objects.using(alias).filter(current_year=True)
+            else:
+                rounds = self._rounds().using(alias).filter(year=int(year))
+            return list(rounds.order_by('start_date', 'name'))
 
     @staticmethod
     def _rule(round_ids, prefix=''):
@@ -371,11 +392,12 @@ class Makani:
             return Q(**{prefix + 'deleted': False}) if population.deleted == 'exclude' else Q()
         return self._rule(round_ids, prefix)
 
-    def _before(self, year):
+    @staticmethod
+    def _before(year, current):
         """The rule used before the Power BI alignment (for the reconciliation only): TLS counted, and in
-        the current year the registrations without a round too."""
+        the current year (``current``) the registrations without a round too."""
         condition = Q(round__year=int(year))
-        if str(year) == self.current_year():
+        if current:
             condition |= Q(round__isnull=True)
         return Q(deleted=False, child__isnull=False) & condition
 
@@ -472,7 +494,8 @@ class Makani:
         from student_registration.students.models import IDType, Nationality
 
         year = str(year)
-        current = year == self.current_year()
+        with engine.read_only_transaction() as alias:  # every read of a count under the limits
+            current = year == self.current_year(alias)
         chosen = power_bi.options(self.name)
         period_rule = chosen['period'] if current else 'round_year'
         rounds = self._period_rounds(year, period_rule)
@@ -587,10 +610,13 @@ class Makani:
                 pending_round = self._pending_round(
                     ids_in_cubes({'enrolment': cubes['enrolment']}, 'partner')
                     | ids_in({'registrations': blocks['registrations']}, 'partner'))
+            except engine.INTERRUPTS:
+                raise
             except Exception as exc:  # recorded in power_bi.errors
-                logger.exception('figures mscc %s: pending_round failed', year)
+                logger.error('figures mscc %s: pending_round failed: %s', year, power_bi.error_line(exc))
                 population.errors.append(power_bi.error_text('pending_round', exc))
-        power = power_bi_block(self.name, year, population, m.Registration.objects.filter(self._before(year)),
+        power = power_bi_block(self.name, year, population,
+                               m.Registration.objects.filter(self._before(year, current)),
                                registrations, current=current, period_rule=period_rule)
 
         centers = Center.objects.filter(id__in=ids_in(blocks, 'center'))
@@ -667,8 +693,10 @@ class Bridging:
     def years(self):
         return list(self._rounds().values_list('name', flat=True))
 
-    def current_year(self):
-        rounds = self._rounds()
+    def current_year(self, alias=None):
+        """The round flagged current for Bridging, else one flagged as of the current year; ``alias``: the
+        figures connection, when read in a count (under the counting limits)."""
+        rounds = self._rounds().using(alias) if alias else self._rounds()
         current = rounds.filter(current_round_bridging=True).first() or rounds.filter(current_year=True).first()
         return current.name if current else None
 
@@ -727,7 +755,9 @@ class Bridging:
         from student_registration.schools.models import School
         from student_registration.students.models import Nationality, Teacher, Training
 
-        the_round = self._rounds().get(name=year)
+        with engine.read_only_transaction() as alias:  # every read of a count under the limits
+            the_round = self._rounds().using(alias).get(name=year)
+            current = the_round.name == self.current_year(alias)
         start = the_round.start_date_bridging
         reference_year = start.year if start else timezone.localdate().year
         rule = Registration.objects.filter(deleted=False, round=the_round, student__isnull=False)
@@ -842,12 +872,14 @@ class Bridging:
         places = {s[k] for s in schools_seen for k in ('governorate', 'district') if s[k]}
         try:
             school_totals = self._school_totals()
+        except engine.INTERRUPTS:
+            raise
         except Exception as exc:  # recorded in power_bi.errors
-            logger.exception('figures bridging %s: school_totals failed', year)
+            logger.error('figures bridging %s: school_totals failed: %s', year, power_bi.error_line(exc))
             population.errors.append(power_bi.error_text('school_totals', exc))
             school_totals = {}
         power = power_bi_block(self.name, the_round.name, population, rule, valid,
-                               current=the_round.name == self.current_year(), period_rule='round')
+                               current=current, period_rule='round')
 
         schools = School.objects.filter(id__in=ids_in(blocks, 'school'))
         return {

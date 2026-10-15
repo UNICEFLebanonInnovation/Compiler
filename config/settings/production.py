@@ -16,6 +16,8 @@ import logging
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
+from student_registration.figures.error_reports import drop_count_variables
+
 from .base import *  # noqa
 
 # SECRET CONFIGURATION
@@ -123,6 +125,9 @@ sentry_sdk.init(
     integrations=[DjangoIntegration()],
     traces_sample_rate=1.0,  # Optional, for performance monitoring
     send_default_pii=True,   # Optional, if you want to send user info
+    # an error passing through a count of the NeuroDB figures is sent without the variables of its frames,
+    # which hold the registration ids of the Power BI views (student_registration/figures/error_reports.py)
+    before_send=drop_count_variables,
 )
 
 LOGGING = {

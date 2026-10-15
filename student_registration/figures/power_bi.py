@@ -52,6 +52,14 @@ DEFAULTS = {
 }
 CHOICES = {'base': ('auto', 'view', 'rule'), 'deleted': ('exclude', 'include'),
            'period': ('round_year', 'current_rounds')}
+# The gate's reasons when the view cannot be read at all (rule mode, base.reason): what a later GRANT, or a missing
+# view created again by hand (SPEC E3), changes without anything else changing (snapshots.stale, ``unreadable``).
+# A view dropped and created again loses its grants (CREATE OR REPLACE keeps them): a counting role that does not
+# own it can no longer read it ("no SELECT permission") until the grant is given again, or unless default
+# privileges of the views' creator give it (docs: NeuroDB OPERATIONS.md, deploying the comparison, step 1).
+VIEW_MISSING = 'view missing'
+NOT_A_VIEW = ', not a view'  # '<view> is a <kind>, not a view'
+NO_PERMISSION = 'no SELECT permission on '  # followed by the view's name
 
 
 @dataclass(frozen=True)
@@ -71,6 +79,7 @@ class Source:
     joins: str = ''           # extra joins of the key check (aliases: r = the registration)
     cross_checks: tuple = ()  # comparisons that must also agree (youth: ids of two tables overlap)
     period_gate: bool = True  # the view's rows must have the registration's round (year) for the key to pass
+    round_profiled: tuple = ()  # profiled views whose round_id is the programme's round: the period's rows only
 
 
 SOURCES = {
@@ -91,7 +100,7 @@ SOURCES = {
         'bridging', 'vw_bridging_data', 'clm_bridging', ('id',), ('round_id',),
         {'partner': 'partner_id', 'school': 'school_id'},
         related=('vw_bridging_wl_data', 'vw_teacher_data', 'vw_outreach_data', 'vw_outreach_not_registered'),
-        profiled=('vw_teacher_data',),
+        profiled=('vw_teacher_data',), round_profiled=('vw_teacher_data',),  # Teacher.round: a CLM round
         person='student_id', person_label='children', period_of_registration='round_id',
         checks=(('same_round', 'round_id', 'r.round_id IS NOT DISTINCT FROM {v}'),
                 ('same_partner', 'partner_id', 'r.partner_id IS NOT DISTINCT FROM {v}'),
@@ -161,8 +170,16 @@ def error_message(exc):
     return QUOTED.sub('"..."', text)[:200]
 
 
+def error_line(exc):
+    """``<ExceptionClass>: <first line, quoted text masked>``: how a failure of the counting code is logged.
+    Never the exception itself (``logger.exception``, ``exc_info``): an error reporter (Sentry, with its
+    defaults) would send the variables of every frame, which hold the view's registration ids, rows and
+    partners (SPEC §7: the population is never logged or sent)."""
+    return '%s: %s' % (error_class(exc), error_message(exc))
+
+
 def error_text(part, exc):
-    return '%s: %s: %s' % (part, error_class(exc), error_message(exc))
+    return '%s: %s' % (part, error_line(exc))
 
 
 # -------------------------------------------------------------------------------- catalogue
@@ -283,6 +300,27 @@ def describe(name):
     }
 
 
+def readable(programme):
+    """Whether the programme's view exists, is a view or a materialized view, and may be read by the counting
+    role now: the gate's first conditions (D2), from the catalogue only (no data, one query)."""
+    with engine.read_only_cursor() as cursor:
+        cursor.execute(
+            "SELECT c.relkind IN ('v', 'm') AND has_table_privilege(current_user, c.oid, 'SELECT') "
+            'FROM pg_class c WHERE c.oid = to_regclass(%s::text)', [SOURCES[programme].view])
+        row = cursor.fetchone()
+    return bool(row and row[0])
+
+
+def unreadable(base):
+    """Whether a payload's ``power_bi.base`` says it was counted with the rule because the view could not be
+    read at all (missing, not a view, no SELECT permission), rather than for what its rows hold (key check,
+    no rows for the period) or the setting."""
+    if not isinstance(base, dict) or base.get('mode') != 'rule':
+        return False
+    reason = str(base.get('reason') or '')
+    return reason == VIEW_MISSING or reason.startswith(NO_PERMISSION) or reason.endswith(NOT_A_VIEW)
+
+
 # ------------------------------------------------------------------------------- population
 @dataclass
 class Population:
@@ -300,6 +338,7 @@ class Population:
     key_check: dict = field(default_factory=dict)  # counts only
     setting: str = 'auto'        # FIGURES_POWER_BI[programme]['base']
     read: bool = False           # the view's rows of the period were read (ids hold them)
+    failed: bool = False         # reading the view failed (e.g. a timeout): not read again in this count
     catalogue: dict = field(default_factory=dict)  # describe(view)
     errors: list = field(default_factory=list)
     period_values: list = field(default_factory=list)  # the period's round or year ids (None: every row)
@@ -350,17 +389,22 @@ def _from_view(source, key, period_column, values, names, whole=False):
 
 def key_check(source, key, period_column, values, names, columns):
     """Counts comparing the view's rows of the period with the registrations their key points to.
-    Over the whole view when the period comes from the registration (else "found" would be certain)."""
+    Over the whole view when the period comes from the registration (else "found" would be certain).
+    ``rows`` and the comparisons count the rows with a key; ``null_keys`` the rows whose key is blank
+    (e.g. an enrolment whose registration was removed): they point to no registration, the population
+    leaves them out, and they say nothing about whether the column is the registration id."""
     sources, where, params = _from_view(source, key, period_column, values, names,
                                         whole=period_column == 'registration')
     checks = []  # (name, column, sql): the first comparison of each name whose column the view has
     for name, column, sql in source.checks:
         if column in columns and name not in {c[0] for c in checks}:
             checks.append((name, column, sql))
-    select = ['COUNT(*)', 'COUNT(DISTINCT v.%s)' % quote(key), 'COUNT(r.id)']
+    keyed = 'v.%s IS NOT NULL' % quote(key)
+    select = ['COUNT(*) FILTER (WHERE %s)' % keyed, 'COUNT(DISTINCT v.%s)' % quote(key), 'COUNT(r.id)']
     for name, column, sql in checks:
-        select.append('COUNT(*) FILTER (WHERE %s)' % sql.format(v='v.%s' % quote(column)))
+        select.append('COUNT(*) FILTER (WHERE %s AND %s)' % (keyed, sql.format(v='v.%s' % quote(column))))
     select.append('COUNT(*) FILTER (WHERE r.deleted)')
+    select.append('COUNT(*) FILTER (WHERE v.%s IS NULL)' % quote(key))
     sql = 'SELECT %s FROM %s LEFT JOIN %s r ON r.id = v.%s %s WHERE %s' % (
         ', '.join(select), sources, quote(source.table), quote(key), source.joins, where)
     with engine.read_only_cursor() as cursor:
@@ -368,14 +412,19 @@ def key_check(source, key, period_column, values, names, columns):
         record = cursor.fetchone()
     out = {'rows': record[0], 'ids': record[1], 'found': record[2]}
     out.update({name: None for name, _column, _sql in source.checks})
-    out.update({name: value for (name, _column, _sql), value in zip(checks, record[3:-1])})
-    out.update({'deleted_rows': record[-1], 'max_rows_per_id': None, 'conflicting': None, 'verified': False})
+    out.update({name: value for (name, _column, _sql), value in zip(checks, record[3:-2])})
+    out.update({'deleted_rows': record[-2], 'null_keys': record[-1], 'max_rows_per_id': None, 'conflicting': None,
+                'verified': False})
     return out
 
 
-def judge(source, check, period_column):
-    """Why the key fails ('' when it passes), and whether it was cross-checked."""
-    rows, threshold = check['rows'], min_match()
+def judge(source, check, period_column, key='id'):
+    """Why the key fails ('' when it passes), and whether it was cross-checked. Over the rows with a key:
+    a blank key points to no registration and is left out of the population; but a column blank on most
+    rows is not the registration id."""
+    rows, threshold, blank = check['rows'], min_match(), check.get('null_keys') or 0
+    if blank and blank >= rows:
+        return "key check: %d%% of the view's rows have no %s" % (100 * blank // (rows + blank), key), False
     if not rows:
         return '', False
     if check['found'] < threshold * rows:
@@ -442,20 +491,23 @@ def population(programme, period, *, round_ids=None, year=None, rule=None):
     out.period_values = values
     try:
         out.catalogue = info = describe(source.view)
+    except engine.INTERRUPTS:
+        raise
     except Exception as exc:  # recorded; the count goes on with the rule
         logger.warning('power_bi: describing %s failed: %s', source.view, error_class(exc))
         out.errors.append(error_text('catalogue', exc))
         out.reason = '%s: %s' % (error_class(exc), error_message(exc))
+        out.catalogue, out.failed = {'exists': None, 'error': error_class(exc)}, True  # unknown, not missing
         return out
     columns = _columns(info)
     if not info['exists']:
-        out.reason = 'view missing'
+        out.reason = VIEW_MISSING
         return out
     if info['kind'] not in ('view', 'materialized view'):
-        out.reason = '%s is a %s, not a view' % (source.view, info['kind'])
+        out.reason = '%s is a %s%s' % (source.view, info['kind'], NOT_A_VIEW)
         return out
     if not info['can_select']:
-        out.reason = 'no SELECT permission on %s' % source.view
+        out.reason = NO_PERMISSION + source.view
         return out
     if chosen['base'] == 'rule':
         out.reason = 'setting FIGURES_POWER_BI base = rule'
@@ -470,30 +522,36 @@ def population(programme, period, *, round_ids=None, year=None, rule=None):
         return out
     out.period_column = next((c for c in source.periods if c in columns), 'registration') if values else None
     try:
-        reason = ''
+        reason, preferred = '', None
         for key in integer_keys:
             out.key = key
             out.key_check = key_check(source, key, out.period_column, values, names, columns)
-            reason, verified = judge(source, out.key_check, out.period_column)
+            reason, verified = judge(source, out.key_check, out.period_column, key)
             out.key_check['verified'] = verified
             if not reason:
                 break
-        if reason:
-            out.reason = reason
+            preferred = preferred or (key, out.key_check, reason)
+        if reason:  # every key failed: the preferred key's result says why
+            out.key, out.key_check, out.reason = preferred
             return out
         if not out.key_check['rows'] and chosen['base'] != 'view':
-            counted = rule.using(engine.database_alias()).count() if rule is not None else 0
+            counted = 0
+            if rule is not None:
+                with engine.read_only_transaction() as alias:  # the limits, and a savepoint of its own
+                    counted = rule.using(alias).count()
             if counted:
                 out.read = True
                 out.reason = 'the view has no rows for %s while %s registrations do' % (
                     'all years' if values is None else period, format(counted, ','))
                 return out
         _read(source, out, columns, values, names)
+    except engine.INTERRUPTS:
+        raise
     except Exception as exc:  # a timeout, a permission or an SQL error: rule mode, recorded
         logger.warning('power_bi: reading %s failed: %s', source.view, error_class(exc))
         out.errors.append(error_text('population', exc))
         out.reason = '%s: %s' % (error_class(exc), error_message(exc))
-        out.ids, out.rows, out.overrides, out.read = [], [], {}, False
+        out.ids, out.rows, out.overrides, out.read, out.failed = [], [], {}, False, True
         return out
     out.mode = 'view'
     return out
@@ -554,7 +612,7 @@ def reconcile(programme, period, population, before, counted):
         params += flag_params
     width = len(names)
     rows, totals = [], {}
-    with engine.read_only_cursor() as cursor:
+    with engine.read_only_cursor(bind_on_server=True) as cursor:  # the ids never in the SQL text
         cursor.execute(sql, params)
         for record in cursor.fetchall():
             if record[0]:  # the grand total
@@ -585,23 +643,28 @@ def reconcile(programme, period, population, before, counted):
 # ------------------------------------------------------------------------- periods, related views
 def _period_meta(programme, values, column=None):
     """Non-personal metadata of the rounds (years) ``values`` ({value: dict}); youth ``values`` are year
-    names when ``column`` is the view's ``year``, else year ids."""
+    names when ``column`` is the view's ``year``, else year ids. Read under the counting limits."""
+    with engine.read_only_transaction() as alias:
+        return _period_meta_of(programme, values, column, alias)
+
+
+def _period_meta_of(programme, values, column, alias):
     if programme == 'mscc':
         from student_registration.mscc.models import Round
 
         return {r.id: {'id': r.id, 'name': r.name, 'year': r.year, 'current': r.current_year,
                        'start_date': _iso(r.start_date), 'end_date': _iso(r.end_date)}
-                for r in Round.objects.filter(id__in=[v for v in values if isinstance(v, int)])}
+                for r in Round.objects.using(alias).filter(id__in=[v for v in values if isinstance(v, int)])}
     if programme == 'bridging':
         from student_registration.schools.models import CLMRound
 
         return {r.id: {'id': r.id, 'name': r.name, 'current': r.current_round_bridging,
                        'current_year': r.current_year, 'start_date': _iso(r.start_date_bridging),
                        'end_date': _iso(r.end_date_bridging)}
-                for r in CLMRound.objects.filter(id__in=[v for v in values if isinstance(v, int)])}
+                for r in CLMRound.objects.using(alias).filter(id__in=[v for v in values if isinstance(v, int)])}
     from student_registration.youth.models import Year
 
-    years = Year.objects.all()
+    years = list(Year.objects.using(alias))
     by_id = {y.id: y for y in years}
     by_name = {y.name: y for y in years}
     out = {}
@@ -652,8 +715,13 @@ def _safe(value, keep=frozenset()):
     return '<other>'
 
 
-def profile(name, info):
-    """Counts of a related view's rows by its low-cardinality flag columns (at most 50 rows)."""
+def profile(name, info, rounds=None):
+    """Counts of a related view's rows by its low-cardinality flag columns (at most 50 rows).
+
+    ``rounds``: the period's rounds, for a view whose ``round_id`` is the programme's round (Source.round_profiled):
+    only their rows are counted (``"rounds"`` in the answer), the rows NeuroDB reads. A view of every round can
+    have more than 50 (round, flag) groups (Dirasa's teachers are those of every CLM round), and a cut would drop
+    the period's. Otherwise the newest rounds (years) come first, so that a cut drops the oldest."""
     if not info.get('exists'):
         return {'exists': False}
     keep = choice_values({relation for _s, relation, _k in info.get('reads') or ()})
@@ -661,17 +729,26 @@ def profile(name, info):
     by = [c for c in FLAG_COLUMNS if c in columns]
     measures = ['rows', 'ids'] if 'id' in columns else ['rows']
     select = ['v.%s' % quote(c) for c in by] + ['COUNT(*)'] + (['COUNT(DISTINCT v.id)'] if 'id' in columns else [])
-    sql = 'SELECT %s FROM %s v' % (', '.join(select), quote(name))
+    sql, params = 'SELECT %s FROM %s v' % (', '.join(select), quote(name)), []
+    if rounds is not None and columns.get('round_id') not in INTEGER_TYPES:
+        rounds = None  # no round column to choose them by: every row, the newest first
+    if rounds is not None:
+        rounds = sorted({int(r) for r in rounds})
+        sql += ' WHERE v.%s = ANY(%%s::int[])' % quote('round_id')
+        params.append(int_array(rounds))
     if by:
-        sql += ' GROUP BY %s ORDER BY %s' % (', '.join(str(i + 1) for i in range(len(by))),
-                                             ', '.join(str(i + 1) for i in range(len(by))))
+        order = ['%d DESC' % (i + 1) if c in ('round_id', 'year_id') else str(i + 1) for i, c in enumerate(by)]
+        sql += ' GROUP BY %s ORDER BY %s' % (', '.join(str(i + 1) for i in range(len(by))), ', '.join(order))
     sql += ' LIMIT %d' % (MAX_RELATED_ROWS + 1)
     with engine.read_only_cursor() as cursor:
-        cursor.execute(sql, [])
+        cursor.execute(sql, params)
         found = cursor.fetchall()
     rows = [[_safe(v, keep) for v in record[:len(by)]] + [int(v) for v in record[len(by):]]
             for record in found[:MAX_RELATED_ROWS]]
-    return {'exists': True, 'by': by, 'measures': measures, 'rows': rows, 'truncated': len(found) > MAX_RELATED_ROWS}
+    out = {'exists': True, 'by': by, 'measures': measures, 'rows': rows, 'truncated': len(found) > MAX_RELATED_ROWS}
+    if rounds is not None:
+        out['rounds'] = rounds
+    return out
 
 
 # -------------------------------------------------------------------------------- the block
@@ -690,33 +767,48 @@ def block(programme, period, population, before, counted, *, current=False, peri
         'related': {},
         'errors': list(population.errors),
     }
-    out['catalogue'][source.view] = population.catalogue or {'exists': False}
+    # a view not described (an error) is unknown, never "missing": NeuroDB would take it as dropped
+    out['catalogue'][source.view] = population.catalogue or {'exists': None, 'error': 'not described'}
     if related_on():
         for name in source.related:
             try:
                 out['catalogue'][name] = describe(name)
+            except engine.INTERRUPTS:
+                raise
             except Exception as exc:
+                out['catalogue'][name] = {'exists': None, 'error': error_class(exc)}
                 out['errors'].append(error_text('catalogue %s' % name, exc))
     try:
         out['reconciliation'] = reconcile(programme, period, population, before, counted)
+    except engine.INTERRUPTS:
+        raise
     except Exception as exc:
         logger.warning('power_bi: reconciliation of %s failed: %s', programme, error_class(exc))
         out['errors'].append(error_text('reconciliation', exc))
+    # the view's rows per round: not when reading the view just failed (a second timeout for nothing)
     readable = (population.catalogue.get('can_select') and population.key and population.setting != 'rule'
-                and population.catalogue.get('kind') in ('view', 'materialized view'))
+                and population.catalogue.get('kind') in ('view', 'materialized view') and not population.failed)
     if current and readable:
         try:
             out['periods'] = periods(programme, population)
+        except engine.INTERRUPTS:
+            raise
         except Exception as exc:
             out['errors'].append(error_text('periods', exc))
     if current and related_on():
         for name in source.profiled:
             info = out['catalogue'].get(name) or {}
+            if info.get('exists') is None and info.get('error'):
+                out['related'][name] = {'exists': None, 'error': info['error']}
+                continue
             if info.get('exists') and not info.get('can_select'):
                 out['related'][name] = {'exists': True, 'error': 'no SELECT permission'}
                 continue
+            rounds = (population.period_values or None) if name in source.round_profiled else None
             try:
-                out['related'][name] = profile(name, info)
+                out['related'][name] = profile(name, info, rounds)
+            except engine.INTERRUPTS:
+                raise
             except Exception as exc:
                 out['related'][name] = {'exists': True, 'error': error_class(exc)}
                 out['errors'].append(error_text('related %s' % name, exc))

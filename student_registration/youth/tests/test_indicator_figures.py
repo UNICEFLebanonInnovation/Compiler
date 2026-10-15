@@ -268,8 +268,8 @@ def test_the_view_decides_which_registrations_count(more):
                              'period_column': 'year_id', 'period_rule': 'year', 'deleted': 'exclude',
                              'overrides': ['partner']}
     assert power['key_check'] == {'rows': 5, 'ids': 5, 'found': 5, 'same_year': 5, 'same_partner': 5,
-                                  'same_deleted': 5, 'deleted_rows': 1, 'max_rows_per_id': 1, 'conflicting': 0,
-                                  'verified': True}
+                                  'same_deleted': 5, 'deleted_rows': 1, 'null_keys': 0, 'max_rows_per_id': 1,
+                                  'conflicting': 0, 'verified': True}
     assert table(payload)[()] == 3 and block(payload, 'registered')[()] == [4, 4, 3]
     assert block(payload, 'enrolments')[()] == [5, 3]
     totals = power['reconciliation']['totals']
@@ -421,6 +421,231 @@ def test_the_api_serves_the_fresh_snapshot_else_counts_now(data):
     assert client.get(URL, {'year': '1999'}).status_code == 404
 
 
+def test_a_failing_youth_count_never_hands_its_frames_to_the_error_reporter(more, caplog):
+    """SPEC §7: the population is never logged or sent. The variables of the count's frames hold it (the id
+    arrays of the queries, the view's partner per registration, the chunk of enrolment rows being read), and an
+    error reporter with its defaults (Sentry in production: local variables on, the Django integration catching
+    a request's unhandled exception) sends the variables of every frame. So a failure is logged by its class and
+    first line only, never with ``exc_info``, and never raised out of a request or the command: a failing block,
+    a failing read of the enrolment rows in a night run, the API counting on the spot, the command."""
+    import logging
+
+    import psycopg
+    from django.core.management import CommandError, call_command
+    from django.db import OperationalError
+
+    from student_registration.figures import engine
+    from student_registration.figures.models import FiguresRun
+
+    youth_view()
+    caplog.set_level(logging.DEBUG)
+    real_block, real_fetch = engine.figures_block, psycopg.ServerCursor.fetchmany
+
+    def enrolments_fail(sql, params, dimensions, *args):
+        if 'master' in dimensions:
+            raise OperationalError('canceling statement due to statement timeout')
+        return real_block(sql, params, dimensions, *args)
+
+    with mock.patch.object(engine, 'figures_block', enrolments_fail):
+        payload = Youth().build('2026')
+    assert payload['power_bi']['base']['mode'] == 'view' and payload['blocks']['enrolments']['error']
+
+    def second_fetch_fails():
+        calls = []
+
+        def fetchmany(self, size=0):
+            calls.append(size)
+            if len(calls) == 2:
+                raise psycopg.errors.QueryCanceled('canceling statement due to statement timeout')
+            return real_fetch(self, size)
+
+        return mock.patch.object(psycopg.ServerCursor, 'fetchmany', fetchmany)
+
+    with second_fetch_fails():
+        run_ = snapshots.execute_run(FiguresRun.objects.create(targets=[['youth', '2026']]).pk)
+    assert run_.error == 'youth 2026: QueryCanceled: canceling statement due to statement timeout'
+    with second_fetch_fails():  # no snapshot: counted on the spot, and the failure is answered, not raised
+        answer = _service_client().get(URL, {'year': '2026'})
+    assert answer.status_code == 503 and answer.json()['error'] == 'QueryCanceled'
+    with second_fetch_fails(), pytest.raises(CommandError, match='youth 2026: QueryCanceled: canceling'):
+        call_command('refresh_neurodb_figures', '--programme', 'youth', '--year', '2026')
+
+    failures = [r.getMessage() for r in caplog.records if r.levelno >= logging.ERROR]
+    for part in ('figures block enrolments failed: OperationalError', 'figures run %d: youth 2026 failed: '
+                 'QueryCanceled' % run_.pk, 'youth figures 2026: counting on the spot failed: QueryCanceled'):
+        assert part in failures or any(text.startswith(part) for text in failures), part
+    assert [r for r in caplog.records if r.exc_info] == []  # nothing an error reporter could unfold
+    ids = power_bi.int_array(sorted(Registration.objects.filter(year=more['year']).values_list('id', flat=True)))
+    assert not any(ids in r.getMessage() for r in caplog.records)
+
+
+# ------------------------------------------------- the worker aborted during a count on the spot
+def _abort_inside_the_count(where):
+    """gunicorn's worker timeout (Procfile --timeout=60): the arbiter's SIGABRT, whose handler calls
+    ``sys.exit(1)``, a SystemExit raised wherever the count is: in the enrolment loop (while it holds an
+    enrolment row and the view's partner per registration) or while a block's query runs (its parameters: the
+    arrays of the view's registration ids)."""
+    import sys
+
+    from student_registration.figures import engine
+
+    real_age, real_block = indicator_figures.age_group, engine.figures_block
+    calls = []
+
+    def age_group(*args):
+        calls.append(1)
+        if where == 'enrolment loop' and len(calls) == 2:
+            sys.exit(1)
+        return real_age(*args)
+
+    def figures_block(sql, params, dimensions, *args):
+        if where == 'block query' and 'master' in dimensions:
+            sys.exit(1)
+        return real_block(sql, params, dimensions, *args)
+
+    patches = mock.patch.object(indicator_figures, 'age_group', age_group), \
+        mock.patch.object(engine, 'figures_block', figures_block)
+    return patches
+
+
+def _reachable_frames(exc):
+    """Every frame an error reporter can walk from ``exc``: its traceback's and those of every exception
+    chained to it (cause or context, shown or suppressed)."""
+    seen, frames, pending = set(), [], [exc]
+    while pending:
+        current = pending.pop()
+        if current is None or id(current) in seen:
+            continue
+        seen.add(id(current))
+        tb = current.__traceback__
+        while tb is not None:
+            frames.append(tb.tb_frame)
+            tb = tb.tb_next
+        pending += [current.__cause__, current.__context__]
+    return frames
+
+
+@pytest.mark.parametrize('where', ['enrolment loop', 'block query'])
+def test_a_worker_abort_during_a_count_on_the_spot_carries_no_frame_of_the_count(more, where):
+    """SPEC §7. The abort is not an Exception: it passed through the count's ``except Exception`` and reached
+    the error reporter's WSGI middleware (Sentry, production), which sends the variables of every frame: the
+    view's partner per registration, the arrays of the view's registration ids. It still stops the worker
+    (SystemExit(1) out of the request), but as a new exception raised by the answer itself: no frame of the
+    count, no chained exception."""
+    youth_view()
+    ids = sorted(Registration.objects.filter(year=more['year']).values_list('id', flat=True))
+    client = _service_client()
+    first, second = _abort_inside_the_count(where)
+    with first, second, pytest.raises(SystemExit) as raised:
+        client.get(URL, {'year': '2026'})
+    assert raised.value.code == 1  # the worker exits as gunicorn asked
+    assert raised.value.__cause__ is None and raised.value.__context__ is None
+    frames = [f for f in _reachable_frames(raised.value) if f.f_code.co_filename != __file__]
+    assert frames[-1].f_code.co_name == 'count_now'  # raised there: nothing of the count below it
+    counting = [(f.f_globals.get('__name__'), f.f_code.co_name) for f in frames
+                if f.f_globals.get('__name__', '').startswith('student_registration.figures')
+                or f.f_globals.get('__name__') == 'student_registration.youth.indicator_figures']
+    assert counting == []
+    array = power_bi.int_array(ids)
+    assert not [f.f_code.co_name for f in frames if array in repr(f.f_locals)]
+
+
+@pytest.fixture
+def sentry():
+    """Sentry as production sets it up (config/settings/production.py), sending into memory; skipped where
+    sentry-sdk is not installed (it is a production requirement only)."""
+    sentry_sdk = pytest.importorskip('sentry_sdk')
+    from sentry_sdk.integrations.django import DjangoIntegration
+    from sentry_sdk.transport import Transport
+
+    class Memory(Transport):
+        events = []
+
+        def capture_envelope(self, envelope):
+            self.events.extend(item.payload.json for item in envelope.items if item.type == 'event')
+
+    def start(before_send=None):
+        Memory.events = []
+        sentry_sdk.init(dsn='https://public@sentry.invalid/1', transport=Memory, integrations=[DjangoIntegration()],
+                        traces_sample_rate=1.0, send_default_pii=True, before_send=before_send)
+        return Memory
+
+    yield start
+    sentry_sdk.get_client().close()
+    sentry_sdk.init()
+
+
+def _wsgi_get(path, query, token):
+    """One request through Django's WSGI handler, as gunicorn calls it (Sentry's middleware included)."""
+    import io
+    import sys
+
+    from django.core import signals
+    from django.core.wsgi import get_wsgi_application
+    from django.db import close_old_connections
+
+    signals.request_started.disconnect(close_old_connections)  # the test's transaction stays open
+    signals.request_finished.disconnect(close_old_connections)
+    environ = {'REQUEST_METHOD': 'GET', 'PATH_INFO': path, 'QUERY_STRING': query, 'SERVER_NAME': 'testserver',
+               'SERVER_PORT': '80', 'wsgi.url_scheme': 'http', 'wsgi.input': io.BytesIO(b''), 'wsgi.errors': sys.stderr,
+               'HTTP_AUTHORIZATION': 'Token ' + token, 'HTTP_HOST': 'testserver'}
+    try:
+        return get_wsgi_application()(environ, lambda status, headers, exc_info=None: None)
+    finally:
+        signals.request_started.connect(close_old_connections)
+        signals.request_finished.connect(close_old_connections)
+
+
+@pytest.mark.parametrize('before_send', [False, True], ids=['the abort alone', 'production'])
+@pytest.mark.parametrize('where', ['enrolment loop', 'block query'])
+def test_a_worker_abort_during_a_count_on_the_spot_sends_no_id_to_sentry(more, sentry, settings, where, before_send):
+    """The same abort through Sentry's WSGI middleware: reported, with none of the view's ids, whether or not
+    production's ``before_send`` (figures/error_reports.py) is set."""
+    from student_registration.figures.error_reports import drop_count_variables
+
+    transport = sentry(drop_count_variables if before_send else None)
+    settings.ALLOWED_HOSTS = ['testserver']
+    youth_view()
+    ids = sorted(Registration.objects.filter(year=more['year']).values_list('id', flat=True))
+    service = get_user_model().objects.create_user(username='neurodb', password='x-pass-123456')
+    service.groups.add(Group.objects.get_or_create(name='NeuroDB API')[0])
+    first, second = _abort_inside_the_count(where)
+    with first, second, pytest.raises(SystemExit):
+        _wsgi_get(URL, 'year=2026', Token.objects.create(user=service).key)
+    import sentry_sdk
+
+    sentry_sdk.flush()
+    # the abort, reported (and the logged line, an event of its own without a stack)
+    assert [e['exception']['values'][-1]['type'] for e in transport.events if 'exception' in e] == ['SystemExit']
+    text = json.dumps(transport.events)
+    assert power_bi.int_array(ids) not in text and 'view_partner' not in text
+
+
+def test_an_error_passing_through_a_count_reaches_sentry_without_the_variables(more, sentry):
+    """Production's ``before_send``: an exception that passes through a count anyway (a failure in code added
+    later, an abort inside a query) is sent without the variables of any frame, Django's and psycopg's below
+    the count included (they hold the same parameters)."""
+    import sentry_sdk
+
+    from student_registration.figures.error_reports import drop_count_variables
+
+    youth_view()
+    ids = sorted(Registration.objects.filter(year=more['year']).values_list('id', flat=True))
+    for before_send, holds in ((None, True), (drop_count_variables, False)):
+        transport = sentry(before_send)
+        with mock.patch.object(indicator_figures, 'age_group', side_effect=RuntimeError('not caught')):
+            try:
+                Youth().build('2026')
+            except RuntimeError:
+                sentry_sdk.capture_exception()
+        sentry_sdk.flush()
+        [event] = transport.events
+        frames = event['exception']['values'][-1]['stacktrace']['frames']
+        assert any(f.get('module') == 'student_registration.youth.indicator_figures' for f in frames)
+        assert (power_bi.int_array(ids) in json.dumps(event)) is holds  # without it: the view's ids are sent
+        assert any('vars' in f for f in frames) is holds
+
+
 def test_the_youth_api_has_a_throttle_of_its_own():
     from student_registration.figures.api import FiguresView
     from student_registration.youth.indicator_figures_api import YouthIndicatorFiguresView
@@ -469,3 +694,109 @@ def test_an_empty_view_for_all_years(more):
     youth_view(where='FALSE')
     power = indicator_figures.build(None)['power_bi']
     assert power['base']['reason'] == 'the view has no rows for all years while 6 registrations do'
+
+
+# ------------------------------------------------------------------ limits, keys, the year "all"
+def test_a_failed_gate_count_leaves_the_youth_count_going(more, settings):
+    """The view is empty for the year, so the gate counts the rule's registrations: when that count fails
+    (a timeout), it fails in a savepoint of its own and the rest of the night count goes on."""
+    from django.db.models.expressions import RawSQL
+
+    from student_registration.figures import education
+
+    youth_view(where='FALSE')
+    slow = RawSQL('SELECT id FROM youth_registration WHERE pg_sleep(0.3) IS NOT NULL', [])
+
+    def population_of(year):
+        return education.view_population('youth', year.name, year=year,
+                                         rule=indicator_figures.rule(year).filter(id__in=slow))
+
+    settings.FIGURES_STATEMENT_TIMEOUT_MS = 100
+    with mock.patch.object(indicator_figures, 'population_of', side_effect=population_of):
+        payload = Youth().build('2026')  # one read-only transaction: the failed count must not abort it
+    power = payload['power_bi']
+    assert power['base']['mode'] == 'rule'
+    assert power['base']['reason'] == 'QueryCanceled: canceling statement due to statement timeout'
+    assert power['errors'] == ['population: QueryCanceled: canceling statement due to statement timeout']
+    assert table(payload)[()] == 3 and block(payload, 'registered')[()] == [4, 4, 3]
+    assert all('error' not in b for b in payload['blocks'].values())
+
+
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.parametrize('empty', [False, True], ids=['view', 'empty view'])
+def test_every_read_of_a_youth_count_runs_under_the_limits(more, settings, empty):
+    from student_registration.figures.tests.test_power_bi import read_under_the_limits
+
+    youth_view(where='FALSE' if empty else 'TRUE')
+    try:
+        payload, tables = read_under_the_limits(lambda: Youth().build('2026'), settings)
+    finally:
+        run('DROP VIEW vw_youth_data_all')
+    reason = payload['power_bi']['base']['reason']
+    assert reason == ('the view has no rows for 2026 while 4 registrations do' if empty else '')
+    assert {'vw_youth_data_all', 'youth_registration', 'youth_enrolledprograms', 'youth_year'} <= tables
+
+
+def test_the_views_registration_ids_are_never_in_the_youth_sql_text(more):
+    from student_registration.figures.tests.test_power_bi import statements_sent
+
+    youth_view()
+    payload, sent = statements_sent(lambda: indicator_figures.build(more['year']))
+    assert payload['power_bi']['base']['mode'] == 'view'
+    ids = power_bi.int_array(sorted(Registration.objects.filter(year=more['year']).values_list('id', flat=True)))
+    carrying = [text for params, text in sent if ids in params]
+    assert len(carrying) >= 4  # the enrolments read for the figures, the two blocks, the reconciliation
+    assert any(text.startswith('DECLARE') for text in carrying)  # read a chunk at a time
+    assert all(text and ids not in text and '$1' in text for text in carrying)
+    assert not any(ids in text for _params, text in sent)
+
+
+PER_ENROLMENT = 'youth_enrolledprograms e LEFT JOIN youth_registration r ON r.id = e.registration_id'
+
+
+def test_rows_without_a_registration_do_not_fail_the_key(more):
+    """A per-enrolment view keeps the enrolments whose registration was removed (on_delete SET_NULL): their
+    blank key points to no registration, is left out of the population, and is no evidence against the key."""
+    EnrolledPrograms.objects.create(registration=None, master_program=more['skills'])
+    youth_view(columns='e.id, e.registration_id, r.partner_id, r.deleted, r.year_id', source=PER_ENROLMENT)
+    for year in (more['year'], None):
+        population = power_bi.population('youth', year.name if year else 'all', year=year)
+        assert (population.mode, population.key, population.reason) == ('view', 'registration_id', '')
+    check = population.key_check  # "all": every view row
+    assert (check['rows'], check['found'], check['null_keys'], check['verified']) == (8, 8, 1, True)
+    payload = indicator_figures.build(None)
+    assert payload['power_bi']['base']['key'] == 'registration_id' and table(payload)[()] == 5
+
+
+def test_when_every_key_fails_the_preferred_keys_result_is_shown(more):
+    youth_view(columns='e.id + 100000 AS id, CASE WHEN e.id % 2 = 0 THEN e.registration_id '
+                       'ELSE e.registration_id + 100000 END AS registration_id, r.partner_id, r.deleted, r.year_id',
+               source=PER_ENROLMENT)
+    population = power_bi.population('youth', '2026', year=more['year'])
+    check = population.key_check
+    assert population.mode == 'rule' and population.key == 'registration_id'
+    assert 0 < check['found'] < check['rows']  # the enrolment-id key would show 0
+    assert population.reason == "key check: %d%% of the view's ids are registrations" % (
+        100 * check['found'] // check['rows'])
+
+
+def test_a_key_blank_on_most_rows_is_not_the_key(more):
+    """Blank keys are tolerated, not a column blank on most rows: here ``id`` is the registration id."""
+    youth_view(columns='e.registration_id AS id, CASE WHEN e.id % 3 = 0 THEN e.registration_id END '
+                       'AS registration_id, r.partner_id, r.deleted, r.year_id', source=PER_ENROLMENT)
+    population = power_bi.population('youth', '2026', year=more['year'])
+    assert (population.mode, population.key) == ('view', 'id')
+    assert sorted(population.ids) == sorted(
+        Registration.objects.filter(year=more['year'], enrolled_programs__isnull=False).distinct()
+        .values_list('id', flat=True))
+
+
+def test_the_year_all_in_any_case(data):
+    from student_registration.figures.api import read_targets
+
+    youth = Youth()
+    assert youth.has_year('ALL') and youth.has_year(' All ') and not youth.has_year('alll')
+    assert read_targets([['youth', 'ALL'], ['youth', 'all']], snapshots.all_programmes()) == (
+        [('youth', 'all')], None)
+    assert snapshots.refresh('youth', 'ALL').year == 'all'
+    assert youth.build('All')['year'] == 'all'

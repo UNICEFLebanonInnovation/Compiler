@@ -29,17 +29,23 @@ class Youth:
     def current_year(self):
         return indicator_figures.current_year_name()
 
+    @staticmethod
+    def year_name(year):
+        """``year`` as stored: a year's name, or "all" in any case (as the youth API takes it)."""
+        year = str(year).strip()
+        return indicator_figures.ALL if year.lower() == indicator_figures.ALL else year
+
     def has_year(self, year):
         from student_registration.youth.models import Year
 
-        year = str(year).strip()
+        year = self.year_name(year)
         return year == indicator_figures.ALL or Year.objects.filter(name=year).exists()
 
     def build(self, year):
         """The payload of ``year`` (a year's name, or "all"), counted under the read-only limits."""
         from student_registration.youth.models import Year
 
-        year = str(year).strip()
+        year = self.year_name(year)
         with engine.read_only_transaction() as alias:
             chosen = None
             if year != indicator_figures.ALL:

@@ -424,9 +424,12 @@ SPECTACULAR_SETTINGS = {
 # ------------------------------------------------------------------------------
 # Per programme (missing keys take these defaults):
 # - base: 'auto' (the view when its checks pass, else Compiler's own rule), 'view' (the view even when it has no
-#   rows for a period; existence and key still checked) or 'rule' (never read the view: a switch, no code change);
+#   rows for a period; existence and key still checked) or 'rule' (never read the programme's view: a switch, no code
+#   change; the related views below are still read unless FIGURES_POWER_BI_RELATED is False);
 # - deleted: 'exclude' (deleted registrations left out of the view's rows) or 'include';
 # - period (Makani): 'round_year' (rounds whose year is Y) or 'current_rounds' (rounds flagged current_year).
+# A change of base or deleted makes every stored period stale (snapshots.settings_changed): the next run counts them
+# again. A change of Makani's period makes only the current year stale (a past year always counts its own rounds).
 FIGURES_POWER_BI = {
     'mscc': {'base': 'auto', 'deleted': 'exclude', 'period': 'round_year'},
     'bridging': {'base': 'auto', 'deleted': 'exclude'},

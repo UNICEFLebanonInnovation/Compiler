@@ -74,11 +74,13 @@ class FiguresIndexView(APIView):
         for name, definition in snapshots.programmes().items():
             counted = snapshots.counted_years(name)
             current = definition.current_year()
+            readable = snapshots.readability(name)  # asked at most once, for a year counted without the view
             years = []
             for year in definition.years():
-                format_version, created_at = counted.get(year, (None, None))
+                format_version, created_at, base = counted.get(year, (None, None, None))
                 years.append({'year': year, 'counted': year in counted, 'format': format_version,
-                              'stale': snapshots.stale(definition, year, format_version, created_at, current)})
+                              'stale': snapshots.stale(definition, year, format_version, created_at, current,
+                                                       base=base, readable=readable)})
             out.append({
                 'programme': name,
                 'label': definition.label,
@@ -109,6 +111,8 @@ def read_targets(given, definitions):
             return None, {'detail': 'Unknown programme', 'programmes': sorted(definitions)}
         if year and not definitions[programme].has_year(year):
             return None, {'detail': 'No such year: %s %s' % (programme, year[:40])}
+        if year and hasattr(definitions[programme], 'year_name'):  # youth: "ALL" is "all"
+            year = definitions[programme].year_name(year)
         if (programme, year or None) not in targets:
             targets.append((programme, year or None))
     return targets, None
@@ -134,6 +138,8 @@ class FiguresRunsView(APIView):
                 return Response({'detail': 'A year needs its programme'}, status=400)
             if year and not definitions[programme].has_year(year):
                 return Response({'detail': 'No such year: %s' % year[:40]}, status=400)
+            if year and hasattr(definitions[programme], 'year_name'):
+                year = definitions[programme].year_name(year)
             targets = [(programme, year)] if programme else [(name, None) for name in snapshots.programmes()]
         run, created = snapshots.start_run(targets, requested_by=request.user.get_username())
         return Response(run.as_dict(), status=202 if created else 200)

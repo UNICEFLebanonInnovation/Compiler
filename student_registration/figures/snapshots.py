@@ -7,7 +7,10 @@ NeuroDB polls the run until it is done: the schedule lives in NeuroDB, BMA keeps
 Programmes: ``programmes()`` are the education ones (Makani, Bridging), the only ones the education
 index and /api/figures/<programme>/ list; ``all_programmes()`` adds Youth, which a run may count (its
 snapshots are served by /api/youth/indicator-figures/). A snapshot is stale when it was counted in an
-older payload format of its programme, or is older than FIGURES_MAX_AGE_HOURS (the current period, and
+older payload format of its programme, under other FIGURES_POWER_BI settings than today's (the ``base``
+switch, ``deleted``, Makani's ``period``: a past period follows a change at the next run, not a week
+later), with the rule because its view could not be read while it can be now (a GRANT given since, or the
+view created again by hand: likewise), or is older than FIGURES_MAX_AGE_HOURS (the current period, and
 youth's "all") or FIGURES_PAST_MAX_AGE_HOURS (a past period: recounted weekly).
 """
 
@@ -69,19 +72,78 @@ def latest(programme, year):
     )
 
 
-def stale(definition, year, format_version, created_at, current_year=None):
+def stale(definition, year, format_version, created_at, current_year=None, base=None, readable=None):
     """Whether a snapshot of ``definition``'s ``year`` counted at ``created_at`` in ``format_version`` must
     be counted again: never counted, counted in an older format of its programme (after an upgrade,
-    however recent), or older than FIGURES_MAX_AGE_HOURS (the current period, and "all") or
-    FIGURES_PAST_MAX_AGE_HOURS (a past period). ``current_year``: the programme's, when known."""
+    however recent), counted under other FIGURES_POWER_BI settings (``base``: its ``power_bi.base``),
+    counted with the rule because the view could not be read while it can be now (``view_readable_again``),
+    or older than FIGURES_MAX_AGE_HOURS (the current period, and "all") or FIGURES_PAST_MAX_AGE_HOURS (a past
+    period). ``current_year``: the programme's, when known; ``readable``: see ``view_readable_again``."""
     if definition is None or created_at is None or format_version != definition.format_version:
         return True
     current_year = definition.current_year() if current_year is None else current_year
-    if str(year) in (str(current_year), 'all'):
+    current = str(year) in (str(current_year), 'all')
+    if settings_changed(definition.name, base, str(year) == str(current_year)):
+        return True
+    if view_readable_again(definition.name, base, readable):
+        return True
+    if current:
         hours = int(getattr(settings, 'FIGURES_MAX_AGE_HOURS', 26))
     else:
         hours = int(getattr(settings, 'FIGURES_PAST_MAX_AGE_HOURS', 168))
     return created_at < timezone.now() - datetime.timedelta(hours=hours)
+
+
+def settings_changed(programme, base, current):
+    """Whether the FIGURES_POWER_BI settings that chose a snapshot's rows (its ``power_bi.base``) differ
+    from today's: the ``base`` switch (e.g. the way back to the rule), ``deleted``, and Makani's ``period``
+    (the current year only: a past year always counts the rounds of its year)."""
+    from . import power_bi
+
+    if not isinstance(base, dict) or programme not in power_bi.DEFAULTS:
+        return False
+    chosen = power_bi.options(programme)
+    if base.get('setting') != chosen['base'] or base.get('deleted') != chosen['deleted']:
+        return True
+    return programme == 'mscc' and current and base.get('period_rule') != chosen['period']
+
+
+def view_readable_again(programme, base, readable=None):
+    """Whether a snapshot counted with the rule because its view could not be read at all (missing, not a
+    view, no SELECT permission: its ``power_bi.base``) would now be counted from the view: the view can be
+    read (a GRANT given since, or a missing view created again by hand, SPEC E3; a view dropped and created
+    again loses its grants, see power_bi.VIEW_MISSING) and the setting does not force the
+    rule. A past period then follows at the next run, as the current one does, rather than at its weekly
+    count. ``readable``: a callable answering ``power_bi.readable(programme)``, when the caller asks once for
+    many snapshots (``readability``); asked only for such a snapshot. A failing check answers no (the weekly
+    count still comes)."""
+    from . import engine, power_bi
+
+    if programme not in power_bi.SOURCES or not power_bi.unreadable(base):
+        return False
+    if power_bi.options(programme)['base'] == 'rule':
+        return False
+    try:
+        return bool((readable or readability(programme))())
+    except engine.INTERRUPTS:
+        raise
+    except Exception as exc:  # the catalogue could not be read: no data involved, the class is enough
+        logger.warning('figures: checking whether %s can be read failed: %s', programme, power_bi.error_class(exc))
+        return False
+
+
+def readability(programme):
+    """A callable answering, once, whether ``programme``'s view can be read now (``power_bi.readable``)."""
+    from . import power_bi
+
+    answer = []
+
+    def readable():
+        if not answer:
+            answer.append(power_bi.readable(programme))
+        return answer[0]
+
+    return readable
 
 
 def is_stale(snapshot, programme=None):
@@ -90,16 +152,19 @@ def is_stale(snapshot, programme=None):
     if snapshot is None:
         return True
     definition = all_programmes().get(programme or snapshot.programme)
-    return stale(definition, snapshot.year, (snapshot.payload or {}).get('format'), snapshot.created_at)
+    payload = snapshot.payload or {}
+    return stale(definition, snapshot.year, payload.get('format'), snapshot.created_at,
+                 base=(payload.get('power_bi') or {}).get('base'))
 
 
 def counted_years(programme):
-    """{year: (format, counted at)} of the latest snapshot of each year, without reading the payloads."""
+    """{year: (format, counted at, power_bi.base)} of the latest snapshot of each year, without reading
+    the payloads into Python."""
     found = {}
     rows = (FiguresSnapshot.objects.filter(programme=programme).order_by('year', '-created_at')
-            .values_list('year', 'payload__format', 'created_at'))
-    for year, format_version, created_at in rows:
-        found.setdefault(year, (format_version, created_at))
+            .values_list('year', 'payload__format', 'created_at', 'payload__power_bi__base'))
+    for year, format_version, created_at, base in rows:
+        found.setdefault(year, (format_version, created_at, base))
     return found
 
 
@@ -160,10 +225,9 @@ def execute_run(run_id):
             errors.append('time limit reached; not counted: %s' % ', '.join(
                 '%s %s' % (name, when or 'current') for name, when in left))
             break
-        except Exception as exc:  # recorded on the run
-            logger.exception('figures run %s: %s %s failed', run.pk, programme, year)
-            errors.append('%s %s: %s: %s' % (programme, year or 'current', power_bi.error_class(exc),
-                                             power_bi.error_message(exc)))
+        except Exception as exc:  # recorded on the run; logged by its class only (power_bi.error_line)
+            logger.error('figures run %s: %s %s failed: %s', run.pk, programme, year, power_bi.error_line(exc))
+            errors.append('%s %s: %s' % (programme, year or 'current', power_bi.error_line(exc)))
             continue
         if snapshot is None:
             errors.append('%s %s: no such year' % (programme, year or 'current'))

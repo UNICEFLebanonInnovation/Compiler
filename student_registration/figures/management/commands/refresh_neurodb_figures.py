@@ -2,7 +2,7 @@
 
 from django.core.management.base import BaseCommand, CommandError
 
-from student_registration.figures import snapshots
+from student_registration.figures import power_bi, snapshots
 
 
 class Command(BaseCommand):
@@ -17,7 +17,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         names = [options['programme']] if options['programme'] else list(snapshots.all_programmes())
         for name in names:
-            snapshot = snapshots.refresh(name, options['year'])
+            failure = None
+            try:
+                snapshot = snapshots.refresh(name, options['year'])
+            except Exception as exc:  # by its class and first line only: unhandled, it would reach the error
+                failure = power_bi.error_line(exc)  # reporter with the frames' variables (the view's ids)
+            if failure is not None:
+                raise CommandError('%s %s: %s' % (name, options['year'] or 'current', failure))
             if snapshot is None:
                 raise CommandError('%s: no such year' % name)
             self.stdout.write('%s %s: %ss' % (name, snapshot.year, snapshot.seconds))
