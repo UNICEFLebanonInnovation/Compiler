@@ -231,6 +231,7 @@ $(document).ready(function() {
 
     $(document).on('click', '.download-report-async', function(e){
         e.preventDefault();
+        $('#export-format').val('xlsx');
         $('#exportOptionsModal').modal('show');
     });
 
@@ -241,6 +242,7 @@ $(document).ready(function() {
         var father_name = $("#id_child__father_name").val();
         var mother_fullname = $("#id_child__mother_fullname").val();
         var round = $("#id_round").val();
+        var format = $('#export-format').val() || 'xlsx';
         var button = $(this);
         var originalHtml = button.html();
         button.prop('disabled', true);
@@ -259,7 +261,8 @@ $(document).ready(function() {
             last_name: last_name || '',
             father_name: father_name || '',
             mother_fullname: mother_fullname || '',
-            round: round || ''
+            round: round || '',
+            format: format
         });
         var exportUrl = "/mscc/export-list-background/?" + exportParams;
         $.ajax({

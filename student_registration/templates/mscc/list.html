@@ -211,22 +211,23 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title"> Export </h5>
+        <h5 class="modal-title">{% trans "Export" %}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body" style="display: none;">
+      <div class="modal-body">
         <div class="form-group">
-          <label for="export-format">Format</label>
-          <select id="export-format" class="form-control export-format">
-            <option value="csv" selected>CSV</option>
-            <option value="xlsx">XLSX</option>
+          <label for="export-format">{% trans "Format" %}</label>
+          <select id="export-format" class="form-control export-format" aria-describedby="export-format-help">
+            <option value="xlsx" selected>{% trans "Excel with photographs" %}</option>
+            <option value="csv">CSV</option>
           </select>
+          <small id="export-format-help" class="form-text text-muted">{% trans "Excel includes each child's photograph in the same row as their Child ID and Registration ID." %}</small>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary start-export">Start Export</button>
+        <button type="button" class="btn btn-primary start-export">{% trans "Start Export" %}</button>
       </div>
     </div>
   </div>
@@ -278,6 +279,6 @@
     </script>
 
     <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/list.js' %}?v=20"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/list.js' %}?v=21"></script>
 
 {% endblock %}
