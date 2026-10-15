@@ -216,12 +216,17 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body" style="display: none;">
+      <div class="modal-body">
+        <p class="text-muted small">
+          Export the registered children matching the current filters and cycle.
+          Excel includes each child's profile picture in the same row as their child and registration IDs.
+          CSV does not include photographs. Large exports are processed in the background.
+        </p>
         <div class="form-group">
           <label for="export-format">Format</label>
           <select id="export-format" class="form-control export-format">
-            <option value="csv" selected>CSV</option>
-            <option value="xlsx">XLSX</option>
+            <option value="csv" selected>CSV (text only)</option>
+            <option value="xlsx">Excel with photographs</option>
           </select>
         </div>
       </div>
@@ -278,6 +283,6 @@
     </script>
 
     <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/list.js' %}?v=20"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/list.js' %}?v=21"></script>
 
 {% endblock %}

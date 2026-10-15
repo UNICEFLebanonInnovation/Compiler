@@ -253,13 +253,15 @@ $(document).ready(function() {
             return;
         }
         requestHeaders = getHeader();
+        var exportFormat = $('#exportOptionsModal .export-format').val() || 'csv';
         var exportParams = $.param({
             nationality: nationality || '',
             first_name: first_name || '',
             last_name: last_name || '',
             father_name: father_name || '',
             mother_fullname: mother_fullname || '',
-            round: round || ''
+            round: round || '',
+            format: exportFormat
         });
         var exportUrl = "/mscc/export-list-background/?" + exportParams;
         $.ajax({
@@ -272,7 +274,8 @@ $(document).ready(function() {
                 window.pollExportUntilReady(data.export_id);
             },
             error: function(xhr, textStatus, errorThrown){
-                showModal('Failed to start export. Please try again later.');
+                var reason = xhr && xhr.responseJSON && xhr.responseJSON.error;
+                showModal(reason || 'Failed to start export. Please try again later.');
             },
             complete: function(xhr, textStatus){
                 button.prop('disabled', false);

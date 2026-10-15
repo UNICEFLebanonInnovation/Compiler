@@ -17,11 +17,14 @@ from openpyxl import Workbook
 
 from student_registration.backends.models import ExportHistory
 from student_registration.backends.utils import ExportStorage, send_push_to_web
-from student_registration.users.templatetags.custom_tags import has_group
-from student_registration.mscc.models import Registration
 from django.urls import reverse
 
+from .document_exports import build_children_workbook
+from .export_access import filter_registrations, scoped_registrations
+
 logger = logging.getLogger(__name__)
+
+EXPORT_FORMATS = ('csv', 'xlsx')
 
 _executor_lock = threading.Lock()
 _export_executor = None
@@ -122,54 +125,67 @@ def _generate_mscc_export(export_id, fields=None, file_format='csv'):
                     str(e),
                     data={"type": "mscc_export_failed", "reason": str(e)},
                 )
+
+
+def _generate_photo_workbook_export(registration_qs):
+    """Store an XLSX with each registration's profile picture in its row.
+
+    The workbook is generated from the ORM snapshot rather than the legacy SQL
+    views, so the saved photograph and the current registration values are
+    read together for every row within the requester's scope.
+    """
+    payload = build_children_workbook(registration_qs.iterator(chunk_size=200))
+    file_name = 'out_file_{}.xlsx'.format(uuid.uuid4())
+    file_name = ExportStorage().save(file_name, ContentFile(payload))
+    return reverse('mscc:export_download', args=[file_name])
+
+
 def _generate_filtered_mscc_export(export_id, nationality="", first_name="", last_name="",
-                                   father_name="", mother_fullname="", round=""):
+                                   father_name="", mother_fullname="", round="",
+                                   file_format='csv'):
     """Generate an MSCC export with optional filtering and notify the user.
 
-    Parameters are used to filter the SQL query in the same way the synchronous
-    view previously did.  Results are written to a ZIP file stored in Azure
-    storage.  A push notification containing the download URL is sent to the
+    Parameters filter the registrations in the same way the list page does.
+    CSV results come from the legacy SQL views and are written to a ZIP file.
+    XLSX results embed each registration's profile picture in its own row.
+    A push notification containing the download URL is sent to the
     requesting user when done.
     """
     export = ExportHistory.objects.get(id=export_id)
     try:
         user = export.created_by
+        if file_format not in EXPORT_FORMATS:
+            raise ValueError('Unsupported export format.')
+        is_world_learning = bool(user.partner and user.partner.is_world_learning)
+        registration_qs = filter_registrations(scoped_registrations(user), {
+            'round': round, 'nationality': nationality, 'first_name': first_name,
+            'last_name': last_name, 'father_name': father_name,
+            'mother_fullname': mother_fullname,
+        })
+
+        if file_format == 'xlsx':
+            file_url = _generate_photo_workbook_export(registration_qs)
+            export.file_url = file_url
+            export.status = 'done'
+            export.save()
+            if user:
+                send_push_to_web(
+                    user,
+                    "Makani export ready",
+                    "Your export is ready to download.",
+                    data={"type": "mscc_export_ready", "url": file_url},
+                )
+            return
+
         cursor = connection.cursor()
         statement_timeout_ms = getattr(settings, 'MSCC_EXPORT_STATEMENT_TIMEOUT_MS', 300000)
         cursor.execute("SET statement_timeout = %s", [statement_timeout_ms])
-        center_id = user.center_id
-        partner_id = user.partner_id or 0
-        is_world_learning = bool(user.partner and user.partner.is_world_learning)
-
-        registration_qs = Registration.objects.filter(deleted=False)
         if not round:
-            registration_qs = registration_qs.none()
             vw_mscc_view_name = "vw_mscc_data"
         elif round == "no_round":
-            registration_qs = registration_qs.filter(round__isnull=True)
             vw_mscc_view_name = "vw_mscc_wl_data_no_round" if is_world_learning else "vw_mscc_data_no_round"
         else:
-            registration_qs = registration_qs.filter(round_id=round)
             vw_mscc_view_name = "vw_mscc_wl_data" if is_world_learning else "vw_mscc_data"
-
-        if nationality:
-            registration_qs = registration_qs.filter(child__nationality_id=nationality)
-        if first_name:
-            registration_qs = registration_qs.filter(child__first_name__icontains=first_name)
-        if last_name:
-            registration_qs = registration_qs.filter(child__last_name__icontains=last_name)
-        if father_name:
-            registration_qs = registration_qs.filter(child__father_name__icontains=father_name)
-        if mother_fullname:
-            registration_qs = registration_qs.filter(child__mother_fullname__icontains=mother_fullname)
-
-        if not (has_group(user, 'MSCC_UNICEF') or is_world_learning):
-            if has_group(user, 'MSCC_PARTNER') and partner_id:
-                registration_qs = registration_qs.filter(partner_id=partner_id)
-            elif has_group(user, 'MSCC_CENTER') and center_id:
-                registration_qs = registration_qs.filter(center_id=center_id)
-            else:
-                registration_qs = registration_qs.none()
 
         registration_ids = list(registration_qs.values_list('id', flat=True))
         if registration_ids:
@@ -275,7 +291,8 @@ def queue_mscc_export(export_id, fields=None, file_format='csv'):
 
 
 def queue_filtered_mscc_export(export_id, nationality="", first_name="", last_name="",
-                               father_name="", mother_fullname="", round=""):
+                               father_name="", mother_fullname="", round="",
+                               file_format='csv'):
     """Run the filtered MSCC export in a background thread."""
     executor = _get_executor()
     future = executor.submit(
@@ -288,5 +305,6 @@ def queue_filtered_mscc_export(export_id, nationality="", first_name="", last_na
         father_name,
         mother_fullname,
         round,
+        file_format,
     )
     return future

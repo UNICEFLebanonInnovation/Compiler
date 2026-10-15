@@ -14,7 +14,7 @@ from django.views.generic import (
 )
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.http import Http404, HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.db.models import Count, F
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db import connection
@@ -77,7 +77,8 @@ from .serializers import (
 from .utils import *
 
 from student_registration.mscc.templatetags.simple_tags import education_history_model, get_education_service_history
-from .tasks import queue_mscc_export, queue_filtered_mscc_export
+from .export_access import user_can_export
+from .tasks import EXPORT_FORMATS, queue_mscc_export, queue_filtered_mscc_export
 from student_registration.users.templatetags.custom_tags import has_group
 from student_registration.child.models import Child
 
@@ -989,20 +990,30 @@ class ChildProfilePreview(LoginRequiredMixin, TemplateView):
 @login_required(login_url='/users/login')
 def export_list_background(request):
     user = request.user
+    if not user_can_export(user):
+        return JsonResponse({'error': 'An assigned MSCC export role is required.'}, status=403)
     nationality = request.GET.get('nationality', '')
     first_name = request.GET.get('first_name', '')
     last_name = request.GET.get('last_name', '')
     father_name = request.GET.get('father_name', '')
     mother_fullname = request.GET.get('mother_fullname', '')
     round = request.GET.get('round', '')
+    file_format = request.GET.get('format', 'csv') or 'csv'
     if not round:
         return JsonResponse({'error': 'Round is not selected. Please select a round before exporting data.'},
                             status=400)
+    if file_format not in EXPORT_FORMATS:
+        return JsonResponse({'error': 'Unsupported export format.'}, status=400)
+    if round != 'no_round' and not str(round).isdecimal():
+        return JsonResponse({'error': 'Please select a valid cycle before exporting data.'}, status=400)
+    if nationality and not str(nationality).isdecimal():
+        return JsonResponse({'error': 'Please select a valid nationality.'}, status=400)
 
     export_record = ExportHistory.objects.create(
         export_type='Makani List',
         created_by=user,
-        partner_name=user.partner.name if user.partner else ''
+        partner_name=user.partner.name if user.partner else '',
+        file_format=file_format,
     )
     queue_filtered_mscc_export(
         export_record.id,
@@ -1012,6 +1023,7 @@ def export_list_background(request):
         father_name,
         mother_fullname,
         round,
+        file_format,
     )
     return JsonResponse({'status': 'started', 'export_id': export_record.id})
 
@@ -1087,6 +1099,18 @@ def export_list_async(request):
 def get_file(request, file_name):
     if is_valid_filename(file_name, 'zip'):
         return download_file(file_name, 'output_file.zip')
+    if is_valid_filename(file_name, 'xlsx'):
+        # Workbooks contain children's photographs, so only the requester of
+        # a completed export may download it.
+        if not ExportHistory.objects.filter(
+            created_by=request.user, status='done',
+            file_url=reverse('mscc:export_download', args=[file_name]),
+        ).exists():
+            raise Http404('Export file not found.')
+        return download_file(
+            file_name, 'exported_data.xlsx',
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        )
     return HttpResponse("Invalid file.")
 
 
