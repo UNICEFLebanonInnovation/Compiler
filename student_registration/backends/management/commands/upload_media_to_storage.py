@@ -36,19 +36,24 @@ class Command(BaseCommand):
             '--overwrite', action='store_true',
             help='Upload a file even when the storage already has one with that name.',
         )
+        parser.add_argument(
+            '--source', default=None,
+            help='Folder to upload instead of MEDIA_ROOT, for example a copy of the '
+                 "server's media folder saved on another machine.",
+        )
 
     def handle(self, *args, **options):
         storage = default_storage
-        media_root = str(settings.MEDIA_ROOT)
+        media_root = str(options['source'] or settings.MEDIA_ROOT)
         if isinstance(storage, FileSystemStorage) and os.path.abspath(
             storage.location,
         ) == os.path.abspath(media_root):
             raise CommandError(
-                'The default storage is MEDIA_ROOT itself; configure the Azure '
-                'backend in STORAGES before uploading.'
+                'The default storage is the source folder itself; configure the '
+                'Azure backend in STORAGES before uploading.'
             )
         if not os.path.isdir(media_root):
-            raise CommandError('MEDIA_ROOT does not exist: {}'.format(media_root))
+            raise CommandError('Source folder does not exist: {}'.format(media_root))
         prefixes = tuple(prefix.strip('/').replace(os.sep, '/') for prefix in options['prefix'])
 
         uploaded = skipped = 0

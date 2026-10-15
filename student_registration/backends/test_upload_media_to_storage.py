@@ -71,6 +71,19 @@ class UploadMediaToStorageTests(SimpleTestCase):
         self.assertIn('would upload uploads/student/new.pdf', output)
         self.assertEqual(len(self.uploaded()), 3)
 
+    def test_source_folder_can_replace_media_root(self):
+        backup = tempfile.TemporaryDirectory()
+        self.addCleanup(backup.cleanup)
+        path = os.path.join(backup.name, 'uploads/bridging/profile_pictures/BACKUP-1.jpeg')
+        os.makedirs(os.path.dirname(path))
+        with open(path, 'wb') as handle:
+            handle.write(b'backup')
+        output = self.run_command('--source', backup.name)
+        self.assertEqual(self.uploaded(), ['uploads/bridging/profile_pictures/BACKUP-1.jpeg'])
+        self.assertIn('Uploaded 1 file(s), 0 already present.', output)
+        with self.assertRaises(CommandError):
+            self.run_command('--source', os.path.join(backup.name, 'missing'))
+
     def test_refuses_when_the_default_storage_is_media_root_itself(self):
         with override_settings(STORAGES={
             'default': {
