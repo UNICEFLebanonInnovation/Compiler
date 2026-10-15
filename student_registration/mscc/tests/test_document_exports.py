@@ -450,8 +450,8 @@ class ExportViewTests(SimpleTestCase):
 
 
 class ExportTaskTests(SimpleTestCase):
-    def run_export(self, file_format, registrations=()):
-        user = SimpleNamespace(partner=None, partner_id=None, center_id=None)
+    def run_export(self, file_format, registrations=(), notification_error=None):
+        user = SimpleNamespace(pk=3, partner=None, partner_id=None, center_id=None)
         export = Mock(created_by=user, status='pending', file_url=None)
         queryset = Mock()
         queryset.iterator.return_value = iter(registrations)
@@ -469,6 +469,7 @@ class ExportTaskTests(SimpleTestCase):
                 patch.object(tasks, 'send_push_to_web') as notify, \
                 patch.object(tasks, 'connection') as connection:
             storage.return_value.save.side_effect = save_file
+            notify.side_effect = notification_error
             tasks._generate_filtered_mscc_export(
                 7, nationality='2', first_name='Ra', round='4', file_format=file_format,
             )
@@ -496,6 +497,19 @@ class ExportTaskTests(SimpleTestCase):
         notify.assert_called_once()
         self.assertEqual(notify.call_args.kwargs['data']['url'], export.file_url)
         connection.cursor.assert_not_called()
+
+    def test_export_stays_downloadable_when_the_push_notification_fails(self):
+        child = make_child(11)
+        registration = make_registration(101, child, StoredPicture(portrait_bytes('red')))
+        export, files, notify, _, _, _ = self.run_export(
+            'xlsx', [registration],
+            notification_error=ModuleNotFoundError("No module named 'firebase_admin'"),
+        )
+        self.assertEqual(len(files), 1)
+        self.assertEqual(export.status, 'done')
+        self.assertEqual(export.file_url, '/mscc/export-download/%s/' % next(iter(files)))
+        export.save.assert_called_once()
+        notify.assert_called_once()
 
     def test_unsupported_format_marks_the_export_failed(self):
         export, files, notify, _, _, _ = self.run_export('docx')
