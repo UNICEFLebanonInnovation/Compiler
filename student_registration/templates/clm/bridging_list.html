@@ -289,9 +289,9 @@
             // and is polled from the export history until the file is stored.
             var params = new URLSearchParams();
             [
-                'round', 'student__first_name', 'student__father_name', 'student__last_name',
-                'student__mother_fullname', 'student__nationality', 'partner', 'school',
-                'governorate', 'district'
+                'round', 'has_photo', 'student__first_name', 'student__father_name',
+                'student__last_name', 'student__mother_fullname', 'student__nationality',
+                'partner', 'school', 'governorate', 'district'
             ].forEach(function (name) {
                 var value = $('#id_' + name).val();
                 if (value) params.set(name, value);

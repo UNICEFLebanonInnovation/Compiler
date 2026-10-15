@@ -268,6 +268,10 @@ class BridgingAccessTests(SimpleTestCase):
             clean_filters({'round': '3', 'school': '', 'student__first_name': 'La', 'partner': '2'}),
             {'round': 3, 'partner': 2, 'student__first_name': 'La'},
         )
+        with self.assertRaises(ValidationError):
+            clean_filters({'round': '3', 'has_photo': 'maybe'})
+        self.assertEqual(clean_filters({'round': '3', 'has_photo': 'yes'}), {'round': 3, 'has_photo': 'yes'})
+        self.assertEqual(clean_filters({'round': '3', 'has_photo': ''}), {'round': 3})
 
     def test_filters_apply_within_the_scope(self):
         qs = Mock()
@@ -280,6 +284,25 @@ class BridgingAccessTests(SimpleTestCase):
             {'round_id': 3}, {'student__nationality_id': 2}, {'district_id': 8},
             {'student__last_name__icontains': 'Ex'},
         ])
+        qs.exclude.assert_not_called()
+
+    def test_photo_filter_keeps_only_students_with_or_without_a_saved_picture(self):
+        qs = Mock()
+        qs.filter.return_value = qs
+        qs.exclude.return_value = qs
+        filter_bridging_registrations(qs, {'round': '3', 'has_photo': 'yes'})
+        self.assertEqual(
+            [call.kwargs for call in qs.exclude.call_args_list],
+            [{'profile_picture': ''}, {'profile_picture__isnull': True}],
+        )
+        qs = Mock()
+        qs.filter.return_value = qs
+        filter_bridging_registrations(qs, {'round': '3', 'has_photo': 'no'})
+        condition = qs.filter.call_args_list[-1].args[0]
+        self.assertEqual(condition.connector, 'OR')
+        self.assertEqual(
+            sorted(condition.children), [('profile_picture', ''), ('profile_picture__isnull', True)],
+        )
 
 
 class BridgingExportViewTests(SimpleTestCase):

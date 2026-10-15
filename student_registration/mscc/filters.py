@@ -1,5 +1,7 @@
 from django.db.models import Q
 
+from .export_access import filter_by_photo
+
 from django_filters import (
     FilterSet,
     ModelChoiceFilter,
@@ -61,6 +63,12 @@ class PlaceholderFilterSet(FilterSet):
                 field.widget.attrs.setdefault('placeholder', label)
 
 
+PHOTO_CHOICES = (
+    ('yes', 'With photo'),
+    ('no', 'Without photo'),
+)
+
+
 class MainFilter(PlaceholderFilterSet):
     NO_ROUND_OPTION = ('no_round', 'No Cycle')
 
@@ -79,6 +87,7 @@ class MainFilter(PlaceholderFilterSet):
         empty_label='Cycle',
         method='filter_round'
     )
+    has_photo = ChoiceFilter(choices=PHOTO_CHOICES, empty_label='Photo', method='filter_has_photo')
     programme_type = ChoiceFilter(choices=EducationService.EDUCATION_PROGRAM,
                                   field_name='education_service__education_program',
                                   empty_label='Programme Type', method='filter_education_program')
@@ -103,6 +112,9 @@ class MainFilter(PlaceholderFilterSet):
             return queryset.filter(round__isnull=True)
         return queryset.filter(**{name: value})
 
+    def filter_has_photo(self, queryset, name, value):
+        return filter_by_photo(queryset, value)
+
     def filter_education_program(self, queryset, name, value):
         return queryset.filter(education_service__education_program=value)
 
@@ -119,6 +131,7 @@ class FullFilter(PlaceholderFilterSet):
         empty_label='Cycle',
         method='filter_round'
     )
+    has_photo = ChoiceFilter(choices=PHOTO_CHOICES, empty_label='Photo', method='filter_has_photo')
 
     center = ChoiceFilter(choices=Center.objects.values_list('id', 'name')
                           .order_by('name').distinct(), empty_label='Center')
@@ -154,6 +167,9 @@ class FullFilter(PlaceholderFilterSet):
         if value == 'no_round':
             return queryset.filter(round__isnull=True)
         return queryset.filter(**{name: value})
+
+    def filter_has_photo(self, queryset, name, value):
+        return filter_by_photo(queryset, value)
 
     def filter_education_program(self, queryset, name, value):
         return queryset.filter(education_service__education_program=value)

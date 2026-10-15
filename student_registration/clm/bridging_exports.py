@@ -21,6 +21,7 @@ from django.urls import reverse
 from student_registration.backends.models import ExportHistory
 from student_registration.backends.utils import ExportStorage
 from student_registration.mscc.document_exports import ExportProfile, build_children_workbook
+from student_registration.mscc.export_access import PHOTO_FILTER_VALUES, filter_by_photo
 from student_registration.mscc.tasks import (
     _get_executor, _notify_excel_export, _run_with_new_db_connection,
 )
@@ -50,7 +51,7 @@ _TEXT_FILTERS = (
     'student__first_name', 'student__father_name', 'student__last_name',
     'student__mother_fullname',
 )
-EXPORT_FILTERS = tuple(name for name, _ in _INTEGER_FILTERS) + _TEXT_FILTERS
+EXPORT_FILTERS = tuple(name for name, _ in _INTEGER_FILTERS) + _TEXT_FILTERS + ('has_photo',)
 
 
 def user_can_export_bridging(user):
@@ -100,6 +101,11 @@ def clean_filters(filters=None):
         value = filters.get(name)
         if value:
             cleaned[name] = str(value)
+    has_photo = filters.get('has_photo') or ''
+    if has_photo not in PHOTO_FILTER_VALUES:
+        raise ValidationError('Invalid photo filter.')
+    if has_photo:
+        cleaned['has_photo'] = has_photo
     return cleaned
 
 
@@ -112,7 +118,7 @@ def filter_bridging_registrations(queryset, filters=None):
     for name in _TEXT_FILTERS:
         if name in cleaned:
             queryset = queryset.filter(**{name + '__icontains': cleaned[name]})
-    return queryset
+    return filter_by_photo(queryset, cleaned.get('has_photo', ''))
 
 
 def _generate_bridging_photo_export(export_id, filters=None):
