@@ -1123,9 +1123,18 @@ def get_file(request, file_name):
             file_url=reverse('mscc:export_download', args=[file_name]),
         ).exists():
             raise Http404('Export not found.')
+    elif file_name.startswith('bridging_photo_export_'):
+        from student_registration.clm.bridging_exports import user_can_export_bridging
+        if not user_can_export_bridging(request.user):
+            return HttpResponseForbidden('A Dirasa export role is required.')
+        if not ExportHistory.objects.filter(
+            created_by=request.user, status='done',
+            file_url=reverse('mscc:export_download', args=[file_name]),
+        ).exists():
+            raise Http404('Export not found.')
     if is_valid_filename(file_name, 'zip'):
         response = download_file(file_name, 'output_file.zip', request=request)
-        if file_name.startswith('mscc_photo_export_'):
+        if file_name.startswith(('mscc_photo_export_', 'bridging_photo_export_')):
             response['Cache-Control'] = 'private, no-store'
         return response
     return HttpResponse("Invalid file.")

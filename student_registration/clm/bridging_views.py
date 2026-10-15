@@ -637,6 +637,33 @@ def bridging_export_data(request, **kwargs):
 
 
 @login_required(login_url='/users/login')
+def bridging_export_photos(request):
+    """Queue the Excel export with each Dirasa student's profile picture."""
+    from django.core.exceptions import ValidationError
+
+    from .bridging_exports import (
+        EXPORT_FILTERS, clean_filters, queue_bridging_photo_export, user_can_export_bridging,
+    )
+
+    user = request.user
+    if not user_can_export_bridging(user):
+        return JsonResponse({'error': 'A Dirasa export role is required.'}, status=403)
+    filters = {name: request.GET.get(name, '') for name in EXPORT_FILTERS}
+    try:
+        clean_filters(filters)
+    except ValidationError as exc:
+        return JsonResponse({'error': '; '.join(exc.messages)}, status=400)
+    export_record = ExportHistory.objects.create(
+        export_type='Bridging List',
+        created_by=user,
+        partner_name=user.partner.name if user.partner else '',
+        file_format='xlsx',
+    )
+    queue_bridging_photo_export(export_record.id, filters)
+    return JsonResponse({'status': 'started', 'export_id': export_record.id})
+
+
+@login_required(login_url='/users/login')
 def bridging_school_export(request, **kwargs):
     try:
         cursor = connection.cursor()

@@ -43,16 +43,28 @@ class ExportStorage(AzureStorage):
     overwrite_files = True
 
 
+# Archives holding children's photographs. They may only be downloaded by the
+# user who requested the completed export, whichever endpoint serves them.
+PHOTO_EXPORT_PREFIXES = ('mscc_photo_export_', 'bridging_photo_export_')
+
+
 def download_file(file_name, returned_file_name, content_type="application/octet-stream", delete_after=True,
                   *, request=None):
     """Retrieve a file from Azure storage and return it as an HTTP response."""
 
-    if file_name.startswith('mscc_photo_export_'):
+    if file_name.startswith(PHOTO_EXPORT_PREFIXES):
         # Several modules share this storage/download utility. Photo archives
         # must not be readable through an older module's unscoped alias.
         from student_registration.backends.models import ExportHistory
-        from student_registration.mscc.export_access import user_can_export
-        if request is None or not user_can_export(request.user):
+        if request is None:
+            raise Http404('Export not found.')
+        if file_name.startswith('mscc_photo_export_'):
+            from student_registration.mscc.export_access import user_can_export
+            allowed = user_can_export(request.user)
+        else:
+            from student_registration.clm.bridging_exports import user_can_export_bridging
+            allowed = user_can_export_bridging(request.user)
+        if not allowed:
             raise Http404('Export not found.')
         if not ExportHistory.objects.filter(
             created_by=request.user, status='done',
@@ -67,7 +79,7 @@ def download_file(file_name, returned_file_name, content_type="application/octet
             file_stream.seek(0)
             response = FileResponse(file_stream, content_type=content_type)
             response["Content-Disposition"] = f'attachment; filename="{returned_file_name}"'
-            if file_name.startswith('mscc_photo_export_'):
+            if file_name.startswith(PHOTO_EXPORT_PREFIXES):
                 response['Cache-Control'] = 'private, no-store'
     except Exception as exc:  # pragma: no cover - logged for debugging purposes
         logger.exception("Error reading file %s", file_name)
