@@ -454,7 +454,18 @@ AZURE_ACCOUNT_NAME = env('AZURE_ACCOUNT_NAME', default='compiler')
 AZURE_ACCOUNT_KEY = env('AZURE_ACCOUNT_KEY', default='dfY79hBWV9JlsN6EGfaWi5UOsTbYiXkUHksb3E0VW7CowcdOiGErV8k8rcCEMmyizGDmsasO5I8djej2W+UY3Q==')
 AZURE_CONTAINER = env('AZURE_CONTAINER', default='exports')
 
-DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
+# Django 5.1 removed DEFAULT_FILE_STORAGE; without this STORAGES entry the
+# profile pictures silently fall back to the local filesystem (MEDIA_ROOT),
+# so a local server connected to the shared database cannot read pictures
+# that live in Azure Blob Storage.
+STORAGES = {
+    'default': {
+        'BACKEND': 'storages.backends.azure_storage.AzureStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+    },
+}
 
 DEFAULT_FILE_FORMAT = 'xlsx'
 DEFAULT_FILE_CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'

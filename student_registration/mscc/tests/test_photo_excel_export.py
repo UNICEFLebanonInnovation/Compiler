@@ -90,8 +90,13 @@ class LocalPhotoStorageMixin:
         directory = tempfile.TemporaryDirectory()
         self.addCleanup(directory.cleanup)
         self.directory = directory.name
+        # Django 5 reads STORAGES, not DEFAULT_FILE_STORAGE; without this the
+        # pictures saved by the tests would go to the real Azure container.
         settings = override_settings(
-            DEFAULT_FILE_STORAGE='django.core.files.storage.FileSystemStorage',
+            STORAGES={
+                'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+                'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+            },
             MEDIA_ROOT=self.directory,
         )
         settings.enable()

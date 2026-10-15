@@ -239,10 +239,15 @@ def load_registration_photo(registration, picture_field='profile_picture'):
     try:
         with picture.open('rb') as source:
             data = source.read()
-    except Exception:
+    except Exception as exc:
         # Remote backends can raise their own connection or missing-object
-        # exceptions. Keep this row and report the unavailable photo explicitly.
-        logger.warning('Photograph unavailable for registration ID %s', registration.pk)
+        # exceptions. Keep this row and report the unavailable photo explicitly,
+        # naming the error type so a storage misconfiguration is easy to spot.
+        logger.warning(
+            'Photograph unavailable for registration ID %s: %s while opening %s via %s',
+            registration.pk, type(exc).__name__, picture.name,
+            type(getattr(picture, 'storage', None)).__name__,
+        )
         return None, PHOTO_UNAVAILABLE
     try:
         with Image.open(io.BytesIO(data)) as source:
@@ -255,8 +260,11 @@ def load_registration_photo(registration, picture_field='profile_picture'):
             destination = io.BytesIO()
             clean_image.save(destination, format='PNG')
             return destination.getvalue(), PHOTO_INCLUDED
-    except (OSError, ValueError, SyntaxError, Image.DecompressionBombError):
-        logger.warning('Photograph unavailable for registration ID %s', registration.pk)
+    except (OSError, ValueError, SyntaxError, Image.DecompressionBombError) as exc:
+        logger.warning(
+            'Photograph unavailable for registration ID %s: %s while decoding %s',
+            registration.pk, type(exc).__name__, picture.name,
+        )
         return None, PHOTO_UNAVAILABLE
 
 
