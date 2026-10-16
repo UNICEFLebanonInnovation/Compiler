@@ -35,10 +35,14 @@ class Youth:
         year = str(year).strip()
         return indicator_figures.ALL if year.lower() == indicator_figures.ALL else year
 
-    def has_year(self, year):
+    def has_year(self, year, years=None):
+        """Whether ``year`` (a year's name, or "all" in any case) is one of ``years()`` (``years``: when already
+        read)."""
         from student_registration.youth.models import Year
 
         year = self.year_name(year)
+        if years is not None:
+            return year in years
         return year == indicator_figures.ALL or Year.objects.filter(name=year).exists()
 
     def build(self, year):

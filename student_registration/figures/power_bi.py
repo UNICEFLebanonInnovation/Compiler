@@ -156,17 +156,30 @@ def options(programme):
 YEAR_IN_NAME = re.compile(r'(?<!\d)((?:19|20)\d{2})(?!\d)')  # "Bridging 2025-2026" -> 2025
 
 
+def _start_or_name_year(start, name):
+    if start is not None:
+        return start.year, 'start_date'
+    found = YEAR_IN_NAME.search(name or '')
+    if found:
+        return int(found.group(1)), 'name'
+    return None, None
+
+
 def bridging_year(the_round):
     """(year, how) of a CLM round for Dirasa: the year of its Bridging start date ('start_date'), else the
     first four-digit year in its name ('name'), else (None, None): the round is in no year. A round spanning
     two years belongs to the year of its start only."""
-    start = getattr(the_round, 'start_date_bridging', None)
-    if start is not None:
-        return start.year, 'start_date'
-    found = YEAR_IN_NAME.search(getattr(the_round, 'name', None) or '')
-    if found:
-        return int(found.group(1)), 'name'
-    return None, None
+    return _start_or_name_year(getattr(the_round, 'start_date_bridging', None), getattr(the_round, 'name', None))
+
+
+def makani_year(the_round):
+    """(year, how) of a Makani round: its own ``year`` ('year'); without one (the field is optional, added in
+    September 2025 and never filled in for the rounds before), the year of its start date ('start_date'), else
+    the first four-digit year in its name ('name'), else (None, None): the round is in no year."""
+    own = getattr(the_round, 'year', None)
+    if own is not None:
+        return int(own), 'year'
+    return _start_or_name_year(getattr(the_round, 'start_date', None), getattr(the_round, 'name', None))
 
 
 def min_match():
@@ -706,9 +719,12 @@ def _period_meta_of(programme, values, column, alias):
     if programme == 'mscc':
         from student_registration.mscc.models import Round
 
-        return {r.id: {'id': r.id, 'name': r.name, 'year': r.year, 'current': r.current_year,
-                       'start_date': _iso(r.start_date), 'end_date': _iso(r.end_date)}
-                for r in Round.objects.using(alias).filter(id__in=[v for v in values if isinstance(v, int)])}
+        out = {}
+        for r in Round.objects.using(alias).filter(id__in=[v for v in values if isinstance(v, int)]):
+            year, year_from = makani_year(r)  # the year the count gives the round
+            out[r.id] = {'id': r.id, 'name': r.name, 'year': year, 'current': r.current_year,
+                         'start_date': _iso(r.start_date), 'end_date': _iso(r.end_date), 'year_from': year_from}
+        return out
     if programme == 'bridging':
         from student_registration.schools.models import CLMRound
 
@@ -749,7 +765,7 @@ def periods(programme, population):
         cursor.execute(sql, [])
         found = cursor.fetchall()
     meta = _period_meta(programme, [v for v, *_rest in found if v is not None], column)
-    empty = {'mscc': ('id', 'name', 'year', 'current', 'start_date', 'end_date'),
+    empty = {'mscc': ('id', 'name', 'year', 'current', 'start_date', 'end_date', 'year_from'),
              'bridging': ('id', 'name', 'current', 'current_year', 'start_date', 'end_date', 'year', 'year_from'),
              'youth': ('id', 'name', 'current')}[programme]
     out = []

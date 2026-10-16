@@ -49,9 +49,13 @@ def refresh(programme, year=None):
     """Count ``programme`` for ``year`` (its current year when None) and store the snapshot; None when
     there is no such year."""
     definition = all_programmes()[programme]
-    year = year or definition.current_year()
-    if year is None or not definition.has_year(year):
-        return None
+    if year:
+        if not definition.has_year(year):
+            return None
+    else:  # the current year is one of the programme's years
+        year = definition.current_year()
+        if year is None:
+            return None
     started = time.monotonic()
     payload = definition.build(year)
     snapshot = FiguresSnapshot.objects.create(
@@ -60,16 +64,24 @@ def refresh(programme, year=None):
         seconds=round(time.monotonic() - started, 1),
         payload=payload,
     )
-    old = FiguresSnapshot.objects.filter(programme=programme, year=snapshot.year).order_by('-created_at')[KEEP:]
+    old = of_periods(programme).filter(year=snapshot.year).order_by('-created_at')[KEEP:]
     FiguresSnapshot.objects.filter(id__in=[s.id for s in old]).delete()
     logger.info('figures %s %s counted in %ss', programme, snapshot.year, snapshot.seconds)
     return snapshot
 
 
+def of_periods(programme):
+    """The stored snapshots of ``programme``'s periods. Bridging's from its first yearly format only
+    (``yearly_format``, 4): an older one is a CLM round's, stored under the round's name, which can be a year's (a
+    round named "2025"); those stay stored for a rollback, never listed, served nor pruned. Makani's snapshots of
+    an older format are of the same years: listed (stale) and served until counted again."""
+    found = FiguresSnapshot.objects.filter(programme=programme)
+    first = getattr(programmes().get(programme), 'yearly_format', None)
+    return found.filter(payload__format__gte=first) if first else found
+
+
 def latest(programme, year):
-    return (
-        FiguresSnapshot.objects.filter(programme=programme, year=str(year)).order_by('-created_at').first()
-    )
+    return of_periods(programme).filter(year=str(year)).order_by('-created_at').first()
 
 
 def stale(definition, year, format_version, created_at, current_year=None, base=None, readable=None):
@@ -163,7 +175,7 @@ def counted_years(programme):
     """{year: (format, counted at, power_bi.base)} of the latest snapshot of each year, without reading
     the payloads into Python."""
     found = {}
-    rows = (FiguresSnapshot.objects.filter(programme=programme).order_by('year', '-created_at')
+    rows = (of_periods(programme).order_by('year', '-created_at')
             .values_list('year', 'payload__format', 'created_at', 'payload__power_bi__base'))
     for year, format_version, created_at, base in rows:
         found.setdefault(year, (format_version, created_at, base))

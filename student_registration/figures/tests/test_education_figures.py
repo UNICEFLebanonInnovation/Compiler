@@ -1,6 +1,7 @@
 """Education figures for NeuroDB: unique children per grouping, stored snapshots, service access."""
 
 import datetime
+import re
 from unittest import mock
 
 import pytest
@@ -819,7 +820,7 @@ def test_bridging_years_come_from_the_bridging_start_or_the_name(places):
     assert sum(total(dirasa.build(y)['cubes']['enrolment'], 'registrations') for y in dirasa.years()) == 3
     [entry] = dirasa.build('2026')['rounds']
     assert entry == {'id': b.id, 'name': 'Round 3 2026', 'start_date': None, 'end_date': None, 'current': False,
-                     'current_year': False, 'year': 2026, 'year_from': 'name'}
+                     'current_year': False, 'year': 2026, 'year_from': 'name', 'in_year': True}
     empty = dirasa.build('2028')  # a direct call for a year with no round: an empty payload, no error
     assert empty['rounds'] == [] and total(empty['cubes']['enrolment'], 'registrations') == 0
 
@@ -921,3 +922,153 @@ def test_a_change_of_the_bridging_period_makes_the_current_year_stale(bridging, 
     assert stale() == {'2025': False, '2024': False}  # Makani's value given to Bridging: ignored
     settings.FIGURES_POWER_BI = {'bridging': {'deleted': 'include'}}
     assert stale() == {'2025': True, '2024': True}
+
+
+# ------------------------------------------------------------- Dirasa by year: review 1 fixes
+def _clone_rows(model, template_id, count, over):
+    """``count`` copies of ``model``'s row ``template_id`` made in the database (INSERT ... SELECT), with the
+    columns of ``over`` (name -> SQL over the copy's number ``g``) changed. Children and teachers stay "Secret"."""
+    from django.db import connection
+
+    table = model._meta.db_table
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name = %s AND "
+                       "column_name <> 'id' ORDER BY ordinal_position", [table])
+        columns = [row[0] for row in cursor.fetchall()]
+        chosen = [over.get(c, 't."%s"' % c) for c in columns]
+        cursor.execute('INSERT INTO "%s" (%s) SELECT %s FROM "%s" t, generate_series(0, %d) g WHERE t.id = %d'
+                       % (table, ', '.join('"%s"' % c for c in columns), ', '.join(chosen), table, count - 1,
+                          template_id))
+
+
+def _plans(sqls):
+    from django.db import connection
+
+    out = []
+    with connection.cursor() as cursor:
+        for sql in sqls:
+            cursor.execute('EXPLAIN ' + sql)
+            out.append('\n'.join(row[0] for row in cursor.fetchall()))
+    return out
+
+
+def test_finding_the_bridging_rounds_never_scans_the_registrations_per_round(bridging, places):
+    """The Bridging rounds (index, run checks, the API, every count) are found without reading clm_bridging once per
+    round of another CLM programme: such a round has no Bridging row, so a probe planned for any round (a
+    correlated EXISTS, planned as a sequential scan that stops at the first Bridging row) reads the whole table
+    for each of them. Each such round is an index lookup; the statements sent do not grow with the rounds."""
+    from django.db import connection
+    from django.test.utils import CaptureQueriesContext
+
+    from .test_power_bi import run
+
+    old = _bridging_round('Bridging 2023')  # no Bridging start date: a Bridging round by its registrations
+    r1 = _bridging_round('Round 1 2026', datetime.date(2026, 1, 12))
+    template = Bridging.objects.filter(round=bridging['round'], deleted=False).first()
+    ids = ','.join(str(i) for i in (bridging['round'].id, r1.id, old.id))
+    _clone_rows(Bridging, template.id, 30000, {'round_id': '(ARRAY[%s])[1 + g %% 3]' % ids})
+    others = [_bridging_round('BLN %d' % number).id  # the other CLM programmes': no Bridging row, no teacher
+              for number in range(10)]
+    run('ANALYZE %s' % Bridging._meta.db_table)
+    run('ANALYZE %s' % Teacher._meta.db_table)
+    dirasa = education.PROGRAMMES['bridging']
+
+    def statements():
+        with CaptureQueriesContext(connection) as captured:
+            assert dirasa.years() == ['2026', '2025', '2023']
+        return [q['sql'] for q in captured.captured_queries if Bridging._meta.db_table in q['sql']]
+
+    sent = statements()
+    plan = '\n'.join(_plans(sent))
+    looked_up = set(re.findall(r'Index (?:Only )?Scan using \S+ on %s .*\n\s+Index Cond: \(round_id = (\d+)\)'
+                               % Bridging._meta.db_table, plan))
+    assert {str(i) for i in others} <= looked_up, plan  # never a scan of the table
+    for number in range(10, 30):
+        _bridging_round('BLN %d' % number)
+    assert len(statements()) == len(sent)  # one statement for any number of rounds
+
+
+def test_the_current_year_reports_the_bridging_rounds_in_no_year(bridging, places, settings):
+    """A Bridging round with no Bridging start date and no year in its name is in no year, flagged current or not:
+    the current year's payload names it and counts its registrations (``no_year``), so that the round running
+    now is never left out silently. Under ``current_rounds`` a round flagged current_year is the year's own."""
+    CLMRound.objects.filter(pk=bridging['round'].pk).update(current_round_bridging=False)
+    now = _bridging_round('Round 4', current_round_bridging=True, current_year=True)
+    for _ in range(3):
+        _registration(_student(places), now, bridging['partner'], bridging['school'], places)
+    _registration(_student(places), now, bridging['partner'], bridging['school'], places, deleted=True)
+    _bridging_round('Bridging 2024', datetime.date(2024, 9, 1))
+    dirasa = education.PROGRAMMES['bridging']
+    assert dirasa.years() == ['2025', '2024'] and dirasa.current_year() == '2025'  # Round 4 is in no year
+
+    payload = dirasa.build('2025')
+    assert [r['name'] for r in payload['rounds']] == ['Bridging 2025']
+    assert payload['no_year'] == {'registrations': 3, 'rounds': [
+        {'id': now.id, 'name': 'Round 4', 'start_date': None, 'end_date': None, 'current': True,
+         'current_year': True, 'year': None, 'year_from': None, 'in_year': False}]}
+    assert dirasa.build('2024')['no_year'] == {'registrations': 0, 'rounds': []}  # the current year's payload only
+
+    settings.FIGURES_POWER_BI = {'bridging': {'period': 'current_rounds'}}
+    payload = dirasa.build('2025')
+    assert [(r['name'], r['in_year']) for r in payload['rounds']] == [('Round 4', True)]
+    assert total(payload['cubes']['enrolment'], 'registrations') == 3
+    assert payload['no_year'] == {'registrations': 0, 'rounds': []}
+
+
+def test_an_old_round_snapshot_never_stands_for_a_year_of_the_same_name(bridging):
+    """A CLM round named like a year ("2025"): its per-round snapshot (format 3, stored under "2025") is not the year
+    2025's: never listed as counted, served nor pruned with the year's snapshots."""
+    the_round = _bridging_round('2025', datetime.date(2025, 3, 1))
+    old = FiguresSnapshot.objects.create(programme='bridging', year='2025', seconds=1,
+                                         payload={'format': 3, 'year': '2025', 'rounds': [{'id': the_round.id}]})
+    client = _service_client()
+    index = {p['programme']: p for p in client.get('/api/figures/').json()['programmes']}
+    assert index['bridging']['years'] == [{'year': '2025', 'counted': False, 'format': None, 'stale': True}]
+    response = client.get('/api/figures/bridging/', {'year': '2025'})
+    assert response.status_code == 404 and response.json()['year'] == '2025'
+    assert snapshots.latest('bridging', '2025') is None
+    for _ in range(snapshots.KEEP + 1):
+        assert snapshots.refresh('bridging', '2025').payload['format'] == 4
+    assert FiguresSnapshot.objects.filter(pk=old.pk).exists()
+    assert FiguresSnapshot.objects.filter(programme='bridging', year='2025').count() == snapshots.KEEP + 1
+    served = client.get('/api/figures/bridging/', {'year': '2025'}).json()
+    assert served['format'] == 4 and [r['name'] for r in served['rounds']] == ['2025', 'Bridging 2025']
+    index = {p['programme']: p for p in client.get('/api/figures/').json()['programmes']}
+    assert index['bridging']['years'] == [{'year': '2025', 'counted': True, 'format': 4, 'stale': False}]
+    # Makani's snapshots of an older format are the same years': still listed (stale) and served until counted
+    FiguresSnapshot.objects.create(programme='mscc', year='2025', seconds=1, payload={'format': 3, 'year': '2025'})
+    assert snapshots.latest('mscc', '2025').payload['format'] == 3
+
+
+def test_a_makani_round_without_a_year_takes_its_start_or_its_name(places):
+    """A Makani round's year: its ``year``, else its start date's, else the first year in its name (``year`` is
+    optional and was never filled in for older rounds), else none: the current year's payload names the rounds in no
+    year and counts their registrations (``no_year``, TLS left out as in the count)."""
+    r1 = m.Round.objects.create(name='Round 1 2026', year=2026, start_date=datetime.date(2026, 2, 1))
+    r2 = m.Round.objects.create(name='Round 2 2026', start_date=datetime.date(2026, 9, 1), current_year=True)
+    r3 = m.Round.objects.create(name='Summer 2025')
+    r4 = m.Round.objects.create(name='Catch-up')
+    for the_round in (r1, r2, r3, r4):
+        child = Child.objects.create(first_name='Secret', gender='Female', birthday_year='2016')
+        m.Registration.objects.create(child=child, round=the_round, type='Core-Package')
+    tls = Child.objects.create(first_name='Secret', gender='Male', birthday_year='2012')
+    m.Registration.objects.create(child=tls, round=r4, type='TLS')
+    makani_ = education.PROGRAMMES['mscc']
+    assert makani_.years() == ['2026', '2025'] and makani_.current_year() == '2026'
+    assert makani_.has_year('2025') and not makani_.has_year('2027')
+
+    payload = makani_.build('2026')
+    assert [(r['name'], r['year'], r['year_from']) for r in payload['rounds']] == [
+        ('Round 1 2026', 2026, 'year'), ('Round 2 2026', 2026, 'start_date')]
+    assert total(payload['cubes']['enrolment'], 'registrations') == 2
+    assert payload['no_year'] == {'registrations': 1, 'rounds': [
+        {'id': r4.id, 'name': 'Catch-up', 'start_date': None, 'end_date': None, 'current': False, 'year': None,
+         'year_from': None}]}
+    past = makani_.build('2025')
+    assert [(r['name'], r['year_from']) for r in past['rounds']] == [('Summer 2025', 'name')]
+    assert past['no_year'] == {'registrations': 0, 'rounds': []}
+    from student_registration.figures import power_bi
+
+    assert power_bi._period_meta('mscc', [r2.id])[r2.id]['year'] == 2026  # Data health's rounds: the same year
+    m.Round.objects.filter(pk=r2.pk).update(year=2027)  # the round's own year wins over its start date
+    assert makani_.years() == ['2027', '2026', '2025'] and makani_.current_year() == '2027'

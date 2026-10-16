@@ -75,10 +75,10 @@ class FiguresIndexView(APIView):
         out = []
         for name, definition in snapshots.programmes().items():
             counted = snapshots.counted_years(name)
-            current = definition.current_year()
+            known, current = definition.years_and_current()  # one read of the rounds
             readable = snapshots.readability(name)  # asked at most once, for a year counted without the view
             years = []
-            for year in definition.years():
+            for year in known:
                 format_version, created_at, base = counted.get(year, (None, None, None))
                 years.append({'year': year, 'counted': year in counted, 'format': format_version,
                               'stale': snapshots.stale(definition, year, format_version, created_at, current,
@@ -103,7 +103,7 @@ def read_targets(given, definitions):
         return None, {'detail': 'targets must be a non-empty list of [programme, year or null]'}
     if len(given) > MAX_TARGETS:
         return None, {'detail': 'At most %d targets' % MAX_TARGETS}
-    targets = []
+    targets, known = [], {}  # known: each programme's years, read once (Bridging's: a look at its rounds)
     for target in given:
         if not isinstance(target, (list, tuple)) or len(target) not in (1, 2):
             return None, {'detail': 'A target is [programme, year or null]: %s' % str(target)[:60]}
@@ -111,7 +111,9 @@ def read_targets(given, definitions):
         year = _text(target[1]) if len(target) == 2 else ''
         if programme not in definitions:
             return None, {'detail': 'Unknown programme', 'programmes': sorted(definitions)}
-        if year and not definitions[programme].has_year(year):
+        if year and programme not in known:
+            known[programme] = definitions[programme].years()
+        if year and not definitions[programme].has_year(year, years=known[programme]):
             return None, {'detail': 'No such year: %s %s' % (programme, year[:40])}
         if year and hasattr(definitions[programme], 'year_name'):  # youth: "ALL" is "all"
             year = definitions[programme].year_name(year)

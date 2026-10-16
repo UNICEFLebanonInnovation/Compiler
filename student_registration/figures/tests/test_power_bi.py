@@ -100,7 +100,8 @@ def test_view_mode_counts_the_views_registrations_of_the_year(seeded):
     periods = {p['id']: p for p in power['periods']}
     assert periods[seeded['current'].id] == {
         'id': seeded['current'].id, 'name': 'Round 1 2025', 'year': 2025, 'current': True,
-        'start_date': '2025-01-01', 'end_date': None, 'view_rows': 3, 'view_ids': 3, 'deleted_rows': 1}
+        'start_date': '2025-01-01', 'end_date': None, 'year_from': 'year', 'view_rows': 3, 'view_ids': 3,
+        'deleted_rows': 1}
     assert periods[seeded['old'].round_id]['view_rows'] == 1
     assert power['related']['vw_center_program_staff'] == {'exists': False}
 
@@ -716,6 +717,18 @@ def test_every_read_of_a_bridging_count_runs_under_the_limits(bridging, dirasa_m
             'SUM("schools_school', 'pg_class'} <= tables
 
 
+@pytest.mark.django_db(transaction=True)
+def test_the_bridging_rounds_are_read_under_the_limits_outside_a_count_too(bridging, settings):
+    """The index, a GET and a run's checks find the Bridging rounds (a look at clm_bridging and students_teacher for
+    a round with neither a Bridging start date nor the flag) under the counting limits, as a count does."""
+    CLMRound.objects.create(name='BLN 2026')
+    dirasa = education.PROGRAMMES['bridging']
+    years, tables = read_under_the_limits(dirasa.years, settings)
+    assert years == ['2025'] and {'schools_clmround', 'clm_bridging'} <= tables
+    assert read_under_the_limits(lambda: dirasa.has_year('2025'), settings)[0] is True
+    assert read_under_the_limits(dirasa.current_year, settings)[0] == '2025'
+
+
 # ------------------------------------------------------------- the ids never in the SQL text
 def statements_sent(build):
     """``build()``'s statements: (the parameters, the statement text psycopg sent to the server)."""
@@ -1097,3 +1110,24 @@ def test_tls_registrations_and_their_services_stay_out(seeded, with_view):
     tls_rows = [row for row in reconciliation['rows'] if row[tls_at]]
     assert tls_rows and not any(row[counted_at] for row in tls_rows)
     assert after['pending_round'] == before['pending_round'] == 1  # the boy only
+
+
+def test_a_view_year_column_lists_every_round_it_counts(bridging, places):
+    """View mode by the view's own year column: a registration of another year's round that the view puts in 2026 is
+    counted in 2026, and its round is listed in the payload's rounds (``in_year`` false, with its own year), so the
+    rounds listed add up to the year and each can be chosen. The rounds of the year by the rule are ``in_year``."""
+    r1, r2 = _dirasa_year(bridging, places)
+    run('CREATE VIEW vw_bridging_data AS SELECT b.id, b.round_id, b.partner_id, b.school_id, 2026 AS year FROM %s b'
+        % Bridging._meta.db_table)
+    payload = build('bridging', '2026')
+    assert (payload['power_bi']['base']['mode'], payload['power_bi']['base']['period_column']) == ('view', 'year')
+    rounds = payload['rounds']
+    assert [(r['name'], r['year'], r['in_year']) for r in rounds] == [
+        ('Bridging 2025', 2025, False), ('Round 1 2026', 2026, True), ('Round 2 2026', 2026, True)]
+    enrolment = payload['cubes']['enrolment']
+    assert total(enrolment, 'registrations') == 5  # the 2025 round's two (not the deleted one), and three
+    assert sum(total(enrolment, 'registrations', round=r['id']) for r in rounds) == 5
+    assert payload['no_year'] == {'registrations': 0, 'rounds': []}
+    run('DROP VIEW vw_bridging_data')
+    rule = build('bridging', '2026')  # rule mode: the rule's rounds only
+    assert [(r['name'], r['in_year']) for r in rule['rounds']] == [('Round 1 2026', True), ('Round 2 2026', True)]
