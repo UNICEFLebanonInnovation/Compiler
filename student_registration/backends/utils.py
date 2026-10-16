@@ -10,7 +10,8 @@ import warnings
 from pathlib import Path
 from time import mktime
 
-from django.http import FileResponse, HttpResponse
+from django.http import FileResponse, HttpResponse, Http404
+from django.urls import reverse
 from storages.backends.azure_storage import AzureStorage
 
 logger = logging.getLogger(__name__)
@@ -42,8 +43,22 @@ class ExportStorage(AzureStorage):
     overwrite_files = True
 
 
-def download_file(file_name, returned_file_name, content_type="application/octet-stream", delete_after=True):
+def download_file(file_name, returned_file_name, content_type="application/octet-stream", delete_after=True,
+                  *, request=None):
     """Retrieve a file from Azure storage and return it as an HTTP response."""
+
+    if file_name.startswith('mscc_photo_export_'):
+        # Several modules share this storage/download utility. Photo archives
+        # must not be readable through an older module's unscoped alias.
+        from student_registration.backends.models import ExportHistory
+        from student_registration.mscc.export_access import user_can_export
+        if request is None or not user_can_export(request.user):
+            raise Http404('Export not found.')
+        if not ExportHistory.objects.filter(
+            created_by=request.user, status='done',
+            file_url=reverse('mscc:export_download', args=[file_name]),
+        ).exists():
+            raise Http404('Export not found.')
 
     storage = ExportStorage()
     try:
@@ -52,6 +67,8 @@ def download_file(file_name, returned_file_name, content_type="application/octet
             file_stream.seek(0)
             response = FileResponse(file_stream, content_type=content_type)
             response["Content-Disposition"] = f'attachment; filename="{returned_file_name}"'
+            if file_name.startswith('mscc_photo_export_'):
+                response['Cache-Control'] = 'private, no-store'
     except Exception as exc:  # pragma: no cover - logged for debugging purposes
         logger.exception("Error reading file %s", file_name)
         response = HttpResponse(f"Error reading file: {exc}")

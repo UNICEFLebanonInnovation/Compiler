@@ -4,7 +4,7 @@ from django.utils.translation import gettext as _
 from django.urls import reverse
 from django.utils.html import format_html
 
-from .models import Registration
+from student_registration.mscc.models import Registration
 
 
 class BootstrapTable(tables.Table):
@@ -74,10 +74,10 @@ class TLSMainTable(CommonTable):
         template_name='django_tables2/tls/action_column.html'
     )
     outreached = tables.TemplateColumn(verbose_name=_('Outreach Child?'), orderable=False,
-                                       template_name='django_tables2/mscc/outreached_column.html')
+                                       template_name='django_tables2/tls/outreached_column.html')
 
     absence_column = tables.TemplateColumn(verbose_name=_('Total Absence'), orderable=False,
-                                       template_name='django_tables2/mscc/absence_column.html')
+                                       template_name='django_tables2/tls/absence_column.html')
 
 
     # center_type = tables.Column(verbose_name=_('Center Type'), accessor='center.type')
@@ -122,9 +122,9 @@ class FullTable(CommonTable):
         template_name='django_tables2/tls/action_column.html'
     )
     outreached = tables.TemplateColumn(verbose_name=_('Outreach Child?'), orderable=False,
-                                       template_name='django_tables2/mscc/outreached_column.html')
+                                       template_name='django_tables2/tls/outreached_column.html')
     absence_column = tables.TemplateColumn(verbose_name=_('Total Absence'), orderable=False,
-                                       template_name='django_tables2/mscc/absence_column.html')
+                                       template_name='django_tables2/tls/absence_column.html')
     center_type = tables.Column(verbose_name=_('Center Type'), accessor='center.type')
     governorate = tables.Column(verbose_name=_('Governorate'), accessor='center.governorate')
     caza = tables.Column(verbose_name=_('Caza'), accessor='center.caza')
@@ -168,9 +168,9 @@ class PartnerTable(CommonTable):
         template_name='django_tables2/tls/action_column.html'
     )
     outreached = tables.TemplateColumn(verbose_name=_('Outreach Child?'), orderable=False,
-                                       template_name='django_tables2/mscc/outreached_column.html')
+                                       template_name='django_tables2/tls/outreached_column.html')
     absence_column = tables.TemplateColumn(verbose_name=_('Total Absence'), orderable=False,
-                                       template_name='django_tables2/mscc/absence_column.html')
+                                       template_name='django_tables2/tls/absence_column.html')
     center_type = tables.Column(verbose_name=_('Center Type'), accessor='center.type')
     governorate = tables.Column(verbose_name=_('Governorate'), accessor='center.governorate')
     caza = tables.Column(verbose_name=_('Caza'), accessor='center.caza')
