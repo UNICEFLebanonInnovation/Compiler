@@ -4,7 +4,8 @@ The workbook reuses the MSCC photo export builder: one row per Bridging
 registration, with the saved profile picture embedded next to the student
 and registration IDs. Access follows the printable profile ID list: users
 with the CLM_BRIDGING_ALL group or staff see every registration, partner
-users see their partner's (and school's) registrations only. The archive is
+users see their own registrations under existing school restrictions plus
+partner 3 registrations in their temporarily permitted governorates. The archive is
 named with a dedicated prefix so the shared download endpoint can require a
 completed export belonging to the requester.
 """
@@ -16,6 +17,7 @@ import zipfile
 
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.files.base import ContentFile
+from django.db.models import Q
 from django.urls import reverse
 
 from student_registration.backends.models import ExportHistory
@@ -28,6 +30,7 @@ from student_registration.mscc.tasks import (
 from student_registration.students.models import Student
 from student_registration.users.templatetags.custom_tags import has_group
 
+from .bridging_access import temporary_bridging_governorates
 from .models import Bridging
 
 logger = logging.getLogger(__name__)
@@ -77,10 +80,14 @@ def scoped_bridging_registrations(user):
     if has_group(user, 'CLM_BRIDGING_ALL') or user.is_staff:
         return queryset
     if user.partner_id:
-        queryset = queryset.filter(partner_id=user.partner_id)
+        own_records = Q(partner_id=user.partner_id)
         if getattr(user, 'school_id', None):
-            queryset = queryset.filter(school_id=user.school_id)
-        return queryset
+            own_records &= Q(school_id=user.school_id)
+        # TODO: Remove Temporary access
+        governorate_ids = temporary_bridging_governorates(user)
+        if governorate_ids:
+            own_records |= Q(partner_id=3, governorate_id__in=governorate_ids)
+        return queryset.filter(own_records)
     return queryset.none()
 
 
