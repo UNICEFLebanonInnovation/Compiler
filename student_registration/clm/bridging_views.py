@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View, DetailView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden, Http404, FileResponse
 import io
@@ -18,6 +18,7 @@ import mimetypes
 from django.core.files.storage import default_storage
 from storages.backends.azure_storage import AzureStorage
 from django.core.files.base import ContentFile
+from django.core.exceptions import ValidationError
 from django.db import connection
 import codecs
 import logging
@@ -79,7 +80,9 @@ from .serializers import (
     CBECESerializer,
     BridgingSerializer
 )
-from .bridging_access import temporary_bridging_governorate
+from .bridging_access import (
+    scope_bridging_queryset, unrestricted_bridging_access, user_can_access_bridging,
+)
 from .utils import is_allowed_create, is_allowed_edit,  get_outreach_child
 from student_registration.users.templatetags.custom_tags import has_group
 from student_registration.students.utils import generate_one_unique_id
@@ -152,55 +155,22 @@ class BridgingPage(LoginRequiredMixin,
 
 def bridging_list_queryset(request):
     """Current-year Dirasa registrations the user may see, ordered like the Dirasa list."""
-    is_world_learning = bool(request.user.partner and request.user.partner.is_world_learning)
-
-    qs = (
-        Bridging.objects.filter(round__current_year=True, deleted=False)
-        .select_related(
-            "student",
-            "student__nationality",
-            "round",
-            "school",
-            "governorate",
-            "district",
-            "owner",
-            "modified_by",
-        )
-        .order_by(
-            "student__first_name",
-            "student__father_name",
-            "student__last_name",
-        )
-    )
-
-    if (
-        not has_group(request.user, "CLM_BRIDGING_ALL")
-        and not request.user.is_staff
-        and not is_world_learning
-    ):
-        if request.user.partner:
-            own_records = Q(partner_id=request.user.partner_id)
-            if request.user.school:
-                own_records &= Q(school_id=request.user.school_id)
-            # TODO: Remove Temporary access
-            governorate_id = temporary_bridging_governorate(request.user)
-            if governorate_id:
-                own_records |= Q(partner_id=3, governorate_id=governorate_id)
-            qs = qs.filter(own_records)
-        else:
-            qs = qs.none()
-
-    return qs
+    return scope_bridging_queryset(
+        Bridging.objects.filter(round__current_year=True, deleted=False), request.user,
+    ).select_related(
+        'student', 'student__nationality', 'round', 'partner', 'school',
+        'governorate', 'district', 'owner', 'modified_by',
+    ).order_by('student__first_name', 'student__father_name', 'student__last_name', 'pk')
 
 
 def bridging_filterset_class(user):
-    if has_group(user, 'CLM_BRIDGING_ALL'):
+    if unrestricted_bridging_access(user):
         return BridgingFullFilter
     return BridgingPartnerFilter
 
 
 class BridgingListView(LoginRequiredMixin,
-                       GroupRequiredMixin,
+                       UserPassesTestMixin,
                        FilterView,
                        ExportMixin,
                        SingleTableView,
@@ -211,6 +181,9 @@ class BridgingListView(LoginRequiredMixin,
     group_required = [u"CLM_Bridging"]
 
     filterset_class = BridgingPartnerFilter
+
+    def test_func(self):
+        return user_can_access_bridging(self.request.user)
 
     def get_queryset(self):
         return bridging_list_queryset(self.request)
@@ -501,15 +474,9 @@ class BridgingBulkProfileIdView(LoginRequiredMixin, GroupRequiredMixin, View):
     group_required = [u"CLM_Bridging"]
 
     def get_registrations(self, round_id):
-        user = self.request.user
-        queryset = Bridging.objects.filter(round_id=round_id, deleted=False)
-        if not has_group(user, 'CLM_BRIDGING_ALL') and not user.is_staff:
-            if user.partner:
-                queryset = queryset.filter(partner_id=user.partner_id)
-                if user.school:
-                    queryset = queryset.filter(school_id=user.school_id)
-            else:
-                queryset = queryset.none()
+        queryset = scope_bridging_queryset(
+            Bridging.objects.filter(round_id=round_id, deleted=False), self.request.user,
+        )
         return queryset.select_related(
             'student', 'student__nationality', 'round', 'partner',
             'governorate', 'disability',
@@ -547,8 +514,29 @@ class ExportStorage(AzureStorage):
     """Azure storage backend dedicated for exported files."""
     location = "export"
 
+
+def _bridging_export_ids(request, round_id=None, school_id=None):
+    """Use the same scoped and filtered records for every SQL export."""
+    from .bridging_exports import EXPORT_FILTERS, filter_bridging_registrations
+    filters = {name: request.GET.get(name, '') for name in EXPORT_FILTERS}
+    if round_id is not None:
+        filters['round'] = round_id
+    queryset = bridging_list_queryset(request)
+    if filters.get('round'):
+        queryset = filter_bridging_registrations(queryset, filters)
+    else:
+        filterset = BridgingFullFilter(request.GET, queryset=queryset)
+        if not filterset.is_valid():
+            raise ValidationError('Invalid export filters.')
+        queryset = filterset.qs
+    if school_id is not None:
+        queryset = queryset.filter(school_id=school_id)
+    return queryset.order_by().values('pk').query.sql_with_params()
+
 @login_required(login_url='/users/login')
 def bridging_export_data(request, **kwargs):
+    if not user_can_access_bridging(request.user):
+        return HttpResponseForbidden('A Dirasa export role is required.')
     try:
         cursor = connection.cursor()
         user = request.user
@@ -566,24 +554,9 @@ def bridging_export_data(request, **kwargs):
         vw_bridging_data += " AND round_id = %s"
         query_params.append(round_id)
 
-        clm_bridging_all = has_group(request.user, 'CLM_BRIDGING_ALL')
-        is_staff = request.user.is_staff
-
-        if not clm_bridging_all and not is_staff and request.user.partner:
-            school_id = 0
-            partner_id = request.user.partner_id
-
-            vw_bridging_data += " AND partner_id = %s"
-            query_params.append(partner_id)
-
-            if request.user.school:
-                school_id = request.user.school.id
-            if school_id > 0:
-                vw_bridging_data += " AND school_id = %s"
-                query_params.append(school_id)
-
-        elif not clm_bridging_all and not is_staff and not request.user.partner:
-            vw_bridging_data += " AND id = 0 "
+        ids_sql, ids_params = _bridging_export_ids(request, round_id=round_id)
+        vw_bridging_data += " AND id IN (" + ids_sql + ")"
+        query_params.extend(ids_params)
 
         vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name "
 
@@ -636,6 +609,8 @@ def bridging_export_data(request, **kwargs):
 
         return HttpResponse(file_name)
 
+    except ValidationError as exc:
+        return HttpResponseBadRequest('; '.join(exc.messages))
     except Exception as e:
         logging.error("An error occurred during the export process:")
         logging.error(traceback.format_exc())
@@ -645,8 +620,6 @@ def bridging_export_data(request, **kwargs):
 @login_required(login_url='/users/login')
 def bridging_export_photos(request):
     """Queue the Excel export with each Dirasa student's profile picture."""
-    from django.core.exceptions import ValidationError
-
     from .bridging_exports import (
         EXPORT_FILTERS, clean_filters, queue_bridging_photo_export, user_can_export_bridging,
     )
@@ -659,47 +632,36 @@ def bridging_export_photos(request):
         clean_filters(filters)
     except ValidationError as exc:
         return JsonResponse({'error': '; '.join(exc.messages)}, status=400)
+    include_photos = request.GET.get('include_photos', 'yes')
+    if include_photos not in ('yes', 'no'):
+        return JsonResponse({'error': 'Invalid picture option.'}, status=400)
     export_record = ExportHistory.objects.create(
         export_type='Bridging List',
         created_by=user,
         partner_name=user.partner.name if user.partner else '',
         file_format='xlsx',
     )
-    queue_bridging_photo_export(export_record.id, filters)
+    queue_bridging_photo_export(
+        export_record.id, filters, include_photos=include_photos == 'yes',
+    )
     return JsonResponse({'status': 'started', 'export_id': export_record.id})
 
 
 @login_required(login_url='/users/login')
 def bridging_school_export(request, **kwargs):
+    if not user_can_access_bridging(request.user):
+        return HttpResponseForbidden('A Dirasa export role is required.')
     try:
         cursor = connection.cursor()
         user = request.user
         partner_name = user.partner.name if user.partner else ''
-        is_world_learning = bool(user.partner and user.partner.is_world_learning)
 
         school_id = int(kwargs.get('school_id'))
 
-        clm_bridging_all = has_group(request.user, 'CLM_BRIDGING_ALL')
-        is_staff = request.user.is_staff
-
-        if not is_world_learning:
-            vw_bridging_data = 'SELECT * FROM  vw_bridging_data  WHERE id > 0'
-        else:
-            vw_bridging_data = 'SELECT * FROM vw_bridging_wl_data WHERE id > 0'
-
-        query_params = []
-
-        if not clm_bridging_all and not is_staff  and not is_world_learning and request.user.partner:
-            partner_id = request.user.partner_id
-            vw_bridging_data += " AND partner_id = %s"
-            query_params.append(partner_id)
-
-        elif not clm_bridging_all and not is_staff  and not is_world_learning and not request.user.partner:
-            vw_bridging_data += " AND id = 0"
-
-        if school_id > 0:
-            vw_bridging_data += " AND school_id = %s"
-            query_params.append(school_id)
+        vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
+        ids_sql, ids_params = _bridging_export_ids(request, school_id=school_id)
+        vw_bridging_data += " AND id IN (" + ids_sql + ")"
+        query_params = list(ids_params)
 
         vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name"
 
@@ -757,6 +719,8 @@ def bridging_school_export(request, **kwargs):
 
         return HttpResponse(file_name)
 
+    except ValidationError as exc:
+        return HttpResponseBadRequest('; '.join(exc.messages))
     except Exception as e:
         logging.error("An error occurred during the export process:")
         logging.error(traceback.format_exc())
@@ -1367,10 +1331,13 @@ if sys.version_info[0] >= 3:
 
 @login_required(login_url='/users/login')
 def bridging_export_all(request, **kwargs):
+    if not user_can_access_bridging(request.user):
+        return HttpResponseForbidden('A Dirasa export role is required.')
     try:
         cursor = connection.cursor()
-        query = 'SELECT * FROM vw_bridging_extract WHERE id > 0'
-        cursor.execute(query)
+        ids_sql, ids_params = _bridging_export_ids(request)
+        query = 'SELECT * FROM vw_bridging_extract WHERE id IN (' + ids_sql + ')'
+        cursor.execute(query, ids_params)
         data = cursor.fetchall()
         headers = [col[0] for col in cursor.description]
 
@@ -1400,6 +1367,8 @@ def bridging_export_all(request, **kwargs):
         response['Content-Disposition'] = 'attachment; filename="{}"'.format(file_name)
         return response
 
+    except ValidationError as exc:
+        return HttpResponseBadRequest('; '.join(exc.messages))
     except Exception as e:
         logging.error("Export failed: %s", traceback.format_exc())
         return HttpResponse("An error occurred: " + str(e), status=500)

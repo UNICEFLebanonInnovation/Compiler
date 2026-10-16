@@ -268,10 +268,11 @@ def load_registration_photo(registration, picture_field='profile_picture'):
         return None, PHOTO_UNAVAILABLE
 
 
-def registration_snapshot(registration, profile=MSCC_PROFILE):
+def registration_snapshot(registration, profile=MSCC_PROFILE, include_photos=True):
     """Read a registration's values and its own profile photograph once."""
     person = getattr(registration, profile.person_field, None)
-    photo_data, photo_status = load_registration_photo(registration, profile.picture_field)
+    photo_data, photo_status = (load_registration_photo(registration, profile.picture_field)
+                                if include_photos else (None, ''))
     picture = getattr(registration, profile.picture_field, None)
     values = OrderedDict((
         ('registration_id', _text(registration.pk)),
@@ -294,9 +295,12 @@ def registration_snapshot(registration, profile=MSCC_PROFILE):
     return RegistrationSnapshot(values, photo_data, photo_status)
 
 
-def build_children_workbook(registrations, fields=None, profile=MSCC_PROFILE):
+def build_children_workbook(registrations, fields=None, profile=MSCC_PROFILE, include_photos=True):
     """Return XLSX bytes with each photo anchored inside its registration row."""
     columns = export_columns(fields, profile)
+    if not include_photos:
+        columns = [column for column in columns
+                   if column.key not in ('photograph', 'photograph_status')]
     destination = io.BytesIO()
     workbook = xlsxwriter.Workbook(destination, {
         'in_memory': True,
@@ -322,7 +326,7 @@ def build_children_workbook(registrations, fields=None, profile=MSCC_PROFILE):
         if row >= 1048576:
             raise ValueError('The export exceeds the Excel worksheet row limit.')
         last_row = row
-        snapshot = registration_snapshot(registration, profile)
+        snapshot = registration_snapshot(registration, profile, include_photos=include_photos)
         sheet.set_row(row, 108)
         for index, column in enumerate(columns):
             value = snapshot.values.get(column.key, '')

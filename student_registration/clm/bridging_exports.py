@@ -2,9 +2,8 @@
 
 The workbook reuses the MSCC photo export builder: one row per Bridging
 registration, with the saved profile picture embedded next to the student
-and registration IDs. Access follows the printable profile ID list: users
-with the CLM_BRIDGING_ALL group or staff see every registration, partner
-users see their partner's (and school's) registrations only. The archive is
+and registration IDs. Access uses the same scope as the Dirasa list,
+including school restrictions and exceptional partner access. The archive is
 named with a dedicated prefix so the shared download endpoint can require a
 completed export belonging to the requester.
 """
@@ -26,9 +25,9 @@ from student_registration.mscc.tasks import (
     _get_executor, _notify_excel_export, _run_with_new_db_connection,
 )
 from student_registration.students.models import Student
-from student_registration.users.templatetags.custom_tags import has_group
 
 from .models import Bridging
+from .bridging_access import scope_bridging_queryset, user_can_access_bridging
 
 logger = logging.getLogger(__name__)
 
@@ -46,21 +45,20 @@ _INTEGER_FILTERS = (
     ('school', 'school_id'),
     ('governorate', 'governorate_id'),
     ('district', 'district_id'),
+    ('disability', 'disability_id'),
 )
 _TEXT_FILTERS = (
     'student__first_name', 'student__father_name', 'student__last_name',
-    'student__mother_fullname',
+    'student__mother_fullname', 'student__id_number', 'student__number',
+    'student__unicef_id', 'internal_number', 'phone_number',
+    'second_phone_number', 'owner__username',
 )
-EXPORT_FILTERS = tuple(name for name, _ in _INTEGER_FILTERS) + _TEXT_FILTERS + ('has_photo',)
+EXPORT_FILTERS = tuple(name for name, _ in _INTEGER_FILTERS) + _TEXT_FILTERS + ('has_photo', 'learning_result')
 
 
 def user_can_export_bridging(user):
-    """Whether a user may export Dirasa registrations with photographs."""
-    if not user or not user.is_authenticated or not user.is_active:
-        return False
-    if not has_group(user, 'CLM_Bridging'):
-        return False
-    return bool(has_group(user, 'CLM_BRIDGING_ALL') or user.is_staff or user.partner_id)
+    """Whether a user may export registrations within their list scope."""
+    return user_can_access_bridging(user)
 
 
 def scoped_bridging_registrations(user):
@@ -69,19 +67,10 @@ def scoped_bridging_registrations(user):
     related.extend(
         'student__' + field.name for field in Student._meta.fields if field.many_to_one
     )
-    queryset = Bridging.objects.filter(deleted=False).select_related(*related).order_by(
+    queryset = Bridging.objects.filter(deleted=False, round__current_year=True).select_related(*related).order_by(
         'student__first_name', 'student__father_name', 'student__last_name', 'pk',
     )
-    if not user_can_export_bridging(user):
-        return queryset.none()
-    if has_group(user, 'CLM_BRIDGING_ALL') or user.is_staff:
-        return queryset
-    if user.partner_id:
-        queryset = queryset.filter(partner_id=user.partner_id)
-        if getattr(user, 'school_id', None):
-            queryset = queryset.filter(school_id=user.school_id)
-        return queryset
-    return queryset.none()
+    return scope_bridging_queryset(queryset, user)
 
 
 def clean_filters(filters=None):
@@ -101,6 +90,11 @@ def clean_filters(filters=None):
         value = filters.get(name)
         if value:
             cleaned[name] = str(value)
+    learning_result = filters.get('learning_result')
+    if learning_result:
+        if learning_result not in dict(Bridging.LEARNING_RESULT):
+            raise ValidationError('Invalid learning result filter.')
+        cleaned['learning_result'] = learning_result
     has_photo = filters.get('has_photo') or ''
     if has_photo not in PHOTO_FILTER_VALUES:
         raise ValidationError('Invalid photo filter.')
@@ -118,10 +112,12 @@ def filter_bridging_registrations(queryset, filters=None):
     for name in _TEXT_FILTERS:
         if name in cleaned:
             queryset = queryset.filter(**{name + '__icontains': cleaned[name]})
+    if 'learning_result' in cleaned:
+        queryset = queryset.filter(learning_result=cleaned['learning_result'])
     return filter_by_photo(queryset, cleaned.get('has_photo', ''))
 
 
-def _generate_bridging_photo_export(export_id, filters=None):
+def _generate_bridging_photo_export(export_id, filters=None, include_photos=True):
     """Store a ZIP holding the requester's scoped Dirasa workbook with photos."""
     try:
         export = ExportHistory.objects.select_related('created_by').get(pk=export_id)
@@ -136,6 +132,7 @@ def _generate_bridging_photo_export(export_id, filters=None):
         )
         workbook = build_children_workbook(
             registrations.iterator(chunk_size=200), profile=BRIDGING_PROFILE,
+            include_photos=include_photos,
         )
         output = io.BytesIO()
         with zipfile.ZipFile(output, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
@@ -157,8 +154,8 @@ def _generate_bridging_photo_export(export_id, filters=None):
     _notify_excel_export(export, succeeded=True)
 
 
-def queue_bridging_photo_export(export_id, filters=None):
+def queue_bridging_photo_export(export_id, filters=None, include_photos=True):
     """Run the Dirasa photo export in the shared background export pool."""
     return _get_executor().submit(
-        _run_with_new_db_connection, _generate_bridging_photo_export, export_id, filters,
+        _run_with_new_db_connection, _generate_bridging_photo_export, export_id, filters, include_photos,
     )

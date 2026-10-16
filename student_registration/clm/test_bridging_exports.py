@@ -14,7 +14,7 @@ from django.test import RequestFactory, SimpleTestCase
 from PIL import Image
 
 from student_registration.backends import utils as backend_utils
-from student_registration.clm import bridging_exports
+from student_registration.clm import bridging_exports, bridging_access
 from student_registration.clm.bridging_exports import (
     BRIDGING_PROFILE, PHOTO_EXPORT_PREFIX, clean_filters, filter_bridging_registrations,
     scoped_bridging_registrations, user_can_export_bridging,
@@ -208,12 +208,12 @@ class BridgingAccessTests(SimpleTestCase):
         return SimpleNamespace(
             is_authenticated=True, is_active=active, is_staff=staff, is_superuser=False,
             partner=SimpleNamespace(name='Partner') if partner_id else None,
-            partner_id=partner_id, school_id=school_id, groups=groups,
+            partner_id=partner_id, school_id=school_id, groups=groups, _group_names_cache=groups,
         )
 
     def has_group(self):
         return patch.object(
-            bridging_exports, 'has_group',
+            bridging_access, 'has_group',
             side_effect=lambda user, group: group in user.groups,
         )
 
@@ -223,7 +223,7 @@ class BridgingAccessTests(SimpleTestCase):
             self.assertTrue(user_can_export_bridging(self.user({'CLM_Bridging'}, staff=True)))
             self.assertTrue(user_can_export_bridging(self.user({'CLM_Bridging'}, partner_id=4)))
             self.assertFalse(user_can_export_bridging(self.user({'CLM_Bridging'})))
-            self.assertFalse(user_can_export_bridging(self.user({'CLM_BRIDGING_ALL'})))
+            self.assertTrue(user_can_export_bridging(self.user({'CLM_BRIDGING_ALL'})))
             self.assertFalse(user_can_export_bridging(self.user({'CLM_Bridging'}, partner_id=4, active=False)))
             self.assertFalse(user_can_export_bridging(None))
 
@@ -235,7 +235,7 @@ class BridgingAccessTests(SimpleTestCase):
         with patch.object(bridging_exports.Bridging, 'objects') as manager, self.has_group():
             manager.filter.return_value = qs
             result = scoped_bridging_registrations(user)
-            manager.filter.assert_called_once_with(deleted=False)
+            manager.filter.assert_called_once_with(deleted=False, round__current_year=True)
         return qs, result
 
     def test_all_and_staff_users_see_every_registration(self):
@@ -246,11 +246,11 @@ class BridgingAccessTests(SimpleTestCase):
 
     def test_partner_users_are_limited_to_their_partner_and_school(self):
         qs, _ = self.scoped(self.user({'CLM_Bridging'}, partner_id=4))
-        self.assertEqual([call.kwargs for call in qs.filter.call_args_list], [{'partner_id': 4}])
+        self.assertEqual(qs.filter.call_args.args[0].children, [('partner_id', 4)])
         qs, _ = self.scoped(self.user({'CLM_Bridging'}, partner_id=4, school_id=9))
         self.assertEqual(
             [call.kwargs for call in qs.filter.call_args_list],
-            [{'partner_id': 4}, {'school_id': 9}],
+            [{'school_id': 9}],
         )
 
     def test_users_without_a_role_have_no_records(self):
@@ -432,3 +432,88 @@ class BridgingExportTaskTests(SimpleTestCase):
         self.assertEqual(export.status, 'failed')
         scoped.assert_not_called()
         notify.assert_called_once_with(export, succeeded=False)
+
+
+class SharedBridgingScopeTests(SimpleTestCase):
+    """Execute the ORM's scope SQL against rows covering every access boundary."""
+
+    def user(self, partner=None, school=None, groups=(), staff=False, superuser=False):
+        return SimpleNamespace(
+            is_authenticated=True, is_active=True, is_staff=staff,
+            is_superuser=superuser, partner_id=partner, school_id=school,
+            _group_names_cache=set(groups),
+        )
+
+    def visible(self, user):
+        import sqlite3
+        from django.core.exceptions import EmptyResultSet
+        from .bridging_access import scope_bridging_queryset
+
+        # Deliberately include another partner in the assigned school: a school
+        # user's scope is the school, independently of their partner assignment.
+        rows = [(1, 7, 10, 7), (2, 7, 11, 1), (3, 3, 20, 7),
+                (4, 3, 21, 1), (5, 3, 22, 3), (6, 3, 23, 5),
+                (7, 3, 24, 2), (8, 107, 30, 1), (9, 29, 40, 3),
+                (10, 99, 10, 3), (11, 99, 50, 7)]
+        queryset = scope_bridging_queryset(Bridging.objects.all(), user)
+        try:
+            sql, params = queryset.order_by().values_list('pk').query.sql_with_params()
+        except EmptyResultSet:
+            return set()
+        with sqlite3.connect(':memory:') as database:
+            table = Bridging._meta.db_table
+            database.execute('CREATE TABLE "%s" (id INTEGER, partner_id INTEGER, school_id INTEGER, governorate_id INTEGER)' % table)
+            database.executemany('INSERT INTO "%s" VALUES (?, ?, ?, ?)' % table, rows)
+            return {row[0] for row in database.execute(sql.replace('%s', '?'), params)}
+
+    def test_partner_exceptions_and_ordinary_partner_scope(self):
+        for partner, expected in ((7, {1, 2, 3}), (107, {4, 8}),
+                                  (29, {5, 6, 9}), (99, {10, 11})):
+            with self.subTest(partner=partner):
+                self.assertEqual(self.visible(self.user(partner=partner)), expected)
+
+    def test_assigned_school_wins_over_every_partner_exception(self):
+        for partner in (7, 107, 29, 99, None):
+            with self.subTest(partner=partner):
+                self.assertEqual(self.visible(self.user(partner=partner, school=10)), {1, 10})
+
+    def test_unrestricted_roles_win_over_school_and_partner(self):
+        for options in ({'staff': True}, {'superuser': True}, {'groups': ['CLM_BRIDGING_ALL']}):
+            self.assertEqual(self.visible(self.user(partner=7, school=10, **options)), set(range(1, 12)))
+
+    def test_no_assignment_and_inactive_users_have_no_rows(self):
+        self.assertEqual(self.visible(self.user()), set())
+        user = self.user(staff=True)
+        user.is_active = False
+        self.assertEqual(self.visible(user), set())
+
+    def test_plain_excel_contains_data_without_opening_or_embedding_pictures(self):
+        registration = make_bridging(501, make_student(31), StoredPicture(portrait_bytes('red')))
+        with patch.object(registration.profile_picture, 'open', side_effect=AssertionError('Photo opened')):
+            content = build_children_workbook([registration], profile=BRIDGING_PROFILE, include_photos=False)
+        row = workbook_rows(content)[0][1]
+        self.assertEqual(row['Registration ID'], '501')
+        self.assertEqual(row['Student ID'], '31')
+        self.assertNotIn('Photograph', row)
+        self.assertNotIn('Photograph status', row)
+        self.assertEqual(workbook_photos_by_row(content), {})
+
+    def test_csv_school_parameter_cannot_replace_assigned_school(self):
+        request = RequestFactory().get('/clm/bridging-school-export-data/99/', {'round': '5'})
+        request.user = self.user(partner=29, school=10)
+        sql, params = bridging_views._bridging_export_ids(request, school_id=99)
+        self.assertIn(10, params)
+        self.assertIn(99, params)
+        self.assertNotIn(' OR ', sql)
+        self.assertNotIn('governorate_id', sql)
+
+    def test_excel_data_only_option_is_queued_and_invalid_option_is_rejected(self):
+        tests = BridgingExportViewTests()
+        tests.setUp()
+        response, create, queue = tests.start({'round': '5', 'include_photos': 'no'})
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(queue.call_args.kwargs['include_photos'])
+        response, create, queue = tests.start({'round': '5', 'include_photos': 'maybe'})
+        self.assertEqual(response.status_code, 400)
+        create.assert_not_called()
+        queue.assert_not_called()
