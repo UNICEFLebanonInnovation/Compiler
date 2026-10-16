@@ -119,7 +119,6 @@
 {% endif %}
 {% endif %}
 
-<button type="button" class="mr-3 btn btn-primary download-report" onclick="checkRoundBeforeExport(event)">{% trans "Export" %}</button>
 <span class="downloading-message" style="display: none;">{% trans "Preparing export..." %}</span>
                         </div>
                         </div>
@@ -178,20 +177,17 @@
         </button>
       </div>
       <div class="modal-body">
-        <p class="text-muted small">
-          {% trans "Export the Dirasa students of the selected round. Excel with photographs includes each student's profile picture in the same row as their student and registration IDs and applies the current filters. CSV does not include photographs." %}
-        </p>
         <div class="form-group">
           <label for="bridging-export-format">{% trans "Format" %}</label>
-          <select id="bridging-export-format" class="form-control">
-            <option value="xlsx-data" selected>{% trans "Excel (data only)" %}</option>
-            <option value="csv">{% trans "CSV (text only)" %}</option>
-            <option value="xlsx">{% trans "Excel with photographs" %}</option>
+          <select id="bridging-export-format" class="form-control export-format" aria-describedby="bridging-export-format-help">
+            <option value="xlsx" selected>{% trans "Excel with photographs" %}</option>
+            <option value="xlsx-data">{% trans "Excel (data only)" %}</option>
+            <option value="csv">CSV</option>
           </select>
+          <small id="bridging-export-format-help" class="form-text text-muted">{% trans "Excel with photographs includes each student's photograph in the same row as their Student ID and Registration ID." %}</small>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "Cancel" %}</button>
         <button type="button" class="btn btn-primary start-bridging-export" onclick="startBridgingExport(this)">{% trans "Start Export" %}</button>
       </div>
     </div>
@@ -232,27 +228,33 @@
 
         function checkRoundBeforeExport(event) {
             event.preventDefault();
-            var round = $("#id_round").val();
-            if (!round) {
-                alert("Round is not selected. Please select a round before exporting data.");
-                return;
-            }
+            $('#bridging-export-format').val('xlsx');
             $('#bridgingExportModal').modal('show');
         }
 
         function startBridgingExport(button) {
-            var format = $('#bridging-export-format').val() || 'csv';
-            $('#bridgingExportModal').modal('hide');
+            var round = $('#id_round').val();
+            if (!round) {
+                $('#bridgingExportModal').modal('hide');
+                notifyExport('Round is not selected. Please select a round before exporting data.');
+                return;
+            }
+            var format = $('#bridging-export-format').val() || 'xlsx';
             if (format === 'xlsx' || format === 'xlsx-data') {
                 startBridgingPhotoExport(button);
             } else {
-                startBridgingCsvExport();
+                startBridgingCsvExport(button);
             }
         }
 
-        function startBridgingCsvExport() {
-            requestHeaders = getHeader();
+        function startBridgingCsvExport(button) {
+            var requestHeaders = getHeader();
             var round = $("#id_round").val();
+            var $button = $(button);
+            var originalHtml = $button.html();
+            $button.prop('disabled', true).html(
+                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...'
+            );
 
             $(".downloading-message").show();
             $('.download-report').addClass('disabled');
@@ -265,16 +267,19 @@
                     type: "GET",
                     headers: requestHeaders,
                     success: function (data) {
+                        $('#bridgingExportModal').modal('hide');
                         $(".downloading-message").hide();
                         $('.download-report').removeClass('disabled');
 
-                        // Open the file in a new tab
-                        window.open("/mscc/export-download-csv/" + encodeURIComponent(data), "_blank");
+                        showBridgingExportReady("/mscc/export-download-csv/" + encodeURIComponent(data));
                     },
                     error: function (error) {
-                        alert("Error downloading file. Please try again.");
+                        notifyExport('Failed to start export. Please try again later.');
                         $(".downloading-message").hide();
                         $('.download-report').removeClass('disabled');
+                    },
+                    complete: function () {
+                        $button.prop('disabled', false).html(originalHtml);
                     }
                 });
 
@@ -316,6 +321,7 @@
                 type: "GET",
                 headers: getHeader(),
                 success: function (data) {
+                    $('#bridgingExportModal').modal('hide');
                     notifyExport('Export started. The download dialog will appear when ready.');
                     pollBridgingExport(data.export_id);
                 },
