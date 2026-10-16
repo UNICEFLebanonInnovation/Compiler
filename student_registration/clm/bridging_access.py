@@ -1,6 +1,6 @@
 # TODO: Remove Temporary access
 # Exceptional access to partner 3's Dirasa registrations by governorate.
-TEMPORARY_BRIDGING_GOVERNORATES = {7: 7, 107: 1, 29: 3}
+TEMPORARY_BRIDGING_GOVERNORATES = {7: 7, 107: 1}
 
 
 def temporary_bridging_governorate(user):
