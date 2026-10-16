@@ -5,8 +5,7 @@ registration, with the saved profile picture embedded next to the student
 and registration IDs. Access follows the printable profile ID list: users
 with the CLM_BRIDGING_ALL group or staff see every registration, partner
 users see their own registrations under existing school restrictions plus
-partner 3 registrations in their temporarily permitted governorates when
-no school restriction is assigned. The archive is
+partner 3 registrations in their temporarily permitted governorates. The archive is
 named with a dedicated prefix so the shared download endpoint can require a
 completed export belonging to the requester.
 """
@@ -86,7 +85,7 @@ def scoped_bridging_registrations(user):
             own_records &= Q(school_id=user.school_id)
         # TODO: Remove Temporary access
         governorate_ids = temporary_bridging_governorates(user)
-        if governorate_ids and not getattr(user, 'school_id', None):
+        if governorate_ids:
             own_records |= Q(partner_id=3, governorate_id__in=governorate_ids)
         return queryset.filter(own_records)
     return queryset.none()

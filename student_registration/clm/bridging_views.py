@@ -510,7 +510,7 @@ class BridgingBulkProfileIdView(LoginRequiredMixin, GroupRequiredMixin, View):
                     own_records &= Q(school_id=user.school_id)
                 # TODO: Remove Temporary access
                 governorate_ids = temporary_bridging_governorates(user)
-                if governorate_ids and not user.school:
+                if governorate_ids:
                     own_records |= Q(partner_id=3, governorate_id__in=governorate_ids)
                 queryset = queryset.filter(own_records)
             else:
@@ -552,22 +552,21 @@ class ExportStorage(AzureStorage):
     """Azure storage backend dedicated for exported files."""
     location = "export"
 
-def _bridging_export_access_sql(user, allow_world_learning=True):
+def _bridging_export_access_sql(user, restrict_school=True, allow_world_learning=True):
     """Parameterised record scope shared by the Bridging CSV exports."""
     if has_group(user, 'CLM_BRIDGING_ALL') or user.is_staff:
         return '', []
-    if (allow_world_learning and user.partner and user.partner.is_world_learning
-            and not user.school):
+    if allow_world_learning and user.partner and user.partner.is_world_learning:
         return '', []
     if not user.partner:
         return ' AND id = 0', []
 
     own_records = Q(partner_id=user.partner_id)
-    if user.school:
+    if restrict_school and user.school:
         own_records &= Q(school_id=user.school_id)
     # TODO: Remove Temporary access
     governorate_ids = temporary_bridging_governorates(user)
-    if governorate_ids and not user.school:
+    if governorate_ids:
         own_records |= Q(partner_id=3, governorate_id__in=governorate_ids)
 
     # Use the registration table for access fields: not every export view
@@ -596,31 +595,11 @@ def bridging_export_data(request, **kwargs):
         vw_bridging_data += " AND round_id = %s"
         query_params.append(round_id)
 
-        clm_bridging_all = has_group(request.user, 'CLM_BRIDGING_ALL')
-        is_staff = request.user.is_staff
-
-        if not clm_bridging_all and not is_staff and request.user.partner:
-            school_id = 0
-            partner_id = request.user.partner_id
-
-            if request.user.school:
-                school_id = request.user.school.id
-            if school_id > 0:
-                vw_bridging_data += " AND partner_id = %s"
-                query_params.append(partner_id)
-                vw_bridging_data += " AND school_id = %s"
-                query_params.append(school_id)
-            else:
-                # TODO: Remove Temporary access
-                # Partner-wide users retain their own data plus scoped exceptions.
-                access_sql, access_params = _bridging_export_access_sql(
-                    user, allow_world_learning=False,
-                )
-                vw_bridging_data += access_sql
-                query_params.extend(access_params)
-
-        elif not clm_bridging_all and not is_staff and not request.user.partner:
-            vw_bridging_data += " AND id = 0 "
+        access_sql, access_params = _bridging_export_access_sql(
+            user, allow_world_learning=False,
+        )
+        vw_bridging_data += access_sql
+        query_params.extend(access_params)
 
         vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name "
 
@@ -726,7 +705,9 @@ def bridging_school_export(request, **kwargs):
 
         query_params = []
 
-        access_sql, access_params = _bridging_export_access_sql(user)
+        access_sql, access_params = _bridging_export_access_sql(
+            user, restrict_school=False,
+        )
         vw_bridging_data += access_sql
         query_params.extend(access_params)
 
