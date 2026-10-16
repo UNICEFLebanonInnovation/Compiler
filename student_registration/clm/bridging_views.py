@@ -79,6 +79,7 @@ from .serializers import (
     CBECESerializer,
     BridgingSerializer
 )
+from .bridging_access import temporary_bridging_governorate
 from .utils import is_allowed_create, is_allowed_edit,  get_outreach_child
 from student_registration.users.templatetags.custom_tags import has_group
 from student_registration.students.utils import generate_one_unique_id
@@ -178,9 +179,14 @@ def bridging_list_queryset(request):
         and not is_world_learning
     ):
         if request.user.partner:
-            qs = qs.filter(partner_id=request.user.partner_id)
+            own_records = Q(partner_id=request.user.partner_id)
             if request.user.school:
-                qs = qs.filter(school_id=request.user.school_id)
+                own_records &= Q(school_id=request.user.school_id)
+            # TODO: Remove Temporary access
+            governorate_id = temporary_bridging_governorate(request.user)
+            if governorate_id:
+                own_records |= Q(partner_id=3, governorate_id=governorate_id)
+            qs = qs.filter(own_records)
         else:
             qs = qs.none()
 
@@ -634,6 +640,33 @@ def bridging_export_data(request, **kwargs):
         logging.error("An error occurred during the export process:")
         logging.error(traceback.format_exc())
         return HttpResponse("An error occurred: " + str(e), status=500)
+
+
+@login_required(login_url='/users/login')
+def bridging_export_photos(request):
+    """Queue the Excel export with each Dirasa student's profile picture."""
+    from django.core.exceptions import ValidationError
+
+    from .bridging_exports import (
+        EXPORT_FILTERS, clean_filters, queue_bridging_photo_export, user_can_export_bridging,
+    )
+
+    user = request.user
+    if not user_can_export_bridging(user):
+        return JsonResponse({'error': 'A Dirasa export role is required.'}, status=403)
+    filters = {name: request.GET.get(name, '') for name in EXPORT_FILTERS}
+    try:
+        clean_filters(filters)
+    except ValidationError as exc:
+        return JsonResponse({'error': '; '.join(exc.messages)}, status=400)
+    export_record = ExportHistory.objects.create(
+        export_type='Bridging List',
+        created_by=user,
+        partner_name=user.partner.name if user.partner else '',
+        file_format='xlsx',
+    )
+    queue_bridging_photo_export(export_record.id, filters)
+    return JsonResponse({'status': 'started', 'export_id': export_record.id})
 
 
 @login_required(login_url='/users/login')

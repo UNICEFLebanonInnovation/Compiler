@@ -70,6 +70,9 @@ from django.forms.widgets import ClearableFileInput
 YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 
 
+from .bridging_access import has_temporary_bridging_access
+
+
 def _bridging_score_value(value):
     if value in (None, ''):
         return 0
@@ -1783,6 +1786,15 @@ class BridgingForm(CommonForm):
                 queryset =queryset.none()
 
 
+
+        # TODO: Remove Temporary access
+        if has_temporary_bridging_access(self.request.user, instance):
+            temporary_schools = School.objects.filter(
+                is_closed=False,
+                partner_schools__id=3,
+                governorate_id=instance.governorate_id,
+            )
+            queryset = (queryset | temporary_schools).distinct()
 
         self.fields['school'] = forms.ModelChoiceField(
             queryset=queryset, widget=forms.Select,
