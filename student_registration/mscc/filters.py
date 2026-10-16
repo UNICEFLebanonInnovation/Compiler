@@ -69,8 +69,13 @@ PHOTO_CHOICES = (
 )
 
 
+def current_round_choices():
+    """Load current cycles when the filter form is built, not at server startup."""
+    rounds = Round.objects.filter(current_year=True).values_list('id', 'name').order_by('name').distinct()
+    return [('no_round', 'No Cycle')] + list(rounds)
+
+
 class MainFilter(PlaceholderFilterSet):
-    NO_ROUND_OPTION = ('no_round', 'No Cycle')
 
     type = ChoiceFilter(choices=PACKAGE_TYPES, empty_label='Package type')
     child__first_name = CharFilter(lookup_expr='icontains' )
@@ -83,7 +88,7 @@ class MainFilter(PlaceholderFilterSet):
     child__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
                                 .order_by('name').distinct(), empty_label='Nationality')
     round = ChoiceFilter(
-        choices=[NO_ROUND_OPTION] + list(Round.objects.filter(current_year=True).values_list('id', 'name').order_by('name').distinct()),
+        choices=current_round_choices,
         empty_label='Cycle',
         method='filter_round'
     )
@@ -120,14 +125,13 @@ class MainFilter(PlaceholderFilterSet):
 
 
 class FullFilter(PlaceholderFilterSet):
-    NO_ROUND_OPTION = ('no_round', 'No Cycle')
 
     type = ChoiceFilter(choices=PACKAGE_TYPES, empty_label='Package type')
     partner = ChoiceFilter(choices=PartnerOrganization.objects.values_list('id', 'name')
                           .order_by('name').distinct(), empty_label='Partner')
 
     round = ChoiceFilter(
-        choices=[NO_ROUND_OPTION] + list(Round.objects.filter(current_year=True).values_list('id', 'name').order_by('name').distinct()),
+        choices=current_round_choices,
         empty_label='Cycle',
         method='filter_round'
     )
