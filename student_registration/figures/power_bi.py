@@ -7,7 +7,8 @@ time:
 
 * ``describe(name)``: the catalogue entry of a view (no data): kind, columns, the relations it reads,
   its definition with every string literal and long number list masked, and the hash of the raw text;
-* ``population(programme, period, ...)``: "view mode". The view's registration ids for the period, how
+* ``population(programme, period, ...)``: "view mode". The view's registration ids for the period (Makani: a
+  year, the rounds of the year; Dirasa: a year, the CLM rounds of the year, ``bridging_year``), how
   many view rows each has, and the partner and centre/school the view gives it, held in the worker's
   memory for one count and joined into every count (``unnest`` of integer arrays). It is used only when
   a gate passes (the view exists and is a view, may be read, its key is the registration id, it has rows
@@ -47,11 +48,14 @@ KINDS = {'r': 'table', 'v': 'view', 'm': 'materialized view', 'p': 'partitioned 
 FLAG_COLUMNS = ('round_id', 'year_id', 'deleted', 'is_active', 'is_active_current_round', 'current_year')
 DEFAULTS = {
     'mscc': {'base': 'auto', 'deleted': 'exclude', 'period': 'round_year'},
-    'bridging': {'base': 'auto', 'deleted': 'exclude'},
+    'bridging': {'base': 'auto', 'deleted': 'exclude', 'period': 'start_year'},
     'youth': {'base': 'auto', 'deleted': 'exclude'},
 }
-CHOICES = {'base': ('auto', 'view', 'rule'), 'deleted': ('exclude', 'include'),
-           'period': ('round_year', 'current_rounds')}
+CHOICES = {'base': ('auto', 'view', 'rule'), 'deleted': ('exclude', 'include')}
+# each programme's own period rules (the first is its default): Makani, the rounds whose year is Y or the rounds
+# flagged current_year; Dirasa, the CLM rounds whose Bridging start date is in Y (bridging_year) or the Bridging
+# rounds flagged current_year. Youth has none (its period is the Year).
+PERIODS = {'mscc': ('round_year', 'current_rounds'), 'bridging': ('start_year', 'current_rounds')}
 # The gate's reasons when the view cannot be read at all (rule mode, base.reason): what a later GRANT, or a missing
 # view created again by hand (SPEC E3), changes without anything else changing (snapshots.stale, ``unreadable``).
 # A view dropped and created again loses its grants (CREATE OR REPLACE keeps them): a counting role that does not
@@ -78,7 +82,15 @@ class Source:
     checks: tuple             # key check comparisons: (name, view column, SQL with {v} for the view's value)
     joins: str = ''           # extra joins of the key check (aliases: r = the registration)
     cross_checks: tuple = ()  # comparisons that must also agree (youth: ids of two tables overlap)
-    period_gate: bool = True  # the view's rows must have the registration's round (year) for the key to pass
+    # period columns whose check is required: the view's rows must have the registration's round for the key to
+    # pass (youth: none, the view's own year decides)
+    gated_periods: tuple = ('round_id',)
+    # period columns whose check is shown, not required, and verifies the key when it reaches the threshold
+    # (Dirasa's year: the view's own year decides)
+    verifying_periods: tuple = ()
+    # (period column, column used instead when the first gives the key check no row for the period and the view
+    # has the second): Dirasa's year column may hold "2025-2026", which names no year
+    period_fallbacks: tuple = ()
     round_profiled: tuple = ()  # profiled views whose round_id is the programme's round: the period's rows only
 
 
@@ -96,15 +108,20 @@ SOURCES = {
                  'COALESCE(r.partner_id, c.partner_id) IS NOT DISTINCT FROM {v}'),
                 ('same_center', 'center_id', 'r.center_id IS NOT DISTINCT FROM {v}')),
         joins='LEFT JOIN locations_center c ON c.id = r.center_id'),
+    # Dirasa: the period is a year, the CLM rounds of the year (bridging_year). A view's year column (any type,
+    # compared as text) chooses the year's rows when the view has one, as youth's, else its round_id; the year
+    # agreement (the registration's round is a round of the year) is shown, not required.
     'bridging': Source(
-        'bridging', 'vw_bridging_data', 'clm_bridging', ('id',), ('round_id',),
+        'bridging', 'vw_bridging_data', 'clm_bridging', ('id',), ('year', 'round_id'),
         {'partner': 'partner_id', 'school': 'school_id'},
         related=('vw_bridging_wl_data', 'vw_teacher_data', 'vw_outreach_data', 'vw_outreach_not_registered'),
         profiled=('vw_teacher_data',), round_profiled=('vw_teacher_data',),  # Teacher.round: a CLM round
         person='student_id', person_label='children', period_of_registration='round_id',
         checks=(('same_round', 'round_id', 'r.round_id IS NOT DISTINCT FROM {v}'),
+                ('same_year', 'year', 'r.round_id = ANY({rounds})'),
                 ('same_partner', 'partner_id', 'r.partner_id IS NOT DISTINCT FROM {v}'),
-                ('same_school', 'school_id', 'r.school_id IS NOT DISTINCT FROM {v}'))),
+                ('same_school', 'school_id', 'r.school_id IS NOT DISTINCT FROM {v}')),
+        verifying_periods=('year',), period_fallbacks=(('year', 'round_id'),)),
     # Youth: the period is a reporting year (youth rounds are not tied to a year, so a view's round_id cannot
     # choose one); the year agreement is shown, not required (the view's own year decides, SPEC D1); the key
     # must agree on partner or deleted, since enrolment and registration ids overlap as numbers.
@@ -118,20 +135,38 @@ SOURCES = {
                 ('same_partner', 'partner_id', 'r.partner_id IS NOT DISTINCT FROM {v}'),
                 ('same_deleted', 'deleted', 'r.deleted::text IS NOT DISTINCT FROM lower({v}::text)')),
         joins='LEFT JOIN youth_year yy ON yy.id = r.year_id',
-        cross_checks=('same_partner', 'same_deleted'), period_gate=False),
+        cross_checks=('same_partner', 'same_deleted'), gated_periods=()),
 }
 PERIOD_CHECKS = {'round_id': 'same_round', 'year_id': 'same_year', 'year': 'same_year'}
 CROSS_MATCH = 0.95  # youth: share of rows whose partner / deleted agree with the registration's
 
 
 def options(programme):
-    """``FIGURES_POWER_BI[programme]`` over the defaults; unknown values fall back to the default."""
+    """``FIGURES_POWER_BI[programme]`` over the defaults; unknown values fall back to the default, and a
+    ``period`` is taken only from the programme's own list (``PERIODS``)."""
     chosen = dict(DEFAULTS.get(programme, {}))
     given = (getattr(settings, 'FIGURES_POWER_BI', None) or {}).get(programme) or {}
+    choices = dict(CHOICES, period=PERIODS.get(programme, ()))
     for name, value in given.items():
-        if name in CHOICES and value in CHOICES[name]:
+        if name in choices and value in choices[name]:
             chosen[name] = value
     return chosen
+
+
+YEAR_IN_NAME = re.compile(r'(?<!\d)((?:19|20)\d{2})(?!\d)')  # "Bridging 2025-2026" -> 2025
+
+
+def bridging_year(the_round):
+    """(year, how) of a CLM round for Dirasa: the year of its Bridging start date ('start_date'), else the
+    first four-digit year in its name ('name'), else (None, None): the round is in no year. A round spanning
+    two years belongs to the year of its start only."""
+    start = getattr(the_round, 'start_date_bridging', None)
+    if start is not None:
+        return start.year, 'start_date'
+    found = YEAR_IN_NAME.search(getattr(the_round, 'name', None) or '')
+    if found:
+        return int(found.group(1)), 'name'
+    return None, None
 
 
 def min_match():
@@ -392,21 +427,29 @@ def key_check(source, key, period_column, values, names, columns):
     Over the whole view when the period comes from the registration (else "found" would be certain).
     ``rows`` and the comparisons count the rows with a key; ``null_keys`` the rows whose key is blank
     (e.g. an enrolment whose registration was removed): they point to no registration, the population
-    leaves them out, and they say nothing about whether the column is the registration id."""
+    leaves them out, and they say nothing about whether the column is the registration id. A check's SQL may
+    name the period's rounds (``{rounds}``, Dirasa's ``same_year``): computed only when ``values`` lists them."""
     sources, where, params = _from_view(source, key, period_column, values, names,
                                         whole=period_column == 'registration')
     checks = []  # (name, column, sql): the first comparison of each name whose column the view has
     for name, column, sql in source.checks:
+        if '{rounds}' in sql and not isinstance(values, list):
+            continue
         if column in columns and name not in {c[0] for c in checks}:
             checks.append((name, column, sql))
     keyed = 'v.%s IS NOT NULL' % quote(key)
     select = ['COUNT(*) FILTER (WHERE %s)' % keyed, 'COUNT(DISTINCT v.%s)' % quote(key), 'COUNT(r.id)']
+    select_params = []  # the SELECT list's parameters, before the WHERE's
     for name, column, sql in checks:
-        select.append('COUNT(*) FILTER (WHERE %s AND %s)' % (keyed, sql.format(v='v.%s' % quote(column))))
+        if '{rounds}' in sql:
+            select_params.append(int_array(values))
+        select.append('COUNT(*) FILTER (WHERE %s AND %s)' % (
+            keyed, sql.format(v='v.%s' % quote(column), rounds='%s::int[]')))
     select.append('COUNT(*) FILTER (WHERE r.deleted)')
     select.append('COUNT(*) FILTER (WHERE v.%s IS NULL)' % quote(key))
     sql = 'SELECT %s FROM %s LEFT JOIN %s r ON r.id = v.%s %s WHERE %s' % (
         ', '.join(select), sources, quote(source.table), quote(key), source.joins, where)
+    params = select_params + list(params)
     with engine.read_only_cursor() as cursor:
         cursor.execute(sql, params)
         record = cursor.fetchone()
@@ -430,13 +473,17 @@ def judge(source, check, period_column, key='id'):
     if check['found'] < threshold * rows:
         return "key check: %d%% of the view's ids are registrations" % (100 * check['found'] // rows), False
     verified = False
-    period_check = PERIOD_CHECKS.get(period_column) if source.period_gate else None
+    period_check = PERIOD_CHECKS.get(period_column)
     if period_check and check.get(period_check) is not None:
-        if check[period_check] < threshold * rows:
-            what = 'round' if period_check == 'same_round' else 'year'
-            return "key check: %d%% of the view's rows have the registration's %s" % (
-                100 * check[period_check] // rows, what), False
-        verified = True
+        reached = check[period_check] >= threshold * rows
+        if period_column in source.gated_periods:
+            if not reached:
+                what = 'round' if period_check == 'same_round' else 'year'
+                return "key check: %d%% of the view's rows have the registration's %s" % (
+                    100 * check[period_check] // rows, what), False
+            verified = True
+        elif period_column in source.verifying_periods:  # shown, not required: the view's own year decides
+            verified = reached
     for name in source.cross_checks:
         if check.get(name) is not None:
             if check[name] < CROSS_MATCH * rows:
@@ -477,7 +524,7 @@ def _read(source, population, columns, values, names):
 def population(programme, period, *, round_ids=None, year=None, rule=None):
     """The view's population for ``period`` (view mode), or rule mode with the reason.
 
-    ``round_ids``: the period's rounds (Makani, Bridging); ``year``: the youth Year (None with no
+    ``round_ids``: the period's rounds (Makani's year, Bridging's year); ``year``: the youth Year (None with no
     ``round_ids``: every row, the "all" period); ``rule``: a queryset of the registrations the caller's
     own rule counts for the period (asked only when the view has no row for the period)."""
     source, chosen = SOURCES[programme], options(programme)
@@ -523,9 +570,15 @@ def population(programme, period, *, round_ids=None, year=None, rule=None):
     out.period_column = next((c for c in source.periods if c in columns), 'registration') if values else None
     try:
         reason, preferred = '', None
+        fallbacks = dict(source.period_fallbacks)
         for key in integer_keys:
             out.key = key
             out.key_check = key_check(source, key, out.period_column, values, names, columns)
+            instead = fallbacks.get(out.period_column)
+            if not out.key_check['rows'] and instead in columns:
+                # a year column that cannot name the year (e.g. "2025-2026"): the view's rounds of the year
+                out.period_column = instead
+                out.key_check = key_check(source, key, instead, values, names, columns)
             reason, verified = judge(source, out.key_check, out.period_column, key)
             out.key_check['verified'] = verified
             if not reason:
@@ -567,8 +620,9 @@ def _flags(programme, population):
                 ('no_round', 'r.round_id IS NULL', []), ('no_child', 'r.child_id IS NULL', []),
                 ('other_year', *other)]
     if programme == 'bridging':
+        other = ('r.round_id IS NOT NULL AND r.round_id <> ALL(%s::int[])', [int_array(values or [])])
         return [('deleted', 'r.deleted', []), ('no_student', 'r.student_id IS NULL', []),
-                ('other_round', 'r.round_id IS NULL OR r.round_id <> ALL(%s::int[])', [int_array(values or [])])]
+                ('no_round', 'r.round_id IS NULL', []), ('other_year', *other)]
     enrolled = 'SELECT 1 FROM youth_enrolledprograms e WHERE e.registration_id = r.id'
     other = ('r.year_id IS NOT NULL AND r.year_id <> ALL(%s::int[])', [int_array(values)]) if values else ('FALSE', [])
     return [('deleted', 'r.deleted', []), ('no_year', 'r.year_id IS NULL', []), ('other_year', *other),
@@ -658,10 +712,13 @@ def _period_meta_of(programme, values, column, alias):
     if programme == 'bridging':
         from student_registration.schools.models import CLMRound
 
-        return {r.id: {'id': r.id, 'name': r.name, 'current': r.current_round_bridging,
-                       'current_year': r.current_year, 'start_date': _iso(r.start_date_bridging),
-                       'end_date': _iso(r.end_date_bridging)}
-                for r in CLMRound.objects.using(alias).filter(id__in=[v for v in values if isinstance(v, int)])}
+        out = {}
+        for r in CLMRound.objects.using(alias).filter(id__in=[v for v in values if isinstance(v, int)]):
+            year, year_from = bridging_year(r)
+            out[r.id] = {'id': r.id, 'name': r.name, 'current': r.current_round_bridging,
+                         'current_year': r.current_year, 'start_date': _iso(r.start_date_bridging),
+                         'end_date': _iso(r.end_date_bridging), 'year': year, 'year_from': year_from}
+        return out
     from student_registration.youth.models import Year
 
     years = list(Year.objects.using(alias))
@@ -676,9 +733,13 @@ def _period_meta_of(programme, values, column, alias):
 
 
 def periods(programme, population):
-    """The view's rows per round (year) over the whole view, with each round's metadata."""
+    """The view's rows per round (year) over the whole view, with each round's metadata. Dirasa's are always
+    per round (the view's round_id, else the registration's), even when the view's year chose the period: the
+    rounds of every year, each with its own year."""
     source = SOURCES[programme]
     key, column = quote(population.key), population.period_column
+    if programme == 'bridging':
+        column = 'round_id' if 'round_id' in _columns(population.catalogue) else 'registration'
     group = 'v.%s' % quote(column) if column not in (None, 'registration') else 'r.%s' % quote(
         source.period_of_registration)
     sql = ('SELECT %(group)s, COUNT(*), COUNT(DISTINCT v.%(key)s), COUNT(*) FILTER (WHERE r.deleted) '
@@ -689,7 +750,7 @@ def periods(programme, population):
         found = cursor.fetchall()
     meta = _period_meta(programme, [v for v, *_rest in found if v is not None], column)
     empty = {'mscc': ('id', 'name', 'year', 'current', 'start_date', 'end_date'),
-             'bridging': ('id', 'name', 'current', 'current_year', 'start_date', 'end_date'),
+             'bridging': ('id', 'name', 'current', 'current_year', 'start_date', 'end_date', 'year', 'year_from'),
              'youth': ('id', 'name', 'current')}[programme]
     out = []
     for value, rows, ids, deleted in found:

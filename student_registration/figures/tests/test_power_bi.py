@@ -20,7 +20,7 @@ from student_registration.clm.models import Bridging
 from student_registration.figures import education, engine, power_bi
 from student_registration.locations.models import Center, ProgramStaff
 from student_registration.mscc import models as m
-from student_registration.schools.models import PartnerOrganization, School
+from student_registration.schools.models import CLMRound, PartnerOrganization, School
 from student_registration.students.models import Student, Teacher
 
 from . import test_education_figures as base
@@ -476,10 +476,10 @@ def test_bridging_counts_the_views_rows(bridging, dirasa_more):
         "CASE WHEN b.learning_result = 'dropout' THEN %d ELSE b.school_id END AS school_id, "
         's.first_name AS student_first_name FROM %s b JOIN %s s ON s.id = b.student_id'
         % (other.id, school_b.id, Bridging._meta.db_table, Student._meta.db_table))
-    payload = build('bridging', 'Bridging 2025')
+    payload = build('bridging', '2025')
     power = payload['power_bi']
     assert power['base']['mode'] == 'view' and power['base']['overrides'] == ['partner', 'school']
-    assert power['base']['period_rule'] == 'round'
+    assert power['base']['period_rule'] == 'start_year'
     enrolment = payload['cubes']['enrolment']
     assert enrolment['measures'] == ['registrations', 'pre_tested', 'post_tested', 'view_rows']
     assert total(enrolment, 'registrations') == 2  # the deleted one in the view is left out
@@ -493,11 +493,12 @@ def test_bridging_counts_the_views_rows(bridging, dirasa_more):
     assert (totals['view_rows'], totals['deleted_in_view'], totals['counted'], totals['counted_children']) == (
         3, 1, 2, 2)
     assert power['reconciliation']['by'] == ['in_view', 'in_before', 'counted', 'deleted', 'no_student',
-                                             'other_round']
+                                             'no_round', 'other_year']
     check = power['key_check']
     assert (check['rows'], check['same_round'], check['same_partner'], check['same_school']) == (3, 3, 2, 2)
-    assert set(check) == {'rows', 'ids', 'found', 'same_round', 'same_partner', 'same_school', 'deleted_rows',
-                          'null_keys', 'max_rows_per_id', 'conflicting', 'verified'}
+    assert set(check) == {'rows', 'ids', 'found', 'same_round', 'same_year', 'same_partner', 'same_school',
+                          'deleted_rows', 'null_keys', 'max_rows_per_id', 'conflicting', 'verified'}
+    assert check['same_year'] is None  # the view has no year column
     assert payload['school_totals'] == {
         'listed': {'schools': 2, 'children': 100, 'children_male': 40, 'children_female': 60,
                    'children_lebanese': 30, 'children_non_lebanese': 70, 'cwd': 5, 'dirasa_children': 12,
@@ -539,7 +540,7 @@ def test_the_teachers_profile_counts_the_rounds_of_the_period_however_many_round
         % Bridging._meta.db_table)
     run('CREATE VIEW vw_teacher_data AS SELECT t.id, t.round_id, t.is_active_current_round FROM %s t'
         % Teacher._meta.db_table)
-    payload = build('bridging', 'Bridging 2025')
+    payload = build('bridging', '2025')
     teachers = payload['power_bi']['related']['vw_teacher_data']
     assert teachers == {'exists': True, 'by': ['round_id', 'is_active_current_round'], 'measures': ['rows', 'ids'],
                         'rows': [[current.id, 'yes', 5, 5]], 'truncated': False, 'rounds': [current.id]}
@@ -548,7 +549,7 @@ def test_the_teachers_profile_counts_the_rounds_of_the_period_however_many_round
     # a view of every round with no round column: every row, as before
     run('DROP VIEW vw_teacher_data')
     run('CREATE VIEW vw_teacher_data AS SELECT t.id, t.is_active_current_round FROM %s t' % Teacher._meta.db_table)
-    teachers = build('bridging', 'Bridging 2025')['power_bi']['related']['vw_teacher_data']
+    teachers = build('bridging', '2025')['power_bi']['related']['vw_teacher_data']
     assert teachers['rows'] == [['no', 30, 30], ['yes', 35, 35]] and 'rounds' not in teachers
     # Makani's related views are not by the programme's rounds (no round_profiled)
     assert power_bi.SOURCES['mscc'].round_profiled == ()
@@ -568,13 +569,13 @@ def test_a_cut_profile_keeps_the_newest_rounds(seeded):
 
 
 def test_bridging_without_a_view_counts_as_before(bridging):
-    payload = build('bridging', 'Bridging 2025')
+    payload = build('bridging', '2025')
     power = payload['power_bi']
     assert power['base']['mode'] == 'rule' and power['base']['reason'] == 'view missing'
     assert total(payload['cubes']['enrolment'], 'registrations') == 2
     assert payload['school_totals']['all']['schools'] == 1
     t, f = True, False
-    assert bucket(power['reconciliation']) == {(f, t, t, f, f, f): [2, 0, 2]}
+    assert bucket(power['reconciliation']) == {(f, t, t, f, f, f, f): [2, 0, 2]}
 
 
 # ------------------------------------------------------------------------------------- youth
@@ -621,7 +622,7 @@ def test_options_ignore_unknown_values(settings):
     settings.FIGURES_POWER_BI = {'mscc': {'base': 'nonsense', 'deleted': 'include'}}
     assert power_bi.options('mscc') == {'base': 'auto', 'deleted': 'include', 'period': 'round_year'}
     del settings.FIGURES_POWER_BI
-    assert power_bi.options('bridging') == {'base': 'auto', 'deleted': 'exclude'}
+    assert power_bi.options('bridging') == {'base': 'auto', 'deleted': 'exclude', 'period': 'start_year'}
 
 
 def test_a_past_year_has_no_periods_nor_related_profiles(seeded):
@@ -704,12 +705,12 @@ def test_every_read_of_a_bridging_count_runs_under_the_limits(bridging, dirasa_m
         % (Bridging._meta.db_table, ' WHERE FALSE' if empty else ''))
     run('CREATE VIEW vw_teacher_data AS SELECT t.id, t.round_id FROM students_teacher t')
     try:
-        payload, tables = read_under_the_limits(lambda: build('bridging', 'Bridging 2025'), settings)
+        payload, tables = read_under_the_limits(lambda: build('bridging', '2025'), settings)
     finally:
         run('DROP VIEW vw_bridging_data')
         run('DROP VIEW vw_teacher_data')
     reason = payload['power_bi']['base']['reason']
-    assert reason == ('the view has no rows for Bridging 2025 while 2 registrations do' if empty else '')
+    assert reason == ('the view has no rows for 2025 while 2 registrations do' if empty else '')
     assert payload['power_bi']['related']['vw_teacher_data']['rows'] and payload['school_totals']
     assert {'vw_bridging_data', 'vw_teacher_data', 'clm_bridging', 'schools_clmround', 'students_teacher',
             'SUM("schools_school', 'pg_class'} <= tables
@@ -739,7 +740,7 @@ def test_the_views_registration_ids_are_never_in_the_sql_text(seeded, bridging):
     run('CREATE VIEW vw_bridging_data AS SELECT b.id, b.round_id, b.partner_id, b.school_id FROM %s b'
         % Bridging._meta.db_table)
     cases = (('mscc', '2025', m.Registration.objects.filter(round=seeded['current']).exclude(type='TLS')),
-             ('bridging', 'Bridging 2025', Bridging.objects.filter(round=bridging['round'])))
+             ('bridging', '2025', Bridging.objects.filter(round=bridging['round'])))
     for name, year, in_view in cases:
         payload, sent = statements_sent(lambda: build(name, year))
         assert payload['power_bi']['base']['mode'] == 'view'
@@ -757,7 +758,7 @@ def _rows_out(node, kind):
     return own + sum(_rows_out(child, kind) for child in node.get('Plans') or ())
 
 
-@pytest.mark.parametrize('name, year', [('mscc', '2025'), ('bridging', 'Bridging 2025')])
+@pytest.mark.parametrize('name, year', [('mscc', '2025'), ('bridging', '2025')])
 def test_each_services_branch_reads_the_views_registrations_only(seeded, bridging, name, year):
     """The services block is one UNION ALL branch per service table (Makani) or per service answer (Bridging).
     PostgreSQL does not push the join with the view's population, outside the union, into its branches: each
@@ -817,12 +818,12 @@ def test_a_failing_part_is_logged_by_its_class_never_with_the_exception(seeded, 
                (education.Makani, '_pending_round'), (education.Bridging, '_school_totals')]
     for target, name in failing:
         with mock.patch.object(target, name, _timeout):
-            for programme, year in (('mscc', '2025'), ('bridging', 'Bridging 2025')):
+            for programme, year in (('mscc', '2025'), ('bridging', '2025')):
                 build(programme, year)
     failures = [r.getMessage() for r in caplog.records if r.levelno >= logging.ERROR]
     for part in ('figures block registrations failed', 'figures cube enrolment failed',
                  'the view population failed', 'the power_bi block failed', 'figures mscc 2025: pending_round failed',
-                 'figures bridging Bridging 2025: school_totals failed'):
+                 'figures bridging 2025: school_totals failed'):
         assert any(text.startswith(part) or (': ' + part) in text for text in failures), part
     assert all(text.endswith('OperationalError: canceling statement due to statement timeout') for text in failures)
     assert [r for r in caplog.records if r.exc_info] == []  # nothing an error reporter could unfold
@@ -926,7 +927,7 @@ def test_the_time_limit_is_never_one_parts_failure(seeded, bridging, programme, 
     mscc_view()
     with mock.patch.object(target, name, side_effect=side_effect):
         with pytest.raises(SoftTimeLimitExceeded):
-            build(programme, '2025' if programme == 'mscc' else 'Bridging 2025')
+            build(programme, '2025')
 
 
 # ---------------------------------------------------------------- a view not described
@@ -950,3 +951,149 @@ def test_a_view_that_could_not_be_described_is_unknown_not_missing(seeded):
                                'catalogue vw_tls_data: RuntimeError: canceling statement due to statement timeout']
     with mock.patch.object(power_bi, 'population', side_effect=RuntimeError('boom')):
         assert build()['power_bi']['catalogue']['vw_mscc_data'] == {'exists': None, 'error': 'not described'}
+
+
+# ------------------------------------------------------------------ Dirasa by year (format 4)
+def _dirasa_year(bridging, places):
+    """The fixture's round of 2025 and two rounds of 2026, the second flagged current: child p in both rounds
+    of 2026, child q in the first."""
+    CLMRound.objects.filter(pk=bridging['round'].pk).update(current_round_bridging=False)
+    r1 = CLMRound.objects.create(name='Round 1 2026', start_date_bridging=datetime.date(2026, 1, 12))
+    r2 = CLMRound.objects.create(name='Round 2 2026', start_date_bridging=datetime.date(2026, 9, 1),
+                                 current_round_bridging=True)
+    p = Student.objects.create(first_name='Secret', sex='Female', birthday_year='2015', nationality=places['syrian'])
+    q = Student.objects.create(first_name='Secret', sex='Male', birthday_year='2013', nationality=places['syrian'])
+    for student, the_round in ((p, r1), (q, r1), (p, r2)):
+        Bridging.objects.create(student=student, round=the_round, partner=bridging['partner'],
+                                school=bridging['school'], governorate=places['akkar'])
+    return r1, r2
+
+
+def test_bridging_current_rounds_period(bridging, places, settings):
+    """``current_rounds`` (the current year only): the Bridging rounds flagged current_year, as Compiler's own
+    Bridging list, whatever their start year; another CLM programme's round flagged current_year is not one."""
+    r1, r2 = _dirasa_year(bridging, places)
+    CLMRound.objects.filter(pk__in=[bridging['round'].pk, r2.pk]).update(current_year=True)
+    CLMRound.objects.create(name='BLN 2026', current_year=True)  # no Bridging start, registration or teacher
+    settings.FIGURES_POWER_BI = {'bridging': {'period': 'current_rounds'}}
+    payload = build('bridging', '2026')
+    assert payload['power_bi']['base']['period_rule'] == 'current_rounds'
+    assert [(r['name'], r['year'], r['year_from'], r['current_year']) for r in payload['rounds']] == [
+        ('Bridging 2025', 2025, 'start_date', True), ('Round 2 2026', 2026, 'start_date', True)]
+    assert total(payload['cubes']['enrolment'], 'registrations') == 3  # the 2025 round's two, R2's one
+    past = build('bridging', '2025')  # a past year: always the rounds of its year
+    assert past['power_bi']['base']['period_rule'] == 'start_year'
+    assert [r['name'] for r in past['rounds']] == ['Bridging 2025']
+    CLMRound.objects.update(current_year=False)  # none flagged: the rounds of the year, and said so
+    payload = build('bridging', '2026')
+    assert payload['power_bi']['base']['period_rule'] == 'start_year'
+    assert [r['name'] for r in payload['rounds']] == ['Round 1 2026', 'Round 2 2026']
+    assert total(payload['cubes']['enrolment'], 'registrations') == 3
+
+
+def test_bridging_view_mode_reads_the_years_rounds(bridging, places, settings):
+    """View mode for a year: the view's rows whose round is a round of the year, or, when the view has a year
+    column (any type), the rows of that year, the view's year deciding; a year column that names no year falls
+    back to the rounds. The rows per round stay per round."""
+    r1, r2 = _dirasa_year(bridging, places)
+    Teacher.objects.create(first_name='Secret', sex='Male', round=r1, school=bridging['school'])
+    run('CREATE VIEW vw_teacher_data AS SELECT t.id, t.round_id FROM students_teacher t')
+    view = ('CREATE VIEW vw_bridging_data AS SELECT b.id, b.round_id, b.partner_id, b.school_id%s, '
+            's.first_name AS student_first_name FROM ' + Bridging._meta.db_table + ' b JOIN '
+            + Student._meta.db_table + ' s ON s.id = b.student_id JOIN schools_clmround cr ON cr.id = b.round_id')
+    t, f = True, False
+
+    run(view % '')
+    payload = build('bridging', '2026')
+    power = payload['power_bi']
+    assert (power['base']['mode'], power['base']['period_column'], power['base']['reason']) == ('view', 'round_id', '')
+    check = power['key_check']
+    assert (check['rows'], check['same_round'], check['same_year'], check['verified']) == (3, 3, None, True)
+    assert total(payload['cubes']['enrolment'], 'registrations') == 3  # not the 2025 round's rows
+    assert table(payload['blocks']['registrations'])[()] == [2, 0, 0]
+    reconciliation = power['reconciliation']
+    assert reconciliation['period'] == '2026'
+    assert reconciliation['by'] == ['in_view', 'in_before', 'counted', 'deleted', 'no_student', 'no_round',
+                                    'other_year']
+    assert bucket(reconciliation) == {(t, t, t, f, f, f, f): [3, 3, 2]}
+    assert power['related']['vw_teacher_data']['rounds'] == sorted([r1.id, r2.id])
+    assert power['related']['vw_teacher_data']['rows'] == [[r1.id, 1, 1]]
+    expected_periods = [('Bridging 2025', 2025, 'start_date', 3), ('Round 1 2026', 2026, 'start_date', 2),
+                        ('Round 2 2026', 2026, 'start_date', 1)]
+    assert [(p['name'], p['year'], p['year_from'], p['view_rows']) for p in power['periods']] == expected_periods
+
+    # an integer year column: it chooses the rows, even one whose year disagrees with its round
+    moved = Bridging.objects.get(round=bridging['round'], student__sex='Female')  # a 2025 registration
+    run('DROP VIEW vw_bridging_data')
+    run(view % (', CASE WHEN b.id = %d THEN 2026 ELSE EXTRACT(YEAR FROM cr.start_date_bridging)::int END AS year'
+                % moved.id))
+    payload = build('bridging', '2026')
+    power = payload['power_bi']
+    assert (power['base']['mode'], power['base']['period_column']) == ('view', 'year')
+    check = power['key_check']
+    assert (check['rows'], check['same_round'], check['same_year'], check['verified']) == (4, 4, 3, False)
+    assert total(payload['cubes']['enrolment'], 'registrations') == 4
+    assert total(payload['cubes']['enrolment'], 'registrations', round=bridging['round'].id) == 1
+    assert table(payload['blocks']['registrations'])[()] == [3, 1, 0]
+    assert bucket(power['reconciliation'])[(t, f, t, f, f, f, t)] == [1, 1, 1]  # of another year, counted
+    assert [(p['name'], p['year'], p['year_from'], p['view_rows']) for p in power['periods']] == expected_periods
+    settings.FIGURES_POWER_BI_MIN_MATCH = 0.7  # same_year (3 of 4) reaches it: the key is verified
+    assert build('bridging', '2026')['power_bi']['key_check']['verified'] is True
+    settings.FIGURES_POWER_BI_MIN_MATCH = 0.99
+
+    # a text year column holding the year: used likewise
+    run('DROP VIEW vw_bridging_data')
+    run(view % ', EXTRACT(YEAR FROM cr.start_date_bridging)::int::text AS year')
+    power = build('bridging', '2026')['power_bi']
+    assert (power['base']['mode'], power['base']['period_column']) == ('view', 'year')
+    assert (power['key_check']['rows'], power['key_check']['same_year'], power['key_check']['verified']) == (3, 3, True)
+
+    # a text year column that names no year ("2025-2026"): the view's rounds of the year, not "no rows for 2026"
+    run('DROP VIEW vw_bridging_data')
+    run(view % ", '2025-2026'::text AS year")
+    payload = build('bridging', '2026')
+    power = payload['power_bi']
+    assert (power['base']['mode'], power['base']['period_column'], power['base']['reason']) == ('view', 'round_id', '')
+    assert (power['key_check']['rows'], power['key_check']['same_year']) == (3, 3)
+    assert total(payload['cubes']['enrolment'], 'registrations') == 3
+
+
+def test_options_take_each_programmes_own_periods(settings):
+    settings.FIGURES_POWER_BI = {'mscc': {'period': 'start_year'}, 'bridging': {'period': 'round_year'},
+                                 'youth': {'period': 'current_rounds'}}
+    assert power_bi.options('mscc')['period'] == 'round_year'  # another programme's value: the default
+    assert power_bi.options('bridging')['period'] == 'start_year'
+    assert 'period' not in power_bi.options('youth')
+    settings.FIGURES_POWER_BI = {'mscc': {'period': 'current_rounds'}, 'bridging': {'period': 'current_rounds'}}
+    assert power_bi.options('mscc')['period'] == power_bi.options('bridging')['period'] == 'current_rounds'
+
+
+@pytest.mark.parametrize('with_view', [False, True], ids=['rule mode', 'view mode'])
+def test_tls_registrations_and_their_services_stay_out(seeded, with_view):
+    """Neuro's TLS workflows (e00ea37a) store TLS registrations in the MSCC tables (``type = 'TLS'``, forced by
+    the TLS forms) and write their services into the MSCC service tables. Makani's rule leaves them out with
+    their services, and so does the view Power BI reads (TLS has its own views): a later change to how TLS is
+    stored fails here."""
+    if with_view:
+        mscc_view()  # STANDARD leaves TLS out
+    before = build()
+    tls = seeded['tls']
+    m.PSSService.objects.create(registration_id=tls.id)
+    m.HealthNutritionService.objects.create(registration_id=tls.id, immunization_record_screened='yes',
+                                            child_immunization_screened='yes')
+    m.EducationService.objects.create(registration_id=tls.id, education_program='RS Grade 3')
+    # a TLS registration without a round: not waiting for a Makani cycle
+    m.Registration.objects.create(child=tls.child, partner=seeded['partner'], center=seeded['center'], type='TLS')
+    after = build()
+    assert after['power_bi']['base']['mode'] == ('view' if with_view else 'rule')
+    assert after['blocks']['services'] == before['blocks']['services']
+    assert table(after['blocks']['services'], 'service') == {('Child protection (PSS)',): [1], ('Education',): [1]}
+    assert table(after['blocks']['education_programmes'], 'education_programme') == {('BLN Level 1',): [1]}
+    enrolment = after['cubes']['enrolment']
+    assert enrolment['rows'] == before['cubes']['enrolment']['rows']
+    assert total(enrolment, 'registrations', package='TLS') == 0 and total(enrolment, 'immunized') == 0
+    reconciliation = after['power_bi']['reconciliation']
+    tls_at, counted_at = reconciliation['by'].index('tls'), reconciliation['by'].index('counted')
+    tls_rows = [row for row in reconciliation['rows'] if row[tls_at]]
+    assert tls_rows and not any(row[counted_at] for row in tls_rows)
+    assert after['pending_round'] == before['pending_round'] == 1  # the boy only

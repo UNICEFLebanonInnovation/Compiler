@@ -1,4 +1,4 @@
-"""``manage.py refresh_neurodb_figures [--programme mscc|bridging|youth] [--year 2025-2026|all]``: count now."""
+"""``manage.py refresh_neurodb_figures [--programme mscc|bridging|youth] [--year 2026|all]``: count now."""
 
 from django.core.management.base import BaseCommand, CommandError
 
@@ -11,7 +11,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--programme', choices=sorted(snapshots.all_programmes()),
                             help='one programme (default: every programme, youth included)')
-        parser.add_argument('--year', help="the round or year's name (default: the current one); "
+        parser.add_argument('--year', help="the year's name (default: the current one), e.g. 2026; "
                                            "youth also takes 'all' (every year)")
 
     def handle(self, *args, **options):

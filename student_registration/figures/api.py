@@ -1,7 +1,9 @@
 """The education figures API, for NeuroDB, which decides when they are counted.
 
 * GET /api/figures/ : the education programmes (Makani, Bridging), their payload format, their years,
-  and per year whether it is counted, in which format, and whether it is stale (snapshots.stale).
+  and per year whether it is counted, in which format, and whether it is stale (snapshots.stale). The
+  years of both are year names ("2026"): Bridging's are the years of its CLM rounds (format 4; a round's
+  name is no year: 404 here, 400 for a run).
 * GET /api/figures/<programme>/?year= : the latest stored counts (one indexed SELECT; it never counts;
   404 when not counted yet). Education programmes only: youth answers 404.
 * POST /api/figures/runs/ : ask for a count. 202 with the run; 200 with the run already queued or running.

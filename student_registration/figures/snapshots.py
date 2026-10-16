@@ -8,10 +8,10 @@ Programmes: ``programmes()`` are the education ones (Makani, Bridging), the only
 index and /api/figures/<programme>/ list; ``all_programmes()`` adds Youth, which a run may count (its
 snapshots are served by /api/youth/indicator-figures/). A snapshot is stale when it was counted in an
 older payload format of its programme, under other FIGURES_POWER_BI settings than today's (the ``base``
-switch, ``deleted``, Makani's ``period``: a past period follows a change at the next run, not a week
-later), with the rule because its view could not be read while it can be now (a GRANT given since, or the
-view created again by hand: likewise), or is older than FIGURES_MAX_AGE_HOURS (the current period, and
-youth's "all") or FIGURES_PAST_MAX_AGE_HOURS (a past period: recounted weekly).
+switch, ``deleted``, the ``period`` setting of Makani and Bridging: a past period follows a change at the
+next run, not a week later), with the rule because its view could not be read while it can be now (a GRANT
+given since, or the view created again by hand: likewise), or is older than FIGURES_MAX_AGE_HOURS (the
+current period, and youth's "all") or FIGURES_PAST_MAX_AGE_HOURS (a past period: recounted weekly).
 """
 
 from __future__ import annotations
@@ -96,8 +96,10 @@ def stale(definition, year, format_version, created_at, current_year=None, base=
 
 def settings_changed(programme, base, current):
     """Whether the FIGURES_POWER_BI settings that chose a snapshot's rows (its ``power_bi.base``) differ
-    from today's: the ``base`` switch (e.g. the way back to the rule), ``deleted``, and Makani's ``period``
-    (the current year only: a past year always counts the rounds of its year)."""
+    from today's: the ``base`` switch (e.g. the way back to the rule), ``deleted``, and the ``period`` of
+    Makani and Bridging (the current year only: a past year always counts the rounds of its year). With
+    Bridging's ``current_rounds`` and no round flagged, the current year reports ``start_year`` and stays
+    stale: NeuroDB asks for the current year at every run anyway."""
     from . import power_bi
 
     if not isinstance(base, dict) or programme not in power_bi.DEFAULTS:
@@ -105,7 +107,7 @@ def settings_changed(programme, base, current):
     chosen = power_bi.options(programme)
     if base.get('setting') != chosen['base'] or base.get('deleted') != chosen['deleted']:
         return True
-    return programme == 'mscc' and current and base.get('period_rule') != chosen['period']
+    return 'period' in chosen and current and base.get('period_rule') != chosen['period']
 
 
 def view_readable_again(programme, base, readable=None):
