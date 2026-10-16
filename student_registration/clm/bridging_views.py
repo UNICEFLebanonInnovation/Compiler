@@ -79,6 +79,7 @@ from .serializers import (
     CBECESerializer,
     BridgingSerializer
 )
+from .bridging_access import temporary_bridging_governorates
 from .utils import is_allowed_create, is_allowed_edit,  get_outreach_child
 from student_registration.users.templatetags.custom_tags import has_group
 from student_registration.students.utils import generate_one_unique_id
@@ -178,9 +179,14 @@ def bridging_list_queryset(request):
         and not is_world_learning
     ):
         if request.user.partner:
-            qs = qs.filter(partner_id=request.user.partner_id)
+            own_records = Q(partner_id=request.user.partner_id)
             if request.user.school:
-                qs = qs.filter(school_id=request.user.school_id)
+                own_records &= Q(school_id=request.user.school_id)
+            # TODO: Remove Temporary access
+            governorate_ids = temporary_bridging_governorates(request.user)
+            if governorate_ids:
+                own_records |= Q(partner_id=3, governorate_id__in=governorate_ids)
+            qs = qs.filter(own_records)
         else:
             qs = qs.none()
 
