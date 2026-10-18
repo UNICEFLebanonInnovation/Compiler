@@ -5,6 +5,9 @@ from __future__ import unicode_literals, absolute_import, division
 
 import json
 import logging
+import os
+import threading
+import time
 
 import requests
 from django.conf import settings
@@ -12,6 +15,25 @@ from django.conf import settings
 from .constants import CONTRACT_VERSION, SOURCE_SYSTEM_COMPILER
 
 logger = logging.getLogger(__name__)
+_connections = threading.local()
+
+
+def _new_session():
+    session = requests.Session()
+    adapter = requests.adapters.HTTPAdapter(pool_connections=4, pool_maxsize=1,
+                                            pool_block=True, max_retries=0)
+    session.mount('https://', adapter)
+    session.mount('http://', adapter)
+    return session
+
+
+def pooled_session():
+    # Never share a mutable Session between threads or inherit a live pool
+    # across Celery's process fork.
+    if getattr(_connections, 'pid', None) != os.getpid():
+        _connections.session = _new_session()
+        _connections.pid = os.getpid()
+    return _connections.session
 
 
 class SyncTransportError(Exception):
@@ -35,11 +57,34 @@ class SyncClient(object):
         timeout (int): Request timeout in seconds.
     """
 
-    def __init__(self, url=None, token=None, timeout=None):
+    def __init__(self, url=None, token=None, timeout=None, session=None):
         self.url = (url or getattr(settings, 'DATASYNC_TARGET_URL', '') or '').strip()
         self.token = (token or getattr(settings, 'DATASYNC_TARGET_TOKEN', '') or '').strip()
         self.timeout = timeout or getattr(settings, 'DATASYNC_TIMEOUT', 30)
         self.verify = getattr(settings, 'DATASYNC_VERIFY_TLS', True)
+        self.session = session if session is not None else pooled_session()
+
+    def worker_copy(self):
+        client = type(self)(url=self.url, token=self.token, timeout=self.timeout,
+                            session=_new_session())
+        client.verify = self.verify
+        return client
+
+    def close(self):
+        self.session.close()
+
+    def photo_reuse_supported(self):
+        if not getattr(settings, 'DATASYNC_PHOTO_REUSE_ENABLED', True):
+            return False
+        key = (self.url, self.token)
+        cache = getattr(self.session, '_datasync_capabilities', {})
+        previous = cache.get(key)
+        if previous and time.monotonic() - previous[0] < 60:
+            return previous[1]
+        supported = bool(self.ping().get('child_photo_sync', {}).get('verified_reuse'))
+        cache[key] = (time.monotonic(), supported)
+        self.session._datasync_capabilities = cache
+        return supported
 
     def _check(self):
         """Raise when the endpoint or credentials are missing."""
@@ -73,8 +118,9 @@ class SyncClient(object):
         """
         self._check()
         try:
-            response = requests.get(
-                self.url, headers=self.headers, timeout=self.timeout, verify=self.verify
+            response = self.session.get(
+                self.url, headers=self.headers, timeout=self.timeout, verify=self.verify,
+                allow_redirects=False,
             )
         except requests.RequestException as error:
             raise SyncTransportError('cannot reach {}: {}'.format(self.url, error))
@@ -111,7 +157,7 @@ class SyncClient(object):
         try:
             if attachments:
                 headers = {key: value for key, value in self.headers.items() if key != 'Content-Type'}
-                response = requests.post(
+                response = self.session.post(
                     self.url, headers=headers, data={'envelope': json.dumps(body, default=str)},
                     files={key: ('photo', stream, 'application/octet-stream')
                            for key, stream in attachments.items()},
@@ -119,7 +165,7 @@ class SyncClient(object):
                     verify=self.verify, allow_redirects=False,
                 )
             else:
-                response = requests.post(
+                response = self.session.post(
                     self.url, headers=self.headers, data=json.dumps(body, default=str),
                     timeout=self.timeout, verify=self.verify, allow_redirects=False,
                 )

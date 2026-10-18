@@ -36,6 +36,16 @@ SYNC_STATUS = (
 )
 
 
+class SourcePhotoFingerprint(models.Model):
+    """Recomputable checksums of source image versions; never image bytes."""
+
+    student_id = models.CharField(max_length=64, primary_key=True)
+    storage_name = models.TextField()
+    source_version = models.CharField(max_length=64)
+    sha256 = models.CharField(max_length=64)
+    size = models.PositiveIntegerField()
+
+
 class SchoolCenterLink(TimeStampedModel):
     """Which BMA-NFE centre a Compiler school's teachers belong to.
 

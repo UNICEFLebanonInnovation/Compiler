@@ -54,7 +54,7 @@ def student_photo_saved(sender, instance, raw=False, **kwargs):
     if raw or not sync_enabled() or not photo_sync_enabled():
         return
     def push():
-        ids = Registration.objects.filter(student_old=instance.pk).values_list('child_id', flat=True).distinct()
+        ids = Registration.objects.filter(student_old=instance.pk).order_by().values_list('child_id', flat=True).distinct()
         for child_id in ids:
             enqueue_child_photo(child_id)
     _safe(push, 'photos of linked children')

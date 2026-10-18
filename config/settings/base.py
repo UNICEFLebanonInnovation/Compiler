@@ -417,6 +417,9 @@ DATASYNC_ENABLED = env.bool('DATASYNC_ENABLED', default=True)
 DATASYNC_PHOTO_SYNC_ENABLED = DATASYNC_ENABLED  # Compatibility alias; one sync switch
 DATASYNC_PHOTO_MAX_BYTES = env.int('DATASYNC_PHOTO_MAX_BYTES', default=5 * 1024 * 1024)
 DATASYNC_PHOTO_TIMEOUT = env.int('DATASYNC_PHOTO_TIMEOUT', default=60)
+DATASYNC_PHOTO_REUSE_ENABLED = env.bool('DATASYNC_PHOTO_REUSE_ENABLED', default=True)
+# Shared PostgreSQL slots cap in-flight deliveries across all Compiler workers.
+DATASYNC_PARALLEL_UPLOADS = env.int('DATASYNC_PARALLEL_UPLOADS', default=4)
 
 # BMA-NFE's ingest endpoint and the token of its service account.
 DATASYNC_TARGET_URL = env('DATASYNC_TARGET_URL', default='')

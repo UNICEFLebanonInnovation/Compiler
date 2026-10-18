@@ -1,4 +1,4 @@
-"""The photo outbox uses the dedicated multipart endpoint."""
+"""Preserve legacy photo events for conversion into registration deliveries."""
 
 from django.db import migrations, models
 

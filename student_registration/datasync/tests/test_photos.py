@@ -6,7 +6,7 @@ import uuid
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
-from django.test import SimpleTestCase, override_settings
+from django.test import SimpleTestCase, TestCase, override_settings
 from django.utils import timezone
 
 from .. import photos
@@ -68,7 +68,7 @@ class PhotoSenderTests(SimpleTestCase):
 
     def test_missing_and_ambiguous_links(self):
         Registration = Mock()
-        query = Registration.objects.filter.return_value.exclude.return_value.exclude.return_value
+        query = Registration.objects.filter.return_value.exclude.return_value.exclude.return_value.order_by.return_value
         for ids, expected in (([], None), ([7], 7)):
             query.values_list.return_value.distinct.return_value = ids
             with patch.object(photos.apps, 'get_model', return_value=Registration):
@@ -92,8 +92,7 @@ class PhotoSenderTests(SimpleTestCase):
         client = SyncClient(url='https://nfe.example/api/sync/events/', token='test-token')
         response = Mock(status_code=200)
         response.json.return_value = {'results': []}
-        with patch.object(__import__(SyncClient.__module__, fromlist=['requests']).requests,
-                          'post', return_value=response) as post:
+        with patch.object(client.session, 'post', return_value=response) as post:
             client.push([{'event_id': 'test'}], attachments={'photo_test': io.BytesIO(b'image')})
         self.assertEqual(post.call_args.args[0], 'https://nfe.example/api/sync/events/')
         self.assertIn('envelope', post.call_args.kwargs['data'])
@@ -134,3 +133,33 @@ class PhotoSenderTests(SimpleTestCase):
         with patch.object(outbox, '_deliver_now') as deliver:
             callbacks[0]()
         deliver.assert_called_once_with(43)
+
+
+@override_settings(DATASYNC_ENABLED=False)
+class PhotoLinkDatabaseTests(TestCase):
+    """Default Registration ordering must not affect distinct photo identities."""
+
+    def setUp(self):
+        from student_registration.child.models import Child
+        from student_registration.students.models import Student
+        from student_registration.mscc.models import Registration
+        self.student = Student.objects.create(first_name='Photo link fixture', unicef_id='PHOTO-LINK-FIXTURE')
+        self.child = Child.objects.create(first_name='Photo link child')
+        self.first = Registration.objects.create(child=self.child, student_old=self.student.pk)
+        self.second = Registration.objects.create(child=self.child, student_old=self.student.pk)
+
+    def test_two_registrations_pointing_to_same_student_are_not_ambiguous(self):
+        self.assertEqual(photos.linked_student_id(self.child.pk), self.student.pk)
+
+    def test_a_student_save_queues_each_registration_only_once(self):
+        from ..models import SyncEvent
+        with self.settings(DATASYNC_ENABLED=True):
+            self.student.save()
+        queued = list(SyncEvent.objects.filter(resource='mscc.registration').values_list('source_id', flat=True))
+        self.assertCountEqual(queued, [str(self.first.pk), str(self.second.pk)])
+
+    def test_genuinely_different_student_links_still_require_correction(self):
+        self.second.student_old = self.student.pk + 100
+        self.second.save()
+        with self.assertRaises(photos.PhotoSourceError):
+            photos.linked_student_id(self.child.pk)

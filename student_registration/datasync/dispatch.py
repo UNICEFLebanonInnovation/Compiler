@@ -11,9 +11,12 @@ from __future__ import unicode_literals, absolute_import, division
 
 import datetime
 import logging
+from concurrent.futures import ThreadPoolExecutor
+from itertools import groupby
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import connections, close_old_connections
 from django.db.models import Case, F, IntegerField, Value, When
 from django.utils import timezone
 
@@ -26,6 +29,7 @@ from .models import (
     SyncEvent,
 )
 from .serializers import MODEL_FOR_RESOURCE, serialize, wire_timestamp
+from .delivery import guard_events, parallel_uploads
 
 logger = logging.getLogger(__name__)
 
@@ -127,6 +131,55 @@ def _fail_one(event, error, counts, retryable=True):
 
 
 def deliver_events(events, client=None):
+    """Deliver dependency stages with bounded, independently pooled lanes."""
+    totals = {'sent': 0, 'failed': 0, 'abandoned': 0}
+    if not events or not getattr(settings, 'DATASYNC_ENABLED', True):
+        return totals
+    client = client or SyncClient()
+
+    def rank(event):
+        resource = RESOURCE_REGISTRATION if event.resource == RESOURCE_CHILD_PHOTO else event.resource
+        return RESOURCE_ORDER.index(resource) if resource in RESOURCE_ORDER else len(RESOURCE_ORDER)
+
+    for _rank, stage in groupby(sorted(events, key=rank), key=rank):
+        stage = list(stage)
+        photo_stage = stage[0].resource in (RESOURCE_REGISTRATION, RESOURCE_CHILD_PHOTO)
+        if photo_stage and len(stage) > 1 and isinstance(client, SyncClient) and parallel_uploads() > 1:
+            count = min(parallel_uploads(), len(stage))
+            with ThreadPoolExecutor(max_workers=count) as executor:
+                results = list(executor.map(lambda lane: _deliver_lane(lane, client),
+                                            [stage[index::count] for index in range(count)]))
+        elif photo_stage:
+            results = [_locked_push([event], client) for event in stage]
+        else:
+            results = [_locked_push(stage, client)]
+        for result in results:
+            for name in totals:
+                totals[name] += result[name]
+    return totals
+
+
+def _deliver_lane(events, parent_client):
+    close_old_connections()
+    client = parent_client.worker_copy()
+    totals = {'sent': 0, 'failed': 0, 'abandoned': 0}
+    try:
+        for event in events:
+            result = _locked_push([event], client)
+            for name in totals:
+                totals[name] += result[name]
+        return totals
+    finally:
+        client.close()
+        connections.close_all()
+
+
+def _locked_push(events, client):
+    with guard_events(events) as ready:
+        return _push_events(ready, client)
+
+
+def _push_events(events, client):
     """Push ``events`` in one request and record what BMA-NFE reported.
 
     Args:
@@ -142,14 +195,6 @@ def deliver_events(events, client=None):
 
     client = client or SyncClient()
     from .photos import photo_sync_enabled, prepare_photo, PhotoSourceError
-    # Bound multipart memory: a registration and its photo travel together.
-    if len(events) > 1 and photo_sync_enabled() and any(
-            e.resource in (RESOURCE_REGISTRATION, RESOURCE_CHILD_PHOTO) for e in events):
-        for event in events:
-            result = deliver_events([event], client=client)
-            for name in counts:
-                counts[name] += result[name]
-        return counts
     payloads = []
     attachments = {}
     by_event_id = {}
@@ -180,7 +225,12 @@ def deliver_events(events, client=None):
             if wire['resource'] == RESOURCE_REGISTRATION and wire['operation'] != OPERATION_DELETE:
                 child = wire['payload'].get('child')
                 if child:
-                    descriptor, stream = prepare_photo(child['source_id'], event)
+                    reuse = isinstance(client, SyncClient) and getattr(
+                        settings, 'DATASYNC_PHOTO_REUSE_ENABLED', True)
+                    descriptor, stream = prepare_photo(child['source_id'], event, allow_reuse=reuse)
+                    if descriptor and descriptor.get('action') == 'verify' and not client.photo_reuse_supported():
+                        descriptor, stream = prepare_photo(child['source_id'], event,
+                                                           allow_reuse=True, force_read=True)
                     if descriptor is not None:
                         child['photo_sync'] = descriptor
                     if stream is not None:
@@ -199,6 +249,27 @@ def deliver_events(events, client=None):
 
     try:
         response = client.push(payloads, attachments=attachments) if attachments else client.push(payloads)
+        # A verification request commits metadata only when NFE proves its
+        # current image matches. Missing/edited files request bytes and roll
+        # back; continue the same event immediately, without another attempt.
+        if len(payloads) == 1 and any(result.get('photo_upload_required')
+                                      for result in response.get('results', [])):
+            wire = payloads[0]
+            child = wire['payload'].get('child', {})
+            if child.get('photo_sync', {}).get('action') == 'verify':
+                descriptor, stream = prepare_photo(child['source_id'], by_event_id[wire['event_id']],
+                                                   allow_reuse=True, force_read=True)
+                child['photo_sync'] = descriptor
+                try:
+                    files = {descriptor['file_key']: stream} if stream else None
+                    response = client.push([wire], attachments=files) if files else client.push([wire])
+                finally:
+                    if stream:
+                        stream.close()
+    except PhotoSourceError as error:
+        for event in by_event_id.values():
+            _fail_one(event, error, counts, retryable=False)
+        return counts
     except (SyncTransportError, SyncConfigurationError) as error:
         for event in by_event_id.values():
             _fail_one(event, error, counts, retryable=True)
