@@ -18,14 +18,14 @@ from django.db.models import Case, F, IntegerField, Value, When
 from django.utils import timezone
 
 from .client import SyncClient, SyncConfigurationError, SyncTransportError
-from .constants import OPERATION_DELETE, RESOURCE_ORDER
+from .constants import OPERATION_DELETE, RESOURCE_ORDER, RESOURCE_CHILD_PHOTO, RESOURCE_REGISTRATION
 from .models import (
     STATUS_ABANDONED,
     STATUS_FAILED,
     STATUS_PENDING,
     SyncEvent,
 )
-from .serializers import MODEL_FOR_RESOURCE, serialize
+from .serializers import MODEL_FOR_RESOURCE, serialize, wire_timestamp
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +73,7 @@ def build_wire_event(event):
         'resource': event.resource,
         'operation': event.operation,
         'source_id': event.source_id,
-        'source_modified': event.created.isoformat(),
+        'source_modified': wire_timestamp(event.created),
     }
 
     if event.operation == OPERATION_DELETE:
@@ -137,17 +137,59 @@ def deliver_events(events, client=None):
         dict: ``{"sent": n, "failed": n, "abandoned": n}``.
     """
     counts = {'sent': 0, 'failed': 0, 'abandoned': 0}
-    if not events:
+    if not events or not getattr(settings, 'DATASYNC_ENABLED', True):
         return counts
 
     client = client or SyncClient()
+    from .photos import photo_sync_enabled, prepare_photo, PhotoSourceError
+    # Bound multipart memory: a registration and its photo travel together.
+    if len(events) > 1 and photo_sync_enabled() and any(
+            e.resource in (RESOURCE_REGISTRATION, RESOURCE_CHILD_PHOTO) for e in events):
+        for event in events:
+            result = deliver_events([event], client=client)
+            for name in counts:
+                counts[name] += result[name]
+        return counts
     payloads = []
+    attachments = {}
     by_event_id = {}
 
     for event in events:
-        wire = build_wire_event(event)
-        if wire is None:
-            _abandon_missing(event, counts)
+        event.attempts += 1
+        SyncEvent.objects.filter(pk=event.pk).update(attempts=F('attempts') + 1)
+        try:
+            if isinstance(client, SyncClient):
+                client._check()
+            if event.resource == RESOURCE_CHILD_PHOTO:
+                # Migrate pending jobs from the former photo-only pipeline.
+                from django.apps import apps
+                Registration = apps.get_model('mscc', 'Registration')
+                registration = Registration.objects.filter(child_id=event.source_id).order_by('pk').first()
+                if registration is None:
+                    _abandon_missing(event, counts)
+                    continue
+                wire = {'event_id': str(event.event_id), 'resource': RESOURCE_REGISTRATION,
+                        'operation': 'upsert', 'source_id': str(registration.pk),
+                        'source_modified': event.created.isoformat(),
+                        'payload': serialize(RESOURCE_REGISTRATION, registration)}
+            else:
+                wire = build_wire_event(event)
+            if wire is None:
+                _abandon_missing(event, counts)
+                continue
+            if wire['resource'] == RESOURCE_REGISTRATION and wire['operation'] != OPERATION_DELETE:
+                child = wire['payload'].get('child')
+                if child:
+                    descriptor, stream = prepare_photo(child['source_id'], event)
+                    if descriptor is not None:
+                        child['photo_sync'] = descriptor
+                    if stream is not None:
+                        attachments[descriptor['file_key']] = stream
+        except PhotoSourceError as error:
+            _fail_one(event, error, counts, retryable=False)
+            continue
+        except (SyncTransportError, SyncConfigurationError) as error:
+            _fail_one(event, error, counts, retryable=True)
             continue
         payloads.append(wire)
         by_event_id[wire['event_id']] = event
@@ -155,20 +197,15 @@ def deliver_events(events, client=None):
     if not payloads:
         return counts
 
-    # Count the attempt before calling out, so a worker that dies mid-request
-    # cannot leave an event retrying forever.
-    SyncEvent.objects.filter(pk__in=[e.pk for e in by_event_id.values()]).update(
-        attempts=F('attempts') + 1
-    )
-    for event in by_event_id.values():
-        event.attempts += 1
-
     try:
-        response = client.push(payloads)
+        response = client.push(payloads, attachments=attachments) if attachments else client.push(payloads)
     except (SyncTransportError, SyncConfigurationError) as error:
         for event in by_event_id.values():
             _fail_one(event, error, counts, retryable=True)
         return counts
+    finally:
+        for stream in attachments.values():
+            stream.close()
 
     reported = {
         str(result.get('event_id')): result

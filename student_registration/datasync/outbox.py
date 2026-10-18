@@ -23,7 +23,7 @@ import logging
 from django.conf import settings
 from django.db import transaction
 
-from .constants import OPERATION_DELETE, OPERATION_UPSERT
+from .constants import OPERATION_DELETE, OPERATION_UPSERT, RESOURCE_CHILD_PHOTO, RESOURCE_REGISTRATION
 from .models import STATUS_FAILED, STATUS_PENDING, SyncEvent
 
 logger = logging.getLogger(__name__)
@@ -31,10 +31,10 @@ logger = logging.getLogger(__name__)
 
 def sync_enabled():
     """Return whether outbound replication is switched on."""
-    return getattr(settings, 'DATASYNC_ENABLED', False)
+    return getattr(settings, 'DATASYNC_ENABLED', True)
 
 
-def enqueue(resource, source_id, operation=OPERATION_UPSERT, deliver=True):
+def enqueue(resource, source_id, operation=OPERATION_UPSERT, deliver=True, payload=None):
     """Queue one change for replication.
 
     Args:
@@ -62,6 +62,7 @@ def enqueue(resource, source_id, operation=OPERATION_UPSERT, deliver=True):
         resource=resource,
         source_id=source_id,
         operation=operation,
+        payload=payload or {},
     )
     if deliver:
         _schedule(event)
@@ -97,10 +98,13 @@ def enqueue_delete(instance, resource=None):
 def _schedule(event):
     """Ask for ``event`` to be delivered once the transaction commits."""
     event_pk = event.pk
-    transaction.on_commit(lambda: _deliver_now(event_pk))
+    if event.resource in (RESOURCE_CHILD_PHOTO, RESOURCE_REGISTRATION) and sync_enabled():
+        transaction.on_commit(lambda: _deliver_now(event_pk, allow_inline=False))
+    else:
+        transaction.on_commit(lambda: _deliver_now(event_pk))
 
 
-def _deliver_now(event_pk):
+def _deliver_now(event_pk, allow_inline=True):
     """Hand one event to a worker, falling back to an in-process send.
 
     Delivery normally runs in Celery so the request finishes immediately. When
@@ -115,11 +119,11 @@ def _deliver_now(event_pk):
         return
     except Exception as error:  # noqa: BLE001 - broker down must not break the save
         logger.warning(
-            'datasync: could not queue delivery of event %s (%s), sending inline',
-            event_pk, error,
+            'datasync: could not queue delivery of event %s (%s); event remains pending',
+            event_pk, type(error).__name__,
         )
 
-    if not getattr(settings, 'DATASYNC_INLINE_FALLBACK', True):
+    if not allow_inline or not getattr(settings, 'DATASYNC_INLINE_FALLBACK', True):
         return
 
     from .dispatch import deliver_event

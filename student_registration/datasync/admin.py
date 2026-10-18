@@ -4,6 +4,7 @@
 from __future__ import unicode_literals, absolute_import, division
 
 from django.contrib import admin
+from django.utils import timezone
 
 from .models import STATUS_PENDING, SchoolCenterLink, SyncEvent
 
@@ -28,9 +29,11 @@ class SyncEventAdmin(admin.ModelAdmin):
     """Read-only view of what is queued for, or was sent to, BMA-NFE."""
 
     list_display = (
-        'created', 'resource', 'source_id', 'operation', 'status',
-        'attempts', 'conflict', 'remote_id', 'short_error',
+        'queued_at', 'delivered_at', 'resource', 'source_id', 'operation', 'status',
+        'attempts', 'local_edit_overwritten', 'remote_id', 'short_reply', 'short_error',
     )
+    ordering = ('-created', '-id')
+    list_display_links = ('queued_at',)
     list_filter = ('status', 'resource', 'operation', 'conflict')
     search_fields = ('source_id', 'event_id', 'last_error', 'remote_detail')
     date_hierarchy = 'created'
@@ -46,6 +49,31 @@ class SyncEventAdmin(admin.ModelAdmin):
 
     def has_change_permission(self, request, obj=None):
         return False
+
+    @staticmethod
+    def _local_time(value):
+        if value is None:
+            return '—'
+        if timezone.is_naive(value):
+            value = timezone.make_aware(value, timezone.get_default_timezone())
+        return timezone.localtime(value).strftime('%Y-%m-%d %H:%M:%S %z')
+
+    @admin.display(description='Queued at (local time)', ordering='created')
+    def queued_at(self, obj):
+        return self._local_time(obj.created)
+
+    @admin.display(description='Delivered at (local time)', ordering='sent_at')
+    def delivered_at(self, obj):
+        return self._local_time(obj.sent_at)
+
+    @admin.display(description='Local NFE edit overwritten?', ordering='conflict')
+    def local_edit_overwritten(self, obj):
+        return 'Yes' if obj.conflict else 'No'
+
+    @admin.display(description='Result from NFE')
+    def short_reply(self, obj):
+        detail = (obj.remote_detail or '').strip()
+        return detail[:180] + ('...' if len(detail) > 180 else '')
 
     @admin.display(description='Last error')
     def short_error(self, obj):

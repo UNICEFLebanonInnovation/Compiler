@@ -8,6 +8,7 @@ they are saved.
 
 from __future__ import unicode_literals, absolute_import, division
 
+from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 
 from student_registration.datasync.constants import RESOURCE_ORDER
@@ -59,6 +60,13 @@ class Command(BaseCommand):
                 'Switch it on, or re-run with --dry-run.'
             )
 
+        if not options['dry_run'] and not options['no_send']:
+            from ...client import SyncClient, SyncConfigurationError, SyncTransportError
+            try:
+                SyncClient().check_ready()
+            except (SyncConfigurationError, SyncTransportError) as error:
+                raise CommandError(str(error)) from error
+        self.stdout.write('Unified sync: registrations include available child profile photos.')
         resources = options['resources'] or RESOURCE_ORDER
         limit = options['limit']
         total = 0
@@ -81,6 +89,8 @@ class Command(BaseCommand):
                 enqueue(resource, record_id, deliver=False)
 
         if options['dry_run']:
+            if 'mscc.registration' in resources:
+                call_command('datasync_backfill_photos', dry_run=True, stdout=self.stdout)
             self.stdout.write(self.style.WARNING(
                 'Dry run: {} record(s) would have been queued.'.format(total)
             ))

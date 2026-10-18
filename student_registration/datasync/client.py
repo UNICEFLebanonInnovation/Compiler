@@ -80,7 +80,16 @@ class SyncClient(object):
             raise SyncTransportError('cannot reach {}: {}'.format(self.url, error))
         return self._decode(response)
 
-    def push(self, events):
+    def check_ready(self):
+        """Initial imports require the same complete-event contract on NFE."""
+        capabilities = self.ping()
+        if not capabilities.get('enabled'):
+            raise SyncConfigurationError('NFE synchronization is disabled')
+        if not capabilities.get('child_photo_sync', {}).get('atomic_with_registration'):
+            raise SyncConfigurationError('Deploy the unified record/photo receiver on NFE first')
+        return capabilities
+
+    def push(self, events, attachments=None):
         """Send a batch of events and return BMA-NFE's per-event outcome.
 
         Args:
@@ -100,13 +109,20 @@ class SyncClient(object):
             'events': events,
         }
         try:
-            response = requests.post(
-                self.url,
-                headers=self.headers,
-                data=json.dumps(body, default=str),
-                timeout=self.timeout,
-                verify=self.verify,
-            )
+            if attachments:
+                headers = {key: value for key, value in self.headers.items() if key != 'Content-Type'}
+                response = requests.post(
+                    self.url, headers=headers, data={'envelope': json.dumps(body, default=str)},
+                    files={key: ('photo', stream, 'application/octet-stream')
+                           for key, stream in attachments.items()},
+                    timeout=getattr(settings, 'DATASYNC_PHOTO_TIMEOUT', self.timeout),
+                    verify=self.verify, allow_redirects=False,
+                )
+            else:
+                response = requests.post(
+                    self.url, headers=self.headers, data=json.dumps(body, default=str),
+                    timeout=self.timeout, verify=self.verify, allow_redirects=False,
+                )
         except requests.RequestException as error:
             raise SyncTransportError('cannot reach {}: {}'.format(self.url, error))
         return self._decode(response)

@@ -20,6 +20,7 @@ import logging
 import uuid
 
 from django.db import models as django_models
+from django.utils import timezone
 
 from student_registration.attendances.models import (
     MSCCAttendance,
@@ -65,6 +66,13 @@ TEACHER_ASSIGNMENT_MAP = {
     'Dirasa only': 'Makani only',
     'Private and Dirasa': 'Private and Makani',
 }
+
+
+def wire_timestamp(value):
+    """Include the project's timezone even when USE_TZ=False stores naive dates."""
+    if timezone.is_naive(value):
+        value = timezone.make_aware(value, timezone.get_default_timezone())
+    return value.isoformat()
 
 
 def jsonable(value):

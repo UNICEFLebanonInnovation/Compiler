@@ -29,6 +29,7 @@ RESOURCE_ATTENDANCE = 'attendances.mscc_attendance'
 #: Child records travel embedded in their registration, but they still get a
 #: mapping row of their own so attendance rows can be resolved against them.
 RESOURCE_CHILD = 'child.child'
+RESOURCE_CHILD_PHOTO = 'child.photo'
 
 #: Resources are applied in this order inside a batch. A registration can only
 #: be written once its centre exists, an education service only once its
@@ -47,6 +48,7 @@ RESOURCE_ORDER = [
 
 #: Human readable labels, used by the Django admin on both sides.
 RESOURCE_LABELS = (
+    (RESOURCE_CHILD_PHOTO, 'Child photo (multipart)'),
     (RESOURCE_ROUND, 'Round'),
     (RESOURCE_CENTER, 'Center'),
     (RESOURCE_TEACHER, 'Teacher'),

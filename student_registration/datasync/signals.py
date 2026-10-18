@@ -21,11 +21,12 @@ from django.dispatch import receiver
 from student_registration.attendances.models import MSCCAttendanceChild
 from student_registration.child.models import Child
 from student_registration.mscc.models import Registration
-from student_registration.students.models import Teacher
+from student_registration.students.models import Teacher, Student
 
 from .constants import RESOURCE_ATTENDANCE, RESOURCE_REGISTRATION, RESOURCE_TEACHER
 from .outbox import enqueue, enqueue_delete, enqueue_instance, sync_enabled
 from .serializers import REGISTRY
+from .photos import enqueue_child_photo, photo_sync_enabled
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +47,17 @@ def _replicated_saved(sender, instance, created, raw=False, **kwargs):
         lambda: enqueue_instance(instance),
         '{} #{}'.format(sender.__name__, instance.pk),
     )
+
+
+@receiver(post_save, sender=Student, dispatch_uid='datasync_student_photo_saved')
+def student_photo_saved(sender, instance, raw=False, **kwargs):
+    if raw or not sync_enabled() or not photo_sync_enabled():
+        return
+    def push():
+        ids = Registration.objects.filter(student_old=instance.pk).values_list('child_id', flat=True).distinct()
+        for child_id in ids:
+            enqueue_child_photo(child_id)
+    _safe(push, 'photos of linked children')
 
 
 def _replicated_deleted(sender, instance, **kwargs):

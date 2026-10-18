@@ -413,7 +413,10 @@ CELERY_BEAT_SCHEDULE = {
 
 # Master switch. Off by default so a deployment that has not been configured
 # yet does not start queueing events it cannot deliver.
-DATASYNC_ENABLED = env.bool('DATASYNC_ENABLED', default=False)
+DATASYNC_ENABLED = env.bool('DATASYNC_ENABLED', default=True)
+DATASYNC_PHOTO_SYNC_ENABLED = DATASYNC_ENABLED  # Compatibility alias; one sync switch
+DATASYNC_PHOTO_MAX_BYTES = env.int('DATASYNC_PHOTO_MAX_BYTES', default=5 * 1024 * 1024)
+DATASYNC_PHOTO_TIMEOUT = env.int('DATASYNC_PHOTO_TIMEOUT', default=60)
 
 # BMA-NFE's ingest endpoint and the token of its service account.
 DATASYNC_TARGET_URL = env('DATASYNC_TARGET_URL', default='')
