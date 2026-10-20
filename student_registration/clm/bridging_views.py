@@ -16,7 +16,7 @@ import os
 import uuid
 import mimetypes
 from django.core.files.storage import default_storage
-from storages.backends.azure_storage import AzureStorage
+from student_registration.backends.azure_storage import ChunkedAzureStorage as AzureStorage
 from django.core.files.base import ContentFile
 from django.core.exceptions import ValidationError
 from django.db import connection

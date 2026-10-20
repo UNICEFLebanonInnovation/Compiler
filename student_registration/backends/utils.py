@@ -12,7 +12,7 @@ from time import mktime
 
 from django.http import FileResponse, HttpResponse, Http404
 from django.urls import reverse
-from storages.backends.azure_storage import AzureStorage
+from .azure_storage import ChunkedAzureStorage
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +32,7 @@ class MyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-class ExportStorage(AzureStorage):
+class ExportStorage(ChunkedAzureStorage):
     """Azure storage backend dedicated for exported files."""
     location = "export"
 
