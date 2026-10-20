@@ -53,11 +53,13 @@ def roster_values(registration, programme, birthday):
     )
 
 
-def build_photo_roster(registrations, programme, today=None):
+def build_photo_roster(registrations, programme, today=None, unavailable_only=False):
     """Include valid saved dates from the seventh through the tenth birthday.
 
     One row is one visible registration; missing photos do not remove children.
     Text is written literally so names and telephone numbers remain unchanged.
+    The unavailable-only report excludes readable photos and uses their saved
+    filenames in the Photograph column; absent uploads retain the missing label.
     """
     if today is None:
         now = timezone.now()
@@ -66,7 +68,7 @@ def build_photo_roster(registrations, programme, today=None):
     workbook = xlsxwriter.Workbook(output, {
         'in_memory': True, 'strings_to_formulas': False, 'strings_to_urls': False,
     })
-    sheet = workbook.add_worksheet('Children aged 7-10')
+    sheet = workbook.add_worksheet('Unavailable photos' if unavailable_only else 'Children aged 7-10')
     heading = workbook.add_format({'bold': True, 'text_wrap': True,
                                   'bg_color': '#164A68', 'font_color': '#FFFFFF'})
     body = workbook.add_format({'text_wrap': True, 'valign': 'top'})
@@ -85,10 +87,12 @@ def build_photo_roster(registrations, programme, today=None):
         age = today.year - birthday.year - ((today.month, today.day) < (birthday.month, birthday.day))
         if not 7 <= age <= 10:
             continue
+        photo, photo_status = load_registration_photo(registration)
+        if unavailable_only and photo:
+            continue
         row += 1
         if row >= 1048576:
             raise ValueError('The export exceeds the Excel worksheet row limit.')
-        photo, photo_status = load_registration_photo(registration)
         sheet.set_row(row, 108)
         for column, value in enumerate(roster_values(registration, programme, birthday)):
             sheet.write_string(row, column, _text(value), body)
@@ -101,7 +105,9 @@ def build_photo_roster(registrations, programme, today=None):
                 'x_scale': scale, 'y_scale': scale, 'positioning': 1,
             })
         else:
-            sheet.write_string(row, 0, photo_status, body)
+            picture = registration.profile_picture
+            filename = picture.name.rsplit('/', 1)[-1] if picture else ''
+            sheet.write_string(row, 0, _text(filename) if unavailable_only and filename else photo_status, body)
     sheet.autofilter(0, 0, row, len(HEADERS) - 1)
     workbook.close()
     return output.getvalue()
@@ -110,15 +116,19 @@ def build_photo_roster(registrations, programme, today=None):
 class ChildPhotoExportMixin:
     """Reuse the list's role scope and filters, without its page size."""
 
+    unavailable_only = False
+
     def get_context_data(self, **kwargs):
         return kwargs
 
     def render_to_response(self, context, **response_kwargs):
         if self.filterset.is_bound and not self.filterset.is_valid():
             return HttpResponseBadRequest('Please correct the list filters before exporting.')
-        content = build_photo_roster(self.object_list.iterator(chunk_size=200), self.programme)
+        content = build_photo_roster(self.object_list.iterator(chunk_size=200), self.programme,
+                                    unavailable_only=self.unavailable_only)
         response = HttpResponse(content, content_type=(
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'))
-        response['Content-Disposition'] = 'attachment; filename="{}-children-7-10.xlsx"'.format(self.programme)
+        report = 'unavailable-photos' if self.unavailable_only else 'children'
+        response['Content-Disposition'] = 'attachment; filename="{}-{}-7-10.xlsx"'.format(self.programme, report)
         response['Cache-Control'] = 'private, no-store'
         return response

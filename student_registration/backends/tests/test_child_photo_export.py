@@ -103,6 +103,30 @@ def test_both_language_columns_use_programme_language_when_available():
     assert rows[1]['S'] == rows[1]['T'] == ''
 
 
+@pytest.mark.parametrize('programme', ['makani', 'dirasa'])
+def test_unavailable_report_keeps_format_and_filenames_without_available_photos(programme):
+    image = io.BytesIO()
+    Image.new('RGB', (30, 50), 'red').save(image, format='JPEG')
+    unreadable = registration(programme, photo=b'broken image')
+    unreadable.profile_picture.name = 'uploads/profile_pictures/=photo.jpg'
+    unreachable = registration(programme, photo=b'unused')
+    unreachable.profile_picture.name = 'uploads/profile_pictures/missing.jpg'
+
+    def fail_open(mode):
+        raise OSError('Storage unavailable')
+
+    unreachable.profile_picture.open = fail_open
+    rows, files, _ = read_rows(build_photo_roster([
+        registration(programme, photo=image.getvalue()), unreadable, unreachable,
+        registration(programme), registration(programme, birthday=(2010, 1, 1)),
+    ], programme, TODAY, unavailable_only=True))
+    assert list(rows[0].values()) == list(HEADERS)
+    assert [row['A'] for row in rows[1:]] == [
+        '=photo.jpg', 'missing.jpg', 'No photograph uploaded']
+    assert all(row['B'] == '=Ali Hassan Rahman' for row in rows[1:])
+    assert not any(name.startswith('xl/media/') for name in files)
+
+
 def test_export_uses_full_filtered_queryset_and_rejects_invalid_filters(monkeypatch):
     monkeypatch.setattr('student_registration.backends.child_photo_export.timezone.now',
                         lambda: datetime.datetime(2026, 10, 20, 12))
@@ -125,7 +149,8 @@ def test_export_uses_full_filtered_queryset_and_rejects_invalid_filters(monkeypa
 
 @pytest.mark.django_db
 @pytest.mark.parametrize('programme', ['makani', 'dirasa'])
-def test_endpoint_respects_partner_scope_filters_and_login(programme, rf, django_user_model, monkeypatch):
+@pytest.mark.parametrize('unavailable_only', [False, True])
+def test_endpoint_respects_partner_scope_filters_and_login(programme, unavailable_only, rf, django_user_model, monkeypatch):
     from django.contrib.auth.models import AnonymousUser, Group
     from student_registration.schools.models import PartnerOrganization, CLMRound
     from student_registration.mscc.models import Registration, Round
@@ -157,9 +182,11 @@ def test_endpoint_respects_partner_scope_filters_and_login(programme, rf, django
         model.objects.create(**{relation: person}, partner=assigned_partner, round=cycle)
     request = rf.get('/photo-export/', query)
     request.user = user
-    response = view.as_view()(request)
+    response = view.as_view(unavailable_only=unavailable_only)(request)
     assert response.status_code == 200
     rows, _, _ = read_rows(response.content)
     assert [row['B'] for row in rows[1:]] == ['Visible Father Family']
+    report = 'unavailable-photos' if unavailable_only else 'children'
+    assert '{}-{}-7-10.xlsx'.format(programme, report) in response['Content-Disposition']
     request.user = AnonymousUser()
-    assert view.as_view()(request).status_code == 302
+    assert view.as_view(unavailable_only=unavailable_only)(request).status_code == 302

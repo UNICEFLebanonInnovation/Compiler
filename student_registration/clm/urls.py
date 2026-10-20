@@ -9,6 +9,7 @@ from . import views, attendance_views, inclusion_views, bridging_views
 app_name = 'clm'
 
 urlpatterns = [
+    re_path(r'^bridging-unavailable-children-photo-export/$', bridging_views.BridgingChildPhotoExportView.as_view(unavailable_only=True), name='bridging_unavailable_children_photo_export'),
     re_path(r'^bridging-children-photo-export/$', bridging_views.BridgingChildPhotoExportView.as_view(), name='bridging_children_photo_export'),
 
     re_path(
