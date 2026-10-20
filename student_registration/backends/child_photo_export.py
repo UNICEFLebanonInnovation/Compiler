@@ -16,7 +16,7 @@ HEADERS = (
     'Last name', 'Father name', 'Mother fullname', 'Sex', 'Birthday year',
     'Birthday month', 'Birthday day', 'Nationality', 'Governorate', 'District',
     'Cadaster', 'Disability', 'Partner', 'Phone Number', 'Main Language',
-    'Math Language',
+    'Math Language', 'ID',
 )
 
 
@@ -49,7 +49,7 @@ def roster_values(registration, programme, birthday):
         child.disability if makani else registration.disability,
         registration.partner,
         child.first_phone_number if makani else registration.phone_number,
-        language, language,
+        language, language, registration.pk,
     )
 
 

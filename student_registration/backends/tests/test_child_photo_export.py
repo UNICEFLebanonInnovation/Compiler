@@ -66,6 +66,7 @@ def test_headers_fields_and_embedded_photograph(programme):
     assert rows[1]['O'] == 'Town'
     assert rows[1]['P'] == 'None'
     assert rows[1]['Q'] == 'Partner A'
+    assert rows[1]['U'] == '1'
     assert any(name.startswith('xl/media/') for name in files)
     root = ET.fromstring(drawing)
     ns = {'x': 'http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing'}
@@ -108,8 +109,10 @@ def test_unavailable_report_keeps_format_and_filenames_without_available_photos(
     image = io.BytesIO()
     Image.new('RGB', (30, 50), 'red').save(image, format='JPEG')
     unreadable = registration(programme, photo=b'broken image')
+    unreadable.pk = 38585
     unreadable.profile_picture.name = 'uploads/profile_pictures/=photo.jpg'
     unreachable = registration(programme, photo=b'unused')
+    unreachable.pk = 38586
     unreachable.profile_picture.name = 'uploads/profile_pictures/missing.jpg'
 
     def fail_open(mode):
@@ -124,6 +127,7 @@ def test_unavailable_report_keeps_format_and_filenames_without_available_photos(
     assert [row['A'] for row in rows[1:]] == [
         '=photo.jpg', 'missing.jpg', 'No photograph uploaded']
     assert all(row['B'] == '=Ali Hassan Rahman' for row in rows[1:])
+    assert [row['U'] for row in rows[1:]] == ['38585', '38586', '1']
     assert not any(name.startswith('xl/media/') for name in files)
 
 
