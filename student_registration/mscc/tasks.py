@@ -23,7 +23,7 @@ from student_registration.mscc.models import FollowUpService, Registration
 from django.urls import reverse
 
 from .document_exports import build_children_workbook
-from .export_access import excel_export_registrations, user_can_export
+from .export_access import excel_export_registrations, filter_by_photo, user_can_export
 
 logger = logging.getLogger(__name__)
 
@@ -92,7 +92,7 @@ def _excel_followup_csv(registrations):
 
 def _generate_excel_mscc_export(export_id, fields=None, *, nationality='', first_name='',
                                last_name='', father_name='', mother_fullname='', round=None,
-                               include_followup=False):
+                               include_followup=False, has_photo=''):
     """Build a scoped workbook from saved registrations and their photographs."""
     try:
         export = ExportHistory.objects.select_related('created_by__partner').get(pk=export_id)
@@ -105,7 +105,7 @@ def _generate_excel_mscc_export(export_id, fields=None, *, nationality='', first
         registrations = excel_export_registrations(
             export.created_by, nationality=nationality, first_name=first_name,
             last_name=last_name, father_name=father_name,
-            mother_fullname=mother_fullname, round=round,
+            mother_fullname=mother_fullname, round=round, has_photo=has_photo,
         )
         workbook = build_children_workbook(
             registrations.iterator(chunk_size=200), fields=fields,
@@ -143,7 +143,6 @@ def _generate_mscc_export(export_id, fields=None, file_format='csv'):
         logger.error("ExportHistory with id %s does not exist", export_id)
         return
     try:
-        user = export.created_by
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM vw_mscc_child")
         mscc_data = cursor.fetchall()
@@ -188,28 +187,19 @@ def _generate_mscc_export(export_id, fields=None, file_format='csv'):
         export.file_url = file_url
         export.status = 'done'
         export.save()
-        if user:
-            send_push_to_web(
-                user,
-                "Makani export ready",
-                "Your export is ready to download.",
-                data={"type": "mscc_export_ready", "url": file_url},
-            )
     except Exception as e:
         logger.exception('Error generating export: %s', e)
         if export:
             export.status = 'failed'
             export.save()
-            if export.created_by:
-                # Notify the user that the export failed and include the reason
-                send_push_to_web(
-                    export.created_by,
-                    "Makani export failed",
-                    str(e),
-                    data={"type": "mscc_export_failed", "reason": str(e)},
-                )
+            _notify_excel_export(export, succeeded=False)
+        return
+    # A notification failure (for example Firebase unavailable) must not mark
+    # an export as failed after its file has already been stored.
+    _notify_excel_export(export, succeeded=True)
 def _generate_filtered_mscc_export(export_id, nationality="", first_name="", last_name="",
-                                  father_name="", mother_fullname="", round="", file_format='csv'):
+                                  father_name="", mother_fullname="", round="", file_format='csv',
+                                  has_photo=''):
     """Generate an MSCC export with optional filtering and notify the user.
 
     Parameters are used to filter the SQL query in the same way the synchronous
@@ -222,6 +212,7 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
             export_id, nationality=nationality, first_name=first_name,
             last_name=last_name, father_name=father_name,
             mother_fullname=mother_fullname, round=round, include_followup=True,
+            has_photo=has_photo,
         )
     export = ExportHistory.objects.get(id=export_id)
     try:
@@ -254,6 +245,7 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
             registration_qs = registration_qs.filter(child__father_name__icontains=father_name)
         if mother_fullname:
             registration_qs = registration_qs.filter(child__mother_fullname__icontains=mother_fullname)
+        registration_qs = filter_by_photo(registration_qs, has_photo)
 
         if not (has_group(user, 'MSCC_UNICEF') or is_world_learning):
             if has_group(user, 'MSCC_PARTNER') and partner_id:
@@ -334,24 +326,15 @@ def _generate_filtered_mscc_export(export_id, nationality="", first_name="", las
         export.file_url = file_url
         export.status = 'done'
         export.save()
-        if user:
-            send_push_to_web(
-                user,
-                "Makani export ready",
-                "Your export is ready to download.",
-                data={"type": "mscc_export_ready", "url": file_url},
-            )
     except Exception as e:  # pragma: no cover - logged for debugging purposes
         logger.exception('Error generating export: %s', e)
         export.status = 'failed'
         export.save()
-        if export.created_by:
-            send_push_to_web(
-                export.created_by,
-                "Makani export failed",
-                str(e),
-                data={"type": "mscc_export_failed", "reason": str(e)},
-            )
+        _notify_excel_export(export, succeeded=False)
+        return
+    # A notification failure (for example Firebase unavailable) must not mark
+    # an export as failed after its file has already been stored.
+    _notify_excel_export(export, succeeded=True)
 
 
 def queue_mscc_export(export_id, fields=None, file_format='csv'):
@@ -367,7 +350,8 @@ def queue_mscc_export(export_id, fields=None, file_format='csv'):
 
 
 def queue_filtered_mscc_export(export_id, nationality="", first_name="", last_name="",
-                               father_name="", mother_fullname="", round="", file_format='csv'):
+                               father_name="", mother_fullname="", round="", file_format='csv',
+                               has_photo=''):
     """Run the filtered MSCC export in a background thread."""
     executor = _get_executor()
     future = executor.submit(
@@ -381,5 +365,6 @@ def queue_filtered_mscc_export(export_id, nationality="", first_name="", last_na
         mother_fullname,
         round,
         file_format,
+        has_photo=has_photo,
     )
     return future

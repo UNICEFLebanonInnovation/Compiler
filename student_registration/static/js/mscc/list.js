@@ -262,6 +262,7 @@ $(document).ready(function() {
             father_name: father_name || '',
             mother_fullname: mother_fullname || '',
             round: round || '',
+            has_photo: $('#id_has_photo').val() || '',
             format: format
         });
         var exportUrl = "/mscc/export-list-background/?" + exportParams;

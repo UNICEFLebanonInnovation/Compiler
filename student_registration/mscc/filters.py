@@ -1,5 +1,7 @@
 from django.db.models import Q
 
+from .export_access import filter_by_photo
+
 from django_filters import (
     FilterSet,
     ModelChoiceFilter,
@@ -61,8 +63,19 @@ class PlaceholderFilterSet(FilterSet):
                 field.widget.attrs.setdefault('placeholder', label)
 
 
+PHOTO_CHOICES = (
+    ('yes', 'With photo'),
+    ('no', 'Without photo'),
+)
+
+
+def current_round_choices():
+    """Load current cycles when the filter form is built, not at server startup."""
+    rounds = Round.objects.filter(current_year=True).values_list('id', 'name').order_by('name').distinct()
+    return [('no_round', 'No Cycle')] + list(rounds)
+
+
 class MainFilter(PlaceholderFilterSet):
-    NO_ROUND_OPTION = ('no_round', 'No Cycle')
 
     type = ChoiceFilter(choices=PACKAGE_TYPES, empty_label='Package type')
     child__first_name = CharFilter(lookup_expr='icontains' )
@@ -75,10 +88,11 @@ class MainFilter(PlaceholderFilterSet):
     child__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
                                 .order_by('name').distinct(), empty_label='Nationality')
     round = ChoiceFilter(
-        choices=[NO_ROUND_OPTION] + list(Round.objects.filter(current_year=True).values_list('id', 'name').order_by('name').distinct()),
+        choices=current_round_choices,
         empty_label='Cycle',
         method='filter_round'
     )
+    has_photo = ChoiceFilter(choices=PHOTO_CHOICES, empty_label='Photo', method='filter_has_photo')
     programme_type = ChoiceFilter(choices=EducationService.EDUCATION_PROGRAM,
                                   field_name='education_service__education_program',
                                   empty_label='Programme Type', method='filter_education_program')
@@ -103,22 +117,25 @@ class MainFilter(PlaceholderFilterSet):
             return queryset.filter(round__isnull=True)
         return queryset.filter(**{name: value})
 
+    def filter_has_photo(self, queryset, name, value):
+        return filter_by_photo(queryset, value)
+
     def filter_education_program(self, queryset, name, value):
         return queryset.filter(education_service__education_program=value)
 
 
 class FullFilter(PlaceholderFilterSet):
-    NO_ROUND_OPTION = ('no_round', 'No Cycle')
 
     type = ChoiceFilter(choices=PACKAGE_TYPES, empty_label='Package type')
     partner = ChoiceFilter(choices=PartnerOrganization.objects.values_list('id', 'name')
                           .order_by('name').distinct(), empty_label='Partner')
 
     round = ChoiceFilter(
-        choices=[NO_ROUND_OPTION] + list(Round.objects.filter(current_year=True).values_list('id', 'name').order_by('name').distinct()),
+        choices=current_round_choices,
         empty_label='Cycle',
         method='filter_round'
     )
+    has_photo = ChoiceFilter(choices=PHOTO_CHOICES, empty_label='Photo', method='filter_has_photo')
 
     center = ChoiceFilter(choices=Center.objects.values_list('id', 'name')
                           .order_by('name').distinct(), empty_label='Center')
@@ -154,6 +171,9 @@ class FullFilter(PlaceholderFilterSet):
         if value == 'no_round':
             return queryset.filter(round__isnull=True)
         return queryset.filter(**{name: value})
+
+    def filter_has_photo(self, queryset, name, value):
+        return filter_by_photo(queryset, value)
 
     def filter_education_program(self, queryset, name, value):
         return queryset.filter(education_service__education_program=value)

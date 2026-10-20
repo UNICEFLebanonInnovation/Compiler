@@ -1,6 +1,7 @@
 """Scope photograph exports to the registrations the requester may read."""
 
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 
 from student_registration.child.models import Child
 from student_registration.users.templatetags.custom_tags import has_group
@@ -30,8 +31,23 @@ def _positive_id(value, label):
     return parsed
 
 
+PHOTO_FILTER_VALUES = ('', 'yes', 'no')
+
+
+def filter_by_photo(queryset, has_photo, field='profile_picture'):
+    """Keep registrations with (``yes``) or without (``no``) a saved picture."""
+    if has_photo in (None, ''):
+        return queryset
+    if has_photo == 'yes':
+        return queryset.exclude(**{field: ''}).exclude(**{field + '__isnull': True})
+    if has_photo == 'no':
+        return queryset.filter(Q(**{field: ''}) | Q(**{field + '__isnull': True}))
+    raise ValidationError('Invalid photo filter.')
+
+
 def excel_export_registrations(user, nationality='', first_name='', last_name='',
-                               father_name='', mother_fullname='', round=None):
+                               father_name='', mother_fullname='', round=None,
+                               has_photo=''):
     """Return all matching rows within the existing MSCC partner/centre scope.
 
     Workbooks are independent of list pagination. An omitted cycle is used by
@@ -70,4 +86,4 @@ def excel_export_registrations(user, nationality='', first_name='', last_name=''
     ):
         if value:
             queryset = queryset.filter(**{'child__' + field + '__icontains': value})
-    return queryset
+    return filter_by_photo(queryset, has_photo)
