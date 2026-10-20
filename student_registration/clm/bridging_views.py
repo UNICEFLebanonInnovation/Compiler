@@ -64,6 +64,7 @@ from student_registration.schools.models import (
     CLMRound,
 )
 from student_registration.backends.models import ExportHistory
+from student_registration.backends.child_photo_export import ChildPhotoExportMixin
 from .bridging_forms import (
     BridgingPreAssessmentForm,
     BridgingMathAssessmentForm,
@@ -190,6 +191,13 @@ class BridgingListView(LoginRequiredMixin,
 
     def get_filterset_class(self):
         return bridging_filterset_class(self.request.user)
+
+
+class BridgingChildPhotoExportView(ChildPhotoExportMixin, BridgingListView):
+    programme = 'dirasa'
+
+    def get_queryset(self):
+        return super().get_queryset().select_related('cadaster', 'disability', 'partner')
 
 
 class BridgingAddView(LoginRequiredMixin,
