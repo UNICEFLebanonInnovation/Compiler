@@ -105,6 +105,30 @@ def test_both_language_columns_use_programme_language_when_available():
 
 
 @pytest.mark.parametrize('programme', ['makani', 'dirasa'])
+def test_all_ages_includes_outside_age_band_and_incomplete_birthdays(programme):
+    birthdays = [(2022, 1, 1), (2010, 1, 1), (2018, 3, 4), (0, 0, 0)]
+    rows, _, _ = read_rows(build_photo_roster(
+        [registration(programme, birthday) for birthday in birthdays],
+        programme, TODAY, all_ages=True))
+    assert len(rows) == 5
+    assert list(rows[0].values()) == list(HEADERS)
+    assert [row['C'] for row in rows[1:]] == ['2022-01-01', '2010-01-01', '2018-03-04', '']
+
+
+def test_unavailable_photos_do_not_emit_per_photo_logs(caplog):
+    unreadable = registration(photo=b'broken image')
+    unreachable = registration(photo=b'unused')
+
+    def fail_open(mode):
+        raise OSError('Storage unavailable')
+
+    unreachable.profile_picture.open = fail_open
+    rows, _, _ = read_rows(build_photo_roster([unreadable, unreachable], 'makani', TODAY))
+    assert [row['A'] for row in rows[1:]] == ['Photograph unavailable'] * 2
+    assert not caplog.records
+
+
+@pytest.mark.parametrize('programme', ['makani', 'dirasa'])
 def test_unavailable_report_keeps_format_and_filenames_without_available_photos(programme):
     image = io.BytesIO()
     Image.new('RGB', (30, 50), 'red').save(image, format='JPEG')
@@ -154,7 +178,8 @@ def test_export_uses_full_filtered_queryset_and_rejects_invalid_filters(monkeypa
 @pytest.mark.django_db
 @pytest.mark.parametrize('programme', ['makani', 'dirasa'])
 @pytest.mark.parametrize('unavailable_only', [False, True])
-def test_endpoint_respects_partner_scope_filters_and_login(programme, unavailable_only, rf, django_user_model, monkeypatch):
+@pytest.mark.parametrize('all_ages', [False, True])
+def test_endpoint_respects_partner_scope_filters_and_login(programme, unavailable_only, all_ages, rf, django_user_model, monkeypatch):
     from django.contrib.auth.models import AnonymousUser, Group
     from student_registration.schools.models import PartnerOrganization, CLMRound
     from student_registration.mscc.models import Registration, Round
@@ -186,11 +211,12 @@ def test_endpoint_respects_partner_scope_filters_and_login(programme, unavailabl
         model.objects.create(**{relation: person}, partner=assigned_partner, round=cycle)
     request = rf.get('/photo-export/', query)
     request.user = user
-    response = view.as_view(unavailable_only=unavailable_only)(request)
+    response = view.as_view(unavailable_only=unavailable_only, all_ages=all_ages)(request)
     assert response.status_code == 200
     rows, _, _ = read_rows(response.content)
     assert [row['B'] for row in rows[1:]] == ['Visible Father Family']
     report = 'unavailable-photos' if unavailable_only else 'children'
-    assert '{}-{}-7-10.xlsx'.format(programme, report) in response['Content-Disposition']
+    age_range = 'all-ages' if all_ages else '7-10'
+    assert '{}-{}-{}.xlsx'.format(programme, report, age_range) in response['Content-Disposition']
     request.user = AnonymousUser()
-    assert view.as_view(unavailable_only=unavailable_only)(request).status_code == 302
+    assert view.as_view(unavailable_only=unavailable_only, all_ages=all_ages)(request).status_code == 302

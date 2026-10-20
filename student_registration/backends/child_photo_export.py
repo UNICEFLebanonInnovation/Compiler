@@ -8,7 +8,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils import timezone
 from PIL import Image
 
-from student_registration.mscc.document_exports import load_registration_photo, _text
+from student_registration.mscc.document_exports import load_registration_photo, _text, _date_of_birth
 
 
 HEADERS = (
@@ -40,7 +40,7 @@ def roster_values(registration, programme, birthday):
         language = registration.get_language_display()
     return (
         '', ' '.join(str(name).strip() for name in names if name),
-        birthday.isoformat(), child.first_name, child.last_name, child.father_name,
+        birthday.isoformat() if birthday else _date_of_birth(child), child.first_name, child.last_name, child.father_name,
         child.mother_fullname, child.gender if makani else child.sex,
         child.birthday_year, child.birthday_month, child.birthday_day,
         child.nationality, getattr(location, 'governorate', None),
@@ -53,8 +53,8 @@ def roster_values(registration, programme, birthday):
     )
 
 
-def build_photo_roster(registrations, programme, today=None, unavailable_only=False):
-    """Include valid saved dates from the seventh through the tenth birthday.
+def build_photo_roster(registrations, programme, today=None, unavailable_only=False, all_ages=False):
+    """Export ages 7–10 by default, or every age without requiring a valid DOB.
 
     One row is one visible registration; missing photos do not remove children.
     Text is written literally so names and telephone numbers remain unchanged.
@@ -68,7 +68,8 @@ def build_photo_roster(registrations, programme, today=None, unavailable_only=Fa
     workbook = xlsxwriter.Workbook(output, {
         'in_memory': True, 'strings_to_formulas': False, 'strings_to_urls': False,
     })
-    sheet = workbook.add_worksheet('Unavailable photos' if unavailable_only else 'Children aged 7-10')
+    sheet_name = 'All ages' if all_ages else 'Children aged 7-10'
+    sheet = workbook.add_worksheet('Unavailable photos' if unavailable_only else sheet_name)
     heading = workbook.add_format({'bold': True, 'text_wrap': True,
                                   'bg_color': '#164A68', 'font_color': '#FFFFFF'})
     body = workbook.add_format({'text_wrap': True, 'valign': 'top'})
@@ -81,12 +82,15 @@ def build_photo_roster(registrations, programme, today=None, unavailable_only=Fa
     row = 0
     for registration in registrations:
         child = registration.child if programme == 'makani' else registration.student
+        if child is None:
+            continue
         birthday = birth_date(child)
-        if birthday is None:
-            continue
-        age = today.year - birthday.year - ((today.month, today.day) < (birthday.month, birthday.day))
-        if not 7 <= age <= 10:
-            continue
+        if not all_ages:
+            if birthday is None:
+                continue
+            age = today.year - birthday.year - ((today.month, today.day) < (birthday.month, birthday.day))
+            if not 7 <= age <= 10:
+                continue
         photo, photo_status = load_registration_photo(registration)
         if unavailable_only and photo:
             continue
@@ -117,6 +121,7 @@ class ChildPhotoExportMixin:
     """Reuse the list's role scope and filters, without its page size."""
 
     unavailable_only = False
+    all_ages = False
 
     def get_context_data(self, **kwargs):
         return kwargs
@@ -125,10 +130,11 @@ class ChildPhotoExportMixin:
         if self.filterset.is_bound and not self.filterset.is_valid():
             return HttpResponseBadRequest('Please correct the list filters before exporting.')
         content = build_photo_roster(self.object_list.iterator(chunk_size=200), self.programme,
-                                    unavailable_only=self.unavailable_only)
+                                    unavailable_only=self.unavailable_only, all_ages=self.all_ages)
         response = HttpResponse(content, content_type=(
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'))
         report = 'unavailable-photos' if self.unavailable_only else 'children'
-        response['Content-Disposition'] = 'attachment; filename="{}-{}-7-10.xlsx"'.format(self.programme, report)
+        age_range = 'all-ages' if self.all_ages else '7-10'
+        response['Content-Disposition'] = 'attachment; filename="{}-{}-{}.xlsx"'.format(self.programme, report, age_range)
         response['Cache-Control'] = 'private, no-store'
         return response

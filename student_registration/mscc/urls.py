@@ -8,6 +8,7 @@ from . import views, education_view, services_view, attendance_views
 app_name = 'mscc'
 
 urlpatterns = [
+    re_path(r'^all-ages-children-photo-export/$', views.ChildPhotoExportView.as_view(all_ages=True), name='all_ages_children_photo_export'),
     re_path(r'^unavailable-children-photo-export/$', views.ChildPhotoExportView.as_view(unavailable_only=True), name='unavailable_children_photo_export'),
     re_path(r'^children-photo-export/$', views.ChildPhotoExportView.as_view(), name='children_photo_export'),
     re_path(r'^profile-ids/$', profile_views.BulkProfileIdView.as_view(), name='profile_id_bulk'),

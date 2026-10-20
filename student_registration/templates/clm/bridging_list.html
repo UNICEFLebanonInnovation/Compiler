@@ -111,6 +111,7 @@
                             </div>
                         <div class="page-title-actions clm-bridging-list-actions">
 <a href="{% url 'clm:bridging_children_photo_export' %}?{{ request.GET.urlencode }}" class="mr-3 btn-icon btn btn-success"><i class="fa fa-file-excel-o btn-icon-wrapper" aria-hidden="true"></i>{% trans "Export photos (ages 7–10)" %}</a>
+<a href="{% url 'clm:bridging_all_ages_children_photo_export' %}?{{ request.GET.urlencode }}" class="mr-3 btn-icon btn btn-success"><i class="fa fa-file-excel-o btn-icon-wrapper" aria-hidden="true"></i>{% trans "Export photos (all ages)" %}</a>
 <a href="{% url 'clm:bridging_unavailable_children_photo_export' %}?{{ request.GET.urlencode }}" class="mr-3 btn-icon btn btn-warning"><i class="fa fa-file-excel-o btn-icon-wrapper" aria-hidden="true"></i>{% trans "Export unavailable photos (ages 7–10)" %}</a>
 
 {% if 'Bridging'|is_allowed_create %}
