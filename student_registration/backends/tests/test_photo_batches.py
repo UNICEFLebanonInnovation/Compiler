@@ -44,7 +44,7 @@ def world(request, django_user_model, monkeypatch, tmp_path):
 
     def add(count=1, assigned_partner=partner):
         records = model.objects.bulk_create([
-            model(**{relation: person}, partner=assigned_partner, round=cycle) for _ in range(count)])
+            model(**{relation: person}, partner=assigned_partner, round=cycle) for _ in range(count)], batch_size=50)
         return [record.pk for record in records]
 
     storage = FileSystemStorage(location=tmp_path)
@@ -67,22 +67,22 @@ def children(job):
 
 
 @pytest.mark.django_db
-def test_snapshot_partitions_200_and_queues_after_commit(world, django_capture_on_commit_callbacks):
-    ids = world.add(201)
+def test_snapshot_partitions_2000_and_queues_after_commit(world, django_capture_on_commit_callbacks):
+    ids = world.add(2001)
     world.add(1, assigned_partner=world.other_partner)
     with django_capture_on_commit_callbacks(execute=True):
         job = make_job(world)
         assert not world.queue.called
     parts = children(job)
-    assert job.fields['total'] == 201
-    assert [len(part.fields['ids']) for part in parts] == [200, 1]
+    assert job.fields['total'] == 2001
+    assert [len(part.fields['ids']) for part in parts] == [2000, 1]
     assert parts[0].fields['ids'] + parts[1].fields['ids'] == sorted(ids)
     assert world.queue.call_count == 2
     with django_capture_on_commit_callbacks(execute=True):
         assert make_job(world).pk == job.pk
     assert world.queue.call_count == 2
     world.add()
-    assert sum(len(part.fields['ids']) for part in children(job)) == 201
+    assert sum(len(part.fields['ids']) for part in children(job)) == 2001
 
 
 @pytest.mark.django_db
@@ -230,7 +230,7 @@ def test_real_background_pool_returns_before_photos_finish(world, client, monkey
     from concurrent.futures import ThreadPoolExecutor
     from student_registration.mscc import tasks
 
-    world.add(201)
+    world.add(2001)
     started, release = threading.Event(), threading.Event()
     pool = ThreadPoolExecutor(max_workers=2)
     original = batches.build_photo_roster
@@ -258,7 +258,7 @@ def test_real_background_pool_returns_before_photos_finish(world, client, monkey
     assert job.status == 'done'
     parts = children(job)
     assert [part.status for part in parts] == ['done', 'done']
-    for part, expected_rows in zip(parts, [200, 1]):
+    for part, expected_rows in zip(parts, [2000, 1]):
         with world.storage.open(part.fields['filename'], 'rb') as source:
             rows, _, _ = read_rows(source.read())
         assert len(rows) == expected_rows + 1

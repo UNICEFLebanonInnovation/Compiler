@@ -3,7 +3,7 @@
 {% block content %}
 <div class="card"><div class="card-body">
   <h1>{% trans "Export photos (all ages)" %}</h1>
-  <p>{% trans "Your filtered list will be exported in batches of 200 registrations. Download each Excel file as soon as it is ready." %}</p>
+  <p>{% trans "Your filtered list will be exported in batches of 2,000 registrations. Download each Excel file as soon as it is ready." %}</p>
   <form method="post">{% csrf_token %}<button type="submit" class="btn btn-success">{% trans "Start batch export" %}</button></form>
 </div></div>
 {% endblock %}

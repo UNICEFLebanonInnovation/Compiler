@@ -22,7 +22,7 @@ from .utils import ExportStorage
 
 
 logger = logging.getLogger(__name__)
-BATCH_SIZE = 200
+BATCH_SIZE = 2000
 STALE_AFTER = datetime.timedelta(minutes=30)
 JOB_KIND = 'child_photo_job'
 BATCH_KIND = 'child_photo_batch'
@@ -69,7 +69,8 @@ def create_job(user, programme, queryset, filters):
         get_user_model().objects.select_for_update().get(pk=user.pk)
         candidates = ExportHistory.objects.filter(
             created_by=user, status='pending', fields__kind=JOB_KIND,
-            fields__programme=programme, fields__filters=filters, fields__total=len(ids))
+            fields__programme=programme, fields__filters=filters,
+            fields__total=len(ids), fields__batch_size=BATCH_SIZE)
         for existing in candidates:
             snapshots = ExportHistory.objects.filter(
                 created_by=user, fields__kind=BATCH_KIND, fields__job_id=existing.pk).order_by('pk')

@@ -4,7 +4,7 @@
 <div class="card"><div class="card-body">
   <h1>{% trans "Photo export — all ages" %}</h1>
   <p>{{ ready }} {% trans "of" %} {{ batches|length }} {% trans "batches ready" %} · {{ job.fields.total }} {% trans "registrations" %}</p>
-  <p>{% trans "You can leave this page and return using this link or your export history. Each file contains up to 200 registrations with the same columns and photos." %}</p>
+  <p>{% blocktrans with batch_size=job.fields.batch_size %}You can leave this page and return using this link or your export history. Each file contains up to {{ batch_size }} registrations with the same columns and photos.{% endblocktrans %}</p>
   {% if waiting %}<p role="status">{% trans "Preparing photos. This page refreshes automatically." %}</p>{% endif %}
   <table class="table">
     <thead><tr><th>{% trans "Batch" %}</th><th>{% trans "Registrations" %}</th><th>{% trans "Status" %}</th><th>{% trans "Download / Retry" %}</th></tr></thead>
