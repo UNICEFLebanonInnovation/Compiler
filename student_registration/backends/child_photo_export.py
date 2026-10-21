@@ -4,7 +4,8 @@ import datetime
 import io
 
 import xlsxwriter
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed
+from django.shortcuts import redirect, render
 from django.utils import timezone
 from PIL import Image
 
@@ -126,9 +127,23 @@ class ChildPhotoExportMixin:
     def get_context_data(self, **kwargs):
         return kwargs
 
+    def post(self, request, *args, **kwargs):
+        if not self.all_ages or self.unavailable_only:
+            return HttpResponseNotAllowed(['GET'])
+        return self.get(request, *args, **kwargs)
+
     def render_to_response(self, context, **response_kwargs):
         if self.filterset.is_bound and not self.filterset.is_valid():
             return HttpResponseBadRequest('Please correct the list filters before exporting.')
+        if self.all_ages and not self.unavailable_only:
+            if self.request.method == 'POST':
+                from .photo_batches import create_job
+                job = create_job(self.request.user, self.programme, self.object_list,
+                                 dict(self.request.GET.lists()))
+                return redirect('backends:photo_batch_progress', job_id=job.pk)
+            return render(self.request, 'backends/photo_batch_start.html', {
+                'module_base': 'mscc/base.html' if self.programme == 'makani' else 'clm/base.html',
+            })
         content = build_photo_roster(self.object_list.iterator(chunk_size=200), self.programme,
                                     unavailable_only=self.unavailable_only, all_ages=self.all_ages)
         response = HttpResponse(content, content_type=(

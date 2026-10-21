@@ -210,8 +210,24 @@ def test_endpoint_respects_partner_scope_filters_and_login(programme, unavailabl
             mother_fullname='Mother', birthday_year='2018', birthday_month='3', birthday_day='4')
         model.objects.create(**{relation: person}, partner=assigned_partner, round=cycle)
     request = rf.get('/photo-export/', query)
+    if all_ages and not unavailable_only:
+        from urllib.parse import urlencode
+        request = rf.post('/photo-export/?' + urlencode(query))
     request.user = user
     response = view.as_view(unavailable_only=unavailable_only, all_ages=all_ages)(request)
+    if all_ages and not unavailable_only:
+        from student_registration.backends.models import ExportHistory
+        from student_registration.backends.photo_batches import JOB_KIND, BATCH_KIND
+        assert response.status_code == 302
+        job = ExportHistory.objects.get(created_by=user, fields__kind=JOB_KIND)
+        assert job.fields['total'] == 1
+        batch = ExportHistory.objects.get(fields__kind=BATCH_KIND, fields__job_id=job.pk)
+        expected = model.objects.get(**{relation + '__first_name': 'Visible'})
+        assert batch.fields['ids'] == [expected.pk]
+        request = rf.get('/photo-export/')
+        request.user = AnonymousUser()
+        assert view.as_view(all_ages=True)(request).status_code == 302
+        return
     assert response.status_code == 200
     rows, _, _ = read_rows(response.content)
     assert [row['B'] for row in rows[1:]] == ['Visible Father Family']
