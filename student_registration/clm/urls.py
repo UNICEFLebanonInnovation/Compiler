@@ -9,6 +9,10 @@ from . import views, attendance_views, inclusion_views, bridging_views
 app_name = 'clm'
 
 urlpatterns = [
+    re_path(r'^bridging-all-ages-unavailable-children-photo-export/$', bridging_views.BridgingChildPhotoExportView.as_view(all_ages=True, unavailable_only=True), name='bridging_all_ages_unavailable_children_photo_export'),
+    re_path(r'^bridging-all-ages-children-photo-export/$', bridging_views.BridgingChildPhotoExportView.as_view(all_ages=True), name='bridging_all_ages_children_photo_export'),
+    re_path(r'^bridging-unavailable-children-photo-export/$', bridging_views.BridgingChildPhotoExportView.as_view(unavailable_only=True), name='bridging_unavailable_children_photo_export'),
+    re_path(r'^bridging-children-photo-export/$', bridging_views.BridgingChildPhotoExportView.as_view(), name='bridging_children_photo_export'),
 
     re_path(
         r'^index/$',
@@ -380,6 +384,11 @@ urlpatterns = [
         r'^bridging-export-all/$',
         view=bridging_views.bridging_export_all,
         name='bridging_export_all'
+    ),
+    re_path(
+        r'^bridging-export-photos/$',
+        view=bridging_views.bridging_export_photos,
+        name='bridging_export_photos'
     ),
     re_path(
         r'^bridging-school-export-data/(?P<school_id>[\w.@+-]+)/$',
