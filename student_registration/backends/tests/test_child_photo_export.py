@@ -8,12 +8,16 @@ import pytest
 from PIL import Image
 
 from student_registration.backends.child_photo_export import (
-    HEADERS, ChildPhotoExportMixin, build_photo_roster,
+    HEADERS, MAKANI_EXTRA_HEADERS, ChildPhotoExportMixin, build_photo_roster,
 )
 
 
 TODAY = datetime.date(2026, 10, 20)
 NS = {'s': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
+
+
+def expected_headers(programme):
+    return list(HEADERS + MAKANI_EXTRA_HEADERS if programme == 'makani' else HEADERS)
 
 
 def registration(programme='makani', birthday=(2018, 3, 4), photo=None, **values):
@@ -57,7 +61,7 @@ def test_headers_fields_and_embedded_photograph(programme):
     Image.new('RGB', (30, 50), 'red').save(image, format='JPEG')
     rows, files, drawing = read_rows(build_photo_roster(
         [registration(programme, photo=image.getvalue())], programme, TODAY))
-    assert list(rows[0].values()) == list(HEADERS)
+    assert list(rows[0].values()) == expected_headers(programme)
     assert rows[1]['B'] == '=Ali Hassan Rahman'
     assert rows[1]['C'] == '2018-03-04'
     assert rows[1]['R'] == '00123456'
@@ -81,6 +85,8 @@ def test_age_boundaries_and_invalid_birthdays(programme):
     rows, _, _ = read_rows(build_photo_roster(
         [registration(programme, day) for day in birthdays], programme, TODAY))
     assert [row['C'] for row in rows[1:]] == ['2019-10-20', '2015-10-21']
+    if programme == 'makani':
+        assert [row['W'] for row in rows[1:]] == ['7', '10']
     assert rows[1]['A'] == 'No photograph uploaded'
 
 
@@ -91,7 +97,7 @@ def test_unreadable_photo_keeps_child_and_empty_export_has_headers():
     assert not any(name.startswith('xl/media/') for name in files)
     rows, _, _ = read_rows(build_photo_roster([], 'makani', TODAY))
     assert len(rows) == 1
-    assert list(rows[0].values()) == list(HEADERS)
+    assert list(rows[0].values()) == expected_headers('makani')
 
 
 def test_both_language_columns_use_programme_language_when_available():
@@ -101,7 +107,56 @@ def test_both_language_columns_use_programme_language_when_available():
     rows, _, _ = read_rows(build_photo_roster([record], 'dirasa', TODAY))
     assert rows[1]['S'] == rows[1]['T'] == 'English/Arabic'
     rows, _, _ = read_rows(build_photo_roster([registration()], 'makani', TODAY))
+    assert rows[1]['S'] == rows[1]['T'] == 'English'
+
+
+@pytest.mark.parametrize('french,expected', [('Yes', 'French'), ('No', 'English'), (None, 'English')])
+def test_makani_uses_center_language_latest_level_and_age(french, expected):
+    record = registration()
+    record.center.provide_french_language = french
+    record.language = 'Wrong registration language'
+    record.education_service = SimpleNamespace(all=lambda: [
+        SimpleNamespace(get_education_program_display=lambda: 'BLN Level 1'),
+        SimpleNamespace(get_education_program_display=lambda: 'RS Grade 4'),
+    ])
+    for unavailable_only in [False, True]:
+        record.profile_picture = SimpleNamespace(name='uploads/missing.jpg', open=lambda mode: io.BytesIO(b'broken'))
+        rows, _, _ = read_rows(build_photo_roster([record], 'makani', TODAY,
+                                                  unavailable_only=unavailable_only))
+        assert rows[1]['S'] == rows[1]['T'] == expected
+        assert rows[1]['V'] == 'RS Grade 4'
+        assert rows[1]['W'] == '8'
+
+
+def test_makani_missing_center_level_and_birthdate_remain_blank():
+    record = registration(birthday=(0, 0, 0))
+    record.center = None
+    rows, _, _ = read_rows(build_photo_roster([record], 'makani', TODAY, all_ages=True))
     assert rows[1]['S'] == rows[1]['T'] == ''
+    assert rows[1]['V'] == rows[1]['W'] == ''
+
+
+@pytest.mark.django_db
+def test_makani_level_reuses_prefetched_services(django_assert_num_queries):
+    from student_registration.child.models import Child
+    from student_registration.locations.models import Center
+    from student_registration.mscc.models import Registration, EducationService
+
+    child = Child.objects.create(first_name='Ali', father_name='Father', last_name='Family',
+                                  mother_fullname='Mother', birthday_year='2018', birthday_month='3', birthday_day='4')
+    center = Center.objects.create(name='French center', provide_french_language='Yes')
+    record = Registration.objects.create(child=child, center=center)
+    EducationService.objects.create(registration=record, education_program='BLN Level 1')
+    EducationService.objects.create(registration=record, education_program='BLN Level 2')
+    qs = Registration.objects.filter(pk=record.pk).select_related(
+        'child__nationality', 'child__disability', 'center__governorate',
+        'center__caza', 'center__cadaster', 'partner').prefetch_related('education_service')
+    with django_assert_num_queries(2):
+        content = build_photo_roster(qs, 'makani', TODAY, all_ages=True)
+    rows, _, _ = read_rows(content)
+    assert rows[1]['S'] == rows[1]['T'] == 'French'
+    assert rows[1]['V'] == 'BLN Level 2'
+    assert rows[1]['W'] == '8'
 
 
 @pytest.mark.parametrize('programme', ['makani', 'dirasa'])
@@ -111,7 +166,7 @@ def test_all_ages_includes_outside_age_band_and_incomplete_birthdays(programme):
         [registration(programme, birthday) for birthday in birthdays],
         programme, TODAY, all_ages=True))
     assert len(rows) == 5
-    assert list(rows[0].values()) == list(HEADERS)
+    assert list(rows[0].values()) == expected_headers(programme)
     assert [row['C'] for row in rows[1:]] == ['2022-01-01', '2010-01-01', '2018-03-04', '']
 
 
@@ -147,7 +202,7 @@ def test_unavailable_report_keeps_format_and_filenames_without_available_photos(
         registration(programme, photo=image.getvalue()), unreadable, unreachable,
         registration(programme), registration(programme, birthday=(2010, 1, 1)),
     ], programme, TODAY, unavailable_only=True))
-    assert list(rows[0].values()) == list(HEADERS)
+    assert list(rows[0].values()) == expected_headers(programme)
     assert [row['A'] for row in rows[1:]] == [
         '=photo.jpg', 'missing.jpg']
     assert all(row['B'] == '=Ali Hassan Rahman' for row in rows[1:])

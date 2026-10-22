@@ -19,6 +19,7 @@ HEADERS = (
     'Cadaster', 'Disability', 'Partner', 'Phone Number', 'Main Language',
     'Math Language', 'ID',
 )
+MAKANI_EXTRA_HEADERS = ('Grading/level', 'Age')
 
 
 def birth_date(child):
@@ -31,15 +32,18 @@ def birth_date(child):
         return None
 
 
-def roster_values(registration, programme, birthday):
+def roster_values(registration, programme, birthday, today):
     makani = programme == 'makani'
     child = registration.child if makani else registration.student
     location = registration.center if makani else registration
     names = [child.first_name, child.father_name, child.last_name]
     language = getattr(registration, 'language', '') or ''
-    if language and hasattr(registration, 'get_language_display'):
+    if makani:
+        language = ('French' if getattr(location, 'provide_french_language', None) == 'Yes'
+                    else 'English') if location is not None else ''
+    elif language and hasattr(registration, 'get_language_display'):
         language = registration.get_language_display()
-    return (
+    values = (
         '', ' '.join(str(name).strip() for name in names if name),
         birthday.isoformat() if birthday else _date_of_birth(child), child.first_name, child.last_name, child.father_name,
         child.mother_fullname, child.gender if makani else child.sex,
@@ -52,6 +56,17 @@ def roster_values(registration, programme, birthday):
         child.first_phone_number if makani else registration.phone_number,
         language, language, registration.pk,
     )
+    if makani:
+        manager = getattr(registration, 'education_service', None)
+        # The list prefetches these services in ID order. Reuse that cache
+        # rather than querying .last() for each of thousands of registrations.
+        services = list(manager.all()) if manager is not None else []
+        level = services[-1].get_education_program_display() if services else ''
+        age = ''
+        if birthday and birthday <= today:
+            age = today.year - birthday.year - ((today.month, today.day) < (birthday.month, birthday.day))
+        values += (level, age)
+    return values
 
 
 def build_photo_roster(registrations, programme, today=None, unavailable_only=False, all_ages=False):
@@ -66,6 +81,7 @@ def build_photo_roster(registrations, programme, today=None, unavailable_only=Fa
         now = timezone.now()
         today = (timezone.localtime(now) if timezone.is_aware(now) else now).date()
     output = io.BytesIO()
+    headers = HEADERS + MAKANI_EXTRA_HEADERS if programme == 'makani' else HEADERS
     workbook = xlsxwriter.Workbook(output, {
         'in_memory': True, 'strings_to_formulas': False, 'strings_to_urls': False,
     })
@@ -76,9 +92,9 @@ def build_photo_roster(registrations, programme, today=None, unavailable_only=Fa
     body = workbook.add_format({'text_wrap': True, 'valign': 'top'})
     sheet.freeze_panes(1, 2)
     sheet.set_row(0, 32)
-    sheet.set_column(0, len(HEADERS) - 1, 22)
+    sheet.set_column(0, len(headers) - 1, 22)
     sheet.set_column(0, 0, 20)
-    for column, label in enumerate(HEADERS):
+    for column, label in enumerate(headers):
         sheet.write_string(0, column, label, heading)
     row = 0
     for registration in registrations:
@@ -101,7 +117,7 @@ def build_photo_roster(registrations, programme, today=None, unavailable_only=Fa
         if row >= 1048576:
             raise ValueError('The export exceeds the Excel worksheet row limit.')
         sheet.set_row(row, 108)
-        for column, value in enumerate(roster_values(registration, programme, birthday)):
+        for column, value in enumerate(roster_values(registration, programme, birthday, today)):
             sheet.write_string(row, column, _text(value), body)
         if photo:
             image_data = io.BytesIO(photo)
@@ -115,7 +131,7 @@ def build_photo_roster(registrations, programme, today=None, unavailable_only=Fa
             picture = registration.profile_picture
             filename = picture.name.rsplit('/', 1)[-1] if picture else ''
             sheet.write_string(row, 0, _text(filename) if unavailable_only and filename else photo_status, body)
-    sheet.autofilter(0, 0, row, len(HEADERS) - 1)
+    sheet.autofilter(0, 0, row, len(headers) - 1)
     workbook.close()
     return output.getvalue()
 
