@@ -80,6 +80,7 @@ from .utils import *
 from student_registration.mscc.templatetags.simple_tags import education_history_model, get_education_service_history
 from .tasks import queue_mscc_export, queue_filtered_mscc_export
 from .export_access import PHOTO_FILTER_VALUES, excel_export_registrations, user_can_export
+from student_registration.backends.child_photo_export import ChildPhotoExportMixin
 from student_registration.users.templatetags.custom_tags import has_group
 from student_registration.child.models import Child
 
@@ -596,6 +597,13 @@ class MainListView(LoginRequiredMixin,
             return self.filterset_class
 
         return self.filterset_class
+
+
+class ChildPhotoExportView(ChildPhotoExportMixin, MainListView):
+    programme = 'makani'
+
+    def get_queryset(self):
+        return super().get_queryset().select_related('child__disability')
 
 
 class MainViewSet(mixins.RetrieveModelMixin,

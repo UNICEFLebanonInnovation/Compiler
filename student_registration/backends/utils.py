@@ -5,6 +5,7 @@ import os
 import io
 import re
 import logging
+import posixpath
 import warnings
 
 from pathlib import Path
@@ -12,7 +13,7 @@ from time import mktime
 
 from django.http import FileResponse, HttpResponse, Http404
 from django.urls import reverse
-from storages.backends.azure_storage import AzureStorage
+from .azure_storage import ChunkedAzureStorage
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +33,7 @@ class MyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-class ExportStorage(AzureStorage):
+class ExportStorage(ChunkedAzureStorage):
     """Azure storage backend dedicated for exported files."""
     location = "export"
 
@@ -51,6 +52,11 @@ PHOTO_EXPORT_PREFIXES = ('mscc_photo_export_', 'bridging_photo_export_')
 def download_file(file_name, returned_file_name, content_type="application/octet-stream", delete_after=True,
                   *, request=None):
     """Retrieve a file from Azure storage and return it as an HTTP response."""
+
+    canonical_name = posixpath.normpath(file_name.replace('\\', '/')).rsplit('/', 1)[-1]
+    if canonical_name.startswith('photo_batch_'):
+        # These files are served only by the owner- and scope-checked batch view.
+        raise Http404('Export not found.')
 
     if file_name.startswith(PHOTO_EXPORT_PREFIXES):
         # Several modules share this storage/download utility. Photo archives

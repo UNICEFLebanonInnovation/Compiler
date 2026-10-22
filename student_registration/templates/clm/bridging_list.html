@@ -110,6 +110,10 @@
                                 </div>
                             </div>
                         <div class="page-title-actions clm-bridging-list-actions">
+<a href="{% url 'clm:bridging_children_photo_export' %}?{{ request.GET.urlencode }}" class="mr-3 btn-icon btn btn-success"><i class="fa fa-file-excel-o btn-icon-wrapper" aria-hidden="true"></i>{% trans "Export photos (ages 7–10)" %}</a>
+<form method="post" action="{% url 'clm:bridging_all_ages_children_photo_export' %}?{{ request.GET.urlencode }}" class="d-inline-block mr-3" onsubmit="this.querySelector('button').disabled = true;">{% csrf_token %}<button type="submit" class="btn-icon btn btn-success"><i class="fa fa-file-excel-o btn-icon-wrapper" aria-hidden="true"></i>{% trans "Export photos (all ages)" %}</button></form>
+<a href="{% url 'clm:bridging_unavailable_children_photo_export' %}?{{ request.GET.urlencode }}" class="mr-3 btn-icon btn btn-warning"><i class="fa fa-file-excel-o btn-icon-wrapper" aria-hidden="true"></i>{% trans "Export unavailable photos (ages 7–10)" %}</a>
+<form method="post" action="{% url 'clm:bridging_all_ages_unavailable_children_photo_export' %}?{{ request.GET.urlencode }}" class="d-inline-block mr-3" onsubmit="this.querySelector('button').disabled = true;">{% csrf_token %}<button type="submit" class="btn-icon btn btn-warning"><i class="fa fa-file-excel-o btn-icon-wrapper" aria-hidden="true"></i>{% trans "Export unavailable photos (all ages)" %}</button></form>
 
 {% if 'Bridging'|is_allowed_create %}
 {% if not request.user.partner or not request.user.partner.is_world_learning %}

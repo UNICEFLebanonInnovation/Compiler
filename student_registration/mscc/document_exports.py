@@ -11,7 +11,6 @@ example Dirasa) describe their own registration and person models with an
 import datetime
 import io
 import json
-import logging
 import re
 from collections import Counter, OrderedDict
 from dataclasses import dataclass
@@ -24,8 +23,6 @@ from PIL import Image, ImageOps
 from student_registration.child.models import Child
 from student_registration.mscc.models import Registration
 
-
-logger = logging.getLogger(__name__)
 
 PHOTO_INCLUDED = 'Photograph included'
 PHOTO_MISSING = 'No photograph uploaded'
@@ -239,15 +236,10 @@ def load_registration_photo(registration, picture_field='profile_picture'):
     try:
         with picture.open('rb') as source:
             data = source.read()
-    except Exception as exc:
+    except Exception:
         # Remote backends can raise their own connection or missing-object
-        # exceptions. Keep this row and report the unavailable photo explicitly,
-        # naming the error type so a storage misconfiguration is easy to spot.
-        logger.warning(
-            'Photograph unavailable for registration ID %s: %s while opening %s via %s',
-            registration.pk, type(exc).__name__, picture.name,
-            type(getattr(picture, 'storage', None)).__name__,
-        )
+        # exceptions. Report unavailable photos in the workbook rather than
+        # emitting a log entry for every missing or unreadable photograph.
         return None, PHOTO_UNAVAILABLE
     try:
         with Image.open(io.BytesIO(data)) as source:
@@ -260,11 +252,7 @@ def load_registration_photo(registration, picture_field='profile_picture'):
             destination = io.BytesIO()
             clean_image.save(destination, format='PNG')
             return destination.getvalue(), PHOTO_INCLUDED
-    except (OSError, ValueError, SyntaxError, Image.DecompressionBombError) as exc:
-        logger.warning(
-            'Photograph unavailable for registration ID %s: %s while decoding %s',
-            registration.pk, type(exc).__name__, picture.name,
-        )
+    except (OSError, ValueError, SyntaxError, Image.DecompressionBombError):
         return None, PHOTO_UNAVAILABLE
 
 

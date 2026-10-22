@@ -143,7 +143,9 @@ class ExporterViewSet(LoginRequiredMixin,
 
 @login_required
 def export_history_list(request):
-    exports = ExportHistory.objects.filter(created_by=request.user)
+    exports = ExportHistory.objects.filter(created_by=request.user).exclude(
+        pk__in=ExportHistory.objects.filter(created_by=request.user,
+                                            fields__kind='child_photo_batch').values('pk'))
     export_id = request.GET.get('export_id')
     if export_id:
         exports = exports.filter(id=export_id)
@@ -153,10 +155,16 @@ def export_history_list(request):
     for export in exports:
         created = export.created if is_naive(export.created) else localtime(export.created)
         timestamp = created.strftime('%Y-%m-%d %H:%M')
+        is_photo_job = isinstance(export.fields, dict) and export.fields.get('kind') == 'child_photo_job'
+        if is_photo_job:
+            report = 'unavailable photo batches' if export.fields.get('unavailable_only') else 'photo batches'
+            label = '{} {}'.format(export.fields['programme'].title(), report)
+        else:
+            label = 'MSCC export'
         data.append({
             'id': export.id,
             'url': export.file_url or '#',
-            'text': f'MSCC export {timestamp}',
+            'text': f'{label} {timestamp}',
             'status': export.status,
         })
     return JsonResponse({'exports': data})
