@@ -1,4 +1,4 @@
-"""The shared 7–10-year-old photograph roster for Makani and Dirasa."""
+"""Shared photograph rosters for Makani and Dirasa."""
 
 import datetime
 import io
@@ -9,7 +9,7 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from PIL import Image
 
-from student_registration.mscc.document_exports import load_registration_photo, _text, _date_of_birth
+from student_registration.mscc.document_exports import load_registration_photo, _text, _date_of_birth, PHOTO_UNAVAILABLE
 
 
 HEADERS = (
@@ -60,7 +60,7 @@ def build_photo_roster(registrations, programme, today=None, unavailable_only=Fa
     One row is one visible registration; missing photos do not remove children.
     Text is written literally so names and telephone numbers remain unchanged.
     The unavailable-only report excludes readable photos and uses their saved
-    filenames in the Photograph column; absent uploads retain the missing label.
+    filenames in the Photograph column; blank photo fields are excluded.
     """
     if today is None:
         now = timezone.now()
@@ -92,8 +92,10 @@ def build_photo_roster(registrations, programme, today=None, unavailable_only=Fa
             age = today.year - birthday.year - ((today.month, today.day) < (birthday.month, birthday.day))
             if not 7 <= age <= 10:
                 continue
+        if unavailable_only and not registration.profile_picture:
+            continue
         photo, photo_status = load_registration_photo(registration)
-        if unavailable_only and photo:
+        if unavailable_only and photo_status != PHOTO_UNAVAILABLE:
             continue
         row += 1
         if row >= 1048576:
@@ -128,21 +130,24 @@ class ChildPhotoExportMixin:
         return kwargs
 
     def post(self, request, *args, **kwargs):
-        if not self.all_ages or self.unavailable_only:
+        if not self.all_ages:
             return HttpResponseNotAllowed(['GET'])
         return self.get(request, *args, **kwargs)
 
     def render_to_response(self, context, **response_kwargs):
         if self.filterset.is_bound and not self.filterset.is_valid():
             return HttpResponseBadRequest('Please correct the list filters before exporting.')
-        if self.all_ages and not self.unavailable_only:
+        if self.unavailable_only:
+            self.object_list = self.object_list.exclude(profile_picture='').exclude(profile_picture__isnull=True)
+        if self.all_ages:
             if self.request.method == 'POST':
                 from .photo_batches import create_job
                 job = create_job(self.request.user, self.programme, self.object_list,
-                                 dict(self.request.GET.lists()))
+                                 dict(self.request.GET.lists()), unavailable_only=self.unavailable_only)
                 return redirect('backends:photo_batch_progress', job_id=job.pk)
             return render(self.request, 'backends/photo_batch_start.html', {
                 'module_base': 'mscc/base.html' if self.programme == 'makani' else 'clm/base.html',
+                'unavailable_only': self.unavailable_only,
             })
         content = build_photo_roster(self.object_list.iterator(chunk_size=200), self.programme,
                                     unavailable_only=self.unavailable_only, all_ages=self.all_ages)

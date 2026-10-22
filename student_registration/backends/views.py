@@ -156,7 +156,11 @@ def export_history_list(request):
         created = export.created if is_naive(export.created) else localtime(export.created)
         timestamp = created.strftime('%Y-%m-%d %H:%M')
         is_photo_job = isinstance(export.fields, dict) and export.fields.get('kind') == 'child_photo_job'
-        label = '{} photo batches'.format(export.fields['programme'].title()) if is_photo_job else 'MSCC export'
+        if is_photo_job:
+            report = 'unavailable photo batches' if export.fields.get('unavailable_only') else 'photo batches'
+            label = '{} {}'.format(export.fields['programme'].title(), report)
+        else:
+            label = 'MSCC export'
         data.append({
             'id': export.id,
             'url': export.file_url or '#',

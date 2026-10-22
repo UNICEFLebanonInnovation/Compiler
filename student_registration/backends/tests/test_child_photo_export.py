@@ -149,10 +149,22 @@ def test_unavailable_report_keeps_format_and_filenames_without_available_photos(
     ], programme, TODAY, unavailable_only=True))
     assert list(rows[0].values()) == list(HEADERS)
     assert [row['A'] for row in rows[1:]] == [
-        '=photo.jpg', 'missing.jpg', 'No photograph uploaded']
+        '=photo.jpg', 'missing.jpg']
     assert all(row['B'] == '=Ali Hassan Rahman' for row in rows[1:])
-    assert [row['U'] for row in rows[1:]] == ['38585', '38586', '1']
+    assert [row['U'] for row in rows[1:]] == ['38585', '38586']
     assert not any(name.startswith('xl/media/') for name in files)
+
+
+@pytest.mark.parametrize('programme', ['makani', 'dirasa'])
+def test_unavailable_all_ages_excludes_blank_and_includes_older_uploaded_photo(programme):
+    older = registration(programme, birthday=(2010, 1, 1), photo=b'broken image')
+    older.profile_picture.name = 'uploads/older.jpg'
+    older.pk = 999
+    rows, _, _ = read_rows(build_photo_roster(
+        [registration(programme), older], programme, TODAY, unavailable_only=True, all_ages=True))
+    assert len(rows) == 2
+    assert rows[1]['A'] == 'older.jpg'
+    assert rows[1]['U'] == '999'
 
 
 def test_export_uses_full_filtered_queryset_and_rejects_invalid_filters(monkeypatch):
@@ -204,23 +216,26 @@ def test_endpoint_respects_partner_scope_filters_and_login(programme, unavailabl
         cycle = CLMRound.objects.create(name='Current', current_year=True)
         model, person_model, relation, view = Bridging, Student, 'student', BridgingChildPhotoExportView
         query = {'student__first_name': 'Visible', 'page': '999'}
+    monkeypatch.setattr('student_registration.backends.child_photo_export.load_registration_photo',
+                        lambda registration: (None, 'Photograph unavailable'))
     for assigned_partner, name in [(partner, 'Visible'), (partner, 'Filtered'), (other, 'Visible outsider')]:
         person = person_model.objects.create(
             first_name=name, father_name='Father', last_name='Family',
             mother_fullname='Mother', birthday_year='2018', birthday_month='3', birthday_day='4')
-        model.objects.create(**{relation: person}, partner=assigned_partner, round=cycle)
+        model.objects.create(**{relation: person}, partner=assigned_partner, round=cycle, profile_picture='uploads/missing.jpg')
     request = rf.get('/photo-export/', query)
-    if all_ages and not unavailable_only:
+    if all_ages:
         from urllib.parse import urlencode
         request = rf.post('/photo-export/?' + urlencode(query))
     request.user = user
     response = view.as_view(unavailable_only=unavailable_only, all_ages=all_ages)(request)
-    if all_ages and not unavailable_only:
+    if all_ages:
         from student_registration.backends.models import ExportHistory
         from student_registration.backends.photo_batches import JOB_KIND, BATCH_KIND
         assert response.status_code == 302
         job = ExportHistory.objects.get(created_by=user, fields__kind=JOB_KIND)
         assert job.fields['total'] == 1
+        assert job.fields['unavailable_only'] == unavailable_only
         batch = ExportHistory.objects.get(fields__kind=BATCH_KIND, fields__job_id=job.pk)
         expected = model.objects.get(**{relation + '__first_name': 'Visible'})
         assert batch.fields['ids'] == [expected.pk]

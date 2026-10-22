@@ -2,7 +2,8 @@
 {% load i18n %}
 {% block content %}
 <div class="card"><div class="card-body">
-  <h1>{% trans "Photo export — all ages" %}</h1>
+  <h1>{% if job.fields.unavailable_only %}{% trans "Unavailable photos — all ages" %}{% else %}{% trans "Photo export — all ages" %}{% endif %}</h1>
+  {% if job.fields.unavailable_only %}<p>{% trans "Each batch checks uploaded photos and lists only those that cannot be read. Blank fields and readable photos are excluded. A batch with no unavailable photos contains headers only." %}</p>{% endif %}
   <p>{{ ready }} {% trans "of" %} {{ batches|length }} {% trans "batches ready" %} · {{ job.fields.total }} {% trans "registrations" %}</p>
   <p>{% blocktrans with batch_size=job.fields.batch_size %}You can leave this page and return using this link or your export history. Each file contains up to {{ batch_size }} registrations with the same columns and photos.{% endblocktrans %}</p>
   {% if waiting %}<p role="status">{% trans "Preparing photos. This page refreshes automatically." %}</p>{% endif %}

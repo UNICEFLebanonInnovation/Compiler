@@ -204,6 +204,54 @@ def test_empty_job_and_start_confirmation_and_csrf(world, client):
 
 
 @pytest.mark.django_db
+def test_unavailable_all_ages_job_only_checks_uploads_and_lists_unreadable_ones(world, client, monkeypatch):
+    import io
+    from PIL import Image
+    from student_registration.backends import child_photo_export
+
+    ids = world.add(3)
+    world.model.objects.filter(pk=ids[1]).update(profile_picture='uploads/readable.jpg')
+    world.model.objects.filter(pk=ids[2]).update(profile_picture='uploads/unavailable.jpg')
+    image = io.BytesIO()
+    Image.new('RGB', (20, 20), 'red').save(image, format='PNG')
+    checked = []
+
+    def load_photo(record):
+        checked.append(record.pk)
+        if record.pk == ids[1]:
+            return image.getvalue(), 'Photograph included'
+        return None, 'Photograph unavailable'
+
+    monkeypatch.setattr(child_photo_export, 'load_registration_photo', load_photo)
+    client.force_login(world.user)
+    route = world.route.replace('all_ages_children_photo_export', 'all_ages_unavailable_children_photo_export')
+    response = client.post(reverse(route))
+    assert response.status_code == 302
+    job = ExportHistory.objects.get(fields__kind=batches.JOB_KIND)
+    assert job.fields['total'] == 2
+    assert job.fields['unavailable_only'] is True
+    batch = children(job)[0]
+    assert batch.fields['ids'] == ids[1:]
+    batches.generate_batch(batch.pk, batch.fields['attempt'])
+    batch.refresh_from_db()
+    assert batch.status == 'done'
+    assert checked == ids[1:]
+    download = client.get(batch.file_url)
+    assert 'unavailable-photos' in download['Content-Disposition']
+    rows, _, _ = read_rows(b''.join(download.streaming_content))
+    assert len(rows) == 2
+    assert rows[1]['A'] == 'unavailable.jpg'
+    assert rows[1]['U'] == str(ids[2])
+    # A pending full-photo job must not be reused for the unavailable-only mode.
+    same_rows = batches.scoped_registrations(world.user, world.programme).filter(pk__in=ids[1:])
+    full_job = batches.create_job(world.user, world.programme, same_rows, {})
+    other_mode = batches.create_job(world.user, world.programme,
+                                    same_rows, {},
+                                    unavailable_only=True)
+    assert full_job.pk != other_mode.pk
+
+
+@pytest.mark.django_db
 def test_download_failure_allows_regeneration_and_legacy_alias_is_blocked(world, client):
     from django.http import Http404
     from student_registration.backends.utils import download_file

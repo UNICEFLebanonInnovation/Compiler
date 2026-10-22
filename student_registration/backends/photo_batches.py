@@ -58,8 +58,10 @@ def schedule_batch(batch_id, attempt):
             update_job_status(batch.fields['job_id'])
 
 
-def create_job(user, programme, queryset, filters):
+def create_job(user, programme, queryset, filters, unavailable_only=False):
     person = 'child' if programme == 'makani' else 'student'
+    if unavailable_only:
+        queryset = queryset.exclude(profile_picture='').exclude(profile_picture__isnull=True)
     ids = list(queryset.filter(**{person + '__isnull': False}).order_by('pk')
                .values_list('pk', flat=True).distinct())
     export_type = 'Makani List' if programme == 'makani' else 'Bridging List'
@@ -72,6 +74,8 @@ def create_job(user, programme, queryset, filters):
             fields__programme=programme, fields__filters=filters,
             fields__total=len(ids), fields__batch_size=BATCH_SIZE)
         for existing in candidates:
+            if bool(existing.fields.get('unavailable_only')) != unavailable_only:
+                continue
             snapshots = ExportHistory.objects.filter(
                 created_by=user, fields__kind=BATCH_KIND, fields__job_id=existing.pk).order_by('pk')
             if [pk for part in snapshots for pk in part.fields['ids']] == ids:
@@ -81,6 +85,7 @@ def create_job(user, programme, queryset, filters):
             status='pending' if ids else 'done', fields={
                 'kind': JOB_KIND, 'programme': programme, 'filters': filters,
                 'total': len(ids), 'batch_size': BATCH_SIZE,
+                'unavailable_only': unavailable_only,
             })
         job.file_url = reverse('backends:photo_batch_progress', args=[job.pk])
         job.save(update_fields=['file_url', 'modified'])
@@ -91,6 +96,7 @@ def create_job(user, programme, queryset, filters):
                     'kind': BATCH_KIND, 'job_id': job.pk, 'programme': programme,
                     'number': start // BATCH_SIZE + 1, 'ids': ids[start:start + BATCH_SIZE],
                     'state': 'queued', 'attempt': attempt,
+                    'unavailable_only': unavailable_only,
                 })
             transaction.on_commit(lambda pk=batch.pk, token=attempt: schedule_batch(pk, token))
     return job
@@ -135,7 +141,8 @@ def generate_batch(batch_id, attempt):
                     raise RuntimeError('This batch attempt was replaced.')
                 yield registration
 
-        content = build_photo_roster(registrations(), metadata['programme'], all_ages=True)
+        content = build_photo_roster(registrations(), metadata['programme'], all_ages=True,
+                                     unavailable_only=metadata.get('unavailable_only', False))
         # Permissions may have changed during a slow photo download.
         batch.created_by.refresh_from_db()
         batch_queryset(batch)
@@ -216,8 +223,9 @@ def download(request, batch_id):
         ExportHistory.objects.filter(pk=batch.pk).update(status='failed', modified=timezone.now())
         update_job_status(batch.fields['job_id'])
         return redirect('backends:photo_batch_progress', job_id=batch.fields['job_id'])
-    response = FileResponse(source, as_attachment=True, filename='{}-photos-batch-{:03d}.xlsx'.format(
-        batch.fields['programme'], batch.fields['number']),
+    report = 'unavailable-photos' if batch.fields.get('unavailable_only') else 'photos'
+    response = FileResponse(source, as_attachment=True, filename='{}-{}-batch-{:03d}.xlsx'.format(
+        batch.fields['programme'], report, batch.fields['number']),
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Cache-Control'] = 'private, no-store'
     return response
