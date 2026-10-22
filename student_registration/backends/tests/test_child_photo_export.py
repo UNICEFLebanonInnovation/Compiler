@@ -8,7 +8,7 @@ import pytest
 from PIL import Image
 
 from student_registration.backends.child_photo_export import (
-    HEADERS, MAKANI_EXTRA_HEADERS, ChildPhotoExportMixin, build_photo_roster,
+    HEADERS, MAKANI_EXTRA_HEADERS, DIRASA_EXTRA_HEADERS, ChildPhotoExportMixin, build_photo_roster,
 )
 
 
@@ -17,7 +17,7 @@ NS = {'s': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
 
 
 def expected_headers(programme):
-    return list(HEADERS + MAKANI_EXTRA_HEADERS if programme == 'makani' else HEADERS)
+    return list(HEADERS + (MAKANI_EXTRA_HEADERS if programme == 'makani' else DIRASA_EXTRA_HEADERS))
 
 
 def registration(programme='makani', birthday=(2018, 3, 4), photo=None, **values):
@@ -108,6 +108,26 @@ def test_both_language_columns_use_programme_language_when_available():
     assert rows[1]['S'] == rows[1]['T'] == 'English/Arabic'
     rows, _, _ = read_rows(build_photo_roster([registration()], 'makani', TODAY))
     assert rows[1]['S'] == rows[1]['T'] == 'English'
+
+
+@pytest.mark.parametrize('all_ages', [False, True])
+@pytest.mark.parametrize('unavailable_only', [False, True])
+def test_dirasa_additional_columns_use_saved_registration_fields(all_ages, unavailable_only):
+    record = registration('dirasa', photo=b'broken image')
+    record.registration_level = 'grade_four'
+    record.language = 'french_arabic'
+    record.get_language_display = lambda: 'French/Arabic'
+    rows, _, _ = read_rows(build_photo_roster([record], 'dirasa', TODAY,
+                                              unavailable_only=unavailable_only, all_ages=all_ages))
+    assert list(rows[0].values()) == expected_headers('dirasa')
+    assert rows[1]['V'] == 'grade_four'
+    assert rows[1]['W'] == 'french_arabic'
+    assert rows[1]['S'] == rows[1]['T'] == 'French/Arabic'
+
+
+def test_dirasa_missing_registration_fields_export_as_blank():
+    rows, _, _ = read_rows(build_photo_roster([registration('dirasa')], 'dirasa', TODAY))
+    assert rows[1]['V'] == rows[1]['W'] == ''
 
 
 @pytest.mark.parametrize('french,expected', [('Yes', 'French'), ('No', 'English'), (None, 'English')])

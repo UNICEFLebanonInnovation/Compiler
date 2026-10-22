@@ -20,6 +20,7 @@ HEADERS = (
     'Math Language', 'ID',
 )
 MAKANI_EXTRA_HEADERS = ('Grading/level', 'Age')
+DIRASA_EXTRA_HEADERS = ('registration_level', 'language')
 
 
 def birth_date(child):
@@ -66,6 +67,9 @@ def roster_values(registration, programme, birthday, today):
         if birthday and birthday <= today:
             age = today.year - birthday.year - ((today.month, today.day) < (birthday.month, birthday.day))
         values += (level, age)
+    else:
+        values += (getattr(registration, 'registration_level', '') or '',
+                   getattr(registration, 'language', '') or '')
     return values
 
 
@@ -81,7 +85,7 @@ def build_photo_roster(registrations, programme, today=None, unavailable_only=Fa
         now = timezone.now()
         today = (timezone.localtime(now) if timezone.is_aware(now) else now).date()
     output = io.BytesIO()
-    headers = HEADERS + MAKANI_EXTRA_HEADERS if programme == 'makani' else HEADERS
+    headers = HEADERS + (MAKANI_EXTRA_HEADERS if programme == 'makani' else DIRASA_EXTRA_HEADERS)
     workbook = xlsxwriter.Workbook(output, {
         'in_memory': True, 'strings_to_formulas': False, 'strings_to_urls': False,
     })
