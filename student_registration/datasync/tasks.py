@@ -55,7 +55,9 @@ def flush_sync_outbox(limit=None):
         return {'sent': 0, 'failed': 0, 'abandoned': 0, 'batches': 0}
 
     from .dispatch import flush_outbox
+    from .bulk_sync import prepare_waiting_runs
 
+    prepare_waiting_runs()
     totals = flush_outbox(limit=limit)
     if totals['batches']:
         logger.info(

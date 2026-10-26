@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db.models import Q
+from django.db import transaction
 
 from crispy_forms.helper import FormHelper
 
@@ -528,12 +529,14 @@ class EducationAssessmentForm(forms.ModelForm):
             ),
         )
 
+    @transaction.atomic
     def save(self, request=None, instance=None, registry=None):
-
-        validated_data = request.POST
+        if not self.is_valid():
+            raise ValueError('Cannot save an invalid education assessment.')
+        validated_data = self.cleaned_data
 
         if not instance:
-            instance = EducationAssessment.objects.create(registration_id=registry)
+            instance = EducationAssessment(registration_id=registry)
         else:
             instance = EducationAssessment.objects.get(id=instance)
 
@@ -544,13 +547,13 @@ class EducationAssessmentForm(forms.ModelForm):
         instance.school_year_completed = validated_data.get('school_year_completed')
         instance.post_attended_arabic = validated_data.get('post_attended_arabic')
         instance.post_modality_arabic = validated_data.get('post_modality_arabic')
-        instance.post_arabic_grade = int(validated_data.get('post_arabic_grade'))
+        instance.post_arabic_grade = validated_data.get('post_arabic_grade') or 0
         instance.post_attended_language = validated_data.get('post_attended_language')
         instance.post_modality_language = validated_data.get('post_modality_language')
-        instance.post_language_grade = int(validated_data.get('post_language_grade'))
+        instance.post_language_grade = validated_data.get('post_language_grade') or 0
         instance.post_attended_math = validated_data.get('post_attended_math')
         instance.post_modality_math = validated_data.get('post_modality_math')
-        instance.post_math_grade = int(validated_data.get('post_math_grade'))
+        instance.post_math_grade = validated_data.get('post_math_grade') or 0
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))

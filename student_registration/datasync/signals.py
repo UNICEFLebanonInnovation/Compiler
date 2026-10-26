@@ -20,13 +20,16 @@ from django.dispatch import receiver
 
 from student_registration.attendances.models import MSCCAttendanceChild
 from student_registration.child.models import Child
+from student_registration.locations.models import Center
 from student_registration.mscc.models import Registration
+from student_registration.schools.models import PartnerOrganization
 from student_registration.students.models import Teacher, Student
 
-from .constants import RESOURCE_ATTENDANCE, RESOURCE_REGISTRATION, RESOURCE_TEACHER
+from .constants import RESOURCE_ATTENDANCE, RESOURCE_CENTER, RESOURCE_REGISTRATION, RESOURCE_TEACHER
 from .outbox import enqueue, enqueue_delete, enqueue_instance, sync_enabled
 from .serializers import REGISTRY
 from .photos import enqueue_child_photo, photo_sync_enabled
+from .models import SchoolCenterLink
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +61,34 @@ def student_photo_saved(sender, instance, raw=False, **kwargs):
         for child_id in ids:
             enqueue_child_photo(child_id)
     _safe(push, 'photos of linked children')
+
+
+@receiver(post_save, sender=SchoolCenterLink, dispatch_uid='datasync_school_center_link_saved')
+def school_center_link_saved(sender, instance, raw=False, **kwargs):
+    """A changed mapping must reach existing teachers without another teacher save."""
+    if raw or not sync_enabled():
+        return
+
+    def push():
+        for teacher_id in Teacher.objects.filter(school_id=instance.school_id).order_by().values_list('pk', flat=True):
+            enqueue(RESOURCE_TEACHER, teacher_id)
+
+    _safe(push, 'teachers of mapped school #{}'.format(instance.school_id))
+
+
+@receiver(post_save, sender=PartnerOrganization, dispatch_uid='datasync_partner_saved')
+def partner_saved(sender, instance, raw=False, **kwargs):
+    """Partners travel embedded, so their edits republish the linked records."""
+    if raw or not sync_enabled():
+        return
+
+    def push():
+        for center_id in Center.objects.filter(partner_id=instance.pk).order_by().values_list('pk', flat=True).iterator():
+            enqueue(RESOURCE_CENTER, center_id)
+        for registration_id in Registration.objects.filter(partner_id=instance.pk).order_by().values_list('pk', flat=True).iterator():
+            enqueue(RESOURCE_REGISTRATION, registration_id)
+
+    _safe(push, 'records of partner #{}'.format(instance.pk))
 
 
 def _replicated_deleted(sender, instance, **kwargs):

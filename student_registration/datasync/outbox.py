@@ -90,6 +90,25 @@ def enqueue_instance(instance, resource=None, operation=OPERATION_UPSERT, delive
     return enqueue(resource, instance.pk, operation=operation, deliver=deliver)
 
 
+def enqueue_many(resource, source_ids, bulk_run):
+    """Fill the same outbox in bounded batches; the normal sweep delivers it."""
+    if not sync_enabled():
+        raise ValueError('Synchronization is disabled. Enable DATASYNC_ENABLED first.')
+    count = 0
+    rows = []
+    for source_id in source_ids:
+        rows.append(SyncEvent(resource=resource, source_id=str(source_id),
+                              operation=OPERATION_UPSERT, bulk_run=bulk_run))
+        if len(rows) == 500:
+            SyncEvent.objects.bulk_create(rows, batch_size=500)
+            count += len(rows)
+            rows = []
+    if rows:
+        SyncEvent.objects.bulk_create(rows, batch_size=500)
+        count += len(rows)
+    return count
+
+
 def enqueue_delete(instance, resource=None):
     """Queue the removal of a record that was deleted in the Compiler."""
     return enqueue_instance(instance, resource=resource, operation=OPERATION_DELETE)

@@ -22,6 +22,8 @@ from .constants import (
     OPERATIONS,
     RESOURCE_LABELS,
 )
+from .bulk_types import CATEGORY_LABELS, RUN_CATEGORY_CHOICES, normalize_categories
+from django.conf import settings
 
 STATUS_PENDING = 'pending'
 STATUS_SENT = 'sent'
@@ -77,6 +79,46 @@ class SchoolCenterLink(TimeStampedModel):
         return '{} -> {}'.format(self.school, self.center)
 
 
+class BulkSyncRun(TimeStampedModel):
+    """A durable request to queue a round through the existing outbox."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    round = models.ForeignKey('mscc.Round', null=True, blank=True, on_delete=models.PROTECT)
+    category = models.CharField(max_length=100, choices=RUN_CATEGORY_CHOICES)
+    categories = models.JSONField(default=list, blank=True, verbose_name=_('Selected categories'))
+    requested_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL,
+    )
+    preparation = models.CharField(max_length=12, default='waiting', choices=(
+        ('waiting', 'Waiting to queue'), ('ready', 'Queued'), ('failed', 'Queueing failed'),
+    ))
+    queued_counts = models.JSONField(default=dict)
+    last_error = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ['-created']
+        verbose_name = _('Bulk sync')
+        verbose_name_plural = _('Bulk sync')
+
+    def __str__(self):
+        return '{} / {}'.format(self.scope_label, self.get_category_display())
+
+    @property
+    def scope_label(self):
+        return str(self.round) if self.round_id else 'Global records'
+
+    @property
+    def selected_categories(self):
+        # Requests saved before multiple selection retain their original scope.
+        return normalize_categories(self.categories or self.category)
+
+    def get_category_display(self):
+        try:
+            return ', '.join(CATEGORY_LABELS[key] for key in self.selected_categories)
+        except ValueError:
+            return 'Invalid category selection'
+
+
 class SyncEventQuerySet(models.QuerySet):
     """Queries used by the delivery tasks."""
 
@@ -100,6 +142,10 @@ class SyncEvent(TimeStampedModel):
         unique=True,
         editable=False,
         verbose_name=_('Event id')
+    )
+    bulk_run = models.ForeignKey(
+        BulkSyncRun, null=True, blank=True, on_delete=models.PROTECT,
+        related_name='events', verbose_name=_('Bulk sync run'),
     )
     resource = models.CharField(
         max_length=100,

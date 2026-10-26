@@ -38,7 +38,7 @@ class SyncEventAdmin(admin.ModelAdmin):
     search_fields = ('source_id', 'event_id', 'last_error', 'remote_detail')
     date_hierarchy = 'created'
     readonly_fields = (
-        'event_id', 'resource', 'operation', 'source_id', 'payload', 'status',
+        'event_id', 'bulk_run', 'resource', 'operation', 'source_id', 'payload', 'status',
         'attempts', 'next_attempt', 'last_error', 'remote_detail', 'remote_id',
         'conflict', 'ignored_fields', 'sent_at', 'created', 'modified',
     )
@@ -92,3 +92,6 @@ class SyncEventAdmin(admin.ModelAdmin):
             status=STATUS_PENDING, next_attempt=None, attempts=0, last_error='',
         )
         self.message_user(request, '{} event(s) queued to be sent again.'.format(updated))
+
+
+from .bulk_admin import BulkSyncRunAdmin  # noqa: E402,F401 - register the bulk dashboard

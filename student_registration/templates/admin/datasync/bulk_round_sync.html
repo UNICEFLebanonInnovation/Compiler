@@ -1,0 +1,171 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+{% block content_title %}Bulk sync{% endblock %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+  .bulk-sync {max-width: 1400px; width: 100%; padding-bottom: 24px;}
+  .bulk-sync .sync-panel {background: var(--body-bg, #fff); border: 1px solid var(--hairline-color, #ddd); border-radius: 6px; padding: 20px; margin-bottom: 20px;}
+  .bulk-sync .sync-controls {display: flex; gap: 18px; align-items: end; flex-wrap: wrap;}
+  .bulk-sync label {display: block; font-weight: 600; margin-bottom: 6px;}
+  .bulk-sync select {max-width: 100%; min-height: 38px; padding: 6px;}
+  .bulk-sync table {width: 100%; margin: 12px 0;}
+  .bulk-sync th, .bulk-sync td {padding: 10px; text-align: left; border-bottom: 1px solid var(--hairline-color, #ddd); vertical-align: top;}
+  .bulk-sync .table-scroll {overflow-x: auto;}
+  .bulk-sync .sync-note {color: var(--body-quiet-color, #555); margin: 10px 0;}
+  .bulk-sync .sync-issues {background: #fff4db; color: #593d00; padding: 14px 18px; border-radius: 4px;}
+  .bulk-sync .sync-stats {display: flex; gap: 18px; flex-wrap: wrap; margin: 14px 0;}
+  .bulk-sync .sync-stat {border: 1px solid var(--hairline-color, #ddd); border-radius: 4px; padding: 10px 16px;}
+  .bulk-sync .sync-stat strong {display: block; font-size: 1.4rem;}
+  .bulk-sync progress {width: 100%; height: 18px;}
+  .bulk-sync .sync-error {color: #a31515; max-width: 440px; overflow-wrap: anywhere;}
+  .bulk-sync .sync-actions {display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 16px;}
+  .bulk-sync .pagination {display: flex; gap: 14px; align-items: center; padding: 8px 0;}
+  .bulk-sync h2 {margin: 0 0 12px; font-size: 1.2rem;}
+  .bulk-sync button {cursor: pointer; padding: 9px 16px;}
+  .bulk-sync .category-field {min-width: 300px; max-width: 100%;}
+  .bulk-sync .category-label {display: block; font-weight: 600; margin-bottom: 6px;}
+  .bulk-sync .category-picker {position: relative;}
+  .bulk-sync .category-picker summary {padding: 9px 12px; border: 1px solid #aaa; border-radius: 3px; cursor: pointer; min-height: 38px; background: var(--body-bg, #fff);}
+  .bulk-sync .category-options {position: absolute; top: 100%; left: 0; z-index: 1050; min-width: 100%; width: max-content; max-width: min(440px, 85vw); max-height: 330px; overflow-y: auto; padding: 10px 14px; background: var(--body-bg, #fff); border: 1px solid #aaa; border-radius: 3px; box-shadow: 0 4px 12px #0002;}
+  .bulk-sync .category-options label {display: flex; gap: 9px; align-items: center; font-weight: normal; padding: 7px 0; margin: 0; cursor: pointer;}
+  .bulk-sync .category-options input {flex: 0 0 auto;}
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs"><a href="{% url 'admin:index' %}">Home</a> &rsaquo; Data replication &rsaquo; Bulk sync</div>
+{% endblock %}
+
+{% block content %}
+<div class="bulk-sync">
+  <section class="sync-panel" aria-labelledby="selection-heading">
+    <h2 id="selection-heading">Select records to sync</h2>
+    <p>Choose one or more categories to preview their records before syncing them to BMA-NFE.</p>
+    <p class="sync-note"><strong>Centres and teachers are global.</strong> A round filters registrations, education records, referrals and attendance.</p>
+    <form method="get" class="sync-controls">
+      {{ form.non_field_errors }}
+      {% if can_select_round %}<div><label for="id_round">Round (for round-based categories)</label>{{ form.round }}{{ form.round.errors }}</div>{% endif %}
+      <div class="category-field">
+        <span id="categories-label" class="category-label">Element categories</span>
+        <details class="category-picker" data-category-picker>
+          <summary aria-labelledby="categories-label category-selection-label"><span id="category-selection-label">{{ category_selection_label }}</span></summary>
+          <div class="category-options" role="group" aria-labelledby="categories-label">{{ form.category }}</div>
+        </details>
+        {{ form.category.errors }}
+      </div>
+      <button type="submit" class="button btn btn-primary">Preview records</button>
+    </form>
+    {% if issues %}<div class="sync-issues" role="alert"><ul>{% for issue in issues %}<li>{{ issue }}</li>{% endfor %}</ul>
+      <a href="{{ school_links_url }}">School to centre links</a></div>{% endif %}
+    {% if summary %}
+      <div class="table-scroll"><table aria-label="Category counts">
+        <thead><tr><th>Category</th><th>Records</th><th>Scope</th><th>Included as</th></tr></thead>
+        <tbody>{% for item in summary %}{% if item.count %}<tr><td>{{ item.label }}</td><td>{{ item.count }}</td><td>{{ item.scope }}</td><td>{% if item.supporting %}Required supporting records{% else %}Selected category{% endif %}</td></tr>{% endif %}{% endfor %}</tbody>
+      </table></div>
+      <p class="sync-note">Registrations include the child and available profile photo. Unchanged photos are reused. Partners travel with centre and registration records.</p>
+      {% if can_start and not issues and not run %}
+      <form method="post" class="sync-actions">
+        {% csrf_token %}
+        {% if form.cleaned_data.round %}<input type="hidden" name="round" value="{{ form.cleaned_data.round.pk }}">{% endif %}
+        {% for category in form.cleaned_data.category %}<input type="hidden" name="category" value="{{ category }}">{% endfor %}
+        <input type="hidden" name="request_id" value="{{ request_id }}">
+        <button type="submit" class="button btn btn-primary">Sync this selection</button>
+        <span>{{ preview_total }} records including required supporting records.</span>
+      </form>
+      {% elif not can_start %}<p class="sync-note">You have view-only access. An administrator with permission to add bulk sync runs can start delivery.</p>{% endif %}
+    {% endif %}
+  </section>
+
+  {% if run %}
+  <section class="sync-panel" aria-labelledby="progress-heading">
+    <h2 id="progress-heading">{{ run.scope_label }} · {{ run.get_category_display }}</h2>
+    <p><strong>{{ progress.status }}</strong> · Requested {{ run.created }}{% if run.requested_by %} by {{ run.requested_by }}{% endif %}</p>
+    {% if run.last_error %}<p class="sync-error" role="alert">{{ run.last_error }}</p><p>After correcting the problem, preview the selection and start a new request.</p>{% endif %}
+    <div class="sync-stats">
+      <div class="sync-stat"><strong>{{ progress.sent }} / {{ progress.total }}</strong>Sent</div>
+      <div class="sync-stat"><strong>{{ progress.pending }}</strong>Pending</div>
+      <div class="sync-stat"><strong>{{ progress.failed }}</strong>Failed, will retry</div>
+      <div class="sync-stat"><strong>{{ progress.abandoned }}</strong>Needs attention</div>
+    </div>
+    <progress value="{{ progress.sent }}" max="{{ progress.total|default:1 }}" aria-label="Records sent">{{ progress.percent }}%</progress>
+    <div class="sync-actions"><a class="button btn btn-primary" href="?run={{ run.pk }}">Refresh status</a><a href="{{ events_url }}?bulk_run__id__exact={{ run.pk }}">View delivery details and retries</a></div>
+    <div class="table-scroll"><table aria-label="Bulk sync delivery results">
+      <thead><tr><th>Category</th><th>Record ID</th><th>Status</th><th>Attempts</th><th>ID in BMA-NFE</th><th>Last error</th></tr></thead>
+      <tbody>{% for event in event_page %}<tr><td>{{ event.get_resource_display }}</td><td>{{ event.source_id }}</td><td>{{ event.get_status_display }}</td><td>{{ event.attempts }}</td><td>{{ event.remote_id|default:"—" }}</td><td class="sync-error">{{ event.last_error|default:"—"|truncatechars:250 }}</td></tr>
+      {% empty %}<tr><td colspan="6">The worker has not queued records yet. This request remains saved if delivery is unavailable.</td></tr>{% endfor %}</tbody>
+    </table></div>
+    {% if event_page.has_other_pages %}<nav class="pagination" aria-label="Delivery result pages">
+      {% if event_page.has_previous %}<a href="?run={{ run.pk }}&amp;event_page={{ event_page.previous_page_number }}">Previous</a>{% endif %}
+      <span>Page {{ event_page.number }} of {{ event_page.paginator.num_pages }}</span>
+      {% if event_page.has_next %}<a href="?run={{ run.pk }}&amp;event_page={{ event_page.next_page_number }}">Next</a>{% endif %}
+    </nav>{% endif %}
+  </section>
+  {% endif %}
+
+  {% if summary and not run %}
+  <section class="sync-panel" aria-labelledby="preview-heading">
+    <h2 id="preview-heading">Record preview · {{ preview_total }} records</h2>
+    <p class="sync-note">This list is read-only. The worker queues the current records for the categories and scope shown above.</p>
+    <div class="table-scroll"><table aria-label="Records to sync">
+      <thead><tr><th>Category</th><th>Record ID</th><th>Record</th><th>Scope</th><th>Included as</th></tr></thead>
+      <tbody>{% for row in preview_rows %}<tr><td>{{ row.label }}</td><td>{{ row.source_id }}</td><td>{{ row.description }}</td><td>{{ row.scope }}</td><td>{% if row.supporting %}Required supporting record{% else %}Selected category{% endif %}</td></tr>
+      {% empty %}<tr><td colspan="5">No records found.</td></tr>{% endfor %}</tbody>
+    </table></div>
+    {% if preview_page.has_other_pages %}<nav class="pagination" aria-label="Preview pages">
+      {% if preview_page.has_previous %}<a href="?{{ preview_query }}&amp;page={{ preview_page.previous_page_number }}">Previous</a>{% endif %}
+      <span>Page {{ preview_page.number }} of {{ preview_page.paginator.num_pages }}</span>
+      {% if preview_page.has_next %}<a href="?{{ preview_query }}&amp;page={{ preview_page.next_page_number }}">Next</a>{% endif %}
+    </nav>{% endif %}
+  </section>
+  {% endif %}
+
+  <section class="sync-panel" aria-labelledby="history-heading">
+    <h2 id="history-heading">Recent bulk requests</h2>
+    <div class="table-scroll"><table aria-label="Recent bulk sync requests">
+      <thead><tr><th>Requested</th><th>Round / scope</th><th>Categories</th><th>Queue preparation</th><th></th></tr></thead>
+      <tbody>{% for item in recent_runs %}<tr><td>{{ item.created }}</td><td>{{ item.scope_label }}</td><td>{{ item.get_category_display }}</td><td>{{ item.get_preparation_display }}</td><td><a href="?run={{ item.pk }}">View status</a></td></tr>
+      {% empty %}<tr><td colspan="5">No bulk requests yet.</td></tr>{% endfor %}</tbody>
+    </table></div>
+  </section>
+</div>
+{% endblock %}
+
+{% block extrajs %}{{ block.super }}
+<script>
+  document.querySelectorAll('[data-category-picker]').forEach(function (picker) {
+    var inputs = Array.from(picker.querySelectorAll('input[type="checkbox"]'));
+    var label = picker.querySelector('#category-selection-label');
+    function updateLabel() {
+      var checked = inputs.filter(function (input) { return input.checked; });
+      label.textContent = checked.length === 1 ? checked[0].closest('label').textContent.trim() :
+        checked.length ? checked.length + ' categories selected' : 'Choose categories';
+      var round = document.getElementById('id_round');
+      if (round) {
+        var needsRound = checked.some(function (input) {
+          return input.value !== 'locations.center' && input.value !== 'mscc.teacher';
+        });
+        round.disabled = !needsRound;
+        round.required = needsRound;
+      }
+    }
+    inputs.forEach(function (input) {
+      input.addEventListener('change', function () {
+        if (input.checked) {
+          inputs.forEach(function (other) {
+            if (other !== input && (input.value === 'all' || other.value === 'all')) other.checked = false;
+          });
+        }
+        updateLabel();
+      });
+    });
+    picker.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') { picker.open = false; picker.querySelector('summary').focus(); }
+    });
+    document.addEventListener('pointerdown', function (event) {
+      if (!picker.contains(event.target)) picker.open = false;
+    });
+    updateLabel();
+  });
+</script>
+{% endblock %}

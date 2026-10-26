@@ -307,7 +307,11 @@ def serialize_teacher(instance):
 
     payload = {
         'fields': {name: jsonable(value) for name, value in fields.items()},
-        'round': key_round(instance.round) if instance.round else None,
+        # Teacher rounds are schools.CLMRound; MSCC round IDs are a different
+        # namespace. Resolve their existing name mapping before sending a BMA ID.
+        'round': key_round(
+            Round.objects.filter(name=instance.round.name).first() or instance.round
+        ) if instance.round else None,
         'center': key_center(center_for_school(instance.school)),
         'id_type': key_named(instance.id_type),
         'nationality': key_named(instance.nationality),
