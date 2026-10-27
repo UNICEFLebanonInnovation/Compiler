@@ -576,7 +576,7 @@ class EducationAssessmentForm(forms.ModelForm):
             if post_attended_arabic and post_attended_arabic == 'Yes':
                 if not post_modality_arabic:
                     self.add_error('post_modality_arabic', 'This field is required')
-                if not post_arabic_grade:
+                if post_arabic_grade is None:
                     self.add_error('post_arabic_grade', 'This field is required')
 
             post_attended_language = cleaned_data.get("post_attended_language")
@@ -585,7 +585,7 @@ class EducationAssessmentForm(forms.ModelForm):
             if post_attended_language and post_attended_language == 'Yes':
                 if not post_modality_language:
                     self.add_error('post_modality_language', 'This field is required')
-                if not post_language_grade:
+                if post_language_grade is None:
                     self.add_error('post_language_grade', 'This field is required')
 
             post_attended_math = cleaned_data.get("post_attended_math")
@@ -594,7 +594,7 @@ class EducationAssessmentForm(forms.ModelForm):
             if post_attended_math and post_attended_math == 'Yes':
                 if not post_modality_math:
                     self.add_error('post_modality_math', 'This field is required')
-                if not post_math_grade:
+                if post_math_grade is None:
                     self.add_error('post_math_grade', 'This field is required')
 
     class Meta:

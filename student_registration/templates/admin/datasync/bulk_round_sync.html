@@ -6,7 +6,20 @@
 <style>
   .bulk-sync {max-width: 1400px; width: 100%; padding-bottom: 24px;}
   .bulk-sync .sync-panel {background: var(--body-bg, #fff); border: 1px solid var(--hairline-color, #ddd); border-radius: 6px; padding: 20px; margin-bottom: 20px;}
-  .bulk-sync .sync-controls {display: flex; gap: 18px; align-items: end; flex-wrap: wrap;}
+  .bulk-sync .sync-controls {display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) max-content; column-gap: 18px; align-items: start;}
+  .bulk-sync .sync-controls-no-round {grid-template-columns: repeat(2, minmax(0, 1fr)) max-content;}
+  .bulk-sync .sync-field {display: contents;}
+  .bulk-sync .sync-partner > * {grid-column: 1;}
+  .bulk-sync .sync-round > * {grid-column: 2;}
+  .bulk-sync .sync-category > * {grid-column: 3;}
+  .bulk-sync .sync-controls-no-round .sync-category > * {grid-column: 2;}
+  .bulk-sync .sync-field > label, .bulk-sync .category-label {grid-row: 1; align-self: end;}
+  .bulk-sync .sync-field > select, .bulk-sync .category-picker {grid-row: 2; min-width: 0;}
+  .bulk-sync .sync-controls .errorlist {grid-row: 3; margin: 6px 0 0; padding-left: 18px;}
+  .bulk-sync .sync-controls > button {grid-column: 4; grid-row: 2; white-space: nowrap;}
+  .bulk-sync .sync-controls-no-round > button {grid-column: 3;}
+  .bulk-sync .sync-controls select, .bulk-sync .sync-controls summary, .bulk-sync .sync-controls > button {box-sizing: border-box; height: 42px; padding: 8px 12px; font: inherit; line-height: 24px;}
+  .bulk-sync .sync-controls select {width: 100%; border: 1px solid #aaa; border-radius: 3px;}
   .bulk-sync label {display: block; font-weight: 600; margin-bottom: 6px;}
   .bulk-sync select {max-width: 100%; min-height: 38px; padding: 6px;}
   .bulk-sync table {width: 100%; margin: 12px 0;}
@@ -23,13 +36,19 @@
   .bulk-sync .pagination {display: flex; gap: 14px; align-items: center; padding: 8px 0;}
   .bulk-sync h2 {margin: 0 0 12px; font-size: 1.2rem;}
   .bulk-sync button {cursor: pointer; padding: 9px 16px;}
-  .bulk-sync .category-field {min-width: 300px; max-width: 100%;}
   .bulk-sync .category-label {display: block; font-weight: 600; margin-bottom: 6px;}
   .bulk-sync .category-picker {position: relative;}
-  .bulk-sync .category-picker summary {padding: 9px 12px; border: 1px solid #aaa; border-radius: 3px; cursor: pointer; min-height: 38px; background: var(--body-bg, #fff);}
-  .bulk-sync .category-options {position: absolute; top: 100%; left: 0; z-index: 1050; min-width: 100%; width: max-content; max-width: min(440px, 85vw); max-height: 330px; overflow-y: auto; padding: 10px 14px; background: var(--body-bg, #fff); border: 1px solid #aaa; border-radius: 3px; box-shadow: 0 4px 12px #0002;}
+  .bulk-sync .category-picker summary {padding: 8px 12px; border: 1px solid #aaa; border-radius: 3px; cursor: pointer; min-height: 38px; background: var(--body-bg, #fff);}
+  .bulk-sync .category-options {position: absolute; top: 100%; right: 0; z-index: 1050; min-width: 100%; width: max-content; max-width: min(440px, 85vw); max-height: 330px; overflow-y: auto; padding: 10px 14px; background: var(--body-bg, #fff); border: 1px solid #aaa; border-radius: 3px; box-shadow: 0 4px 12px #0002;}
   .bulk-sync .category-options label {display: flex; gap: 9px; align-items: center; font-weight: normal; padding: 7px 0; margin: 0; cursor: pointer;}
   .bulk-sync .category-options input {flex: 0 0 auto;}
+  .bulk-sync #category-selection-label {display: inline-block; max-width: calc(100% - 18px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: top;}
+  @media (max-width: 767px) {
+    .bulk-sync .sync-controls {display: flex; flex-direction: column; align-items: stretch; gap: 16px;}
+    .bulk-sync .sync-field {display: block; min-width: 0;}
+    .bulk-sync .sync-controls > button {align-self: flex-start;}
+    .bulk-sync .category-options {max-width: min(440px, 75vw);}
+  }
 </style>
 {% endblock %}
 
@@ -41,12 +60,14 @@
 <div class="bulk-sync">
   <section class="sync-panel" aria-labelledby="selection-heading">
     <h2 id="selection-heading">Select records to sync</h2>
-    <p>Choose one or more categories to preview their records before syncing them to BMA-NFE.</p>
-    <p class="sync-note"><strong>Centres and teachers are global.</strong> A round filters registrations, education records, referrals and attendance.</p>
-    <form method="get" class="sync-controls">
-      {{ form.non_field_errors }}
-      {% if can_select_round %}<div><label for="id_round">Round (for round-based categories)</label>{{ form.round }}{{ form.round.errors }}</div>{% endif %}
-      <div class="category-field">
+    <p>Choose a partner and one or more categories to preview their records before syncing them to BMA-NFE.</p>
+    <p class="sync-note"><strong>Every selection is limited to the chosen partner.</strong> Centres and teachers include all rounds for that partner. Choose a round for registrations, education records, referrals and attendance.</p>
+    <p class="sync-note"><strong>Makani records only.</strong> Teachers come from Locations / Program staff. TLS registrations, their services and photos, and attendance days containing non-Makani rows are excluded.</p>
+    {{ form.non_field_errors }}
+    <form method="get" class="sync-controls{% if not can_select_round %} sync-controls-no-round{% endif %}">
+      <div class="sync-field sync-partner"><label for="id_partner">Partner</label>{{ form.partner }}{{ form.partner.errors }}</div>
+      {% if can_select_round %}<div class="sync-field sync-round"><label for="id_round">Round (for round-based categories)</label>{{ form.round }}{{ form.round.errors }}</div>{% endif %}
+      <div class="sync-field sync-category">
         <span id="categories-label" class="category-label">Element categories</span>
         <details class="category-picker" data-category-picker>
           <summary aria-labelledby="categories-label category-selection-label"><span id="category-selection-label">{{ category_selection_label }}</span></summary>
@@ -57,7 +78,7 @@
       <button type="submit" class="button btn btn-primary">Preview records</button>
     </form>
     {% if issues %}<div class="sync-issues" role="alert"><ul>{% for issue in issues %}<li>{{ issue }}</li>{% endfor %}</ul>
-      <a href="{{ school_links_url }}">School to centre links</a></div>{% endif %}
+      </div>{% endif %}
     {% if summary %}
       <div class="table-scroll"><table aria-label="Category counts">
         <thead><tr><th>Category</th><th>Records</th><th>Scope</th><th>Included as</th></tr></thead>
@@ -67,6 +88,7 @@
       {% if can_start and not issues and not run %}
       <form method="post" class="sync-actions">
         {% csrf_token %}
+        <input type="hidden" name="partner" value="{{ form.cleaned_data.partner.pk }}">
         {% if form.cleaned_data.round %}<input type="hidden" name="round" value="{{ form.cleaned_data.round.pk }}">{% endif %}
         {% for category in form.cleaned_data.category %}<input type="hidden" name="category" value="{{ category }}">{% endfor %}
         <input type="hidden" name="request_id" value="{{ request_id }}">
@@ -123,7 +145,7 @@
   <section class="sync-panel" aria-labelledby="history-heading">
     <h2 id="history-heading">Recent bulk requests</h2>
     <div class="table-scroll"><table aria-label="Recent bulk sync requests">
-      <thead><tr><th>Requested</th><th>Round / scope</th><th>Categories</th><th>Queue preparation</th><th></th></tr></thead>
+      <thead><tr><th>Requested</th><th>Partner / scope</th><th>Categories</th><th>Queue preparation</th><th></th></tr></thead>
       <tbody>{% for item in recent_runs %}<tr><td>{{ item.created }}</td><td>{{ item.scope_label }}</td><td>{{ item.get_category_display }}</td><td>{{ item.get_preparation_display }}</td><td><a href="?run={{ item.pk }}">View status</a></td></tr>
       {% empty %}<tr><td colspan="5">No bulk requests yet.</td></tr>{% endfor %}</tbody>
     </table></div>
@@ -143,7 +165,7 @@
       var round = document.getElementById('id_round');
       if (round) {
         var needsRound = checked.some(function (input) {
-          return input.value !== 'locations.center' && input.value !== 'mscc.teacher';
+          return input.value !== 'locations.center' && input.value !== 'locations.program_staff';
         });
         round.disabled = !needsRound;
         round.required = needsRound;

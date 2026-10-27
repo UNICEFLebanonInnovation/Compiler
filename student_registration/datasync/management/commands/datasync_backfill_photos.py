@@ -3,6 +3,7 @@
 from django.apps import apps
 from django.core.management.base import BaseCommand, CommandError
 
+from ...makani_scope import registrations
 from ...photos import enqueue_child_photo, linked_student_id, photo_sync_enabled, PhotoSourceError
 
 
@@ -24,7 +25,7 @@ class Command(BaseCommand):
         storage = Student._meta.get_field('std_image').storage
         self.stdout.write('Source photo backend: {}.{}'.format(
             storage.__class__.__module__, storage.__class__.__name__))
-        rows = Registration.objects.exclude(child_id__isnull=True)
+        rows = registrations().exclude(child_id__isnull=True)
         if options.get('child_id') is not None:
             rows = rows.filter(child_id=options['child_id'])
         counts = {'ready': 0, 'missing_link': 0, 'missing_student': 0, 'no_photo': 0, 'ambiguous': 0}

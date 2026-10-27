@@ -30,6 +30,8 @@ from .models import (
 )
 from .serializers import MODEL_FOR_RESOURCE, serialize, wire_timestamp
 from .delivery import guard_events, parallel_uploads
+from .partner_scope import PartnerScopeError, validate_bulk_delivery
+from .makani_scope import MakaniScopeError, validate_delivery, registrations
 
 logger = logging.getLogger(__name__)
 
@@ -80,8 +82,12 @@ def build_wire_event(event):
         'source_modified': wire_timestamp(event.created),
     }
 
+    if event.resource == 'mscc.teacher':
+        raise MakaniScopeError('Legacy Dirasa teacher event blocked. Create a new ProgramStaff sync request.')
     if event.operation == OPERATION_DELETE:
-        wire['payload'] = {}
+        if (event.payload or {}).get('scope') != 'makani':
+            raise MakaniScopeError('Legacy deletion has no Makani scope proof; review before replaying.')
+        wire['payload'] = event.payload
         return wire
 
     model = MODEL_FOR_RESOURCE.get(event.resource)
@@ -92,7 +98,9 @@ def build_wire_event(event):
     except (ObjectDoesNotExist, ValueError, TypeError):
         return None
 
+    validate_delivery(event.resource, instance)
     wire['payload'] = serialize(event.resource, instance)
+    validate_bulk_delivery(event, instance, wire['payload'])
     return wire
 
 
@@ -209,10 +217,11 @@ def _push_events(events, client):
                 # Migrate pending jobs from the former photo-only pipeline.
                 from django.apps import apps
                 Registration = apps.get_model('mscc', 'Registration')
-                registration = Registration.objects.filter(child_id=event.source_id).order_by('pk').first()
+                registration = registrations().filter(child_id=event.source_id).order_by('pk').first()
                 if registration is None:
                     _abandon_missing(event, counts)
                     continue
+                validate_delivery(RESOURCE_REGISTRATION, registration)
                 wire = {'event_id': str(event.event_id), 'resource': RESOURCE_REGISTRATION,
                         'operation': 'upsert', 'source_id': str(registration.pk),
                         'source_modified': event.created.isoformat(),
@@ -235,7 +244,7 @@ def _push_events(events, client):
                         child['photo_sync'] = descriptor
                     if stream is not None:
                         attachments[descriptor['file_key']] = stream
-        except PhotoSourceError as error:
+        except (PhotoSourceError, PartnerScopeError, MakaniScopeError) as error:
             _fail_one(event, error, counts, retryable=False)
             continue
         except (SyncTransportError, SyncConfigurationError) as error:

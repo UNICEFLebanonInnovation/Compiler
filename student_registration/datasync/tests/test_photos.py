@@ -71,10 +71,10 @@ class PhotoSenderTests(SimpleTestCase):
         query = Registration.objects.filter.return_value.exclude.return_value.exclude.return_value.order_by.return_value
         for ids, expected in (([], None), ([7], 7)):
             query.values_list.return_value.distinct.return_value = ids
-            with patch.object(photos.apps, 'get_model', return_value=Registration):
+            with patch.object(photos, 'makani_registrations', return_value=Registration.objects):
                 self.assertEqual(photos.linked_student_id(900), expected)
         query.values_list.return_value.distinct.return_value = [7, 8]
-        with patch.object(photos.apps, 'get_model', return_value=Registration), \
+        with patch.object(photos, 'makani_registrations', return_value=Registration.objects), \
                 self.assertRaises(photos.PhotoSourceError):
             photos.linked_student_id(900)
 

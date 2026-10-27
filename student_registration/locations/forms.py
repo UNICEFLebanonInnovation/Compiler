@@ -589,7 +589,7 @@ class ProgramStaffForm(forms.ModelForm):
         data.update(request.FILES)
 
         if not instance:
-            instance = ProgramStaff.objects.create(center_id=center_id)
+            instance = ProgramStaff(center_id=center_id)
             instance.owner = request.user
         else:
             instance = ProgramStaff.objects.get(id=instance)

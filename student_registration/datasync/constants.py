@@ -18,7 +18,8 @@ CONTRACT_VERSION = '1.0'
 
 RESOURCE_ROUND = 'mscc.round'
 RESOURCE_CENTER = 'locations.center'
-RESOURCE_TEACHER = 'mscc.teacher'
+RESOURCE_TEACHER = 'locations.program_staff'
+RESOURCE_LEGACY_TEACHER = 'mscc.teacher'
 RESOURCE_REGISTRATION = 'mscc.registration'
 RESOURCE_EDUCATION_SERVICE = 'mscc.education_service'
 RESOURCE_EDUCATION_ASSESSMENT = 'mscc.education_assessment'
@@ -51,7 +52,8 @@ RESOURCE_LABELS = (
     (RESOURCE_CHILD_PHOTO, 'Child photo (multipart)'),
     (RESOURCE_ROUND, 'Round'),
     (RESOURCE_CENTER, 'Center'),
-    (RESOURCE_TEACHER, 'Teacher'),
+    (RESOURCE_TEACHER, 'Makani program staff'),
+    (RESOURCE_LEGACY_TEACHER, 'Legacy Dirasa teacher (disabled)'),
     (RESOURCE_REGISTRATION, 'Registration'),
     (RESOURCE_EDUCATION_SERVICE, 'Child education situation'),
     (RESOURCE_EDUCATION_ASSESSMENT, 'Education assessment'),

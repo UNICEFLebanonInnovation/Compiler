@@ -12,7 +12,7 @@ CATEGORY_CHOICES = (
     (ALL_CATEGORIES, 'All categories'),
     (RESOURCE_ROUND, 'Round'),
     (RESOURCE_CENTER, 'Centres (including partners)'),
-    (RESOURCE_TEACHER, 'Teachers'),
+    (RESOURCE_TEACHER, 'Teachers (Makani program staff)'),
     (RESOURCE_REGISTRATION, 'Registrations (including children and photos)'),
     (RESOURCE_EDUCATION_SERVICE, 'Education services'),
     (RESOURCE_EDUCATION_ASSESSMENT, 'Education assessments'),

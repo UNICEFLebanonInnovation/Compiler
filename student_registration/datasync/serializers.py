@@ -26,7 +26,7 @@ from student_registration.attendances.models import (
     MSCCAttendance,
     MSCCAttendanceChild,
 )
-from student_registration.locations.models import Center
+from student_registration.locations.models import Center, ProgramStaff
 from student_registration.mscc.models import (
     EducationAssessment,
     EducationProgrammeAssessment,
@@ -35,7 +35,6 @@ from student_registration.mscc.models import (
     Registration,
     Round,
 )
-from student_registration.students.models import Teacher
 
 from .constants import (
     RESOURCE_ATTENDANCE,
@@ -61,11 +60,6 @@ NEVER_SENT = frozenset({
 #: and type of each attachment travel.
 FILE_FIELD_TYPES = (django_models.FileField, django_models.ImageField)
 
-#: ``students.Teacher`` speaks Dirasa; ``mscc.Teacher`` speaks Makani.
-TEACHER_ASSIGNMENT_MAP = {
-    'Dirasa only': 'Makani only',
-    'Private and Dirasa': 'Private and Makani',
-}
 
 
 def wire_timestamp(value):
@@ -261,66 +255,25 @@ def _teacher_birthdate(instance):
 
 
 def serialize_teacher(instance):
-    """Translate a Compiler (Dirasa) teacher into BMA-NFE's centre teacher.
-
-    The two models describe different programmes, so the mapping is explicit
-    rather than a field-by-field copy:
-
-    * the three birthday columns become a single ``birthdate``;
-    * ``teaching_hours_dirasa`` becomes ``teaching_hours_mscc``;
-    * the Dirasa assignment wording becomes the Makani wording;
-    * the Dirasa round name is matched against BMA-NFE's own rounds.
-
-    Two things have no direct counterpart. BMA-NFE teachers belong to a centre
-    rather than a school, so the centre comes from the operator-maintained
-    :class:`~student_registration.datasync.models.SchoolCenterLink` table and
-    is left empty until that school has been mapped. Uploaded attachment files
-    are not replicated either -- only each attachment's description and type.
-    """
-    from .center_links import center_for_school
-
-    fields = {
-        'first_name': instance.first_name,
-        'father_name': instance.father_name,
-        'last_name': instance.last_name,
-        'mother_fullname': instance.mother_fullname,
-        'sex': instance.sex,
-        'birthdate': _teacher_birthdate(instance),
-        'id_number': instance.id_number,
-        'unicef_id': instance.unicef_id,
-        'email': instance.email,
-        'primary_phone_number': instance.primary_phone_number,
-        'subjects_provided': jsonable(instance.subjects_provided),
-        'registration_level': jsonable(instance.registration_level),
-        'teacher_assignment': TEACHER_ASSIGNMENT_MAP.get(
-            instance.teacher_assignment, instance.teacher_assignment
-        ),
-        'teaching_hours_private_school': instance.teaching_hours_private_school,
-        'teaching_hours_mscc': instance.teaching_hours_dirasa,
-        'training_sessions_attended': instance.training_sessions_attended,
-        'extra_coaching': instance.extra_coaching,
-        'extra_coaching_specify': instance.extra_coaching_specify,
+    """Makani ProgramStaff -> existing NFE Teacher, without Dirasa conversion."""
+    return {
+        'source_model': 'locations.programstaff',
+        'fields': {
+            'facilitator_name': instance.facilitator_name,
+            'sex': instance.gender,
+            'email': instance.email,
+            'primary_phone_number': instance.phone_number,
+            'teaching_hours_mscc': instance.weekly_hours_taught,
+            'teacher_assignment': 'Makani only',
+            'program_staff_details': {
+                name: jsonable(getattr(instance, name)) for name in (
+                    'subject', 'programs', 'attendance_training',
+                    'is_active_current_round', 'training_topics',
+                )
+            },
+        },
+        'center': key_center(instance.center),
     }
-    for index in range(1, 6):
-        description = 'attach_short_description_{}'.format(index)
-        fields[description] = getattr(instance, description, None)
-
-    payload = {
-        'fields': {name: jsonable(value) for name, value in fields.items()},
-        # Teacher rounds are schools.CLMRound; MSCC round IDs are a different
-        # namespace. Resolve their existing name mapping before sending a BMA ID.
-        'round': key_round(
-            Round.objects.filter(name=instance.round.name).first() or instance.round
-        ) if instance.round else None,
-        'center': key_center(center_for_school(instance.school)),
-        'id_type': key_named(instance.id_type),
-        'nationality': key_named(instance.nationality),
-        'trainings': [key_named(training) for training in instance.trainings.all()],
-    }
-    for index in range(1, 6):
-        name = 'attach_type_{}'.format(index)
-        payload[name] = key_named(getattr(instance, name, None))
-    return payload
 
 
 def serialize_registration(instance):
@@ -405,7 +358,7 @@ def serialize_attendance(instance):
 REGISTRY = (
     (Round, RESOURCE_ROUND, serialize_round),
     (Center, RESOURCE_CENTER, serialize_center),
-    (Teacher, RESOURCE_TEACHER, serialize_teacher),
+    (ProgramStaff, RESOURCE_TEACHER, serialize_teacher),
     (Registration, RESOURCE_REGISTRATION, serialize_registration),
     (EducationService, RESOURCE_EDUCATION_SERVICE, serialize_education_service),
     (EducationAssessment, RESOURCE_EDUCATION_ASSESSMENT, serialize_education_assessment),

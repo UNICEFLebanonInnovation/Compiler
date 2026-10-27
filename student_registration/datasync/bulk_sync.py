@@ -1,22 +1,23 @@
-"""Round selection and durable queue preparation, using the existing outbox."""
+"""Partner/round selection and durable queueing through the existing outbox."""
 import logging
 
 from django.db import transaction
-from django.db.models import Count, Q
+from django.db.models import Count, F, Q
 
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
 from student_registration.locations.models import Center
 from student_registration.mscc.models import Registration, Round
-from student_registration.students.models import Teacher
 
 from .bulk_types import ALL_CATEGORIES, CATEGORY_LABELS, normalize_categories, requires_round, selection_kind
 from .constants import (
     RESOURCE_ATTENDANCE, RESOURCE_CENTER, RESOURCE_EDUCATION_SERVICE,
     RESOURCE_ORDER, RESOURCE_REGISTRATION, RESOURCE_ROUND, RESOURCE_TEACHER,
 )
-from .models import BulkSyncRun, SchoolCenterLink
+from .models import BulkSyncRun
 from .outbox import enqueue_many, sync_enabled
 from .serializers import MODEL_FOR_RESOURCE
+from .partner_scope import available_partners
+from .makani_scope import scoped_queryset, registrations as makani_registrations
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +29,10 @@ class PlanError(ValueError):
 class RoundSyncPlan:
     """Selected categories plus the parents needed by the current wire contract."""
 
-    def __init__(self, round_object, category):
+    def __init__(self, round_object, category, partner=None):
+        if partner is None:
+            raise PlanError('Choose a partner before starting a bulk sync.')
+        self.partner = partner
         try:
             self.categories = normalize_categories(category)
         except ValueError as error:
@@ -39,16 +43,14 @@ class RoundSyncPlan:
         round_object = self.round
         self.category = selection_kind(self.categories)
         self.selected = set(RESOURCE_ORDER if self.categories == [ALL_CATEGORIES] else self.categories)
-        registrations = (Registration.objects.filter(round=round_object)
+        registrations = (makani_registrations().filter(round=round_object, partner=partner)
                          if round_object else Registration.objects.none())
-        attendance = (MSCCAttendance.objects.filter(round_id=round_object.pk)
+        attendance = (scoped_queryset(RESOURCE_ATTENDANCE).filter(round_id=round_object.pk, center__partner=partner)
                       if round_object else MSCCAttendance.objects.none())
-        # Centres and teachers are shared master records, independent of rounds.
-        teachers = Teacher.objects.all()
-        teacher_centers = SchoolCenterLink.objects.filter(
-            school_id__in=teachers.order_by().values('school_id'),
-        ).order_by().values('center_id')
-        centers = Center.objects.all()
+        # Makani staff belong directly to centres, independently of rounds.
+        teachers = scoped_queryset(RESOURCE_TEACHER).filter(center__partner=partner)
+        teacher_centers = teachers.order_by().values('center_id')
+        centers = scoped_queryset(RESOURCE_CENTER).filter(partner=partner)
         self.queries = {
             RESOURCE_ROUND: (Round.objects.filter(pk=round_object.pk) if round_object else Round.objects.none()),
             RESOURCE_CENTER: centers,
@@ -58,8 +60,8 @@ class RoundSyncPlan:
         }
         for resource in RESOURCE_ORDER:
             if resource not in self.queries:
-                self.queries[resource] = MODEL_FOR_RESOURCE[resource].objects.filter(
-                    registration__round=round_object,
+                self.queries[resource] = scoped_queryset(resource).filter(
+                    registration__round=round_object, registration__partner=partner,
                 ) if round_object else MODEL_FOR_RESOURCE[resource].objects.none()
 
         # Keep dependencies narrow: selecting one assessment does not queue
@@ -67,7 +69,7 @@ class RoundSyncPlan:
         selected_queries = {key: self.queries[key] for key in self.selected}
         registration_filter = Q(pk__in=[])
         if RESOURCE_REGISTRATION in self.selected and round_object:
-            registration_filter |= Q(round=round_object)
+            registration_filter |= Q(pk__in=registrations.order_by().values('pk'))
         for resource, query in selected_queries.items():
             if resource not in (RESOURCE_ROUND, RESOURCE_CENTER, RESOURCE_TEACHER,
                                 RESOURCE_REGISTRATION, RESOURCE_ATTENDANCE):
@@ -76,7 +78,7 @@ class RoundSyncPlan:
             attendance_day_id__in=attendance.order_by().values('pk'),
         ) if RESOURCE_ATTENDANCE in self.selected else MSCCAttendanceChild.objects.none()
         registration_filter |= Q(pk__in=self.attendance_rows.order_by().values('registration_id'))
-        required_registrations = Registration.objects.filter(registration_filter)
+        required_registrations = makani_registrations().filter(registration_filter, partner=partner)
         self.queries[RESOURCE_REGISTRATION] = required_registrations
 
         center_filter = Q(pk__in=required_registrations.order_by().values('center_id'))
@@ -86,7 +88,7 @@ class RoundSyncPlan:
             center_filter |= Q(pk__in=teacher_centers)
         if RESOURCE_ATTENDANCE in self.selected:
             center_filter |= Q(pk__in=attendance.order_by().values('center_id'))
-        self.queries[RESOURCE_CENTER] = Center.objects.filter(center_filter)
+        self.queries[RESOURCE_CENTER] = Center.objects.filter(center_filter, partner=partner)
         included = self.selected | {RESOURCE_ROUND, RESOURCE_CENTER, RESOURCE_REGISTRATION}
         self.queries = {key: self.queries[key].order_by('pk')
                         for key in RESOURCE_ORDER if key in included}
@@ -98,21 +100,21 @@ class RoundSyncPlan:
 
     def resource_scope(self, resource):
         if resource == RESOURCE_TEACHER:
-            return 'Global — all teachers'
+            return 'Selected partner — all rounds'
         if resource == RESOURCE_CENTER:
-            return 'Global — all centres' if resource in self.selected else 'Referenced centres'
-        return 'Selected round'
+            return 'Selected partner — all rounds' if resource in self.selected else 'Referenced centres of selected partner'
+        return 'Shared round metadata' if resource == RESOURCE_ROUND else 'Selected partner and round'
 
     def errors(self):
         errors = []
         if not any(self.queries[resource].exists() for resource in self.selected):
             errors.append('No records were found for the selected categories in this scope.')
-        if RESOURCE_TEACHER in self.selected:
-            unmapped = self.queries[RESOURCE_TEACHER].exclude(
-                school_id__in=SchoolCenterLink.objects.order_by().values('school_id'),
-            ).count()
-            if unmapped:
-                errors.append('{} teacher(s) need a school-to-centre link before syncing.'.format(unmapped))
+        if self.queries[RESOURCE_REGISTRATION].exclude(center__isnull=True).exclude(center__partner=self.partner).exists():
+            errors.append('Some registration centres belong to another partner. Correct those links first.')
+        if self.attendance_rows.exclude(registration__isnull=True).exclude(registration__partner=self.partner).exists():
+            errors.append('Attendance includes registrations from another partner. Correct those links first.')
+        if self.attendance_rows.exclude(registration__isnull=True).exclude(child_id=F('registration__child_id')).exists():
+            errors.append('Attendance child differs from its registration. Correct those links first.')
         if self.attendance_rows.exclude(registration__isnull=True).exclude(
                 registration__round=self.round).exists():
             errors.append('Attendance includes registrations from another round. Correct those links first.')
@@ -133,7 +135,7 @@ class RoundSyncPlan:
             if resource == RESOURCE_REGISTRATION:
                 query = query.select_related('child', 'center')
             elif resource == RESOURCE_TEACHER:
-                query = query.select_related('school')
+                query = query.select_related('center')
             for instance in query[offset:offset + limit - len(rows)]:
                 rows.append(dict(source_id=instance.pk, label=CATEGORY_LABELS[resource],
                                  description=record_description(resource, instance),
@@ -152,8 +154,7 @@ def record_description(resource, instance):
         name = ' '.join(filter(None, [child.first_name, child.last_name])) if child else 'No child linked'
         return '{} · {}'.format(name, instance.center or 'No centre linked')
     if resource == RESOURCE_TEACHER:
-        return '{} · {}'.format(' '.join(filter(None, [instance.first_name, instance.last_name])),
-                               instance.school or 'No school linked')
+        return '{} · {}'.format(instance.facilitator_name, instance.center or 'No centre linked')
     if resource == RESOURCE_ATTENDANCE:
         return 'Attendance on {}'.format(instance.attendance_date or 'No date')
     return 'Registration #{}'.format(instance.registration_id or '—')
@@ -169,7 +170,9 @@ def prepare_run(run_id):
                    .filter(pk=run_id, preparation='waiting').first())
             if run is None:
                 return
-            plan = RoundSyncPlan(run.round, run.selected_categories)
+            if run.requested_by_id and not available_partners(run.requested_by).filter(pk=run.partner_id).exists():
+                raise PlanError('The requesting operator no longer has access to this partner.')
+            plan = RoundSyncPlan(run.round, run.selected_categories, run.partner)
             errors = plan.errors()
             if errors:
                 raise PlanError(' '.join(errors))

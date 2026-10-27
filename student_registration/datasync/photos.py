@@ -19,9 +19,12 @@ def photo_sync_enabled():
     return getattr(settings, 'DATASYNC_ENABLED', True)
 
 
+from .makani_scope import registrations as makani_registrations
+
+
 def linked_student_id(child_id):
     Registration = apps.get_model('mscc', 'Registration')
-    ids = list(Registration.objects.filter(child_id=child_id).exclude(
+    ids = list(makani_registrations().filter(child_id=child_id).exclude(
         student_old__isnull=True).exclude(student_old=0).order_by().values_list(
             'student_old', flat=True).distinct()[:2])
     if not ids:
@@ -41,7 +44,7 @@ def enqueue_child_photo(child_id, deliver=True):
     from .constants import RESOURCE_REGISTRATION
     Registration = apps.get_model('mscc', 'Registration')
     return [enqueue(RESOURCE_REGISTRATION, pk, deliver=deliver)
-            for pk in Registration.objects.filter(child_id=child_id).values_list('pk', flat=True)]
+            for pk in makani_registrations().filter(child_id=child_id).values_list('pk', flat=True)]
 
 
 def _fingerprint_version(student):

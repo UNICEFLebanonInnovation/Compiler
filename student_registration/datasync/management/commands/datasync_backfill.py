@@ -15,6 +15,7 @@ from student_registration.datasync.constants import RESOURCE_ORDER
 from student_registration.datasync.dispatch import flush_outbox
 from student_registration.datasync.outbox import enqueue, sync_enabled
 from student_registration.datasync.serializers import MODEL_FOR_RESOURCE
+from student_registration.datasync.makani_scope import scoped_queryset
 
 
 class Command(BaseCommand):
@@ -75,7 +76,7 @@ class Command(BaseCommand):
             if resource not in resources:
                 continue
             model = MODEL_FOR_RESOURCE[resource]
-            queryset = model.objects.all().order_by('pk')
+            queryset = scoped_queryset(resource).order_by('pk')
             if limit:
                 queryset = queryset[:limit]
 

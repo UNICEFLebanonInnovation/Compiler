@@ -87,6 +87,20 @@ def enqueue_instance(instance, resource=None, operation=OPERATION_UPSERT, delive
     resource = resource or RESOURCE_FOR_MODEL.get(type(instance))
     if resource is None:
         return None
+    from .makani_scope import validate_delivery, eligible_instance, MakaniScopeError
+    if operation == OPERATION_DELETE:
+        if not eligible_instance(resource, instance):
+            return None
+        payload = {'scope': 'makani'}
+        if resource == 'locations.program_staff':
+            payload['source_model'] = 'locations.programstaff'
+        return enqueue(resource, instance.pk, operation=operation, deliver=deliver, payload=payload)
+    try:
+        # Keep a durable failed event for invalid relationships, so operators
+        # can correct the source and retry. Module exclusions create no event.
+        validate_delivery(resource, instance, check_relationships=False)
+    except MakaniScopeError:
+        return None
     return enqueue(resource, instance.pk, operation=operation, deliver=deliver)
 
 

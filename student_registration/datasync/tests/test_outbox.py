@@ -12,7 +12,7 @@ from student_registration.attendances.models import (
 )
 from student_registration.child.models import Child
 from student_registration.clm.models import Disability
-from student_registration.locations.models import Center
+from student_registration.locations.models import Center, ProgramStaff
 from student_registration.mscc.models import (
     EducationService,
     EducationAssessment,
@@ -154,14 +154,13 @@ class CaptureTests(TestCase):
         event = SyncEvent.objects.get(resource=RESOURCE_ATTENDANCE)
         self.assertEqual(event.source_id, str(day.pk))
 
-    def test_changing_teacher_trainings_republishes_the_teacher(self):
+    def test_dirasa_training_changes_do_not_sync(self):
         teacher = Teacher.objects.create(first_name='Rana')
         SyncEvent.objects.all().delete()
 
         teacher.trainings.add(Training.objects.create(name='Numeracy'))
 
-        event = SyncEvent.objects.get(resource=RESOURCE_TEACHER)
-        self.assertEqual(event.source_id, str(teacher.pk))
+        self.assertFalse(SyncEvent.objects.filter(resource=RESOURCE_TEACHER).exists())
 
     @override_settings(DATASYNC_ENABLED=False)
     def test_nothing_is_queued_while_replication_is_off(self):
@@ -221,7 +220,7 @@ class PayloadTests(TestCase):
         day = MSCCAttendance.objects.create(
             center=center, attendance_date='2026-03-02', round_id=round_object.pk
         )
-        registration = Registration.objects.create()
+        registration = Registration.objects.create(center=center, round=round_object)
         MSCCAttendanceChild.objects.create(
             attendance_day=day, registration=registration, attended='Yes'
         )
@@ -267,57 +266,28 @@ class PayloadTests(TestCase):
 
 @override_settings(DATASYNC_ENABLED=True)
 class TeacherMappingTests(TestCase):
-    """The Compiler's Dirasa teacher becomes BMA-NFE's centre teacher."""
-
+    """Makani staff preserve their original fields and direct centre link."""
     def setUp(self):
-        self.school = School.objects.create(name='Some School', number='12345')
-        self.teacher = Teacher.objects.create(
-            first_name='Rana',
-            father_name='Sami',
-            last_name='Khoury',
-            sex='Female',
-            birthday_year='1990',
-            birthday_month='7',
-            birthday_day='3',
-            school=self.school,
-            teacher_assignment='Private and Dirasa',
-            teaching_hours_dirasa=12,
-            teaching_hours_private_school=8,
-        )
+        self.center = Center.objects.create(name='Makani One', p_code='LB-01')
+        self.teacher = ProgramStaff.objects.create(center=self.center, facilitator_name='Rana Khoury',
+            programs=['BLN'], subject=['Education'], weekly_hours_taught=12)
 
-    def test_birthday_parts_become_a_single_date(self):
+    def test_staff_name_is_not_split_or_truncated(self):
+        self.assertEqual(serialize_teacher(self.teacher)['fields']['facilitator_name'], 'Rana Khoury')
+
+    def test_dirasa_birthday_fields_are_not_invented(self):
+        self.assertNotIn('birthdate', serialize_teacher(self.teacher)['fields'])
+
+    def test_hours_are_makani_hours(self):
         payload = serialize_teacher(self.teacher)
-
-        self.assertEqual(payload['fields']['birthdate'], '1990-07-03')
-
-    def test_incomplete_birthday_is_left_empty(self):
-        self.teacher.birthday_day = None
-        payload = serialize_teacher(self.teacher)
-
-        self.assertIsNone(payload['fields']['birthdate'])
-
-    def test_dirasa_vocabulary_is_translated(self):
-        payload = serialize_teacher(self.teacher)
-
-        self.assertEqual(payload['fields']['teacher_assignment'], 'Private and Makani')
         self.assertEqual(payload['fields']['teaching_hours_mscc'], 12)
-        self.assertEqual(payload['fields']['teaching_hours_private_school'], 8)
+        self.assertEqual(payload['fields']['teacher_assignment'], 'Makani only')
 
-    def test_centre_comes_from_the_school_link(self):
-        payload = serialize_teacher(self.teacher)
-        self.assertIsNone(payload['center'])
+    def test_centre_comes_directly_from_program_staff(self):
+        self.assertEqual(serialize_teacher(self.teacher)['center']['source_id'], self.center.pk)
 
-        center = Center.objects.create(name='Makani One', p_code='LB-01')
-        SchoolCenterLink.objects.create(school=self.school, center=center)
-
-        payload = serialize_teacher(self.teacher)
-        self.assertEqual(payload['center']['p_code'], 'LB-01')
-
-    def test_round_travels_by_name(self):
-        self.teacher.round = CLMRound.objects.create(name='2026 Round A')
-        payload = serialize_teacher(self.teacher)
-
-        self.assertEqual(payload['round']['name'], '2026 Round A')
+    def test_no_round_is_added_to_program_staff(self):
+        self.assertNotIn('round', serialize_teacher(self.teacher))
 
 
 @override_settings(DATASYNC_ENABLED=True, DATASYNC_TARGET_URL='https://bma.test/api/sync/events/',

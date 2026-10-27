@@ -1,4 +1,4 @@
-"""Read-only round preview and bulk-sync controls in the Compiler admin."""
+"""Partner-scoped previews and bulk-sync controls in the Compiler admin."""
 import uuid
 
 from django import forms
@@ -14,15 +14,18 @@ from django.urls import path, reverse
 from django.utils.http import urlencode
 
 from student_registration.mscc.models import Round
+from student_registration.schools.models import PartnerOrganization
 
 from .bulk_sync import RoundSyncPlan, run_progress, schedule_bulk_sweep
 from .bulk_types import ALL_CATEGORIES, CATEGORY_CHOICES, GLOBAL_CATEGORIES, normalize_categories, requires_round
 from .models import BulkSyncRun
 from .outbox import sync_enabled
 from .serializers import MODEL_FOR_RESOURCE
+from .partner_scope import available_partners
 
 
 class RoundSyncForm(forms.Form):
+    partner = forms.ModelChoiceField(queryset=PartnerOrganization.objects.order_by('name', 'pk'), required=True)
     round = forms.ModelChoiceField(queryset=Round.objects.order_by('-year', 'name'), required=False)
     category = forms.MultipleChoiceField(
         choices=CATEGORY_CHOICES, label='Element categories', initial=[ALL_CATEGORIES],
@@ -45,6 +48,8 @@ class RoundSyncForm(forms.Form):
 
 
 def can_read(user, resource):
+    if resource not in MODEL_FOR_RESOURCE:
+        return user.is_superuser  # Historical disabled resource audit.
     meta = MODEL_FOR_RESOURCE[resource]._meta
     return user.has_perm('{}.view_{}'.format(meta.app_label, meta.model_name)) or user.has_perm(
         '{}.change_{}'.format(meta.app_label, meta.model_name))
@@ -73,6 +78,7 @@ class BulkSyncRunAdmin(admin.ModelAdmin):
             raise PermissionDenied
         data = request.POST if request.method == 'POST' else request.GET
         form = RoundSyncForm(data or None)
+        partners = available_partners(request.user)
         can_select_round = can_read(request.user, 'mscc.round')
         allowed = {resource for resource in MODEL_FOR_RESOURCE if can_read(request.user, resource)}
         run = None
@@ -82,13 +88,15 @@ class BulkSyncRunAdmin(admin.ModelAdmin):
                 run_id = uuid.UUID(run_id)
             except ValueError:
                 raise PermissionDenied
-            runs = BulkSyncRun.objects.select_related('round', 'requested_by')
+            runs = BulkSyncRun.objects.select_related('partner', 'round', 'requested_by')
             if not request.user.is_superuser:
-                runs = runs.filter(requested_by=request.user)
+                runs = runs.filter(requested_by=request.user, partner__in=partners)
             run = get_object_or_404(runs, pk=run_id)
-            if request.method == 'GET' and 'round' not in request.GET:
-                form = RoundSyncForm({'round': run.round_id, 'category': run.selected_categories})
+            if request.method == 'GET':
+                form = RoundSyncForm({'partner': run.partner_id, 'round': run.round_id,
+                                      'category': run.selected_categories})
 
+        form.fields['partner'].queryset = partners
         if not can_select_round:
             form.fields['round'].queryset = Round.objects.none()
         form.fields['category'].choices = [
@@ -101,13 +109,15 @@ class BulkSyncRunAdmin(admin.ModelAdmin):
         summary = []
         issues = []
         if form.is_bound and form.is_valid() and run is None:
-            plan = RoundSyncPlan(form.cleaned_data['round'], form.cleaned_data['category'])
+            plan = RoundSyncPlan(form.cleaned_data['round'], form.cleaned_data['category'], form.cleaned_data['partner'])
             summary = plan.summary()
             if any(row['count'] and not can_read(request.user, row['resource']) for row in summary):
                 raise PermissionDenied
             issues = plan.errors()
         if not sync_enabled():
             issues.append('Synchronization is disabled. Enable DATASYNC_ENABLED before starting.')
+        if not partners.exists():
+            issues.append('No partners are available. Check your partner assignment and partner view permission.')
         if not getattr(settings, 'DATASYNC_TARGET_URL', '') or not getattr(settings, 'DATASYNC_TARGET_TOKEN', ''):
             issues.append('The NFE destination URL and service token must be configured before starting.')
 
@@ -122,10 +132,12 @@ class BulkSyncRunAdmin(admin.ModelAdmin):
                 else:
                     with transaction.atomic():
                         run, created = BulkSyncRun.objects.get_or_create(pk=request_id, defaults={
+                            'partner': plan.partner,
                             'round': plan.round, 'category': plan.category, 'categories': plan.categories,
                             'requested_by': request.user,
                         })
-                        if (run.round_id != (plan.round.pk if plan.round else None) or run.selected_categories != plan.categories or
+                        if (run.partner_id != plan.partner.pk or
+                                run.round_id != (plan.round.pk if plan.round else None) or run.selected_categories != plan.categories or
                                 run.requested_by_id != request.user.pk):
                             raise PermissionDenied
                         if created:
@@ -134,13 +146,16 @@ class BulkSyncRunAdmin(admin.ModelAdmin):
                     return HttpResponseRedirect('{}?{}'.format(
                         reverse('admin:datasync_bulksyncrun_changelist'), urlencode({'run': run.pk})))
 
-        recent = BulkSyncRun.objects.select_related('round', 'requested_by')
+        recent = BulkSyncRun.objects.select_related('partner', 'round', 'requested_by')
         if not request.user.is_superuser:
-            recent = recent.filter(requested_by=request.user)
+            recent = recent.filter(requested_by=request.user, partner__in=partners)
+        if form.is_bound and form.is_valid() and form.cleaned_data.get('partner'):
+            recent = recent.filter(partner=form.cleaned_data['partner'])
         total = sum(row['count'] for row in summary)
         preview_page = Paginator(range(total), 50).get_page(request.GET.get('page'))
         preview_rows = plan.preview(preview_page.start_index() - 1, 50) if plan and total else []
-        preview_query = urlencode({'round': form['round'].value() or '',
+        preview_query = urlencode({'partner': form['partner'].value() or '',
+                                   'round': form['round'].value() or '',
                                    'category': form['category'].value() or []}, doseq=True)
         chosen = form['category'].value() or []
         chosen_labels = [str(label) for key, label in form.fields['category'].choices if key in chosen]

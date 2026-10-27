@@ -15,7 +15,7 @@ from __future__ import unicode_literals, absolute_import, division
 
 import logging
 
-from django.db.models.signals import m2m_changed, post_delete, post_save
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
 from student_registration.attendances.models import MSCCAttendanceChild
@@ -23,13 +23,13 @@ from student_registration.child.models import Child
 from student_registration.locations.models import Center
 from student_registration.mscc.models import Registration
 from student_registration.schools.models import PartnerOrganization
-from student_registration.students.models import Teacher, Student
+from student_registration.students.models import Student
 
 from .constants import RESOURCE_ATTENDANCE, RESOURCE_CENTER, RESOURCE_REGISTRATION, RESOURCE_TEACHER
 from .outbox import enqueue, enqueue_delete, enqueue_instance, sync_enabled
 from .serializers import REGISTRY
 from .photos import enqueue_child_photo, photo_sync_enabled
-from .models import SchoolCenterLink
+from .makani_scope import registrations, centers
 
 logger = logging.getLogger(__name__)
 
@@ -57,23 +57,10 @@ def student_photo_saved(sender, instance, raw=False, **kwargs):
     if raw or not sync_enabled() or not photo_sync_enabled():
         return
     def push():
-        ids = Registration.objects.filter(student_old=instance.pk).order_by().values_list('child_id', flat=True).distinct()
+        ids = registrations().filter(student_old=instance.pk).order_by().values_list('child_id', flat=True).distinct()
         for child_id in ids:
             enqueue_child_photo(child_id)
     _safe(push, 'photos of linked children')
-
-
-@receiver(post_save, sender=SchoolCenterLink, dispatch_uid='datasync_school_center_link_saved')
-def school_center_link_saved(sender, instance, raw=False, **kwargs):
-    """A changed mapping must reach existing teachers without another teacher save."""
-    if raw or not sync_enabled():
-        return
-
-    def push():
-        for teacher_id in Teacher.objects.filter(school_id=instance.school_id).order_by().values_list('pk', flat=True):
-            enqueue(RESOURCE_TEACHER, teacher_id)
-
-    _safe(push, 'teachers of mapped school #{}'.format(instance.school_id))
 
 
 @receiver(post_save, sender=PartnerOrganization, dispatch_uid='datasync_partner_saved')
@@ -83,9 +70,9 @@ def partner_saved(sender, instance, raw=False, **kwargs):
         return
 
     def push():
-        for center_id in Center.objects.filter(partner_id=instance.pk).order_by().values_list('pk', flat=True).iterator():
+        for center_id in centers().filter(partner_id=instance.pk).order_by().values_list('pk', flat=True).iterator():
             enqueue(RESOURCE_CENTER, center_id)
-        for registration_id in Registration.objects.filter(partner_id=instance.pk).order_by().values_list('pk', flat=True).iterator():
+        for registration_id in registrations().filter(partner_id=instance.pk).order_by().values_list('pk', flat=True).iterator():
             enqueue(RESOURCE_REGISTRATION, registration_id)
 
     _safe(push, 'records of partner #{}'.format(instance.pk))
@@ -113,7 +100,7 @@ def child_saved(sender, instance, raw=False, **kwargs):
         return
 
     def push():
-        ids = Registration.objects.filter(child=instance).values_list('pk', flat=True)
+        ids = registrations().filter(child=instance).values_list('pk', flat=True)
         for registration_id in ids:
             enqueue(RESOURCE_REGISTRATION, registration_id)
 
@@ -137,20 +124,6 @@ def attendance_child_changed(sender, instance, raw=False, **kwargs):
     _safe(
         lambda: enqueue(RESOURCE_ATTENDANCE, instance.attendance_day_id),
         'attendance day #{}'.format(instance.attendance_day_id),
-    )
-
-
-@receiver(m2m_changed, sender=Teacher.trainings.through,
-          dispatch_uid='datasync_teacher_trainings_changed')
-def teacher_trainings_changed(sender, instance, action, reverse=False, **kwargs):
-    """Re-push a teacher when their training topics change."""
-    if not sync_enabled() or reverse:
-        return
-    if action not in ('post_add', 'post_remove', 'post_clear'):
-        return
-    _safe(
-        lambda: enqueue(RESOURCE_TEACHER, instance.pk),
-        'trainings of teacher #{}'.format(instance.pk),
     )
 
 

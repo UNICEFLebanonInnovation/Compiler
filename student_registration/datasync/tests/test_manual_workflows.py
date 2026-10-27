@@ -50,6 +50,28 @@ class AssessmentFormSaveTests(TestCase):
         self.assertEqual(updated.post_arabic_grade, 12)
         self.assertEqual(EducationAssessment.objects.count(), 1)
 
+    def test_completed_assessment_accepts_zero_grades_for_all_subjects(self):
+        values = dict(post_test_done='Yes')
+        for subject in ('arabic', 'language', 'math'):
+            values.update({f'post_attended_{subject}': 'Yes',
+                f'post_modality_{subject}': 'Offline (F2F)', f'post_{subject}_grade': '0'})
+        form, request = self.form(**values)
+        self.assertTrue(form.is_valid(), form.errors)
+        assessment = form.save(request=request, registry=self.registration.pk)
+        self.assertEqual((assessment.post_arabic_grade, assessment.post_language_grade,
+                          assessment.post_math_grade), (0, 0, 0))
+        self.assertEqual(SyncEvent.objects.filter(resource='mscc.education_assessment').count(), 1)
+
+    def test_completed_attended_subjects_still_require_a_grade(self):
+        values = dict(post_test_done='Yes')
+        for subject in ('arabic', 'language', 'math'):
+            values.update({f'post_attended_{subject}': 'Yes',
+                f'post_modality_{subject}': 'Offline (F2F)', f'post_{subject}_grade': ''})
+        form, _ = self.form(**values)
+        self.assertFalse(form.is_valid())
+        for subject in ('arabic', 'language', 'math'):
+            self.assertIn(f'post_{subject}_grade', form.errors)
+
 
 @override_settings(DATASYNC_ENABLED=True)
 class SchoolCenterMappingSaveTests(TestCase):
@@ -65,18 +87,18 @@ class SchoolCenterMappingSaveTests(TestCase):
             self.other = Teacher.objects.create(school=School.objects.create(name='Other', number='QA-other'))
         self.link_model = SchoolCenterLink
 
-    def test_creating_mapping_queues_existing_teachers_only_for_its_school(self):
+    def test_creating_old_dirasa_mapping_does_not_queue_teachers(self):
         self.link_model.objects.create(school=self.school, center=self.center)
-        self.assertEqual(list(SyncEvent.objects.values_list('resource', 'source_id')), [('mscc.teacher', str(self.teacher.pk))])
+        self.assertFalse(SyncEvent.objects.exists())
 
-    def test_changing_mapping_republishes_existing_teacher(self):
+    def test_changing_old_dirasa_mapping_does_not_queue_teachers(self):
         from student_registration.locations.models import Center
         with override_settings(DATASYNC_ENABLED=False):
             link = self.link_model.objects.create(school=self.school, center=self.center)
             other_center = Center.objects.create(name='QA second centre', p_code='QA-map-2')
         link.center = other_center
         link.save()
-        self.assertEqual(list(SyncEvent.objects.values_list('source_id', flat=True)), [str(self.teacher.pk)])
+        self.assertFalse(SyncEvent.objects.exists())
 
     def test_disabled_sync_does_not_queue_mapping_changes(self):
         with override_settings(DATASYNC_ENABLED=False):

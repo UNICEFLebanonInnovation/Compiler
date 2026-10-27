@@ -1,4 +1,9 @@
-# Bulk sync
+# Bulk sync (historical round/global design)
+
+**Superseded on 27 October 2026:** new bulk requests require a partner.
+See [Bulk sync by partner](bulk_sync_by_partner.md) for the current workflow,
+permissions and deployment instructions. The description and evidence below
+document the earlier implementation.
 
 In Compiler admin, open **Data replication → Bulk sync**. Open **Element
 categories**, tick one or more categories, then click **Preview records**.

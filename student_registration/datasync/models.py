@@ -49,13 +49,7 @@ class SourcePhotoFingerprint(models.Model):
 
 
 class SchoolCenterLink(TimeStampedModel):
-    """Which BMA-NFE centre a Compiler school's teachers belong to.
-
-    Teachers are stored per school in the Compiler and per centre in BMA-NFE,
-    and nothing in either schema connects the two. Rather than guess, the
-    replication looks the centre up here; a teacher whose school is not listed
-    is still replicated, just without a centre.
-    """
+    """Historical Dirasa school mapping; unused by Makani ProgramStaff sync."""
 
     school = models.OneToOneField(
         'schools.School',
@@ -80,9 +74,13 @@ class SchoolCenterLink(TimeStampedModel):
 
 
 class BulkSyncRun(TimeStampedModel):
-    """A durable request to queue a round through the existing outbox."""
+    """A durable partner selection, optionally filtered by a round."""
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    partner = models.ForeignKey(
+        'schools.PartnerOrganization', null=True, blank=True, on_delete=models.PROTECT,
+        verbose_name=_('Partner'),
+    )
     round = models.ForeignKey('mscc.Round', null=True, blank=True, on_delete=models.PROTECT)
     category = models.CharField(max_length=100, choices=RUN_CATEGORY_CHOICES)
     categories = models.JSONField(default=list, blank=True, verbose_name=_('Selected categories'))
@@ -105,16 +103,20 @@ class BulkSyncRun(TimeStampedModel):
 
     @property
     def scope_label(self):
-        return str(self.round) if self.round_id else 'Global records'
+        scope = str(self.round) if self.round_id else 'All rounds (centres and teachers)'
+        return '{} · {}'.format(self.partner if self.partner_id else 'All partners (legacy)', scope)
 
     @property
     def selected_categories(self):
         # Requests saved before multiple selection retain their original scope.
-        return normalize_categories(self.categories or self.category)
+        raw = self.categories or [self.category]
+        if 'mscc.teacher' in raw:
+            return raw  # Historical IDs must never be reinterpreted as ProgramStaff.
+        return normalize_categories(raw)
 
     def get_category_display(self):
         try:
-            return ', '.join(CATEGORY_LABELS[key] for key in self.selected_categories)
+            return ', '.join(CATEGORY_LABELS.get(key, 'Legacy Dirasa teacher (disabled)') for key in self.selected_categories)
         except ValueError:
             return 'Invalid category selection'
 
