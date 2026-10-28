@@ -161,7 +161,7 @@ class BulkRoundTests(TestCase):
 
     def test_waiting_run_recovers_after_missed_broker_notification(self):
         run = self.new_run()
-        with patch('student_registration.datasync.tasks.flush_sync_outbox.delay', side_effect=OSError('offline')):
+        with patch('student_registration.datasync.tasks.flush_sync_outbox.apply_async', side_effect=OSError('offline')):
             schedule_bulk_sweep()
         prepare_waiting_runs()
         run.refresh_from_db()

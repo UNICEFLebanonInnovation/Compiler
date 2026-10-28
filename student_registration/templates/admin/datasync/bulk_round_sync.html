@@ -103,7 +103,7 @@
   <section class="sync-panel" aria-labelledby="progress-heading">
     <h2 id="progress-heading">{{ run.scope_label }} · {{ run.get_category_display }}</h2>
     <p><strong>{{ progress.status }}</strong> · Requested {{ run.created }}{% if run.requested_by %} by {{ run.requested_by }}{% endif %}</p>
-    {% if run.last_error %}<p class="sync-error" role="alert">{{ run.last_error }}</p><p>After correcting the problem, preview the selection and start a new request.</p>{% endif %}
+    {% if run.last_error %}<p class="sync-error" role="alert">{{ run.last_error }}</p>{% if run.preparation == 'waiting' %}<p>The request is saved. Check diagnostics and retry its queue notification after correcting the problem.</p>{% else %}<p>After correcting the problem, preview the selection and start a new request.</p>{% endif %}{% endif %}
     <div class="sync-stats">
       <div class="sync-stat"><strong>{{ progress.sent }} / {{ progress.total }}</strong>Sent</div>
       <div class="sync-stat"><strong>{{ progress.pending }}</strong>Pending</div>
@@ -112,6 +112,24 @@
     </div>
     <progress value="{{ progress.sent }}" max="{{ progress.total|default:1 }}" aria-label="Records sent">{{ progress.percent }}%</progress>
     <div class="sync-actions"><a class="button btn btn-primary" href="?run={{ run.pk }}">Refresh status</a><a href="{{ events_url }}?bulk_run__id__exact={{ run.pk }}">View delivery details and retries</a></div>
+    {% if can_start %}
+    <form method="post" action="?run={{ run.pk }}" class="sync-actions">
+      {% csrf_token %}
+      <button type="submit" name="sync_action" value="diagnose" class="button btn btn-secondary">Check sync diagnostics</button>
+      {% if run.preparation == 'waiting' %}<button type="submit" name="sync_action" value="notify_queue" class="button btn btn-outline-primary">Retry queue notification</button>{% endif %}
+    </form>
+    <p class="sync-note">Diagnostics check the broker, worker replies and NFE API without sending records. Retrying the notification wakes the existing request through the same sync worker.</p>
+    {% endif %}
+    {% if diagnostics %}
+    <section aria-labelledby="diagnostics-heading" class="mt-3">
+      <h2 id="diagnostics-heading">Sync diagnostics</h2>
+      <p>Checked {{ diagnostics.checked_at }} · Destination: {{ diagnostics.target|default:"Not configured" }}</p>
+      <div class="table-scroll"><table aria-label="Sync diagnostics">
+        <thead><tr><th>Component</th><th>Result</th><th>Details</th></tr></thead>
+        <tbody>{% for check in diagnostics.checks %}<tr><td>{{ check.component }}</td><td>{{ check.status|capfirst }}</td><td>{{ check.detail }}</td></tr>{% endfor %}</tbody>
+      </table></div>
+    </section>
+    {% endif %}
     <div class="table-scroll"><table aria-label="Bulk sync delivery results">
       <thead><tr><th>Category</th><th>Record ID</th><th>Status</th><th>Attempts</th><th>ID in BMA-NFE</th><th>Last error</th></tr></thead>
       <tbody>{% for event in event_page %}<tr><td>{{ event.get_resource_display }}</td><td>{{ event.source_id }}</td><td>{{ event.get_status_display }}</td><td>{{ event.attempts }}</td><td>{{ event.remote_id|default:"—" }}</td><td class="sync-error">{{ event.last_error|default:"—"|truncatechars:250 }}</td></tr>
@@ -144,6 +162,17 @@
 
   <section class="sync-panel" aria-labelledby="history-heading">
     <h2 id="history-heading">Recent bulk requests</h2>
+    {% if can_start %}
+    <div class="sync-actions mb-3">
+      {% if pending_removal_count %}
+      <a class="button btn btn-outline-danger" href="{{ remove_pending_url }}">Remove pending bulk syncs</a>
+      <span>{{ pending_removal_count }} waiting request{{ pending_removal_count|pluralize }} for {{ selected_partner }}.</span>
+      {% else %}
+      <button type="button" class="btn btn-outline-danger" disabled>Remove pending bulk syncs</button>
+      <span>{% if selected_partner %}No unstarted requests to remove for {{ selected_partner }}.{% else %}Choose a partner above to manage its pending requests.{% endif %}</span>
+      {% endif %}
+    </div>
+    {% endif %}
     <div class="table-scroll"><table aria-label="Recent bulk sync requests">
       <thead><tr><th>Requested</th><th>Partner / scope</th><th>Categories</th><th>Queue preparation</th><th></th></tr></thead>
       <tbody>{% for item in recent_runs %}<tr><td>{{ item.created }}</td><td>{{ item.scope_label }}</td><td>{{ item.get_category_display }}</td><td>{{ item.get_preparation_display }}</td><td><a href="?run={{ item.pk }}">View status</a></td></tr>

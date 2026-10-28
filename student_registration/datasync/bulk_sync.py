@@ -197,13 +197,23 @@ def prepare_waiting_runs(limit=1):
         prepare_run(run_id)
 
 
-def schedule_bulk_sweep():
+def schedule_bulk_sweep(run_id=None):
     """Broker outages leave the durable request for the next periodic sweep."""
     from .tasks import flush_sync_outbox
     try:
-        flush_sync_outbox.delay()
-    except Exception:
+        # Bound publication waits in the web request. The durable run and beat
+        # remain the recovery path if the broker is unavailable.
+        flush_sync_outbox.apply_async(retry=False, timeout=3)
+    except Exception as error:
+        from .health import safe_error
+        if run_id is not None:
+            BulkSyncRun.objects.filter(pk=run_id, preparation='waiting').update(
+                last_error='Could not notify the sync queue. ' + safe_error(error))
         logger.warning('datasync: bulk request saved; scheduled sweep will queue it when the broker recovers')
+        return False
+    if run_id is not None:
+        BulkSyncRun.objects.filter(pk=run_id, preparation='waiting').update(last_error='')
+    return True
 
 
 def run_progress(run):

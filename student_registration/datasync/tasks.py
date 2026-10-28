@@ -18,6 +18,12 @@ from .outbox import sync_enabled
 logger = logging.getLogger(__name__)
 
 
+@shared_task(name='datasync.worker_health', queue='datasync', ignore_result=True)
+def worker_health():
+    """Expose the loaded bulk-sync capability for read-only worker diagnostics."""
+    return {'bulk_sync_diagnostics': 1, 'sync_enabled': sync_enabled()}
+
+
 @shared_task(bind=True, name='datasync.deliver_sync_event', ignore_result=True)
 def deliver_sync_event(self, event_pk):
     """Deliver one outbox row to BMA-NFE.
