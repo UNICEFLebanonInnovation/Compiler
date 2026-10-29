@@ -1,0 +1,30 @@
+{% load simple_tags %}
+<div class="scroll-area-sm" style="height: 200px;">
+    <div class="scrollbar-container ps ps--active-y">
+        <div class="p-3">
+            <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
+                {% for total_field, subject in summer_sections %}
+                <div class="vertical-timeline-item vertical-timeline-element">
+                    <div><span class="vertical-timeline-element-icon bounce-in"><span class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></span></span>
+                        <div class="vertical-timeline-element-content bounce-in">
+                            <h4 class="timeline-title">{{ subject.label }} / {{ subject.total }}</h4>
+                            {% for field, label, maximum in subject.components %}
+                                {% if assessment_period == 'improvement' %}
+                                <p>{{ label }} / {{ maximum }}: {% grading_improvement summer_result field as score %}{{ score }}</p>
+                                {% else %}
+                                <p>{{ label }} / {{ maximum }}: {% summer_rs_score summer_result assessment_period field as score %}{{ score }}</p>
+                                {% endif %}
+                            {% endfor %}
+                            {% if assessment_period == 'improvement' %}
+                            <p><strong>{{ subject.label }} Total / {{ subject.total }}: {% grading_improvement summer_result total_field as score %}{{ score }}</strong></p>
+                            {% else %}
+                            <p><strong>{{ subject.label }} Total / {{ subject.total }}: {% summer_rs_score summer_result assessment_period total_field as score %}{{ score }}</strong></p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>

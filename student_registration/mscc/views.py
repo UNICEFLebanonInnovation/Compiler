@@ -14,7 +14,8 @@ from django.views.generic import (
 )
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden, Http404
+from django.core.exceptions import ValidationError
 from django.db.models import Count, F
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db import connection
@@ -78,6 +79,7 @@ from .utils import *
 
 from student_registration.mscc.templatetags.simple_tags import education_history_model, get_education_service_history
 from .tasks import queue_mscc_export, queue_filtered_mscc_export
+from .export_access import PHOTO_FILTER_VALUES, excel_export_registrations, user_can_export
 from student_registration.users.templatetags.custom_tags import has_group
 from student_registration.child.models import Child
 
@@ -989,20 +991,39 @@ class ChildProfilePreview(LoginRequiredMixin, TemplateView):
 @login_required(login_url='/users/login')
 def export_list_background(request):
     user = request.user
+    file_format = request.GET.get('format', 'csv')
+    if file_format not in ('csv', 'xlsx'):
+        return HttpResponseBadRequest('Unsupported export format.')
     nationality = request.GET.get('nationality', '')
     first_name = request.GET.get('first_name', '')
     last_name = request.GET.get('last_name', '')
     father_name = request.GET.get('father_name', '')
     mother_fullname = request.GET.get('mother_fullname', '')
     round = request.GET.get('round', '')
+    has_photo = request.GET.get('has_photo', '')
     if not round:
         return JsonResponse({'error': 'Round is not selected. Please select a round before exporting data.'},
                             status=400)
+    if has_photo not in PHOTO_FILTER_VALUES:
+        return HttpResponseBadRequest('Invalid photo filter.')
+
+    if file_format == 'xlsx':
+        if not user_can_export(user):
+            return HttpResponseForbidden('An assigned MSCC export role is required.')
+        try:
+            excel_export_registrations(
+                user, nationality=nationality, first_name=first_name,
+                last_name=last_name, father_name=father_name,
+                mother_fullname=mother_fullname, round=round, has_photo=has_photo,
+            )
+        except ValidationError as exc:
+            return HttpResponseBadRequest('; '.join(exc.messages))
 
     export_record = ExportHistory.objects.create(
         export_type='Makani List',
         created_by=user,
-        partner_name=user.partner.name if user.partner else ''
+        partner_name=user.partner.name if user.partner else '',
+        file_format=file_format,
     )
     queue_filtered_mscc_export(
         export_record.id,
@@ -1012,6 +1033,8 @@ def export_list_background(request):
         father_name,
         mother_fullname,
         round,
+        file_format=file_format,
+        has_photo=has_photo,
     )
     return JsonResponse({'status': 'started', 'export_id': export_record.id})
 
@@ -1064,14 +1087,25 @@ def export_list_async(request):
         try:
             payload = json.loads(request.body.decode('utf-8'))
         except (ValueError, AttributeError):
+            if request.content_type == 'application/json':
+                return HttpResponseBadRequest('Invalid JSON payload.')
             payload = request.POST
         if isinstance(payload, dict):
             file_format = payload.get('format', 'csv')
             fields = payload.get('fields') or None
         else:
-            file_format = payload.get('format', 'csv') if payload else 'csv'
+            return HttpResponseBadRequest('Export payload must be a JSON object.')
     else:
         file_format = request.GET.get('format', 'csv')
+    if file_format not in ('csv', 'xlsx'):
+        return HttpResponseBadRequest('Unsupported export format.')
+    if file_format == 'xlsx':
+        if not user_can_export(request.user):
+            return HttpResponseForbidden('An assigned MSCC export role is required.')
+        if fields is not None and (
+            not isinstance(fields, list) or any(not isinstance(field, str) for field in fields)
+        ):
+            return HttpResponseBadRequest('Export fields must be a list of names.')
     export_record = ExportHistory.objects.create(
         export_type='Makani List',
         created_by=request.user,
@@ -1080,13 +1114,33 @@ def export_list_async(request):
         file_format=file_format,
     )
     queue_mscc_export(export_record.id, fields, file_format)
-    return JsonResponse({'status': 'started'})
+    return JsonResponse({'status': 'started', 'export_id': export_record.id})
 
 
 @login_required(login_url='/users/login')
 def get_file(request, file_name):
+    if file_name.startswith('mscc_photo_export_'):
+        if not user_can_export(request.user):
+            return HttpResponseForbidden('An assigned MSCC export role is required.')
+        if not ExportHistory.objects.filter(
+            created_by=request.user, status='done',
+            file_url=reverse('mscc:export_download', args=[file_name]),
+        ).exists():
+            raise Http404('Export not found.')
+    elif file_name.startswith('bridging_photo_export_'):
+        from student_registration.clm.bridging_exports import user_can_export_bridging
+        if not user_can_export_bridging(request.user):
+            return HttpResponseForbidden('A Dirasa export role is required.')
+        if not ExportHistory.objects.filter(
+            created_by=request.user, status='done',
+            file_url=reverse('mscc:export_download', args=[file_name]),
+        ).exists():
+            raise Http404('Export not found.')
     if is_valid_filename(file_name, 'zip'):
-        return download_file(file_name, 'output_file.zip')
+        response = download_file(file_name, 'output_file.zip', request=request)
+        if file_name.startswith(('mscc_photo_export_', 'bridging_photo_export_')):
+            response['Cache-Control'] = 'private, no-store'
+        return response
     return HttpResponse("Invalid file.")
 
 

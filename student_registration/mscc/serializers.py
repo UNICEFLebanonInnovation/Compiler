@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from student_registration.child.models import Child
 from .models import (
     Registration
 )
@@ -61,6 +62,13 @@ class MainSerializer(serializers.ModelSerializer):
     original_id = serializers.IntegerField(source='id', read_only=True)
     registration_id = serializers.IntegerField(source='id', read_only=True)
     child_id = serializers.IntegerField(source='child.id', required=False)
+    child_country_of_birth = serializers.ChoiceField(
+        source='child.country_of_birth',
+        choices=[choice for choice in Child.COUNTRY_OF_BIRTH if choice[0]],
+    )
+    child_place_of_birth = serializers.CharField(
+        source='child.place_of_birth', max_length=255,
+    )
     child_first_name = serializers.CharField(source='child.first_name')
     child_father_name = serializers.CharField(source='child.father_name')
     child_last_name = serializers.CharField(source='child.last_name')
@@ -178,6 +186,8 @@ class MainSerializer(serializers.ModelSerializer):
             'modified',
             'consent',
             'child_is_idp',
+            'child_country_of_birth',
+            'child_place_of_birth',
             'child_first_name',
             'child_father_name',
             'child_last_name',

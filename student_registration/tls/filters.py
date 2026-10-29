@@ -13,13 +13,13 @@ from django import forms
 
 from student_registration.locations.models import Center, Location
 from student_registration.students.models import Nationality
-from .models import (
+from student_registration.mscc.models import (
     Registration,
     EducationService,
     Round,
     PACKAGE_TYPES,
-    EDUCATION_PROGRAM
 )
+from .models import EDUCATION_PROGRAM
 from student_registration.child.models import Child
 from student_registration.schools.models import PartnerOrganization
 

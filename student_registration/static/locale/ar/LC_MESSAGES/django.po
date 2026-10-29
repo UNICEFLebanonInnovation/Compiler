@@ -8850,6 +8850,22 @@ msgstr " اضف تلميذ"
 msgid "Export"
 msgstr "تصدير البيانات على اكسيل"
 
+#: student_registration/templates/mscc/list.html
+msgid "Format"
+msgstr "الصيغة"
+
+#: student_registration/templates/mscc/list.html
+msgid "Excel with photographs"
+msgstr "Excel مع الصور"
+
+#: student_registration/templates/mscc/list.html
+msgid "Excel includes each child's photograph in the same row as their Child ID and Registration ID."
+msgstr "يتضمن ملف Excel صورة كل طفل في الصف نفسه مع رقم الطفل ورقم التسجيل الخاصين به."
+
+#: student_registration/templates/mscc/list.html
+msgid "Start Export"
+msgstr "بدء التصدير"
+
 #: student_registration/templates/alp/list.html:38
 msgid "Export all pre-test data"
 msgstr "تصدير كامل بيانات Pre-test"

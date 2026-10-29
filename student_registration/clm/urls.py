@@ -382,6 +382,11 @@ urlpatterns = [
         name='bridging_export_all'
     ),
     re_path(
+        r'^bridging-export-photos/$',
+        view=bridging_views.bridging_export_photos,
+        name='bridging_export_photos'
+    ),
+    re_path(
         r'^bridging-school-export-data/(?P<school_id>[\w.@+-]+)/$',
         view=bridging_views.bridging_school_export,
         name='bridging_school_export_data'

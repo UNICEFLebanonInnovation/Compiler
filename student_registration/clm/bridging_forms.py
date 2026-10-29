@@ -70,6 +70,9 @@ from django.forms.widgets import ClearableFileInput
 YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 
 
+from .bridging_access import has_temporary_bridging_access
+
+
 def _bridging_score_value(value):
     if value in (None, ''):
         return 0
@@ -465,6 +468,18 @@ class CommonForm(forms.ModelForm):
 
 
 class BridgingForm(CommonForm):
+    student_country_of_birth = forms.ChoiceField(
+        label=_('Country of Birth'),
+        choices=Student.COUNTRY_OF_BIRTH,
+        required=True,
+    )
+    student_place_of_birth = forms.CharField(
+        label=_('Place of Birth'),
+        max_length=200,
+        required=True,
+        help_text=_('Place of birth similar in the Official ID'),
+    )
+
 
     REGISTRATION_LEVEL = (
         ('', '----------'),
@@ -1055,38 +1070,43 @@ class BridgingForm(CommonForm):
                     ),
                     Div(
                         HTML('<span class="badge-form badge-pill">4</span>'),
-                        Div('student_mother_fullname', css_class='col-md-3'),
+                        Div('student_country_of_birth', css_class='col-md-5'),
                         HTML('<span class="badge-form badge-pill">5</span>'),
-                        Div('student_sex', css_class='col-md-3'),
+                        Div('student_place_of_birth', css_class='col-md-5'),
                         css_class='row card-body',
                     ),
                     Div(
                         HTML('<span class="badge-form badge-pill">6</span>'),
-                        Div('student_nationality', css_class='col-md-3'),
-                        HTML('<span class="badge-form badge-pill" id="span_other_nationality">7</span>'),
-                        Div('other_nationality', css_class='col-md-3'),
+                        Div('student_mother_fullname', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">7</span>'),
+                        Div('student_sex', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
                     Div(
                         HTML('<span class="badge-form badge-pill">8</span>'),
-                        Div('student_birthday_year', css_class='col-md-2'),
+                        Div('student_nationality', css_class='col-md-3'),
+                        Div('other_nationality', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
                         HTML('<span class="badge-form badge-pill">9</span>'),
-                        Div('student_birthday_month', css_class='col-md-2'),
+                        Div('student_birthday_year', css_class='col-md-2'),
                         HTML('<span class="badge-form-2 badge-pill">10</span>'),
+                        Div('student_birthday_month', css_class='col-md-2'),
+                        HTML('<span class="badge-form-2 badge-pill">11</span>'),
                         Div('student_birthday_day', css_class='col-md-2'),
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">11</span>'),
-                        Div('student_p_code', css_class='col-md-3'),
                         HTML('<span class="badge-form-2 badge-pill">12</span>'),
+                        Div('student_p_code', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill">13</span>'),
                         Div('disability', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">13</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">14</span>'),
                         Div('education_status', css_class='col-md-3'),
-                        HTML('<span class="badge-form-2 badge-pill" id="span_miss_school_date">14</span>'),
                         Div('miss_school_date', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
@@ -1098,17 +1118,17 @@ class BridgingForm(CommonForm):
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill" id="span_rims_case_number">17</span>'),
+                        HTML('<span class="badge-form-2 badge-pill" id="span_rims_case_number">16</span>'),
                         Div('rims_case_number', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill" id="span_source_of_identification_specify">17</span>'),
+                        HTML('<span class="badge-form-2 badge-pill" id="span_source_of_identification_specify">16</span>'),
                         Div('source_of_identification_specify', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
                         Div('id_type', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
@@ -1123,9 +1143,9 @@ class BridgingForm(CommonForm):
                     #     css_class='row child_id  d-none card-body',
                     # ),
                     # Div(
-                    #     HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                    #     HTML('<span class="badge-form-2 badge-pill">19</span>'),
                     #     Div('parent_individual_case_number', css_class='col-md-4'),
-                    #     HTML('<span class="badge-form-2 badge-pill">18</span>'),
+                    #     HTML('<span class="badge-form-2 badge-pill">20</span>'),
                     #     Div('parent_individual_case_number_confirm', css_class='col-md-4'),
                     #     HTML('<span style="padding-top: 37px;">' +
                     #          '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
@@ -1133,9 +1153,9 @@ class BridgingForm(CommonForm):
                     #     css_class='row child_id  d-none card-body',
                     # ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">18</span>'),
                         Div('individual_case_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">19</span>'),
                         Div('individual_case_number_confirm', css_class='col-md-4'),
                         HTML('<span style="padding-top: 37px;">' +
                              '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
@@ -1143,9 +1163,9 @@ class BridgingForm(CommonForm):
                         css_class='row child_id child_id1 card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">18</span>'),
                         Div('recorded_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">19</span>'),
                         Div('recorded_number_confirm', css_class='col-md-4'),
                         HTML('<span style="padding-top: 37px;">' +
                              '<a class="image-link" href="/static/images/UNHCR_barcode.jpg" target="_blank">' +
@@ -1153,9 +1173,9 @@ class BridgingForm(CommonForm):
                         css_class='row child_id child_id2 card-body',
                     ),
                     # Div(
-                    #     HTML('<span class="badge-form-2 badge-pill">19</span>'),
+                    #     HTML('<span class="badge-form-2 badge-pill">21</span>'),
                     #     Div('parent_national_number', css_class='col-md-4'),
-                    #     HTML('<span class="badge-form-2 badge-pill">20</span>'),
+                    #     HTML('<span class="badge-form-2 badge-pill">22</span>'),
                     #     Div('parent_national_number_confirm', css_class='col-md-4'),
                     #     HTML('<span style="padding-top: 37px;">' +
                     #          '<a class="image-link" href="/static/images/lebanese_nationalID.png" target="_blank">' +
@@ -1163,9 +1183,9 @@ class BridgingForm(CommonForm):
                     #     css_class='row child_id  d-none card-body',
                     # ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">18</span>'),
                         Div('national_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">19</span>'),
                         Div('national_number_confirm', css_class='col-md-4'),
                         HTML('<span style="padding-top: 37px;">' +
                              '<a class="image-link" href="/static/images/lebanese_nationalID.png" target="_blank">' +
@@ -1173,9 +1193,9 @@ class BridgingForm(CommonForm):
                         css_class='row child_id child_id3 card-body',
                     ),
                     # Div(
-                    #     HTML('<span class="badge-form-2 badge-pill">23</span>'),
+                    #     HTML('<span class="badge-form-2 badge-pill">25</span>'),
                     #     Div('parent_syrian_national_number', css_class='col-md-4'),
-                    #     HTML('<span class="badge-form-2 badge-pill">24</span>'),
+                    #     HTML('<span class="badge-form-2 badge-pill">26</span>'),
                     #     Div('parent_syrian_national_number_confirm', css_class='col-md-4'),
                     #     HTML('<span style="padding-top: 37px;">' +
                     #          '<a class="image-link" href="/static/images/Syrian_passport.png" target="_blank">' +
@@ -1183,9 +1203,9 @@ class BridgingForm(CommonForm):
                     #     css_class='row child_id  d-none card-body',
                     # ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">18</span>'),
                         Div('syrian_national_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">19</span>'),
                         Div('syrian_national_number_confirm', css_class='col-md-4'),
                         HTML('<span style="padding-top: 37px;">' +
                              '<a class="image-link" href="/static/images/Syrian_passport.png" target="_blank">' +
@@ -1193,9 +1213,9 @@ class BridgingForm(CommonForm):
                         css_class='row child_id child_id4 card-body',
                     ),
                     # Div(
-                    #     HTML('<span class="badge-form-2 badge-pill">27</span>'),
+                    #     HTML('<span class="badge-form-2 badge-pill">29</span>'),
                     #     Div('parent_sop_national_number', css_class='col-md-4'),
-                    #     HTML('<span class="badge-form-2 badge-pill">28</span>'),
+                    #     HTML('<span class="badge-form-2 badge-pill">30</span>'),
                     #     Div('parent_sop_national_number_confirm', css_class='col-md-4'),
                     #     HTML('<span style="padding-top: 37px;">' +
                     #          '<a class="image-link" href="/static/images/Palestinian_from_Lebanon.png" target="_blank">' +
@@ -1203,9 +1223,9 @@ class BridgingForm(CommonForm):
                     #     css_class='row child_id  d-none card-body',
                     # ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">18</span>'),
                         Div('sop_national_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">19</span>'),
                         Div('sop_national_number_confirm', css_class='col-md-4'),
                         HTML('<span style="padding-top: 37px;">' +
                              '<a class="image-link" href="/static/images/Palestinian_from_Lebanon.png" target="_blank">' +
@@ -1213,23 +1233,23 @@ class BridgingForm(CommonForm):
                         css_class='row child_id child_id5 card-body',
                     ),
                     # Div(
-                    #     HTML('<span class="badge-form-2 badge-pill">31</span>'),
+                    #     HTML('<span class="badge-form-2 badge-pill">33</span>'),
                     #     Div('parent_other_number', css_class='col-md-4'),
-                    #     HTML('<span class="badge-form-2 badge-pill">32</span>'),
+                    #     HTML('<span class="badge-form-2 badge-pill">34</span>'),
                     #     Div('parent_other_number_confirm', css_class='col-md-4'),
                     #     css_class='row child_id  d-none card-body',
                     # ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">18</span>'),
                         Div('other_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">19</span>'),
                         Div('other_number_confirm', css_class='col-md-4'),
                         css_class='row child_id child_id6 card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">18</span>'),
                         Div('individual_extract_record', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">19</span>'),
                         Div('individual_extract_record_confirm', css_class='col-md-4'),
                         css_class='row child_id child_id7 card-body',
                     ),
@@ -1446,38 +1466,43 @@ class BridgingForm(CommonForm):
                     ),
                     Div(
                         HTML('<span class="badge-form badge-pill">4</span>'),
-                        Div('student_mother_fullname', css_class='col-md-3'),
+                        Div('student_country_of_birth', css_class='col-md-5'),
                         HTML('<span class="badge-form badge-pill">5</span>'),
-                        Div('student_sex', css_class='col-md-3'),
+                        Div('student_place_of_birth', css_class='col-md-5'),
                         css_class='row card-body',
                     ),
                     Div(
                         HTML('<span class="badge-form badge-pill">6</span>'),
-                        Div('student_nationality', css_class='col-md-3'),
-                        HTML('<span class="badge-form badge-pill" id="span_other_nationality">7</span>'),
-                        Div('other_nationality', css_class='col-md-3'),
+                        Div('student_mother_fullname', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">7</span>'),
+                        Div('student_sex', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
                     Div(
                         HTML('<span class="badge-form badge-pill">8</span>'),
-                        Div('student_birthday_year', css_class='col-md-2'),
+                        Div('student_nationality', css_class='col-md-3'),
+                        Div('other_nationality', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
                         HTML('<span class="badge-form badge-pill">9</span>'),
-                        Div('student_birthday_month', css_class='col-md-2'),
+                        Div('student_birthday_year', css_class='col-md-2'),
                         HTML('<span class="badge-form-2 badge-pill">10</span>'),
+                        Div('student_birthday_month', css_class='col-md-2'),
+                        HTML('<span class="badge-form-2 badge-pill">11</span>'),
                         Div('student_birthday_day', css_class='col-md-2'),
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">11</span>'),
-                        Div('student_p_code', css_class='col-md-3'),
                         HTML('<span class="badge-form-2 badge-pill">12</span>'),
+                        Div('student_p_code', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill">13</span>'),
                         Div('disability', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">13</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">14</span>'),
                         Div('education_status', css_class='col-md-3'),
-                        HTML('<span class="badge-form-2 badge-pill" id="span_miss_school_date">14</span>'),
                         Div('miss_school_date', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
@@ -1489,18 +1514,18 @@ class BridgingForm(CommonForm):
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill" id="span_rims_case_number">17</span>'),
+                        HTML('<span class="badge-form-2 badge-pill" id="span_rims_case_number">16</span>'),
                         Div('rims_case_number', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
                     Div(
                         HTML(
-                            '<span class="badge-form-2 badge-pill" id="span_source_of_identification_specify">17</span>'),
+                            '<span class="badge-form-2 badge-pill" id="span_source_of_identification_specify">16</span>'),
                         Div('source_of_identification_specify', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
                         Div('id_type', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
@@ -1515,9 +1540,9 @@ class BridgingForm(CommonForm):
                     #     css_class='row child_id  d-none card-body',
                     # ),
                     # Div(
-                    #     HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                    #     HTML('<span class="badge-form-2 badge-pill">19</span>'),
                     #     Div('parent_individual_case_number', css_class='col-md-4'),
-                    #     HTML('<span class="badge-form-2 badge-pill">18</span>'),
+                    #     HTML('<span class="badge-form-2 badge-pill">20</span>'),
                     #     Div('parent_individual_case_number_confirm', css_class='col-md-4'),
                     #     HTML('<span style="padding-top: 37px;">' +
                     #          '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
@@ -1525,9 +1550,9 @@ class BridgingForm(CommonForm):
                     #     css_class='row child_id  d-none card-body',
                     # ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">18</span>'),
                         Div('individual_case_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">19</span>'),
                         Div('individual_case_number_confirm', css_class='col-md-4'),
                         HTML('<span style="padding-top: 37px;">' +
                              '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
@@ -1535,9 +1560,9 @@ class BridgingForm(CommonForm):
                         css_class='row child_id child_id1 card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">18</span>'),
                         Div('recorded_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">19</span>'),
                         Div('recorded_number_confirm', css_class='col-md-4'),
                         HTML('<span style="padding-top: 37px;">' +
                              '<a class="image-link" href="/static/images/UNHCR_barcode.jpg" target="_blank">' +
@@ -1545,9 +1570,9 @@ class BridgingForm(CommonForm):
                         css_class='row child_id child_id2 card-body',
                     ),
                     # Div(
-                    #     HTML('<span class="badge-form-2 badge-pill">19</span>'),
+                    #     HTML('<span class="badge-form-2 badge-pill">21</span>'),
                     #     Div('parent_national_number', css_class='col-md-4'),
-                    #     HTML('<span class="badge-form-2 badge-pill">20</span>'),
+                    #     HTML('<span class="badge-form-2 badge-pill">22</span>'),
                     #     Div('parent_national_number_confirm', css_class='col-md-4'),
                     #     HTML('<span style="padding-top: 37px;">' +
                     #          '<a class="image-link" href="/static/images/lebanese_nationalID.png" target="_blank">' +
@@ -1555,9 +1580,9 @@ class BridgingForm(CommonForm):
                     #     css_class='row child_id  d-none card-body',
                     # ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">18</span>'),
                         Div('national_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">19</span>'),
                         Div('national_number_confirm', css_class='col-md-4'),
                         HTML('<span style="padding-top: 37px;">' +
                              '<a class="image-link" href="/static/images/lebanese_nationalID.png" target="_blank">' +
@@ -1565,9 +1590,9 @@ class BridgingForm(CommonForm):
                         css_class='row child_id child_id3 card-body',
                     ),
                     # Div(
-                    #     HTML('<span class="badge-form-2 badge-pill">23</span>'),
+                    #     HTML('<span class="badge-form-2 badge-pill">25</span>'),
                     #     Div('parent_syrian_national_number', css_class='col-md-4'),
-                    #     HTML('<span class="badge-form-2 badge-pill">24</span>'),
+                    #     HTML('<span class="badge-form-2 badge-pill">26</span>'),
                     #     Div('parent_syrian_national_number_confirm', css_class='col-md-4'),
                     #     HTML('<span style="padding-top: 37px;">' +
                     #          '<a class="image-link" href="/static/images/Syrian_passport.png" target="_blank">' +
@@ -1575,9 +1600,9 @@ class BridgingForm(CommonForm):
                     #     css_class='row child_id  d-none card-body',
                     # ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">18</span>'),
                         Div('syrian_national_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">19</span>'),
                         Div('syrian_national_number_confirm', css_class='col-md-4'),
                         HTML('<span style="padding-top: 37px;">' +
                              '<a class="image-link" href="/static/images/Syrian_passport.png" target="_blank">' +
@@ -1585,9 +1610,9 @@ class BridgingForm(CommonForm):
                         css_class='row child_id child_id4 card-body',
                     ),
                     # Div(
-                    #     HTML('<span class="badge-form-2 badge-pill">27</span>'),
+                    #     HTML('<span class="badge-form-2 badge-pill">29</span>'),
                     #     Div('parent_sop_national_number', css_class='col-md-4'),
-                    #     HTML('<span class="badge-form-2 badge-pill">28</span>'),
+                    #     HTML('<span class="badge-form-2 badge-pill">30</span>'),
                     #     Div('parent_sop_national_number_confirm', css_class='col-md-4'),
                     #     HTML('<span style="padding-top: 37px;">' +
                     #          '<a class="image-link" href="/static/images/Palestinian_from_Lebanon.png" target="_blank">' +
@@ -1595,9 +1620,9 @@ class BridgingForm(CommonForm):
                     #     css_class='row child_id  d-none card-body',
                     # ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">18</span>'),
                         Div('sop_national_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">19</span>'),
                         Div('sop_national_number_confirm', css_class='col-md-4'),
                         HTML('<span style="padding-top: 37px;">' +
                              '<a class="image-link" href="/static/images/Palestinian_from_Lebanon.png" target="_blank">' +
@@ -1605,23 +1630,23 @@ class BridgingForm(CommonForm):
                         css_class='row child_id child_id5 card-body',
                     ),
                     # Div(
-                    #     HTML('<span class="badge-form-2 badge-pill">31</span>'),
+                    #     HTML('<span class="badge-form-2 badge-pill">33</span>'),
                     #     Div('parent_other_number', css_class='col-md-4'),
-                    #     HTML('<span class="badge-form-2 badge-pill">32</span>'),
+                    #     HTML('<span class="badge-form-2 badge-pill">34</span>'),
                     #     Div('parent_other_number_confirm', css_class='col-md-4'),
                     #     css_class='row child_id  d-none card-body',
                     # ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">18</span>'),
                         Div('other_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">19</span>'),
                         Div('other_number_confirm', css_class='col-md-4'),
                         css_class='row child_id child_id6 card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">18</span>'),
                         Div('individual_extract_record', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">19</span>'),
                         Div('individual_extract_record_confirm', css_class='col-md-4'),
                         css_class='row child_id child_id7 card-body',
                     ),
@@ -1783,6 +1808,15 @@ class BridgingForm(CommonForm):
                 queryset =queryset.none()
 
 
+
+        # TODO: Remove Temporary access
+        if has_temporary_bridging_access(self.request.user, instance):
+            temporary_schools = School.objects.filter(
+                is_closed=False,
+                partner_schools__id=3,
+                governorate_id=instance.governorate_id,
+            )
+            queryset = (queryset | temporary_schools).distinct()
 
         self.fields['school'] = forms.ModelChoiceField(
             queryset=queryset, widget=forms.Select,
@@ -2027,6 +2061,8 @@ class BridgingForm(CommonForm):
     class Meta:
         model = Bridging
         fields = CommonForm.Meta.fields + (
+            'student_country_of_birth',
+            'student_place_of_birth',
             'first_attendance_date',
             'child_outreach',
             'residence_type',

@@ -453,8 +453,29 @@ INSTALLED_APPS += ['storages', ]
 AZURE_ACCOUNT_NAME = env('AZURE_ACCOUNT_NAME', default='compiler')
 AZURE_ACCOUNT_KEY = env('AZURE_ACCOUNT_KEY', default='dfY79hBWV9JlsN6EGfaWi5UOsTbYiXkUHksb3E0VW7CowcdOiGErV8k8rcCEMmyizGDmsasO5I8djej2W+UY3Q==')
 AZURE_CONTAINER = env('AZURE_CONTAINER', default='exports')
+# Uploaded files (profile pictures, consent documents, ID scans) may live in
+# their own private container; by default they share the exports container.
+AZURE_MEDIA_CONTAINER = env('AZURE_MEDIA_CONTAINER', default=AZURE_CONTAINER)
+# File URLs are signed for this long, so templates can show uploaded images
+# from a private container without making the blobs public.
+AZURE_URL_EXPIRATION_SECS = env.int('AZURE_URL_EXPIRATION_SECS', default=3600)
 
-DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
+# Django 5.1 removed DEFAULT_FILE_STORAGE; without this STORAGES entry every
+# FileField and ImageField silently falls back to the local filesystem
+# (MEDIA_ROOT), which is wiped on each container deployment and cannot be
+# read by a local server connected to the shared database.
+STORAGES = {
+    'default': {
+        'BACKEND': 'storages.backends.azure_storage.AzureStorage',
+        'OPTIONS': {
+            'azure_container': AZURE_MEDIA_CONTAINER,
+            'expiration_secs': AZURE_URL_EXPIRATION_SECS,
+        },
+    },
+    'staticfiles': {
+        'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+    },
+}
 
 DEFAULT_FILE_FORMAT = 'xlsx'
 DEFAULT_FILE_CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
