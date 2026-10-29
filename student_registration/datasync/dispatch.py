@@ -21,7 +21,7 @@ from django.db.models import Case, F, IntegerField, Q, Value, When
 from django.utils import timezone
 
 from .client import SyncClient, SyncConfigurationError, SyncTransportError
-from .constants import OPERATION_DELETE, RESOURCE_ORDER, RESOURCE_CHILD_PHOTO, RESOURCE_REGISTRATION
+from .constants import OPERATION_DELETE, RESOURCE_ORDER, RESOURCE_CHILD_PHOTO, RESOURCE_REGISTRATION, RESOURCE_ATTENDANCE
 from .models import (
     STATUS_ABANDONED,
     STATUS_FAILED,
@@ -169,6 +169,13 @@ def deliver_events(events, client=None):
                                             [stage[index::count] for index in range(count)]))
         elif photo_stage:
             results = [_locked_push([event], client) for event in stage]
+        elif stage[0].resource == RESOURCE_ATTENDANCE:
+            # One day contains many child rows. Keep complete days atomic but
+            # avoid a metadata-sized batch monopolising the receiver.
+            size = max(1, min(batch_size(), int(getattr(
+                settings, 'DATASYNC_ATTENDANCE_BATCH_SIZE', 10))))
+            results = [_locked_push(stage[index:index + size], client)
+                       for index in range(0, len(stage), size)]
         else:
             results = [_locked_push(stage, client)]
         for result in results:

@@ -3,7 +3,7 @@ from contextlib import contextmanager
 
 from django.core.exceptions import PermissionDenied
 from django.db import connection, transaction
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Q
 from django.utils import timezone
 
 from .models import BulkSyncRun, SyncEvent
@@ -27,9 +27,13 @@ def admission_lock():
 
 
 def unfinished_runs():
-    outstanding = SyncEvent.objects.filter(bulk_run_id=OuterRef('pk'), status__in=('pending', 'failed'))
-    return BulkSyncRun.objects.alias(_outstanding=Exists(outstanding)).filter(
-        Q(preparation='waiting') | Q(preparation__in=('ready', 'cancelled'), _outstanding=True),
+    # Resolve outstanding run IDs once. A correlated EXISTS can scan the
+    # entire outbox for every completed job, on every delivery-lane lookup.
+    outstanding = SyncEvent.objects.filter(
+        status__in=('pending', 'failed'), bulk_run_id__isnull=False,
+    ).values('bulk_run_id')
+    return BulkSyncRun.objects.filter(
+        Q(preparation='waiting') | Q(preparation__in=('ready', 'cancelled'), pk__in=outstanding),
     ).order_by('created', 'pk')
 
 

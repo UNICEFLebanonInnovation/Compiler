@@ -117,7 +117,8 @@ celery -A student_registration.taskapp.celery worker -Q datasync --loglevel=info
 | `DATASYNC_TARGET_URL` | *(empty)* | BMA-NFE's `/api/sync/events/` |
 | `DATASYNC_TARGET_TOKEN` | *(empty)* | Its service account token |
 | `DATASYNC_TIMEOUT` | `30` | Request timeout, seconds |
-| `DATASYNC_BATCH_SIZE` | `100` | Events per request |
+| `DATASYNC_BATCH_SIZE` | `100` | Maximum events per request |
+| `DATASYNC_ATTENDANCE_BATCH_SIZE` | `10` | Complete attendance days per request, capped by the general batch limit |
 | `DATASYNC_RETRY_DELAY` | `60` | First retry delay; doubles each failure |
 | `DATASYNC_MAX_RETRY_DELAY` | `3600` | Cap on the backoff |
 | `DATASYNC_MAX_ATTEMPTS` | `12` | Tries before an event is parked |
@@ -184,3 +185,5 @@ Grading covers `EducationProgrammeAssessment` only. The Compiler's
 `EducationProgrammeWLAssessment`, `EducationProgrammeSummerRSAssessment` and
 `TarlAssessment` have no counterpart in BMA-NFE and are not replicated; that
 would need those models to be added there first.
+
+Attendance child rows are resolved and saved in SQL batches on NFE. A complete day is applied atomically: invalid registration, child, centre, round or Makani scope rolls back the whole day. Existing attendance row IDs remain stable on repeat sync. Restart web and sync workers when deploying the attendance batching change in both projects; it requires no new migration.

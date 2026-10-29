@@ -429,6 +429,8 @@ DATASYNC_TARGET_TOKEN = env('DATASYNC_TARGET_TOKEN', default='')
 DATASYNC_TIMEOUT = env.int('DATASYNC_TIMEOUT', default=30)
 DATASYNC_VERIFY_TLS = env.bool('DATASYNC_VERIFY_TLS', default=True)
 DATASYNC_BATCH_SIZE = env.int('DATASYNC_BATCH_SIZE', default=100)
+# Attendance days embed many child rows; keep their HTTP batches smaller.
+DATASYNC_ATTENDANCE_BATCH_SIZE = env.int('DATASYNC_ATTENDANCE_BATCH_SIZE', default=10)
 
 # Retry policy: the wait doubles after each failure, from DATASYNC_RETRY_DELAY
 # up to DATASYNC_MAX_RETRY_DELAY, and an event is parked for an operator after
