@@ -1061,18 +1061,18 @@ class BridgingForm(CommonForm):
                 Div(
                     Div(
                         HTML('<span class="badge-form badge-pill">1</span>'),
-                        Div('student_country_of_birth', css_class='col-md-5'),
+                        Div('student_first_name', css_class='col-md-3'),
                         HTML('<span class="badge-form badge-pill">2</span>'),
-                        Div('student_place_of_birth', css_class='col-md-5'),
+                        Div('student_father_name', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('student_last_name', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form badge-pill">3</span>'),
-                        Div('student_first_name', css_class='col-md-3'),
                         HTML('<span class="badge-form badge-pill">4</span>'),
-                        Div('student_father_name', css_class='col-md-3'),
+                        Div('student_country_of_birth', css_class='col-md-5'),
                         HTML('<span class="badge-form badge-pill">5</span>'),
-                        Div('student_last_name', css_class='col-md-3'),
+                        Div('student_place_of_birth', css_class='col-md-5'),
                         css_class='row card-body',
                     ),
                     Div(
@@ -1457,18 +1457,18 @@ class BridgingForm(CommonForm):
                 Div(
                     Div(
                         HTML('<span class="badge-form badge-pill">1</span>'),
-                        Div('student_country_of_birth', css_class='col-md-5'),
+                        Div('student_first_name', css_class='col-md-3'),
                         HTML('<span class="badge-form badge-pill">2</span>'),
-                        Div('student_place_of_birth', css_class='col-md-5'),
+                        Div('student_father_name', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('student_last_name', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
                     Div(
-                        HTML('<span class="badge-form badge-pill">3</span>'),
-                        Div('student_first_name', css_class='col-md-3'),
                         HTML('<span class="badge-form badge-pill">4</span>'),
-                        Div('student_father_name', css_class='col-md-3'),
+                        Div('student_country_of_birth', css_class='col-md-5'),
                         HTML('<span class="badge-form badge-pill">5</span>'),
-                        Div('student_last_name', css_class='col-md-3'),
+                        Div('student_place_of_birth', css_class='col-md-5'),
                         css_class='row card-body',
                     ),
                     Div(
