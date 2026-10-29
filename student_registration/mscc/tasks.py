@@ -50,6 +50,86 @@ def _run_with_new_db_connection(fn, *args, **kwargs):
         close_old_connections()
 
 
+def _notify_excel_export(export, succeeded):
+    """A notification failure must not invalidate an already saved workbook."""
+    if not export.created_by:
+        return
+    try:
+        send_push_to_web(
+            export.created_by,
+            'Makani export ready' if succeeded else 'Makani export failed',
+            'Your export is ready to download.' if succeeded else
+            'The export could not be generated. Please try again.',
+            data={'type': 'mscc_export_ready', 'url': export.file_url} if succeeded else
+            {'type': 'mscc_export_failed'},
+        )
+    except Exception:
+        logger.exception('Could not notify requester for Excel export %s', export.pk)
+
+
+def _excel_followup_csv(registrations):
+    """Preserve the existing filtered export's follow-up data in its ZIP."""
+    fields = [field.attname for field in FollowUpService._meta.concrete_fields]
+    output = io.StringIO(newline='')
+    output.write('\ufeff')
+    writer = csv.writer(output)
+    writer.writerow(fields)
+    rows = FollowUpService.objects.filter(
+        registration_id__in=registrations.values('pk'),
+    ).order_by('pk').values_list(*fields)
+    for row in rows.iterator(chunk_size=200):
+        values = [smart_str(value) if value is not None else '' for value in row]
+        writer.writerow([
+            "'" + value if value.lstrip().startswith(('=', '+', '-', '@')) else value
+            for value in values
+        ])
+    return output.getvalue().encode('utf-8')
+
+
+def _generate_excel_mscc_export(export_id, fields=None, *, nationality='', first_name='',
+                               last_name='', father_name='', mother_fullname='', round=None,
+                               include_followup=False, has_photo=''):
+    """Build a scoped workbook from saved registrations and their photographs."""
+    try:
+        export = ExportHistory.objects.select_related('created_by__partner').get(pk=export_id)
+    except ExportHistory.DoesNotExist:
+        logger.error('ExportHistory with id %s does not exist', export_id)
+        return
+    try:
+        if not user_can_export(export.created_by):
+            raise PermissionDenied('An assigned MSCC export role is required.')
+        registrations = excel_export_registrations(
+            export.created_by, nationality=nationality, first_name=first_name,
+            last_name=last_name, father_name=father_name,
+            mother_fullname=mother_fullname, round=round, has_photo=has_photo,
+        )
+        workbook = build_children_workbook(
+            registrations.iterator(chunk_size=200), fields=fields,
+        )
+        output = io.BytesIO()
+        with zipfile.ZipFile(output, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
+            archive.writestr('mscc_data.xlsx', workbook)
+            if include_followup:
+                archive.writestr('followup_data.csv', _excel_followup_csv(registrations))
+        # The prefix identifies photo archives at the shared download endpoint,
+        # where they require a completed export belonging to the requester.
+        file_name = ExportStorage().save(
+            'mscc_photo_export_{}.zip'.format(uuid.uuid4()),
+            ContentFile(output.getvalue()),
+        )
+        export.file_url = reverse('mscc:export_download', args=[file_name])
+        export.status = 'done'
+        export.save(update_fields=['file_url', 'status', 'modified'])
+    except Exception:
+        logger.exception('Error generating photo Excel export %s', export_id)
+        export.status = 'failed'
+        export.file_url = ''
+        export.save(update_fields=['status', 'file_url', 'modified'])
+        _notify_excel_export(export, succeeded=False)
+        return
+    _notify_excel_export(export, succeeded=True)
+
+
 def _generate_mscc_export(export_id, fields=None, file_format='csv'):
     try:
         export = ExportHistory.objects.get(id=export_id)
