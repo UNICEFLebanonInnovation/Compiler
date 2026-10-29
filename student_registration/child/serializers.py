@@ -26,6 +26,8 @@ class ChildSerializer(serializers.ModelSerializer):
         model = Child
         fields = (
             'id',
+            'country_of_birth',
+            'place_of_birth',
             'first_name',
             'last_name',
             'father_name',

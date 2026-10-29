@@ -81,6 +81,26 @@ class Child(TimeStampedModel):
         ('Married and living with extended family', _('Married and living with extended family')),
     )
 
+    COUNTRY_OF_BIRTH = Choices(
+        ('', _('Select an option')),
+        ('Lebanon', _('Lebanon')),
+        ('Syria', _('Syria')),
+        ('Other', _('Other')),
+    )
+
+    country_of_birth = models.CharField(
+        max_length=50,
+        blank=True, null=True,
+        choices=COUNTRY_OF_BIRTH,
+        verbose_name=_('Country of Birth')
+    )
+    place_of_birth = models.CharField(
+        max_length=255,
+        blank=True, null=True,
+        verbose_name=_('Place of Birth'),
+        help_text=_('Place of birth similar in the Official ID')
+    )
+
     first_name = models.CharField(
         max_length=64,
         db_index=True,
