@@ -172,6 +172,10 @@ def prepare_run(run_id):
     """One transaction creates the complete outbox set, once, with no HTTP."""
     if not sync_enabled():
         return
+    from .bulk_jobs import current_run
+    current = current_run()
+    if current is None or current.pk != run_id or current.preparation != 'waiting':
+        return
     try:
         # Validation may read a large round. Keep the waiting request removable
         # while those reads run; deletion is rechecked before any outbox write.
@@ -214,9 +218,11 @@ def prepare_run(run_id):
 
 
 def prepare_waiting_runs(limit=1):
-    for run_id in list(BulkSyncRun.objects.filter(preparation='waiting')
-                       .order_by('created').values_list('pk', flat=True)[:limit]):
-        prepare_run(run_id)
+    from .bulk_jobs import current_run, retire_stopped_events
+    retire_stopped_events()
+    run = current_run()
+    if run and run.preparation == 'waiting':
+        prepare_run(run.pk)
 
 
 def schedule_bulk_sweep(run_id=None):
@@ -242,7 +248,9 @@ def run_progress(run):
     counts = dict(run.events.order_by().values_list('status').annotate(total=Count('pk')))
     total = sum(counts.values())
     sent = counts.get('sent', 0)
-    if run.preparation != 'ready':
+    if run.preparation == 'cancelled':
+        status = 'Stopping' if counts.get('pending', 0) + counts.get('failed', 0) else 'Stopped'
+    elif run.preparation != 'ready':
         status = run.get_preparation_display()
     elif counts.get('abandoned'):
         status = 'Needs attention'
@@ -256,4 +264,5 @@ def run_progress(run):
         status = 'No records queued'
     return dict(status=status, total=total, sent=sent, pending=counts.get('pending', 0),
                 failed=counts.get('failed', 0), abandoned=counts.get('abandoned', 0),
+                not_sent=total - sent,
                 percent=round(100 * sent / total) if total else 0)

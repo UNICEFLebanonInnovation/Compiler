@@ -147,11 +147,10 @@ class PreviewBudgetTests(TestCase):
             cursor.execute('SELECT pg_sleep(0.2)')
         return []
 
-    def test_slow_preview_returns_a_useful_page_instead_of_a_500(self):
-        with patch('student_registration.datasync.bulk_admin.preview_budget', self.timeout), \
-                patch.object(RoundSyncPlan, 'errors', side_effect=self.slow_errors):
+    def test_selection_does_not_execute_slow_source_validation(self):
+        with patch.object(RoundSyncPlan, 'errors', side_effect=AssertionError('Web validation forbidden')):
             response = self.client.get(self.url, self.post_data())
-        self.assertContains(response, 'Preview took too long')
+        self.assertContains(response, 'Start sync')
         self.assertNotContains(response, 'Sync this selection')
         self.assertEqual(BulkSyncRun.objects.count(), 0)
         self.assertEqual(SyncEvent.objects.count(), 0)
@@ -159,12 +158,11 @@ class PreviewBudgetTests(TestCase):
             cursor.execute('SELECT 1')
             self.assertEqual(cursor.fetchone()[0], 1)
 
-    def test_timed_out_post_never_creates_a_request_or_events(self):
-        with patch('student_registration.datasync.bulk_admin.preview_budget', self.timeout), \
-                patch.object(RoundSyncPlan, 'errors', side_effect=self.slow_errors):
+    def test_direct_submission_defers_slow_validation_and_creates_only_the_job(self):
+        with patch.object(RoundSyncPlan, 'errors', side_effect=AssertionError('Web validation forbidden')):
             response = self.client.post(self.url, self.post_data())
-        self.assertContains(response, 'No new sync request was created')
-        self.assertFalse(BulkSyncRun.objects.exists())
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(BulkSyncRun.objects.count(), 1)
         self.assertFalse(SyncEvent.objects.exists())
 
     def test_timeout_setting_is_restored_on_success_and_after_cancellation(self):

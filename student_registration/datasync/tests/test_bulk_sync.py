@@ -184,11 +184,11 @@ class BulkRoundTests(TestCase):
         self.assertEqual(run.preparation, 'waiting')
         self.assertFalse(run.events.exists())
 
-    def test_preview_never_creates_runs_or_events_and_shows_supporting_rows(self):
+    def test_selection_page_never_creates_runs_or_reads_supporting_records(self):
         response = self.client.get(self.url, {'round': self.round.pk, 'category': RESOURCE_EDUCATION_ASSESSMENT, 'partner': self.partner.pk})
-        self.assertContains(response, 'Required supporting records')
-        self.assertContains(response, 'Preview child')
-        self.assertContains(response, 'Sync this selection')
+        self.assertContains(response, 'Start sync')
+        self.assertNotContains(response, 'Preview child')
+        self.assertNotContains(response, 'Record preview')
         self.assertEqual(SyncEvent.objects.count(), 0)
         self.assertEqual(BulkSyncRun.objects.count(), 0)
 
@@ -233,14 +233,15 @@ class BulkRoundTests(TestCase):
         self.assertContains(response, 'view-only access')
         self.assertEqual(self.client.post(self.url, self.post_data()).status_code, 403)
 
-    def test_cannot_preview_supporting_records_without_their_source_permission(self):
+    def test_cannot_start_without_supporting_record_permissions(self):
         user = get_user_model().objects.create_user(username='bulk-limited', password='test', is_staff=True)
         user.user_permissions.add(*Permission.objects.filter(codename__in=[
-            'view_bulksyncrun', 'view_round', 'view_educationassessment',
+            'view_bulksyncrun', 'add_bulksyncrun', 'view_round', 'view_educationassessment',
         'view_partnerorganization']))
         self.client.force_login(user)
         self.assertEqual(self.client.get(self.url, {'round': self.round.pk,
-            'category': RESOURCE_EDUCATION_ASSESSMENT, 'partner': self.partner.pk}).status_code, 403)
+            'category': RESOURCE_EDUCATION_ASSESSMENT, 'partner': self.partner.pk}).status_code, 200)
+        self.assertEqual(self.client.post(self.url, self.post_data()).status_code, 403)
 
     def test_preview_pagination_does_not_repeat_or_omit_records(self):
         plan = RoundSyncPlan(self.round, ALL_CATEGORIES, partner=self.partner)
@@ -343,15 +344,14 @@ class BulkRoundTests(TestCase):
         self.assertEqual(self.client.post(self.url, data).status_code, 403)
         self.assertEqual(BulkSyncRun.objects.get().selected_categories, [RESOURCE_EDUCATION_ASSESSMENT])
 
-    def test_multiple_categories_survive_preview_pagination(self):
-        from urllib.parse import parse_qs
+    def test_multiple_categories_stay_selected_without_loading_records(self):
         Registration.objects.bulk_create([Registration(round=self.round, center=self.center, partner=self.partner) for _ in range(52)])
         categories = [RESOURCE_REGISTRATION, RESOURCE_EDUCATION_ASSESSMENT]
         response = self.client.get(self.url, {'round': self.round.pk, 'category': categories, 'partner': self.partner.pk})
-        self.assertEqual(parse_qs(response.context['preview_query'])['category'], categories)
+        self.assertEqual(response.context['form'].cleaned_data['category'], categories)
         response = self.client.get(self.url, {'round': self.round.pk, 'category': categories, 'page': 2, 'partner': self.partner.pk})
         self.assertEqual(response.context['form'].cleaned_data['category'], categories)
-        self.assertEqual(response.context['preview_page'].number, 2)
+        self.assertNotContains(response, 'Record preview')
         self.assertFalse(BulkSyncRun.objects.exists())
 
     def test_empty_or_invalid_multi_selection_cannot_queue(self):
@@ -437,12 +437,11 @@ class BulkRoundTests(TestCase):
             self.assertContains(response, 'Choose a round for the selected categories.')
         self.assertFalse(BulkSyncRun.objects.exists())
 
-    def test_global_preview_has_explicit_scope_and_no_hidden_round_requirement(self):
+    def test_global_selection_has_explicit_scope_and_no_hidden_round_requirement(self):
         response = self.client.get(self.url, {'category': [RESOURCE_CENTER, RESOURCE_TEACHER], 'partner': self.partner.pk})
-        self.assertContains(response, 'Selected partner — all rounds')
-        self.assertContains(response, 'Selected partner — all rounds')
+        self.assertContains(response, 'include all rounds for the partner')
         self.assertNotContains(response, 'type="hidden" name="round"')
-        self.assertContains(response, 'Sync this selection')
+        self.assertContains(response, 'Start sync')
 
     def test_unassigned_registrations_do_not_leak_into_global_requests(self):
         with override_settings(DATASYNC_ENABLED=False):

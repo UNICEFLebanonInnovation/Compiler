@@ -1,4 +1,4 @@
-"""Partner-scoped previews and bulk-sync controls in the Compiler admin."""
+"""Partner-scoped selection and one active bulk sync in the Compiler admin."""
 import uuid
 from functools import partial
 
@@ -18,7 +18,7 @@ from django.utils.http import urlencode
 from student_registration.mscc.models import Round
 from student_registration.schools.models import PartnerOrganization
 
-from .bulk_sync import RoundSyncPlan, run_progress, schedule_bulk_sweep
+from .bulk_sync import run_progress, schedule_bulk_sweep
 from .bulk_types import ALL_CATEGORIES, CATEGORY_CHOICES, GLOBAL_CATEGORIES, normalize_categories, requires_round
 from .models import BulkSyncRun
 from .outbox import sync_enabled
@@ -26,11 +26,7 @@ from .health import check_sync_health
 from .serializers import MODEL_FOR_RESOURCE
 from .partner_scope import available_partners
 from .pending_cleanup import pending_for_user, remove_pending
-from .query_budget import preview_budget, PreviewTimeout
-
-
-PREVIEW_TIMEOUT_MESSAGE = ('Preview took too long. Choose fewer categories or a narrower round and try again. '
-                           'No new sync request was created.')
+from .bulk_jobs import BulkBusy, current_run, required_resources, retry_run, stop_run, submit_run
 
 
 class RoundSyncForm(forms.Form):
@@ -134,166 +130,123 @@ class BulkSyncRunAdmin(admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
         if not self.has_view_permission(request):
             raise PermissionDenied
-        data = request.POST if request.method == 'POST' else request.GET
-        form = RoundSyncForm(data or None)
+        if request.method not in ('GET', 'POST') or request.GET.get('sync_action'):
+            return HttpResponseNotAllowed(['GET', 'POST'])
         partners = available_partners(request.user)
-        can_select_round = can_read(request.user, 'mscc.round')
-        allowed = {resource for resource in MODEL_FOR_RESOURCE if can_read(request.user, resource)}
+        readable = {key for key in MODEL_FOR_RESOURCE if can_read(request.user, key)}
+        visible_runs = BulkSyncRun.objects.select_related('partner', 'round', 'requested_by')
+        if not request.user.is_superuser:
+            visible_runs = visible_runs.filter(requested_by=request.user, partner__in=partners)
         run = None
-        diagnostics = None
-        action = request.POST.get('sync_action') if request.method == 'POST' else None
-        if request.GET.get('sync_action'):
-            return HttpResponseNotAllowed(['POST'])
-        run_id = request.GET.get('run')
-        if run_id:
+        if request.GET.get('run'):
             try:
-                run_id = uuid.UUID(run_id)
+                run = get_object_or_404(visible_runs, pk=uuid.UUID(request.GET['run']))
             except ValueError:
                 raise PermissionDenied
-            runs = BulkSyncRun.objects.select_related('partner', 'round', 'requested_by')
-            if not request.user.is_superuser:
-                runs = runs.filter(requested_by=request.user, partner__in=partners)
-            run = get_object_or_404(runs, pk=run_id)
-            if request.method == 'GET' or action:
-                form = RoundSyncForm({'partner': run.partner_id, 'round': run.round_id,
-                                      'category': run.selected_categories})
-
+        active = current_run()
+        visible_active = visible_runs.filter(pk=active.pk).first() if active else None
+        diagnostics = None
+        action = request.POST.get('sync_action') if request.method == 'POST' else None
         if action:
-            if action not in ('diagnose', 'notify_queue'):
-                return HttpResponseBadRequest('Unknown sync action.')
-            if run is None or not self._can_start(request):
+            if not self._can_start(request) or run is None:
+                raise PermissionDenied
+            if any(not can_read(request.user, key) for key in required_resources(run.selected_categories)):
                 raise PermissionDenied
             if action == 'diagnose':
                 diagnostics = check_sync_health()
-            elif run.preparation == 'waiting':
-                if not sync_enabled():
-                    self.message_user(request, 'Synchronization is disabled in Compiler.', messages.ERROR)
-                else:
-                    # Recheck the saved selection before waking an existing run.
-                    try:
-                        with preview_budget():
-                            plan = RoundSyncPlan(run.round, run.selected_categories, run.partner)
-                            if any(row['count'] and not can_read(request.user, row['resource']) for row in plan.summary()):
-                                raise PermissionDenied
-                    except PreviewTimeout:
-                        self.message_user(request, 'The selection check took too long. No queue notification was sent. '
-                                          'The saved request is preserved; try again shortly.', messages.WARNING)
-                        return HttpResponseRedirect('{}?{}'.format(
-                            reverse('admin:datasync_bulksyncrun_changelist'), urlencode({'run': run.pk})))
-                    notified = schedule_bulk_sweep(run.pk)
-                    self.message_user(request,
-                        'Queue notification accepted. Refresh status to check whether the worker has prepared this request.'
-                        if notified else 'The queue could not be notified. The saved request and error remain below.',
-                        messages.SUCCESS if notified else messages.ERROR)
+            elif action in ('retry', 'notify_queue', 'stop'):
+                try:
+                    if action == 'stop':
+                        stopped = stop_run(run.pk)
+                        self.message_user(request, 'Sync stopped. Records already received by BMA-NFE are preserved. '
+                            'An upload already in progress may finish.' if stopped else
+                            'This sync has already finished. There are no further attempts to stop.',
+                            messages.SUCCESS if stopped else messages.INFO)
+                    else:
+                        if not sync_enabled():
+                            self.message_user(request, 'Synchronization is disabled in Compiler.', messages.ERROR)
+                            return HttpResponseRedirect('{}?{}'.format(
+                                reverse('admin:datasync_bulksyncrun_changelist'), urlencode({'run': run.pk})))
+                        retry_run(run.pk)
+                        notified = schedule_bulk_sweep(run.pk)
+                        self.message_user(request, 'Sync retry requested.' if notified else
+                            'The sync worker could not be notified. The saved sync and its errors are preserved.',
+                            messages.SUCCESS if notified else messages.WARNING)
+                except BulkBusy as error:
+                    self.message_user(request, str(error), messages.WARNING)
                 return HttpResponseRedirect('{}?{}'.format(
                     reverse('admin:datasync_bulksyncrun_changelist'), urlencode({'run': run.pk})))
             else:
-                self.message_user(request, 'This request has already left the waiting stage.', messages.INFO)
-                return HttpResponseRedirect('{}?{}'.format(
-                    reverse('admin:datasync_bulksyncrun_changelist'), urlencode({'run': run.pk})))
-
+                return HttpResponseBadRequest('Unknown sync action.')
+        data = request.POST if request.method == 'POST' and not action else (
+            request.GET if any(key in request.GET for key in ('partner', 'round', 'category')) else None)
+        initial_run = run or visible_active
+        form = RoundSyncForm(data or None, initial={
+            'partner': initial_run.partner_id, 'round': initial_run.round_id,
+            'category': initial_run.selected_categories} if initial_run else None)
+        can_select_round = can_read(request.user, 'mscc.round')
         form.fields['partner'].queryset = partners
         if not can_select_round:
             form.fields['round'].queryset = Round.objects.none()
-        form.fields['category'].choices = [
-            (key, label) for key, label in CATEGORY_CHOICES
-            if (key == ALL_CATEGORIES and len(allowed) == len(MODEL_FOR_RESOURCE)) or
-               (key in allowed and (key in GLOBAL_CATEGORIES or can_select_round))
-        ]
-
-        plan = None
-        summary = []
+        form.fields['category'].choices = [(key, label) for key, label in CATEGORY_CHOICES
+            if (key == ALL_CATEGORIES and len(readable) == len(MODEL_FOR_RESOURCE)) or
+               (key in readable and (key in GLOBAL_CATEGORIES or can_select_round))]
         issues = []
-        total = 0
-        preview_rows = []
-        preview_page = Paginator(range(0), 50).get_page(1)
-        if form.is_bound and form.is_valid() and run is None:
-            try:
-                with preview_budget():
-                    plan = RoundSyncPlan(form.cleaned_data['round'], form.cleaned_data['category'], form.cleaned_data['partner'])
-                    summary = plan.summary()
-                    if any(row['count'] and not can_read(request.user, row['resource']) for row in summary):
-                        raise PermissionDenied
-                    issues = plan.errors()
-                    total = sum(row['count'] for row in summary)
-                    preview_page = Paginator(range(total), 50).get_page(request.GET.get('page'))
-                    if request.method == 'GET' and total:
-                        preview_rows = plan.preview(preview_page.start_index() - 1, 50)
-            except PreviewTimeout:
-                plan, summary, total, preview_rows = None, [], 0, []
-                issues = [PREVIEW_TIMEOUT_MESSAGE]
         if not sync_enabled():
-            issues.append('Synchronization is disabled. Enable DATASYNC_ENABLED before starting.')
-        if not partners.exists():
-            issues.append('No partners are available. Check your partner assignment and partner view permission.')
+            issues.append('Synchronization is disabled in Compiler.')
         if not getattr(settings, 'DATASYNC_TARGET_URL', '') or not getattr(settings, 'DATASYNC_TARGET_TOKEN', ''):
             issues.append('The NFE destination URL and service token must be configured before starting.')
-
+        if not partners.exists():
+            issues.append('No partners are available. Check your partner assignment and partner view permission.')
         if request.method == 'POST' and not action:
             if not self._can_start(request):
                 raise PermissionDenied
-            if plan is not None and not issues:
-                try:
-                    request_id = uuid.UUID(request.POST.get('request_id', ''))
-                except ValueError:
-                    form.add_error(None, 'Reload the preview before starting a sync.')
-                else:
-                    with transaction.atomic():
-                        run, created = BulkSyncRun.objects.get_or_create(pk=request_id, defaults={
-                            'partner': plan.partner,
-                            'round': plan.round, 'category': plan.category, 'categories': plan.categories,
-                            'requested_by': request.user,
-                        })
-                        if (run.partner_id != plan.partner.pk or
-                                run.round_id != (plan.round.pk if plan.round else None) or run.selected_categories != plan.categories or
-                                run.requested_by_id != request.user.pk):
-                            raise PermissionDenied
-                        if created:
-                            transaction.on_commit(partial(schedule_bulk_sweep, run.pk))
-                    self.message_user(request, 'Bulk sync requested. Delivery status appears below.', messages.SUCCESS)
-                    return HttpResponseRedirect('{}?{}'.format(
-                        reverse('admin:datasync_bulksyncrun_changelist'), urlencode({'run': run.pk})))
-
-        recent = BulkSyncRun.objects.select_related('partner', 'round', 'requested_by')
-        if not request.user.is_superuser:
-            recent = recent.filter(requested_by=request.user, partner__in=partners)
-        if form.is_bound and form.is_valid() and form.cleaned_data.get('partner'):
-            recent = recent.filter(partner=form.cleaned_data['partner'])
-        preview_query = urlencode({'partner': form['partner'].value() or '',
-                                   'round': form['round'].value() or '',
-                                   'category': form['category'].value() or []}, doseq=True)
-        chosen = form['category'].value() or []
-        chosen_labels = [str(label) for key, label in form.fields['category'].choices if key in chosen]
-        category_selection_label = (chosen_labels[0] if len(chosen_labels) == 1 else
-                                    '{} categories selected'.format(len(chosen_labels)) if chosen_labels else
-                                    'Choose categories')
-        event_page = None
-        progress = None
-        if run is not None:
-            # Re-check the permissions against the saved run when viewing its audit.
-            if any(not can_read(request.user, resource) for resource, count in run.queued_counts.items() if count):
+            if form.is_valid():
+                categories = form.cleaned_data['category']
+                if any(not can_read(request.user, key) for key in required_resources(categories)):
+                    raise PermissionDenied
+                if not issues:
+                    try:
+                        request_id = uuid.UUID(request.POST.get('request_id', ''))
+                    except ValueError:
+                        form.add_error(None, 'Reload this page before starting a sync.')
+                    else:
+                        try:
+                            with transaction.atomic():
+                                saved, created = submit_run(request.user, form.cleaned_data['partner'],
+                                    form.cleaned_data['round'], categories, request_id)
+                                if created:
+                                    transaction.on_commit(partial(schedule_bulk_sweep, saved.pk))
+                        except BulkBusy as error:
+                            self.message_user(request, str(error), messages.WARNING)
+                        else:
+                            return HttpResponseRedirect('{}?{}'.format(
+                                reverse('admin:datasync_bulksyncrun_changelist'), urlencode({'run': saved.pk})))
+        # GET only reads the form choices and job status. No source record
+        # counts, attendance checks, previews or photo access run in the web app.
+        if run is None:
+            run = visible_active or visible_runs.order_by('-created').first()
+        event_page = progress = None
+        if run:
+            if any(not can_read(request.user, key) for key, count in run.queued_counts.items() if count):
                 raise PermissionDenied
             event_page = Paginator(run.events.order_by('id'), 50).get_page(request.GET.get('event_page'))
             progress = run_progress(run)
-        selected_partner = getattr(form, 'cleaned_data', {}).get('partner')
-        removal_count = pending_for_user(request.user, selected_partner).count() if selected_partner and self._can_start(request) else 0
-        removal_url = '{}?{}'.format(reverse('admin:datasync_bulksyncrun_remove_pending'),
-                                    urlencode({'partner': selected_partner.pk})) if selected_partner else ''
-        context = {
-            **self.admin_site.each_context(request),
-            'title': 'Bulk sync', 'opts': self.model._meta, 'form': form,
-            'summary': summary, 'issues': issues, 'preview_rows': preview_rows,
-            'preview_page': preview_page, 'preview_query': preview_query, 'preview_total': total,
-            'request_id': uuid.uuid4(), 'can_start': self._can_start(request),
-            'category_selection_label': category_selection_label,
-            'can_select_round': can_select_round,
-            'run': run, 'progress': progress, 'event_page': event_page,
-            'diagnostics': diagnostics,
-            'pending_removal_count': removal_count, 'remove_pending_url': removal_url,
-            'selected_partner': selected_partner,
-            'recent_runs': recent[:10], 'has_view_permission': True,
-            'school_links_url': reverse('admin:datasync_schoolcenterlink_changelist'),
-            'events_url': reverse('admin:datasync_syncevent_changelist'),
-        }
+        chosen = form['category'].value() or []
+        labels = [str(label) for key, label in form.fields['category'].choices if key in chosen]
+        label = labels[0] if len(labels) == 1 else '{} categories selected'.format(len(labels)) if labels else 'Choose categories'
+        recent = visible_runs
+        if form.is_bound and form.is_valid() and form.cleaned_data.get('partner'):
+            recent = recent.filter(partner=form.cleaned_data['partner'])
+        context = {**self.admin_site.each_context(request), 'title': 'Bulk sync', 'opts': self.model._meta,
+            'form': form, 'request_id': uuid.uuid4(), 'issues': issues, 'can_start': self._can_start(request),
+            'can_select_round': can_select_round, 'category_selection_label': label,
+            'busy': bool(active), 'active_run': visible_active, 'run': run, 'event_page': event_page,
+            'progress': progress, 'diagnostics': diagnostics, 'recent_runs': recent.order_by('-created')[:10],
+            'can_retry': bool(run and (run.preparation in ('waiting', 'failed') or
+                                      run.preparation == 'ready' and progress['failed'])),
+            'can_stop': bool(run and (run.preparation == 'waiting' or
+                                     run.preparation == 'ready' and (progress['pending'] or progress['failed']))),
+            'events_url': reverse('admin:datasync_syncevent_changelist')}
         context.update(extra_context or {})
         return TemplateResponse(request, 'admin/datasync/bulk_round_sync.html', context)

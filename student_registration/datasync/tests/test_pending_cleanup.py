@@ -51,17 +51,18 @@ class PendingRemovalTests(TestCase):
         self.assertContains(response, 'Source records and data in BMA-NFE are preserved')
         self.assertTrue(BulkSyncRun.objects.filter(pk=run.pk).exists())
 
-    def test_selected_partner_button_is_available_on_bulk_page(self):
+    def test_old_removal_controls_are_absent_from_simplified_page(self):
         self.new_run()
         response = self.client.get(self.url, {'partner': self.partner.pk, 'category': RESOURCE_ROUND,
                                              'round': self.round.pk})
-        self.assertContains(response, self.removal_url())
-        self.assertContains(response, 'Remove pending bulk syncs')
+        self.assertNotContains(response, self.removal_url())
+        self.assertNotContains(response, 'Remove pending bulk syncs')
+        self.assertContains(response, 'Stop sync')
 
     def test_empty_selection_shows_partner_hint_and_no_removal_link(self):
         self.new_run()
         response = self.client.get(self.url)
-        self.assertContains(response, 'Choose a partner above to manage its pending requests')
+        self.assertContains(response, 'Only one bulk sync runs at a time')
         self.assertNotContains(response, self.removal_url())
 
     def test_confirmed_pending_requests_are_removed_without_source_data_changes(self):
@@ -95,7 +96,7 @@ class PendingRemovalTests(TestCase):
         failed.preparation = 'failed'
         failed.save(update_fields=['preparation'])
         events = self.new_run(RESOURCE_ROUND)
-        prepare_run(events.pk)
+        SyncEvent.objects.create(bulk_run=events, resource=RESOURCE_ROUND, source_id=str(self.round.pk))
         BulkSyncRun.objects.filter(pk=events.pk).update(preparation='waiting', queued_counts={})
         self.assertQuerySetEqual(pending_for_user(self.user, self.partner), [removable])
         self.client.post(self.removal_url(), {'confirmation': self.confirmation()})

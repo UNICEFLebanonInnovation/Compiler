@@ -111,7 +111,7 @@ class DeliveryConcurrencyTests(TransactionTestCase):
     def event(self, index, resource='mscc.registration'):
         return SimpleNamespace(pk=index, event_id=uuid.uuid4(), resource=resource,
                                source_id=str(index), status='pending', next_attempt=None,
-                               attempts=0, refresh_from_db=Mock())
+                               attempts=0, bulk_run_id=None, refresh_from_db=Mock())
 
     def test_parallel_lanes_are_bounded_and_complete_each_event_once(self):
         lock = threading.Lock()

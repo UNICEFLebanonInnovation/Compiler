@@ -144,13 +144,12 @@ class PartnerBulkTests(TestCase):
         self.assertEqual(self.client.post(self.url,data).status_code,403)
         self.assertEqual(BulkSyncRun.objects.get().partner_id,self.partner.pk)
 
-    def test_preview_pagination_keeps_partner_and_excludes_foreign_rows(self):
+    def test_selection_keeps_partner_and_does_not_expose_records(self):
         Registration.objects.bulk_create([Registration(partner=self.partner,center=self.center,round=self.round)
                                           for _ in range(52)])
         response = self.client.get(self.url,self.data(category=RESOURCE_REGISTRATION,page=2))
         self.assertEqual(response.status_code,200)
-        from urllib.parse import parse_qs
-        self.assertEqual(parse_qs(response.context['preview_query'])['partner'],[str(self.partner.pk)])
+        self.assertEqual(response.context['form'].cleaned_data['partner'].pk,self.partner.pk)
         self.assertNotContains(response,self.child_b.first_name)
 
     def test_progress_and_history_retain_the_selected_partner(self):

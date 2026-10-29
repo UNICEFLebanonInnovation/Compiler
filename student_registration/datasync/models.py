@@ -88,7 +88,8 @@ class BulkSyncRun(TimeStampedModel):
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL,
     )
     preparation = models.CharField(max_length=12, default='waiting', choices=(
-        ('waiting', 'Waiting to queue'), ('ready', 'Queued'), ('failed', 'Queueing failed'),
+        ('waiting', 'Starting'), ('ready', 'Syncing'), ('failed', 'Could not start'),
+        ('cancelled', 'Stopped'),
     ))
     queued_counts = models.JSONField(default=dict)
     last_error = models.TextField(blank=True)

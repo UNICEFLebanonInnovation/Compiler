@@ -59,56 +59,43 @@
 {% block content %}
 <div class="bulk-sync">
   <section class="sync-panel" aria-labelledby="selection-heading">
-    <h2 id="selection-heading">Select records to sync</h2>
-    <p>Choose a partner and one or more categories to preview their records before syncing them to BMA-NFE.</p>
-    <p class="sync-note"><strong>Every selection is limited to the chosen partner.</strong> Centres and teachers include all rounds for that partner. Choose a round for registrations, education records, referrals and attendance.</p>
-    <p class="sync-note"><strong>Makani records only.</strong> Teachers come from Locations / Program staff. TLS registrations, their services and photos, and attendance days containing non-Makani rows are excluded.</p>
+    <h2 id="selection-heading">Start a bulk sync</h2>
+    <p>Choose a partner and one or more categories, then start. Only one bulk sync runs at a time.</p>
+    <p class="sync-note">Makani records only. Centres and ProgramStaff teachers include all rounds for the partner. Other categories require a round. Registrations include their children and available photos; unchanged photos are reused.</p>
+    {% if busy %}<p class="sync-note" role="status"><strong>A sync is already in progress.</strong> Finish or stop it before starting another.{% if active_run %} <a href="?run={{ active_run.pk }}">View current sync</a>{% endif %}</p>{% endif %}
     {{ form.non_field_errors }}
-    <form method="get" class="sync-controls{% if not can_select_round %} sync-controls-no-round{% endif %}">
-      <div class="sync-field sync-partner"><label for="id_partner">Partner</label>{{ form.partner }}{{ form.partner.errors }}</div>
-      {% if can_select_round %}<div class="sync-field sync-round"><label for="id_round">Round (for round-based categories)</label>{{ form.round }}{{ form.round.errors }}</div>{% endif %}
-      <div class="sync-field sync-category">
-        <span id="categories-label" class="category-label">Element categories</span>
-        <details class="category-picker" data-category-picker>
-          <summary aria-labelledby="categories-label category-selection-label"><span id="category-selection-label">{{ category_selection_label }}</span></summary>
-          <div class="category-options" role="group" aria-labelledby="categories-label">{{ form.category }}</div>
-        </details>
-        {{ form.category.errors }}
+    <form method="post" id="bulk-sync-selection" class="selection-form">
+      {% csrf_token %}
+      <input type="hidden" name="request_id" value="{{ request_id }}">
+      <div class="sync-controls{% if not can_select_round %} sync-controls-no-round{% endif %}">
+        <div class="sync-field sync-partner"><label for="id_partner">Partner</label>{{ form.partner }}{{ form.partner.errors }}</div>
+        {% if can_select_round %}<div class="sync-field sync-round"><label for="id_round">Round (for round-based categories)</label>{{ form.round }}{{ form.round.errors }}</div>{% endif %}
+        <div class="sync-field sync-category">
+          <span id="categories-label" class="category-label">Element categories</span>
+          <details class="category-picker" data-category-picker>
+            <summary aria-labelledby="categories-label category-selection-label"><span id="category-selection-label">{{ category_selection_label }}</span></summary>
+            <div class="category-options" role="group" aria-labelledby="categories-label">{{ form.category }}</div>
+          </details>
+          {{ form.category.errors }}
+        </div>
+        {% if can_start %}<button type="submit" class="button btn btn-primary" {% if busy or issues %}disabled{% endif %}>Start sync</button>{% endif %}
       </div>
-      <button type="submit" class="button btn btn-primary">Preview records</button>
     </form>
-    {% if issues %}<div class="sync-issues" role="alert"><ul>{% for issue in issues %}<li>{{ issue }}</li>{% endfor %}</ul>
-      </div>{% endif %}
-    {% if summary %}
-      <div class="table-scroll"><table aria-label="Category counts">
-        <thead><tr><th>Category</th><th>Records</th><th>Scope</th><th>Included as</th></tr></thead>
-        <tbody>{% for item in summary %}{% if item.count %}<tr><td>{{ item.label }}</td><td>{{ item.count }}</td><td>{{ item.scope }}</td><td>{% if item.supporting %}Required supporting records{% else %}Selected category{% endif %}</td></tr>{% endif %}{% endfor %}</tbody>
-      </table></div>
-      <p class="sync-note">Registrations include the child and available profile photo. Unchanged photos are reused. Partners travel with centre and registration records.</p>
-      {% if can_start and not issues and not run %}
-      <form method="post" class="sync-actions">
-        {% csrf_token %}
-        <input type="hidden" name="partner" value="{{ form.cleaned_data.partner.pk }}">
-        {% if form.cleaned_data.round %}<input type="hidden" name="round" value="{{ form.cleaned_data.round.pk }}">{% endif %}
-        {% for category in form.cleaned_data.category %}<input type="hidden" name="category" value="{{ category }}">{% endfor %}
-        <input type="hidden" name="request_id" value="{{ request_id }}">
-        <button type="submit" class="button btn btn-primary">Sync this selection</button>
-        <span>{{ preview_total }} records including required supporting records.</span>
-      </form>
-      {% elif not can_start %}<p class="sync-note">You have view-only access. An administrator with permission to add bulk sync runs can start delivery.</p>{% endif %}
-    {% endif %}
+    {% if not can_start %}<p class="sync-note">You have view-only access. An administrator with permission to add bulk sync runs can start delivery.</p>{% endif %}
+    {% if issues %}<div class="sync-issues" role="alert"><ul>{% for issue in issues %}<li>{{ issue }}</li>{% endfor %}</ul></div>{% endif %}
   </section>
 
   {% if run %}
   <section class="sync-panel" aria-labelledby="progress-heading">
     <h2 id="progress-heading">{{ run.scope_label }} · {{ run.get_category_display }}</h2>
     <p><strong>{{ progress.status }}</strong> · Requested {{ run.created }}{% if run.requested_by %} by {{ run.requested_by }}{% endif %}</p>
-    {% if run.last_error %}<p class="sync-error" role="alert">{{ run.last_error }}</p>{% if run.preparation == 'waiting' %}<p>The request is saved. Check diagnostics and retry its queue notification after correcting the problem.</p>{% else %}<p>After correcting the problem, preview the selection and start a new request.</p>{% endif %}{% endif %}
+    {% if run.last_error %}<p class="{% if run.preparation == 'cancelled' %}sync-note{% else %}sync-error{% endif %}" role="status">{{ run.last_error }}</p>{% endif %}
     <div class="sync-stats">
       <div class="sync-stat"><strong>{{ progress.sent }} / {{ progress.total }}</strong>Sent</div>
+      {% if run.preparation == 'cancelled' %}<div class="sync-stat"><strong>{{ progress.not_sent }}</strong>Not sent</div>{% else %}
       <div class="sync-stat"><strong>{{ progress.pending }}</strong>Pending</div>
       <div class="sync-stat"><strong>{{ progress.failed }}</strong>Failed, will retry</div>
-      <div class="sync-stat"><strong>{{ progress.abandoned }}</strong>Needs attention</div>
+      <div class="sync-stat"><strong>{{ progress.abandoned }}</strong>Needs attention</div>{% endif %}
     </div>
     <progress value="{{ progress.sent }}" max="{{ progress.total|default:1 }}" aria-label="Records sent">{{ progress.percent }}%</progress>
     <div class="sync-actions"><a class="button btn btn-primary" href="?run={{ run.pk }}">Refresh status</a><a href="{{ events_url }}?bulk_run__id__exact={{ run.pk }}">View delivery details and retries</a></div>
@@ -116,9 +103,10 @@
     <form method="post" action="?run={{ run.pk }}" class="sync-actions">
       {% csrf_token %}
       <button type="submit" name="sync_action" value="diagnose" class="button btn btn-secondary">Check sync diagnostics</button>
-      {% if run.preparation == 'waiting' %}<button type="submit" name="sync_action" value="notify_queue" class="button btn btn-outline-primary">Retry queue notification</button>{% endif %}
+      {% if can_retry %}<button type="submit" name="sync_action" value="retry" class="button btn btn-outline-primary">Retry sync</button>{% endif %}
+      {% if can_stop %}<button type="submit" name="sync_action" value="stop" class="button btn btn-outline-danger">Stop sync</button>{% endif %}
     </form>
-    <p class="sync-note">Diagnostics check the broker, worker replies and NFE API without sending records. Retrying the notification wakes the existing request through the same sync worker.</p>
+    <p class="sync-note">Retry continues this sync. Stop prevents further attempts and preserves records already received by BMA-NFE; an upload already in progress may finish.</p>
     {% endif %}
     {% if diagnostics %}
     <section aria-labelledby="diagnostics-heading" class="mt-3">
@@ -132,8 +120,8 @@
     {% endif %}
     <div class="table-scroll"><table aria-label="Bulk sync delivery results">
       <thead><tr><th>Category</th><th>Record ID</th><th>Status</th><th>Attempts</th><th>ID in BMA-NFE</th><th>Last error</th></tr></thead>
-      <tbody>{% for event in event_page %}<tr><td>{{ event.get_resource_display }}</td><td>{{ event.source_id }}</td><td>{{ event.get_status_display }}</td><td>{{ event.attempts }}</td><td>{{ event.remote_id|default:"—" }}</td><td class="sync-error">{{ event.last_error|default:"—"|truncatechars:250 }}</td></tr>
-      {% empty %}<tr><td colspan="6">The worker has not queued records yet. This request remains saved if delivery is unavailable.</td></tr>{% endfor %}</tbody>
+      <tbody>{% for event in event_page %}<tr><td>{{ event.get_resource_display }}</td><td>{{ event.source_id }}</td><td>{% if run.preparation == 'cancelled' and event.status == 'abandoned' %}Not sent (stopped){% else %}{{ event.get_status_display }}{% endif %}</td><td>{{ event.attempts }}</td><td>{{ event.remote_id|default:"—" }}</td><td class="sync-error">{{ event.last_error|default:"—"|truncatechars:250 }}</td></tr>
+      {% empty %}<tr><td colspan="6">{% if run.preparation == 'cancelled' %}No records were sent before this sync stopped.{% elif run.preparation == 'failed' %}The sync could not start. Correct the error above and retry.{% else %}The sync is starting. Its status and any error will appear here.{% endif %}</td></tr>{% endfor %}</tbody>
     </table></div>
     {% if event_page.has_other_pages %}<nav class="pagination" aria-label="Delivery result pages">
       {% if event_page.has_previous %}<a href="?run={{ run.pk }}&amp;event_page={{ event_page.previous_page_number }}">Previous</a>{% endif %}
@@ -143,42 +131,14 @@
   </section>
   {% endif %}
 
-  {% if summary and not run %}
-  <section class="sync-panel" aria-labelledby="preview-heading">
-    <h2 id="preview-heading">Record preview · {{ preview_total }} records</h2>
-    <p class="sync-note">This list is read-only. The worker queues the current records for the categories and scope shown above.</p>
-    <div class="table-scroll"><table aria-label="Records to sync">
-      <thead><tr><th>Category</th><th>Record ID</th><th>Record</th><th>Scope</th><th>Included as</th></tr></thead>
-      <tbody>{% for row in preview_rows %}<tr><td>{{ row.label }}</td><td>{{ row.source_id }}</td><td>{{ row.description }}</td><td>{{ row.scope }}</td><td>{% if row.supporting %}Required supporting record{% else %}Selected category{% endif %}</td></tr>
-      {% empty %}<tr><td colspan="5">No records found.</td></tr>{% endfor %}</tbody>
+  <details class="sync-panel">
+    <summary>Previous syncs</summary>
+    <div class="table-scroll"><table aria-label="Previous syncs">
+      <thead><tr><th>Started</th><th>Partner / scope</th><th>Categories</th><th></th></tr></thead>
+      <tbody>{% for item in recent_runs %}<tr><td>{{ item.created }}</td><td>{{ item.scope_label }}</td><td>{{ item.get_category_display }}</td><td><a href="?run={{ item.pk }}">View status</a></td></tr>{% empty %}<tr><td colspan="4">No syncs yet.</td></tr>{% endfor %}</tbody>
     </table></div>
-    {% if preview_page.has_other_pages %}<nav class="pagination" aria-label="Preview pages">
-      {% if preview_page.has_previous %}<a href="?{{ preview_query }}&amp;page={{ preview_page.previous_page_number }}">Previous</a>{% endif %}
-      <span>Page {{ preview_page.number }} of {{ preview_page.paginator.num_pages }}</span>
-      {% if preview_page.has_next %}<a href="?{{ preview_query }}&amp;page={{ preview_page.next_page_number }}">Next</a>{% endif %}
-    </nav>{% endif %}
-  </section>
-  {% endif %}
+  </details>
 
-  <section class="sync-panel" aria-labelledby="history-heading">
-    <h2 id="history-heading">Recent bulk requests</h2>
-    {% if can_start %}
-    <div class="sync-actions mb-3">
-      {% if pending_removal_count %}
-      <a class="button btn btn-outline-danger" href="{{ remove_pending_url }}">Remove pending bulk syncs</a>
-      <span>{{ pending_removal_count }} waiting request{{ pending_removal_count|pluralize }} for {{ selected_partner }}.</span>
-      {% else %}
-      <button type="button" class="btn btn-outline-danger" disabled>Remove pending bulk syncs</button>
-      <span>{% if selected_partner %}No unstarted requests to remove for {{ selected_partner }}.{% else %}Choose a partner above to manage its pending requests.{% endif %}</span>
-      {% endif %}
-    </div>
-    {% endif %}
-    <div class="table-scroll"><table aria-label="Recent bulk sync requests">
-      <thead><tr><th>Requested</th><th>Partner / scope</th><th>Categories</th><th>Queue preparation</th><th></th></tr></thead>
-      <tbody>{% for item in recent_runs %}<tr><td>{{ item.created }}</td><td>{{ item.scope_label }}</td><td>{{ item.get_category_display }}</td><td>{{ item.get_preparation_display }}</td><td><a href="?run={{ item.pk }}">View status</a></td></tr>
-      {% empty %}<tr><td colspan="5">No bulk requests yet.</td></tr>{% endfor %}</tbody>
-    </table></div>
-  </section>
 </div>
 {% endblock %}
 

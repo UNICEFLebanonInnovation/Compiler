@@ -17,7 +17,7 @@ from itertools import groupby
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import connections, close_old_connections
-from django.db.models import Case, F, IntegerField, Value, When
+from django.db.models import Case, F, IntegerField, Q, Value, When
 from django.utils import timezone
 
 from .client import SyncClient, SyncConfigurationError, SyncTransportError
@@ -118,6 +118,12 @@ def _abandon_missing(event, counts):
 
 def _fail_one(event, error, counts, retryable=True):
     """Record a failure for one event and schedule its retry."""
+    from .models import BulkSyncRun
+    if event.bulk_run_id and BulkSyncRun.objects.filter(pk=event.bulk_run_id, preparation='cancelled').exists():
+        from .bulk_jobs import STOPPED_MESSAGE
+        event.mark_failed(STOPPED_MESSAGE, abandoned=True)
+        counts['abandoned'] += 1
+        return
     ceiling = max_attempts() if retryable else min(max_attempts(), PERMANENT_FAILURE_ATTEMPTS)
 
     if event.attempts >= ceiling:
@@ -142,6 +148,10 @@ def deliver_events(events, client=None):
     """Deliver dependency stages with bounded, independently pooled lanes."""
     totals = {'sent': 0, 'failed': 0, 'abandoned': 0}
     if not events or not getattr(settings, 'DATASYNC_ENABLED', True):
+        return totals
+    from .bulk_jobs import restrict_bulk_events
+    events = restrict_bulk_events(events)
+    if not events:
         return totals
     client = client or SyncClient()
 
@@ -184,7 +194,8 @@ def _deliver_lane(events, parent_client):
 
 def _locked_push(events, client):
     with guard_events(events) as ready:
-        return _push_events(ready, client)
+        from .bulk_jobs import restrict_bulk_events
+        return _push_events(restrict_bulk_events(ready), client)
 
 
 def _push_events(events, client):
@@ -341,6 +352,10 @@ def due_events(limit=None):
     rows that hang off them. Ordering in SQL rather than in Python keeps the
     oldest work at the front even when the outbox is long.
     """
+    from .bulk_jobs import current_run, retire_stopped_events
+    retire_stopped_events()
+    run = current_run()
+    active_id = run.pk if run and run.preparation == 'ready' else None
     rank = Case(
         *[
             When(resource=resource, then=Value(index))
@@ -351,6 +366,7 @@ def due_events(limit=None):
     )
     return list(
         SyncEvent.objects.due()
+        .filter(Q(bulk_run__isnull=True) | Q(bulk_run_id=active_id, bulk_run__preparation='ready'))
         .annotate(dependency_rank=rank)
         .order_by('dependency_rank', 'created', 'id')[:limit or batch_size()]
     )

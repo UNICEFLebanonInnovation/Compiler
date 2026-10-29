@@ -134,7 +134,7 @@ class DiagnosticsPortalTests(TestCase):
         }), patch('student_registration.datasync.tasks.flush_sync_outbox.apply_async') as send:
             response = self.client.post('{}?run={}'.format(self.url, run.pk), {'sync_action': 'diagnose'})
         self.assertContains(response, 'Connection refused')
-        self.assertContains(response, 'Retry queue notification')
+        self.assertContains(response, 'Retry sync')
         self.assertEqual((BulkSyncRun.objects.count(), SyncEvent.objects.count()), before)
         send.assert_not_called()
 
@@ -208,9 +208,12 @@ class DiagnosticsPortalTests(TestCase):
     def test_ready_request_cannot_be_prepared_again_from_retry_action(self):
         run = self.new_run()
         prepare_run(run.pk)
+        event_ids = list(run.events.values_list('pk', flat=True))
         with patch('student_registration.datasync.bulk_admin.schedule_bulk_sweep') as notify:
             self.client.post('{}?run={}'.format(self.url, run.pk), {'sync_action': 'notify_queue'})
-        notify.assert_not_called()
+        notify.assert_called_once_with(run.pk)
+        prepare_run(run.pk)
+        self.assertEqual(list(run.events.values_list('pk', flat=True)), event_ids)
 
     def test_disabled_sync_does_not_publish_a_retry_notification(self):
         run = self.new_run()
