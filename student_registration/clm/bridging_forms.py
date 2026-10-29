@@ -468,6 +468,18 @@ class CommonForm(forms.ModelForm):
 
 
 class BridgingForm(CommonForm):
+    student_country_of_birth = forms.ChoiceField(
+        label=_('Country of Birth'),
+        choices=Student.COUNTRY_OF_BIRTH,
+        required=True,
+    )
+    student_place_of_birth = forms.CharField(
+        label=_('Place of Birth'),
+        max_length=200,
+        required=True,
+        help_text=_('Place of birth similar in the Official ID'),
+    )
+
 
     REGISTRATION_LEVEL = (
         ('', '----------'),
@@ -1048,6 +1060,11 @@ class BridgingForm(CommonForm):
                 ),
                 Div(
                     Div(
+                        Div('student_country_of_birth', css_class='col-md-6'),
+                        Div('student_place_of_birth', css_class='col-md-6'),
+                        css_class='row card-body',
+                    ),
+                    Div(
                         HTML('<span class="badge-form badge-pill">1</span>'),
                         Div('student_first_name', css_class='col-md-3'),
                         HTML('<span class="badge-form badge-pill">2</span>'),
@@ -1438,6 +1455,11 @@ class BridgingForm(CommonForm):
                     style='display: none;'
                 ),
                 Div(
+                    Div(
+                        Div('student_country_of_birth', css_class='col-md-6'),
+                        Div('student_place_of_birth', css_class='col-md-6'),
+                        css_class='row card-body',
+                    ),
                     Div(
                         HTML('<span class="badge-form badge-pill">1</span>'),
                         Div('student_first_name', css_class='col-md-3'),
@@ -2039,6 +2061,8 @@ class BridgingForm(CommonForm):
     class Meta:
         model = Bridging
         fields = CommonForm.Meta.fields + (
+            'student_country_of_birth',
+            'student_place_of_birth',
             'first_attendance_date',
             'child_outreach',
             'residence_type',

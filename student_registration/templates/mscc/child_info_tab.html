@@ -38,6 +38,26 @@
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
                                                 <div class="widget-content-left">
+                                                    <div class="widget-heading">{% trans "Country of Birth" %}</div>
+                                                    <div class="widget-subheading">{{ instance.child.get_country_of_birth_display|default:"—" }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <div class="widget-content p-0">
+                                            <div class="widget-content-wrapper">
+                                                <div class="widget-content-left">
+                                                    <div class="widget-heading">{% trans "Place of Birth" %}</div>
+                                                    <div class="widget-subheading">{{ instance.child.place_of_birth|default:"—" }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <div class="widget-content p-0">
+                                            <div class="widget-content-wrapper">
+                                                <div class="widget-content-left">
                                                     <div class="widget-heading">Nationality</div>
                                                         {% if instance.child.nationality.id == 6  %}
                                                             <div class="widget-subheading">{{ instance.child.nationality.name }} - {{ instance.child.nationality_other }}</div>
