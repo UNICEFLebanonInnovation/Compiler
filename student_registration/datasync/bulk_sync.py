@@ -18,6 +18,7 @@ from .outbox import enqueue_many, sync_enabled
 from .serializers import MODEL_FOR_RESOURCE
 from .partner_scope import available_partners
 from .makani_scope import scoped_queryset, registrations as makani_registrations
+from .query_budget import preview_budget, PreviewTimeout
 
 logger = logging.getLogger(__name__)
 
@@ -69,11 +70,14 @@ class RoundSyncPlan:
         selected_queries = {key: self.queries[key] for key in self.selected}
         registration_filter = Q(pk__in=[])
         if RESOURCE_REGISTRATION in self.selected and round_object:
-            registration_filter |= Q(pk__in=registrations.order_by().values('pk'))
-        for resource, query in selected_queries.items():
-            if resource not in (RESOURCE_ROUND, RESOURCE_CENTER, RESOURCE_TEACHER,
-                                RESOURCE_REGISTRATION, RESOURCE_ATTENDANCE):
-                registration_filter |= Q(pk__in=query.order_by().values('registration_id'))
+            # Related categories already use registrations in this round.
+            # Do not OR their subqueries back into that complete selection.
+            registration_filter |= Q(round=round_object)
+        else:
+            for resource, query in selected_queries.items():
+                if resource not in (RESOURCE_ROUND, RESOURCE_CENTER, RESOURCE_TEACHER,
+                                    RESOURCE_REGISTRATION, RESOURCE_ATTENDANCE):
+                    registration_filter |= Q(pk__in=query.order_by().values('registration_id'))
         self.attendance_rows = MSCCAttendanceChild.objects.filter(
             attendance_day_id__in=attendance.order_by().values('pk'),
         ) if RESOURCE_ATTENDANCE in self.selected else MSCCAttendanceChild.objects.none()
@@ -88,15 +92,18 @@ class RoundSyncPlan:
             center_filter |= Q(pk__in=teacher_centers)
         if RESOURCE_ATTENDANCE in self.selected:
             center_filter |= Q(pk__in=attendance.order_by().values('center_id'))
-        self.queries[RESOURCE_CENTER] = Center.objects.filter(center_filter, partner=partner)
+        self.queries[RESOURCE_CENTER] = (centers if RESOURCE_CENTER in self.selected else
+                                       Center.objects.filter(center_filter, partner=partner))
         included = self.selected | {RESOURCE_ROUND, RESOURCE_CENTER, RESOURCE_REGISTRATION}
         self.queries = {key: self.queries[key].order_by('pk')
                         for key in RESOURCE_ORDER if key in included}
 
     def summary(self):
-        return [dict(resource=key, label=CATEGORY_LABELS[key], count=query.count(),
-                     supporting=key not in self.selected, scope=self.resource_scope(key))
-                for key, query in self.queries.items()]
+        if not hasattr(self, '_summary'):
+            self._summary = [dict(resource=key, label=CATEGORY_LABELS[key], count=query.count(),
+                         supporting=key not in self.selected, scope=self.resource_scope(key))
+                    for key, query in self.queries.items()]
+        return self._summary
 
     def resource_scope(self, resource):
         if resource == RESOURCE_TEACHER:
@@ -127,8 +134,9 @@ class RoundSyncPlan:
     def preview(self, offset, limit):
         """Slice across categories without loading the entire round into memory."""
         rows = []
+        counts = {row['resource']: row['count'] for row in self.summary()}
         for resource, query in self.queries.items():
-            count = query.count()
+            count = counts[resource]
             if offset >= count:
                 offset -= count
                 continue
@@ -165,6 +173,21 @@ def prepare_run(run_id):
     if not sync_enabled():
         return
     try:
+        # Validation may read a large round. Keep the waiting request removable
+        # while those reads run; deletion is rechecked before any outbox write.
+        snapshot = BulkSyncRun.objects.filter(pk=run_id, preparation='waiting').first()
+        if snapshot is None:
+            return
+        if snapshot.requested_by_id and not available_partners(snapshot.requested_by).filter(pk=snapshot.partner_id).exists():
+            raise PlanError('The requesting operator no longer has access to this partner.')
+        plan = RoundSyncPlan(snapshot.round, snapshot.selected_categories, snapshot.partner)
+        try:
+            with preview_budget(seconds=20):
+                errors = plan.errors()
+        except PreviewTimeout as error:
+            raise PlanError('Selection validation took too long. Try fewer categories or a narrower round.') from error
+        if errors:
+            raise PlanError(' '.join(errors))
         with transaction.atomic():
             run = (BulkSyncRun.objects.select_for_update(skip_locked=True)
                    .filter(pk=run_id, preparation='waiting').first())
@@ -172,10 +195,9 @@ def prepare_run(run_id):
                 return
             if run.requested_by_id and not available_partners(run.requested_by).filter(pk=run.partner_id).exists():
                 raise PlanError('The requesting operator no longer has access to this partner.')
-            plan = RoundSyncPlan(run.round, run.selected_categories, run.partner)
-            errors = plan.errors()
-            if errors:
-                raise PlanError(' '.join(errors))
+            if (run.partner_id, run.round_id, run.selected_categories) != (
+                    snapshot.partner_id, snapshot.round_id, snapshot.selected_categories):
+                return  # A changed selection is validated by the next sweep.
             run.queued_counts = {
                 resource: enqueue_many(resource, query.values_list('pk', flat=True).iterator(chunk_size=1000), run)
                 for resource, query in plan.queries.items()

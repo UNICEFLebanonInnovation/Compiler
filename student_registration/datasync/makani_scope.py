@@ -4,7 +4,7 @@ Blank package types are historical Makani records (the Makani list includes
 them). TLS and unknown package types must never travel through this channel.
 Shared centres remain eligible when they have a Makani registration or staff.
 """
-from django.db.models import Q
+from django.db.models import Exists, OuterRef, Q
 
 from .constants import (
     RESOURCE_ATTENDANCE, RESOURCE_CENTER, RESOURCE_REGISTRATION,
@@ -39,8 +39,8 @@ def centers():
     from student_registration.locations.models import Center
     return Center.objects.filter(
         ~Q(is_tls__iexact='yes') |
-        Q(pk__in=registrations().values('center_id')) |
-        Q(pk__in=staff().values('center_id')),
+        Q(Exists(registrations().filter(center_id=OuterRef('pk')))) |
+        Q(Exists(staff().filter(center_id=OuterRef('pk')))),
     )
 
 
@@ -59,15 +59,20 @@ def scoped_queryset(resource):
         return query  # Shared metadata; no registrations or staff embedded.
     if resource == RESOURCE_ATTENDANCE:
         from student_registration.attendances.models import MSCCAttendanceChild
-        non_makani = MSCCAttendanceChild.objects.exclude(
-            registration_id__in=registrations().values('pk'),
-        ).values('attendance_day_id')
+        # Inspect only the children of each candidate day via its indexed FK.
+        # A global NOT IN materializes every non-Makani attendance row and
+        # can rescan that result for every child when it exceeds work_mem.
+        non_makani = MSCCAttendanceChild.objects.filter(
+            attendance_day_id=OuterRef('pk'),
+        ).exclude(Q(registration__type__in=MAKANI_TYPES) |
+                  Q(registration__type__isnull=True, registration__isnull=False))
         # Attendance is replaced as one unit. Never strip TLS child rows out
         # of a mixed day, which would hide a data issue or delete other rows.
-        return query.filter(center_id__in=centers().values('pk')).exclude(
-            pk__in=non_makani,
+        return query.filter(Exists(centers().filter(pk=OuterRef('center_id')))).filter(
+            ~Exists(non_makani),
         ).exclude(education_program__in=['TLS', 'Dirasa'])
-    return query.filter(registration_id__in=registrations().values('pk'))
+    return query.filter(Q(registration__type__in=MAKANI_TYPES) |
+                        Q(registration__type__isnull=True, registration__isnull=False))
 
 
 def validate_registration_links(registration):

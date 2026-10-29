@@ -26,6 +26,11 @@ from .health import check_sync_health
 from .serializers import MODEL_FOR_RESOURCE
 from .partner_scope import available_partners
 from .pending_cleanup import pending_for_user, remove_pending
+from .query_budget import preview_budget, PreviewTimeout
+
+
+PREVIEW_TIMEOUT_MESSAGE = ('Preview took too long. Choose fewer categories or a narrower round and try again. '
+                           'No new sync request was created.')
 
 
 class RoundSyncForm(forms.Form):
@@ -105,9 +110,14 @@ class BulkSyncRunAdmin(admin.ModelAdmin):
             except (TypeError, ValueError, AttributeError):
                 return HttpResponseBadRequest('Invalid removal selection.')
             removed, skipped = remove_pending(request.user, partner, ids)
-            self.message_user(request, 'Removed {} pending bulk sync request(s) for {}.'.format(removed, partner), messages.SUCCESS)
+            if removed:
+                self.message_user(request, 'Removed {} pending bulk sync request(s) for {}.'.format(removed, partner), messages.SUCCESS)
             if skipped:
-                self.message_user(request, 'Skipped {} request(s) whose state or availability changed.'.format(skipped), messages.INFO)
+                self.message_user(request,
+                    'Kept {} request(s): a worker is writing their queue records, they have already started, '
+                    'or they are no longer available. Refresh status before trying again.'.format(skipped), messages.WARNING)
+            elif not removed:
+                self.message_user(request, 'No eligible pending requests remain to remove.', messages.INFO)
             return HttpResponseRedirect(reverse('admin:datasync_bulksyncrun_changelist'))
 
         pending = list(pending_for_user(request.user, partner).select_related('round', 'requested_by')
@@ -160,9 +170,16 @@ class BulkSyncRunAdmin(admin.ModelAdmin):
                     self.message_user(request, 'Synchronization is disabled in Compiler.', messages.ERROR)
                 else:
                     # Recheck the saved selection before waking an existing run.
-                    plan = RoundSyncPlan(run.round, run.selected_categories, run.partner)
-                    if any(row['count'] and not can_read(request.user, row['resource']) for row in plan.summary()):
-                        raise PermissionDenied
+                    try:
+                        with preview_budget():
+                            plan = RoundSyncPlan(run.round, run.selected_categories, run.partner)
+                            if any(row['count'] and not can_read(request.user, row['resource']) for row in plan.summary()):
+                                raise PermissionDenied
+                    except PreviewTimeout:
+                        self.message_user(request, 'The selection check took too long. No queue notification was sent. '
+                                          'The saved request is preserved; try again shortly.', messages.WARNING)
+                        return HttpResponseRedirect('{}?{}'.format(
+                            reverse('admin:datasync_bulksyncrun_changelist'), urlencode({'run': run.pk})))
                     notified = schedule_bulk_sweep(run.pk)
                     self.message_user(request,
                         'Queue notification accepted. Refresh status to check whether the worker has prepared this request.'
@@ -187,12 +204,24 @@ class BulkSyncRunAdmin(admin.ModelAdmin):
         plan = None
         summary = []
         issues = []
+        total = 0
+        preview_rows = []
+        preview_page = Paginator(range(0), 50).get_page(1)
         if form.is_bound and form.is_valid() and run is None:
-            plan = RoundSyncPlan(form.cleaned_data['round'], form.cleaned_data['category'], form.cleaned_data['partner'])
-            summary = plan.summary()
-            if any(row['count'] and not can_read(request.user, row['resource']) for row in summary):
-                raise PermissionDenied
-            issues = plan.errors()
+            try:
+                with preview_budget():
+                    plan = RoundSyncPlan(form.cleaned_data['round'], form.cleaned_data['category'], form.cleaned_data['partner'])
+                    summary = plan.summary()
+                    if any(row['count'] and not can_read(request.user, row['resource']) for row in summary):
+                        raise PermissionDenied
+                    issues = plan.errors()
+                    total = sum(row['count'] for row in summary)
+                    preview_page = Paginator(range(total), 50).get_page(request.GET.get('page'))
+                    if request.method == 'GET' and total:
+                        preview_rows = plan.preview(preview_page.start_index() - 1, 50)
+            except PreviewTimeout:
+                plan, summary, total, preview_rows = None, [], 0, []
+                issues = [PREVIEW_TIMEOUT_MESSAGE]
         if not sync_enabled():
             issues.append('Synchronization is disabled. Enable DATASYNC_ENABLED before starting.')
         if not partners.exists():
@@ -230,9 +259,6 @@ class BulkSyncRunAdmin(admin.ModelAdmin):
             recent = recent.filter(requested_by=request.user, partner__in=partners)
         if form.is_bound and form.is_valid() and form.cleaned_data.get('partner'):
             recent = recent.filter(partner=form.cleaned_data['partner'])
-        total = sum(row['count'] for row in summary)
-        preview_page = Paginator(range(total), 50).get_page(request.GET.get('page'))
-        preview_rows = plan.preview(preview_page.start_index() - 1, 50) if plan and total else []
         preview_query = urlencode({'partner': form['partner'].value() or '',
                                    'round': form['round'].value() or '',
                                    'category': form['category'].value() or []}, doseq=True)

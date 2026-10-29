@@ -1,5 +1,15 @@
 # Remove pending bulk syncs
 
+Large-round validation runs before the request's write lock is taken. A waiting
+request can therefore be removed while that validation is running, including a
+request saved on an earlier day. The worker rechecks that the request still
+exists and is waiting before it writes any queue rows. Two workers validating
+the same request cannot both create its outbox set.
+
+During the atomic queue-write phase, removal keeps a locked request. The page
+now explains that it was kept and asks the operator to refresh status; it does
+not display a green "Removed 0" success message.
+
 In **Data replication → Bulk sync**, select a partner. Under **Recent bulk
 requests**, select **Remove pending bulk syncs**. The confirmation lists the
 exact requests, including their rounds, categories and IDs. Confirm removal or

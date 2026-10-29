@@ -133,6 +133,15 @@ class PendingRemovalTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertFalse(BulkSyncRun.objects.filter(pk=run.pk).exists())
 
+    def test_busy_request_is_explained_without_a_green_zero_removed_message(self):
+        self.new_run()
+        token = self.confirmation()
+        with patch('student_registration.datasync.bulk_admin.remove_pending', return_value=(0, 1)):
+            response = self.client.post(self.removal_url(), {'confirmation': token}, follow=True)
+        self.assertContains(response, 'Kept 1 request(s)')
+        self.assertContains(response, 'worker is writing their queue records')
+        self.assertNotContains(response, 'Removed 0 pending')
+
     def test_csrf_is_required_for_confirmation(self):
         run = self.new_run()
         token = self.confirmation()
