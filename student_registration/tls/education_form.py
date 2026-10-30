@@ -741,6 +741,39 @@ class EducationServiceForm(forms.ModelForm):
 
         self.fields['registration_id'].initial = registry
 
+        programme_labels = dict(EDUCATION_PROGRAM)
+        service_programs = list(ServiceProgramOption.objects.filter(is_tls='Yes'))
+
+        if service_programs:
+            service_names = {option.service_name for option in service_programs}
+            available_services = {
+                service_name: get_service(registry, service_name)
+                for service_name in service_names
+            }
+            available_service_names = {
+                name for name, service in available_services.items() if service
+            }
+
+            if registry and not available_service_names:
+                registry_obj = Registration.objects.select_related('child').filter(id=registry).first()
+                if registry_obj:
+                    available_service_names = set(
+                        Packages.objects.filter(
+                            type=registry_obj.type,
+                            age=registry_obj.child_age
+                        ).values_list('name', flat=True)
+                    )
+
+            choices = []
+            for option in service_programs:
+                if available_service_names and option.service_name not in available_service_names:
+                    continue
+
+                label = programme_labels.get(option.program_code, _(option.program_code))
+                choices.append((option.program_code, label))
+
+            self.fields['education_program'].choices = choices
+
         display_edu_section = ''
 
         if registry:
