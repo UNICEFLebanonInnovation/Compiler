@@ -421,9 +421,10 @@ DATASYNC_PHOTO_REUSE_ENABLED = env.bool('DATASYNC_PHOTO_REUSE_ENABLED', default=
 # Shared PostgreSQL slots cap in-flight deliveries across all Compiler workers.
 DATASYNC_PARALLEL_UPLOADS = env.int('DATASYNC_PARALLEL_UPLOADS', default=4)
 
-# BMA-NFE's ingest endpoint and the token of its service account.
-DATASYNC_TARGET_URL = env('DATASYNC_TARGET_URL', default='')
-DATASYNC_TARGET_TOKEN = env('DATASYNC_TARGET_TOKEN', default='')
+# BMA-NFE SIT connection shared by web and sync worker processes.
+# Update both values together when switching the receiver environment.
+DATASYNC_TARGET_URL = 'https://leb-container-test-sector-api.azurewebsites.net/api/sync/events/'
+DATASYNC_TARGET_TOKEN = '18f2184a63a5485617114eefcdae0bb04bd269fb'
 
 # Transport tuning.
 DATASYNC_TIMEOUT = env.int('DATASYNC_TIMEOUT', default=30)
