@@ -11,6 +11,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, ButtonHolder, Submit, HTML
 from django import forms
 from student_registration.locations.models import Location
+from student_registration.mscc.export_access import filter_by_photo
 from student_registration.schools.models import CLMRound, School, Section, ClassRoom, PartnerOrganization
 from student_registration.students.models import Nationality
 from .models import (
@@ -185,22 +186,41 @@ class PlaceholderFilterSet(FilterSet):
         # self.form.helper.add_input(Submit("submit", "Filter"))
         # self.form.helper.add_input(Rest("Rest", "Cancel"))
         all_fields = list(self.form.fields)  # -> ['type', 'partner', 'round', ...]
-        self.form.helper.layout = Layout(
-            *all_fields,
-            ButtonHolder(Submit("submit", "Filter", css_class="btn btn-primary"),
-                         HTML('<a href="javascript:void(0);"  title="Download" class="btn btn-success download-report" onclick="checkRoundBeforeExport(event)">Export</a>')
-            )
+        actions = ButtonHolder(
+            Submit("submit", "Filter", css_class="btn btn-primary"),
+            HTML('<a href="javascript:void(0);"  title="Download" class="btn btn-success download-report" onclick="checkRoundBeforeExport(event)">Export</a>'),
         )
+        if self._meta.model is Bridging:
+            actions.append(HTML("""{% load i18n %}
+{% if request.user.is_superuser %}
+<a href="{% url 'clm:bridging_profile_id_bulk' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}"
+   target="_blank" rel="noopener" class="btn-icon btn btn-primary"
+   onclick="checkRoundBeforeProfileIds(event)"
+   title="{% trans 'Download profile IDs with photos for the selected round' %}">
+  <i class="fa fa-id-card btn-icon-wrapper"> </i>{% trans "Generate Profile IDs (PDF)" %}</a>
+{% endif %}
+"""))
+        self.form.helper.layout = Layout(*all_fields, actions)
         for name, field in self.form.fields.items():
             label = field.label or name.replace('_', ' ').title()
             field.label = ''
             if isinstance(field.widget, (forms.TextInput, forms.NumberInput)):
                 field.widget.attrs.setdefault('placeholder', label)
 
+    def filter_has_photo(self, queryset, name, value):
+        return filter_by_photo(queryset, value)
+
+
+PHOTO_CHOICES = (
+    ('yes', _('With photo')),
+    ('no', _('Without photo')),
+)
+
 
 class BridgingFullFilter(PlaceholderFilterSet):
 
     round = ModelChoiceFilter(queryset=CLMRound.objects.filter(current_year=True).all(), empty_label=_('Round'))
+    has_photo = ChoiceFilter(choices=PHOTO_CHOICES, empty_label=_('Photo'), method='filter_has_photo')
     governorate = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=True), empty_label=_('Governorate'))
     district = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=False), empty_label=_('District'))
     partner = ModelChoiceFilter(queryset=PartnerOrganization.objects.filter(is_dirasa=True).order_by('name'),
@@ -253,6 +273,7 @@ class BridgingFullFilter(PlaceholderFilterSet):
 class BridgingPartnerFilter(PlaceholderFilterSet):
 
     round = ModelChoiceFilter(queryset=CLMRound.objects.filter(current_year=True).all(), empty_label=_('Round'))
+    has_photo = ChoiceFilter(choices=PHOTO_CHOICES, empty_label=_('Photo'), method='filter_has_photo')
     governorate = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=True), empty_label=_('Governorate'))
     district = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=False), empty_label=_('District'))
     student__nationality = ModelChoiceFilter(queryset=Nationality.objects.exclude(id=9), empty_label=_('Nationality'))

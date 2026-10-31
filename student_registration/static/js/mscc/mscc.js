@@ -838,6 +838,15 @@ function showError(selector, message) {
     field.addClass('error-field');
     var errorEl = field.next('.field-error');
     if (!errorEl.length) {
+        // Reuse Django's rendered error when client validation reports it again.
+        var normalizedMessage = message.trim().replace(/[.!]+$/, '').toLowerCase();
+        errorEl = field.closest('[id="div_' + field.attr('id') + '"]')
+            .find('[id^="error_"]').filter(function() {
+                return $(this).text().trim().replace(/[.!]+$/, '').toLowerCase() === normalizedMessage;
+            }).first();
+        errorEl.addClass('field-error');
+    }
+    if (!errorEl.length) {
         errorEl = $('<div class="help-block field-error"></div>');
         errorEl.insertAfter(field);
     }

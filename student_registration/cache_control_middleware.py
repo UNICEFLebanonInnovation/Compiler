@@ -5,7 +5,9 @@ class CacheControlMiddleware:
     def __call__(self, request):
         response = self.get_response(request)
 
-        if request.is_secure:
+        # Keep the existing no-cache default while preserving the stricter
+        # private/no-store policy supplied by photo export responses.
+        if not response.has_header('Cache-Control'):
             response['Cache-Control'] = 'no-cache'
 
         return response

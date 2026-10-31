@@ -322,6 +322,26 @@ urlpatterns = [
         name='bridging_edit'
     ),
     re_path(
+        r'^bridging-profile-picture/(?P<pk>[\w.@+-]+)/$',
+        view=bridging_views.BridgingProfilePictureView.as_view(),
+        name='bridging_profile_picture'
+    ),
+    re_path(
+        r'^bridging-profile-picture/(?P<pk>[\w.@+-]+)/image/$',
+        view=bridging_views.BridgingProfilePictureFileView.as_view(),
+        name='bridging_profile_picture_file'
+    ),
+    re_path(
+        r'^bridging-profile-ids/$',
+        view=bridging_views.BridgingBulkProfileIdView.as_view(),
+        name='bridging_profile_id_bulk'
+    ),
+    re_path(
+        r'^bridging-profile-id/(?P<pk>[\w.@+-]+)/$',
+        view=bridging_views.BridgingProfileIdView.as_view(),
+        name='bridging_profile_id'
+    ),
+    re_path(
         r'^bridging-pre-assessment/(?P<pk>[\w.@+-]+)/$',
         view=bridging_views.BridgingPreAssessmentView.as_view(),
         name='bridging_pre_assessment'
@@ -360,6 +380,11 @@ urlpatterns = [
         r'^bridging-export-all/$',
         view=bridging_views.bridging_export_all,
         name='bridging_export_all'
+    ),
+    re_path(
+        r'^bridging-export-photos/$',
+        view=bridging_views.bridging_export_photos,
+        name='bridging_export_photos'
     ),
     re_path(
         r'^bridging-school-export-data/(?P<school_id>[\w.@+-]+)/$',

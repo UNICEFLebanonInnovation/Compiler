@@ -2651,6 +2651,11 @@ class LegoServiceForm(forms.ModelForm):
         choices=YES_NO,
         label=_('Is the child participating in LEGO free-play sessions?')
     )
+    participating_lego_events = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=YES_NO,
+        label=_('Is the child participating in LEGO events?')
+    )
 
     child_age = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -2679,6 +2684,25 @@ class LegoServiceForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
 
+        # Give the default layout explicit actions; otherwise crispy-forms
+        # renders the fields but provides no way to submit them.
+        self.helper.layout = Layout(
+            Div(
+                Div('child_age', css_class='d-none'),
+                Div('participating_lego_sessions', css_class='col-md-8'),
+                Div('participating_education_sessions', css_class='col-md-8'),
+                Div('participating_lego_play_sessions', css_class='col-md-8'),
+                Div('participating_lego_events', css_class='col-md-8'),
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                ),
+                css_id='step-1'
+            )
+        )
+
         if 3 <= age <= 14:
             self.helper.layout = Layout(
                 Div(
@@ -2699,6 +2723,11 @@ class LegoServiceForm(forms.ModelForm):
                     Div(
                         HTML('<span class="badge-form badge-pill">2</span>'),
                         Div('participating_lego_play_sessions', css_class='col-md-8'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('participating_lego_events', css_class='col-md-8'),
                         css_class='row card-body'
                     ),
                     FormActions(
@@ -2732,6 +2761,11 @@ class LegoServiceForm(forms.ModelForm):
                         Div('participating_lego_play_sessions', css_class='col-md-8'),
                         css_class='row card-body'
                     ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('participating_lego_events', css_class='col-md-8'),
+                        css_class='row card-body'
+                    ),
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
@@ -2754,6 +2788,7 @@ class LegoServiceForm(forms.ModelForm):
         instance.participating_lego_sessions = validated_data.get('participating_lego_sessions')
         instance.participating_education_sessions = validated_data.get('participating_education_sessions')
         instance.participating_lego_play_sessions = validated_data.get('participating_lego_play_sessions')
+        instance.participating_lego_events = validated_data.get('participating_lego_events')
         instance.modified_by = request.user
         instance.save()
 
@@ -2771,4 +2806,5 @@ class LegoServiceForm(forms.ModelForm):
             'participating_lego_sessions',
             'participating_education_sessions',
             'participating_lego_play_sessions',
+            'participating_lego_events',
         )

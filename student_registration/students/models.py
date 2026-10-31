@@ -244,6 +244,18 @@ class Person(TimeStampedModel):
         choices=((str(x), x) for x in range(1, 32)),
         verbose_name=_('Birthday day')
     )
+    COUNTRY_OF_BIRTH = Choices(
+        ('', _('Select an option')),
+        ('Lebanon', _('Lebanon')),
+        ('Syria', _('Syria')),
+        ('Other', _('Other')),
+    )
+    country_of_birth = models.CharField(
+        max_length=50,
+        blank=True, null=True,
+        choices=COUNTRY_OF_BIRTH,
+        verbose_name=_('Country of Birth')
+    )
     place_of_birth = models.CharField(
         max_length=200,
         blank=True,

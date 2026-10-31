@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import (
+from student_registration.mscc.models import (
     Registration
 )
 

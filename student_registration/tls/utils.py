@@ -21,7 +21,7 @@ from student_registration.clm.models import (
     Inclusion
 )
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
-from student_registration.tls.models import Registration, EducationService, Referral
+from student_registration.mscc.models import Registration, EducationService, Referral
 
 logger = logging.getLogger(__name__)
 
@@ -78,11 +78,11 @@ def to_array(fields, obj):
 
 def generate_services(child_age, registry, user=None):
     try:
-        from .models import ProvidedServices, Packages
+        from student_registration.mscc.models import ProvidedServices, Packages
         from student_registration.users.templatetags.custom_tags import has_group
 
         packages = Packages.objects.filter(type=registry.type, age=child_age)
-        if user and has_group(user, 'MSCC_YOUTH'):
+        if user and has_group(user, 'TLS_YOUTH'):
             packages = packages.filter(category="Youth")
 
         for package in packages.all():
@@ -97,7 +97,7 @@ def generate_services(child_age, registry, user=None):
 
 def regenerate_services(child_age, registry, user=None):
     from .templatetags.simple_tags import service_data
-    from .models import ProvidedServices
+    from student_registration.mscc.models import ProvidedServices
 
     ProvidedServices.objects.filter(registration=registry).delete()
     generate_services(child_age, registry, user)
@@ -108,7 +108,7 @@ def regenerate_services(child_age, registry, user=None):
 
 
 def update_service(service_name, registry_id, service_id):
-    from .models import ProvidedServices
+    from student_registration.mscc.models import ProvidedServices
     ProvidedServices.objects.filter(registration_id=registry_id,
                                     name=service_name).update(service_id=service_id,
                                                               completed=True,
@@ -116,7 +116,7 @@ def update_service(service_name, registry_id, service_id):
 
 
 def generate_education_history(registration_id, child_id, student_old_id):
-    from .models import EducationHistory
+    from student_registration.mscc.models import EducationHistory
 
     # 'BLN'
     bln_old_registrations = BLN.objects.filter(student_id=student_old_id).values_list('id', flat=True)
@@ -857,5 +857,3 @@ def validate_date(date_str):
             continue
 
     raise ValidationError("Date is not valid. Please use the format YYYY-MM-DD.")
-
-

@@ -2,11 +2,23 @@ from __future__ import absolute_import, unicode_literals
 
 from django.urls import re_path
 
+from . import profile_views
 from . import views, education_view, services_view, attendance_views
 
 app_name = 'mscc'
 
 urlpatterns = [
+    re_path(r'^profile-ids/$', profile_views.BulkProfileIdView.as_view(), name='profile_id_bulk'),
+    re_path(r'^profile-picture/(?P<pk>\d+)/$', profile_views.ProfilePictureView.as_view(), name='profile_picture'),
+    re_path(r'^profile-picture/(?P<pk>\d+)/file/$', profile_views.ProfilePictureFileView.as_view(), name='profile_picture_file'),
+    re_path(r'^profile-id/(?P<pk>\d+)/$', profile_views.ProfileIdView.as_view(), name='profile_id'),
+
+
+    re_path(
+        r'^public-school-lookup/$',
+        view=views.public_school_lookup,
+        name='public_school_lookup'
+    ),
 
     re_path(
         r'^child-add/$',
@@ -312,6 +324,16 @@ urlpatterns = [
         r'^services/education-grading-edit/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/(?P<pre_post>[\w\s.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=education_view.EducationGradingFormView.as_view(),
         name='service_education_grading_edit'
+    ),
+    re_path(
+        r'^services/summer-rs-assessment-add/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/$',
+        view=education_view.SummerRSAssessmentFormView.as_view(),
+        name='summer_rs_assessment_add'
+    ),
+    re_path(
+        r'^services/summer-rs-assessment-edit/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/(?P<pre_post>pre|post|mid)/(?P<pk>[\w.@+-]+)/$',
+        view=education_view.SummerRSAssessmentFormView.as_view(),
+        name='summer_rs_assessment_edit'
     ),
     re_path(
         r'^services/wl-bln-assessment-add/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/$',

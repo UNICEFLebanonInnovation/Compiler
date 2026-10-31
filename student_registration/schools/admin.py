@@ -25,7 +25,8 @@ from .models import (
     Evaluation,
     PublicHolidays,
     Schl_Subject,
-    ClubType
+    ClubType,
+    PublicSchool,
 )
 from student_registration.locations.models import Location
 
@@ -41,6 +42,24 @@ class ClubTypeResource(resources.ModelResource):
 
 class ClubTypeAdmin(ImportExportModelAdmin):
     resource_class = ClubTypeResource
+
+
+class PublicSchoolResource(resources.ModelResource):
+    class Meta:
+        model = PublicSchool
+        fields = (
+            'name',
+            'cerd',
+        )
+        import_id_fields = ('cerd',)
+        export_order = ('cerd', 'name')
+
+
+class PublicSchoolAdmin(ImportExportModelAdmin):
+    resource_class = PublicSchoolResource
+    list_display = ('cerd', 'name')
+    search_fields = ('cerd', 'name')
+    ordering = ('name',)
 
 
 class GovernorateFilter(admin.SimpleListFilter):
@@ -833,3 +852,4 @@ admin.site.register(EducationalLevel, EducationalLevelAdmin)
 # admin.site.register(Evaluation, EvaluationAdmin)
 admin.site.register(PublicHolidays)
 admin.site.register(ClubType, ClubTypeAdmin)
+admin.site.register(PublicSchool, PublicSchoolAdmin)

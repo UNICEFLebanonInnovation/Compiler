@@ -19,7 +19,8 @@ from student_registration.schools.models import (
     ClassRoom,
     CLMRound,
     EducationalLevel,
-    PartnerOrganization
+    PartnerOrganization,
+    PublicSchool,
 )
 
 
@@ -1844,6 +1845,7 @@ class Bridging(CLM):
         ('graduated_to_Bridging_next_round_same_level', _('Repeat the same Dirasa level')),
         ('dropout', _('Drop out')),
         ('referred_public_school', _('Referred to formal education')),
+        ('referred_to_tvet', _('Referred to TVET')),
         ('other', _('Referred to another pathway')),
     )
     SCHOOL_TYPE = Choices(
@@ -1879,6 +1881,17 @@ class Bridging(CLM):
     )
     SECTION_CHOICES = tuple(
         [('', _('----------'))] + [(char, char.upper()) for char in 'abcdefghijklmnopqrstuvwxyz']
+    )
+    FORMAL_EDUCATION_GRADES = (
+        ('', _('----------')),
+        ('grade_five', _('Grade five')),
+        ('grade_six', _('Grade six')),
+        ('grade_seven', _('Grade seven')),
+        ('grade_eight', _('Grade eight')),
+        ('grade_nine', _('Grade nine')),
+        ('grade_ten', _('Grade ten')),
+        ('grade_eleven', _('Grade eleven')),
+        ('grade_twelve', _('Grade twelve')),
     )
 
     child_outreach = models.IntegerField(blank=True, null=True)
@@ -1948,16 +1961,46 @@ class Bridging(CLM):
         blank=True, null=True,
         verbose_name=_('Please Specify')
     )
-    referral_school = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('Formal Education school')
-    )
-    referral_school_type = models.CharField(
-        max_length=100,
+    public_school = models.ForeignKey(
+        PublicSchool,
         blank=True,
         null=True,
-        choices=SCHOOL_TYPE,
-        verbose_name=_('School Type')
+        related_name='bridging_referrals',
+        on_delete=models.SET_NULL,
+        verbose_name=_('Public school')
+    )
+    formal_education_grade_level = models.CharField(
+        max_length=12,
+        blank=True,
+        null=True,
+        choices=FORMAL_EDUCATION_GRADES,
+        verbose_name=_('Grade level the Child is enrolled in')
+    )
+    transition_arabic_grade = models.PositiveSmallIntegerField(blank=True, null=True)
+    transition_foreign_languages_grade = models.PositiveSmallIntegerField(blank=True, null=True)
+    transition_math_grade = models.PositiveSmallIntegerField(blank=True, null=True)
+    retention_support_enrolled = models.CharField(
+        max_length=3,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was the child referred and enrolled in a Retention Support programme?')
+    )
+    retention_support_partner = models.ForeignKey(
+        PartnerOrganization,
+        blank=True,
+        null=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+        verbose_name=_('Which partner?')
+    )
+    retention_support_center = models.ForeignKey(
+        Center,
+        blank=True,
+        null=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+        verbose_name=_('Which center?')
     )
     dropout_date = models.DateField(
         blank=True,
@@ -2167,6 +2210,12 @@ class Bridging(CLM):
         blank=True,
         null=True,
         verbose_name=_('3- Other additional document'),
+    )
+    profile_picture = models.ImageField(
+        upload_to='uploads/bridging/profile_pictures',
+        blank=True,
+        null=True,
+        verbose_name=_('Profile Picture'),
     )
     consent = models.CharField(
         max_length=10,

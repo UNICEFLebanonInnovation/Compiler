@@ -407,6 +407,9 @@ class EnrolledProgramsForm(forms.ModelForm):
         if donor and program_document and not program_document.donors.filter(pk=donor.pk).exists():
             self.add_error('donor', _('Please select a donor connected to the selected Program Document.'))
 
+        if self.fields['sub_program'].queryset.exists() and not cleaned_data.get('sub_program'):
+            self.add_error('sub_program', _('This field is required.'))
+
         selected_registration_ids = cleaned_data.get('selected_registration_ids')
         if not cleaned_data.get('registration_id') and not selected_registration_ids:
             self.add_error('selected_registration_ids', _('Please select at least one registration.'))

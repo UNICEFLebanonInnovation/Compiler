@@ -8434,6 +8434,22 @@ msgstr ""
 msgid "Export"
 msgstr ""
 
+#: student_registration/templates/mscc/list.html
+msgid "Format"
+msgstr "Format"
+
+#: student_registration/templates/mscc/list.html
+msgid "Excel with photographs"
+msgstr "Excel with photographs"
+
+#: student_registration/templates/mscc/list.html
+msgid "Excel includes each child's photograph in the same row as their Child ID and Registration ID."
+msgstr "Excel includes each child's photograph in the same row as their Child ID and Registration ID."
+
+#: student_registration/templates/mscc/list.html
+msgid "Start Export"
+msgstr "Start Export"
+
 #: student_registration/templates/alp/list.html:38
 msgid "Export all pre-test data"
 msgstr ""

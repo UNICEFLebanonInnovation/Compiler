@@ -25,12 +25,16 @@ $(document).ready(function () {
         '#id_covid_parent_attended', '#id_followup_parent_attended', '#id_attended_biology',
         '#id_attended_chemistry', '#id_attended_physics', '#id_barriers_single', '#id_test_done',
         '#id_pss_session_attended', '#id_learning_result', '#id_covid_session_attended',
-        '#id_followup_session_attended', '#id_referal_other', '#id_parent_attended_visits'
+        '#id_followup_session_attended', '#id_referal_other', '#id_parent_attended_visits',
+        '#id_retention_support_enrolled'
     ].join(',');
 
     if ($('#id_test_done').length) {
         $(document).on('change', selectors, reorganizeForm_post_assessment);
     }
+
+    $(document).on('input', '#id_public_school', lookupPublicSchool);
+    lookupPublicSchool();
 
     $(document).on('click', '.delete-button', function () {
         if (confirm($(this).attr('translation'))) {
@@ -124,16 +128,33 @@ function reorganizeForm_post_assessment()
         $('#span_dropout_date').removeClass('d-none');
     }
 
-    $('div#div_id_referral_school').addClass('d-none');
-    $('#span_referral_school').addClass('d-none');
-    $('div#div_id_referral_school_type').addClass('d-none');
-    $('#span_referral_school_type').addClass('d-none');
-    if(learning_result == 'referred_public_school'){
-        $('div#div_id_referral_school').removeClass('d-none');
-        $('#span_referral_school').removeClass('d-none');
-        $('div#div_id_referral_school_type').removeClass('d-none');
-        $('#span_referral_school_type').removeClass('d-none');
+    var publicSchoolFieldIds = [
+        'public_school', 'formal_education_grade_level', 'transition_arabic_grade',
+        'transition_foreign_languages_grade', 'transition_math_grade', 'retention_support_enrolled'
+    ];
+    publicSchoolFieldIds.forEach(function (fieldId) {
+        $('#div_id_' + fieldId).toggleClass('d-none', learning_result !== 'referred_public_school');
+    });
+    $('#public-school-fields').toggleClass('d-none', learning_result !== 'referred_public_school');
+    if (learning_result !== 'referred_public_school') {
+        $('#id_public_school').val('');
+        $('#public-school-name').text('');
+    } else {
+        lookupPublicSchool();
     }
+    $('#span_formal_education_grade_level, #span_retention_support_enrolled')
+        .toggleClass('d-none', learning_result !== 'referred_public_school');
+    $('#transition_grades_section')
+        .toggleClass('d-none', learning_result !== 'referred_public_school');
+    $('.transition-grades-heading, .transition-grade-badge')
+        .toggleClass('d-none', learning_result !== 'referred_public_school');
+    $('.transition-grade-badge').first().closest('.card-body').find('h5')
+        .toggleClass('d-none', learning_result !== 'referred_public_school');
+
+    var showRetentionDetails = learning_result === 'referred_public_school' &&
+        $('#id_retention_support_enrolled').val() === 'yes';
+    $('#div_id_retention_support_partner, #div_id_retention_support_center')
+        .toggleClass('d-none', !showRetentionDetails);
 
     var participation = $('select#id_participation').val();
     var barriers_single = $('select#id_barriers_single').val();
@@ -279,4 +300,20 @@ function reorganizeForm_post_assessment()
         $('select#id_attended_physics').val("no");
         $('select#id_modality_physics').val("");
     }
+}
+
+function lookupPublicSchool()
+{
+    var cerd = $('#id_public_school').val();
+    var schoolName = $('#public-school-name');
+    schoolName.text('');
+    if (!/^[0-9]{1,6}$/.test(cerd || '')) {
+        return;
+    }
+    $.getJSON($('#id_public_school').data('lookup-url') || '/mscc/public-school-lookup/', {cerd: cerd})
+        .done(function(data) {
+            if ($('#id_public_school').val() === cerd) {
+                schoolName.text(data.name || 'No matching public school');
+            }
+        });
 }

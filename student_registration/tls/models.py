@@ -41,6 +41,9 @@ EDUCATION_PROGRAM = Choices(
     ('Summer RS Grade 7', _('Summer RS Grade 7')),
     ('Summer RS Grade 8', _('Summer RS Grade 8')),
     ('Summer RS Grade 9', _('Summer RS Grade 9')),
+    ('CBECE Level 1', _('CBECE Level 1')),
+    ('CBECE Level 2', _('CBECE Level 2')),
+    ('CBECE Level 3', _('CBECE Level 3')),
 
 )
 YES_NO = _MSCC_MODELS.YES_NO

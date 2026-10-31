@@ -14,12 +14,14 @@ from student_registration.child.models import Child
 from student_registration.locations.models import Center
 from student_registration.schools.models import (
     School,
-    PartnerOrganization
+    PartnerOrganization,
+    PublicSchool,
 )
 
 PACKAGE_TYPES = Choices(
     ('Core-Package', _('Core Package')),
     ('Walk-in', _('Walk-in')),
+    ('TLS', _('TLS')),
     # ('Walk-in-OOSC', _('Walk-in OOSC')),
     # ('Walk-in-In-School', _('Walk-in In School')),
 )
@@ -166,6 +168,12 @@ class Registration(TimeStampedModel):
         related_name='+',
         on_delete=models.SET_NULL,
         verbose_name=_('Child')
+    )
+    profile_picture = models.ImageField(
+        upload_to='mscc/profile_pictures/',
+        blank=True,
+        null=True,
+        verbose_name=_('Profile Picture'),
     )
     child_outreach = models.IntegerField(blank=True, null=True)
     student_old = models.IntegerField(blank=True, null=True)
@@ -1169,6 +1177,13 @@ class ServiceProgramOption(models.Model):
         choices=YES_NO,
         verbose_name=_('TaRL')
     )
+    is_tls = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('TLS')
+    )
 
     class Meta:
         ordering = ['service_name', 'program_code']
@@ -1707,6 +1722,8 @@ class EducationProgrammeAssessment(TimeStampedModel):
     pre_test = JSONField(default=dict)
     mid_test = JSONField(default=dict)
     post_test = JSONField(default=dict)
+    youth_pre_test = JSONField(default=dict)
+    youth_post_test = JSONField(default=dict)
     school_test = JSONField(default=dict)
     programme_type = models.CharField(
         max_length=100,
@@ -1743,8 +1760,32 @@ class EducationProgrammeWLAssessment(TimeStampedModel):
         verbose_name_plural = "WL BLN  Assessments"
 
 
+class EducationProgrammeSummerRSAssessment(TimeStampedModel):
+
+    registration = models.ForeignKey(
+        Registration,
+        blank=False, null=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+    )
+    pre_test = JSONField(default=dict)
+    post_test = JSONField(default=dict)
+    programme_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Education Programme Type')
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Summer RS Assessment"
+        verbose_name_plural = "Summer RS  Assessments"
+
+
 class TarlAssessment(TimeStampedModel):
     ARABIC_LEVELS = Choices(
+        ('', '----------'),
         ('Beginner', _('Beginner')),
         ('Letter', _('Letter')),
         ('Word', _('Word')),
@@ -1754,6 +1795,7 @@ class TarlAssessment(TimeStampedModel):
     )
 
     FRENCH_LEVELS = Choices(
+        ('', '----------'),
         ('Beginner', _('Beginner')),
         ('Letter', _('Letter')),
         ('Word', _('Word')),
@@ -1763,6 +1805,7 @@ class TarlAssessment(TimeStampedModel):
     )
 
     MATH_LEVELS = Choices(
+        ('', '----------'),
         ('Beginner', _('Beginner')),
         ('1-digit', _('1-digit')),
         ('2-digits', _('2-digits')),
@@ -2125,6 +2168,27 @@ class FollowUpService(TimeStampedModel):
 
 
 class Referral(TimeStampedModel):
+    SCHOOL_TYPE = Choices(
+        ('', '----------'),
+        ('Public', _('Public')),
+        ('Private', _('Private')),
+        ('Semi-Private', _('Semi-Private')),
+    )
+    FORMAL_EDUCATION_GRADES = Choices(
+        ('', '----------'),
+        ('grade_one', _('Grade 1')),
+        ('grade_two', _('Grade 2')),
+        ('grade_three', _('Grade 3')),
+        ('grade_four', _('Grade 4')),
+        ('grade_five', _('Grade 5')),
+        ('grade_six', _('Grade 6')),
+        ('grade_seven', _('Grade 7')),
+        ('grade_eight', _('Grade 8')),
+        ('grade_nine', _('Grade 9')),
+        ('grade_ten', _('Grade 10')),
+        ('grade_eleven', _('Grade 11')),
+        ('grade_twelve', _('Grade 12')),
+    )
 
     REFERRED_SERVICE = Choices(
         ('', '----------'),
@@ -2154,20 +2218,6 @@ class Referral(TimeStampedModel):
         related_name='+',
         on_delete=models.SET_NULL,
     )
-    referred_formal_education = models.CharField(
-        max_length=10,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-        verbose_name=_('Was the child referred to formal education (Grade 1)?')
-    )
-    referred_school = models.ForeignKey(
-        School,
-        blank=False, null=True,
-        related_name='+',
-        on_delete=models.SET_NULL,
-        verbose_name=_('Name of the School referred to')
-    )
     receive_needed_material = models.CharField(
         max_length=50,
         blank=True,
@@ -2192,6 +2242,34 @@ class Referral(TimeStampedModel):
         null=True,
         choices=LEARNING_PATH,
         verbose_name=_('Based on the overall score, what is the recommended learning path/outcome?')
+    )
+    public_school = models.ForeignKey(
+        PublicSchool,
+        blank=True,
+        null=True,
+        related_name='referrals',
+        on_delete=models.SET_NULL,
+        verbose_name=_('Public school'),
+    )
+    formal_education_grade_level = models.CharField(
+        max_length=12, blank=True, null=True,
+        choices=FORMAL_EDUCATION_GRADES,
+        verbose_name=_('Grade level the Child is enrolled in')
+    )
+    transition_arabic_grade = models.PositiveSmallIntegerField(blank=True, null=True)
+    transition_foreign_languages_grade = models.PositiveSmallIntegerField(blank=True, null=True)
+    transition_math_grade = models.PositiveSmallIntegerField(blank=True, null=True)
+    retention_support_enrolled = models.CharField(
+        max_length=3, blank=True, null=True, choices=YES_NO,
+        verbose_name=_('Was the child referred and enrolled in a Retention Support programme?')
+    )
+    retention_support_partner = models.ForeignKey(
+        PartnerOrganization, blank=True, null=True, related_name='+',
+        on_delete=models.SET_NULL, verbose_name=_('Which partner?')
+    )
+    retention_support_center = models.ForeignKey(
+        Center, blank=True, null=True, related_name='+',
+        on_delete=models.SET_NULL, verbose_name=_('Which center?')
     )
     dropout_date = models.DateField(blank=True, null=True)
 
@@ -2394,6 +2472,13 @@ class LegoService(TimeStampedModel):
         null=True,
         choices=YES_NO,
         verbose_name=_('Is the child participating in LEGO free-play sessions?')
+    )
+    participating_lego_events = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the child participating in LEGO events?')
     )
 
     class Meta:
