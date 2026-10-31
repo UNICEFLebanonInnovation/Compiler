@@ -175,6 +175,9 @@ class Registration(TimeStampedModel):
         null=True,
         verbose_name=_('Profile Picture'),
     )
+    # An empty FileField alone cannot distinguish an unset legacy photo from
+    # a user clearing a newer registration photo. Keep that intent private.
+    photo_sync_cleared = models.BooleanField(default=False, editable=False)
     child_outreach = models.IntegerField(blank=True, null=True)
     student_old = models.IntegerField(blank=True, null=True)
     partner = models.ForeignKey(
@@ -322,6 +325,24 @@ class Registration(TimeStampedModel):
         null=True,
         verbose_name=_('Partner unique child number')
     )
+
+    def save(self, *args, **kwargs):
+        update_fields = kwargs.get('update_fields')
+        changes_picture = update_fields is None or 'profile_picture' in update_fields
+        if changes_picture and 'profile_picture' in self.__dict__:
+            changed_flag = False
+            if self.profile_picture:
+                self.photo_sync_cleared = False
+                changed_flag = True
+            elif self.pk:
+                previous = (type(self).objects.using(kwargs.get('using') or self._state.db)
+                            .filter(pk=self.pk).values_list('profile_picture', flat=True).first())
+                if previous:
+                    self.photo_sync_cleared = True
+                    changed_flag = True
+            if changed_flag and update_fields is not None:
+                kwargs['update_fields'] = set(update_fields) | {'photo_sync_cleared'}
+        return super().save(*args, **kwargs)
 
     @property
     def child_fullname(self):

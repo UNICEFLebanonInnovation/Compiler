@@ -246,6 +246,7 @@ class PayloadTests(TestCase):
         self.assertEqual(payload['registration']['source_id'], registration.pk)
         self.assertEqual(payload['fields']['pre_arabic_grade'], 12)
 
+    @override_settings(USE_TZ=True)
     def test_event_source_modified_is_the_enqueue_time_not_retry_time(self):
         Registration.objects.create(have_labour='No')
         event = SyncEvent.objects.get(resource=RESOURCE_REGISTRATION)

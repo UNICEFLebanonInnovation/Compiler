@@ -4,7 +4,10 @@ from django.apps import apps
 from django.core.management.base import BaseCommand, CommandError
 
 from ...makani_scope import registrations
-from ...photos import enqueue_child_photo, linked_student_id, photo_sync_enabled, PhotoSourceError
+from ...photos import (
+    _registration_photo, enqueue_child_photo, linked_student_id,
+    photo_sync_enabled, PhotoSourceError,
+)
 
 
 class Command(BaseCommand):
@@ -29,7 +32,19 @@ class Command(BaseCommand):
         if options.get('child_id') is not None:
             rows = rows.filter(child_id=options['child_id'])
         counts = {'ready': 0, 'missing_link': 0, 'missing_student': 0, 'no_photo': 0, 'ambiguous': 0}
-        for child_id in rows.values_list('child_id', flat=True).distinct().iterator():
+        for child_id in rows.order_by().values_list('child_id', flat=True).distinct().iterator():
+            registration = _registration_photo(child_id)
+            if registration is not None:
+                if not registration.profile_picture:
+                    counts['no_photo'] += 1
+                    continue  # An audit/backfill does not queue photo removals.
+                counts['ready'] += 1
+                if options.get('child_id') is not None:
+                    self.stdout.write('BMA child #{} -> Registration #{}'.format(
+                        child_id, registration.pk))
+                if not options['dry_run']:
+                    enqueue_child_photo(child_id, deliver=False)
+                continue
             try:
                 student_id = linked_student_id(child_id)
             except PhotoSourceError:

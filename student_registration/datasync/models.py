@@ -39,7 +39,7 @@ SYNC_STATUS = (
 
 
 class SourcePhotoFingerprint(models.Model):
-    """Recomputable checksums of source image versions; never image bytes."""
+    """Recomputable checksums; keys are Student IDs or registration:<id>."""
 
     student_id = models.CharField(max_length=64, primary_key=True)
     storage_name = models.TextField()

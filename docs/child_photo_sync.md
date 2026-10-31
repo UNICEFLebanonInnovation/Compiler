@@ -75,11 +75,20 @@ DATASYNC_TARGET_URL=https://YOUR-NFE-HOST/api/sync/events/
 DATASYNC_TARGET_TOKEN=YOUR-NFE-SERVICE-ACCOUNT-TOKEN
 ```
 
-The sender reads photos through the existing Student image field's storage;
-no Compiler storage configuration change is required. Do not place tokens or
-storage keys in source control. No real target
-URL/token was discovered in the local checkout environment files; they may
-be supplied separately on the deployment server and must be verified there.
+The sender first reads `Registration.profile_picture` through Django storage.
+For a child with multiple Makani registrations, the most recently modified
+registration containing an image or an explicit clear is selected, with its
+primary key breaking ties. If none exists, `student_old` resolves the legacy
+`Student.std_image`. TLS registrations never provide a sync photo.
+Clearing an uploaded registration photo records that intent and removes NFE's
+copy; later syncs do not restore the legacy image. Uploading a replacement
+resets the clear marker. Both photo sources use Compiler's configured Azure
+storage; NFE continues using its own file share. The photo backfill/audit
+command recognizes both sources and skips removals.
+
+For production, supply the receiver URL/token through the environment. This
+branch currently retains the separately requested SIT URL/token override in
+`config/settings/base.py`; restore environment-based settings before production.
 Setting defaults to enabled does not start a server/worker or deploy anything.
 An explicit deployment environment value of False still disables its side.
 

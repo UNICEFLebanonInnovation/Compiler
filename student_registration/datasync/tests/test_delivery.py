@@ -75,6 +75,7 @@ class FingerprintTests(SimpleTestCase):
         manager = Mock()
         manager.filter.return_value.first.return_value = None
         with patch.object(photos.apps, 'get_model', return_value=Student), \
+                patch.object(photos, '_registration_photo', return_value=None), \
                 patch.object(photos, 'linked_student_id', return_value=7), \
                 patch.object(SourcePhotoFingerprint, 'objects', manager):
             descriptor, stream = photos.prepare_photo(900, event, allow_reuse=True)

@@ -38,6 +38,7 @@ class PhotoSenderTests(SimpleTestCase):
         Student = Mock()
         Student.objects.filter.return_value.first.return_value = student
         with patch.object(photos.apps, 'get_model', return_value=Student), \
+                patch.object(photos, '_registration_photo', return_value=None), \
                 patch.object(photos, 'linked_student_id', return_value=7):
             return photos.prepare_photo(self.event().source_id, self.event())
 
@@ -79,7 +80,8 @@ class PhotoSenderTests(SimpleTestCase):
             photos.linked_student_id(900)
 
     def test_missing_link_reports_unavailable_without_guessing(self):
-        with patch.object(photos, 'linked_student_id', return_value=None):
+        with patch.object(photos, '_registration_photo', return_value=None), \
+                patch.object(photos, 'linked_student_id', return_value=None):
             descriptor, stream = photos.prepare_photo(900, self.event())
         self.assertEqual(descriptor['action'], 'unavailable')
         self.assertIsNone(stream)

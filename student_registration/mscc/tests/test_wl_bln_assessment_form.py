@@ -5,7 +5,11 @@ from decimal import Decimal
 from student_registration.mscc.education_form import WLBLNAssessmentForm
 
 
-def test_wl_bln_pre_form_computes_totals():
+@pytest.mark.parametrize('french, selected, hidden', [
+    ('No', 'english_grade', 'french_grade'),
+    ('Yes', 'french_grade', 'english_grade'),
+])
+def test_wl_bln_pre_form_computes_totals(french, selected, hidden):
     form = WLBLNAssessmentForm(
         data={
             'programme_type': 'BLN Level 1',
@@ -30,16 +34,22 @@ def test_wl_bln_pre_form_computes_totals():
         registry='1',
         programme_type='BLN Level 1',
         pre_post='pre',
+        request=SimpleNamespace(user=SimpleNamespace(
+            center=SimpleNamespace(provide_french_language=french))),
     )
 
     assert form.is_valid(), form.errors
-    assert form.cleaned_data['english_grade'] == Decimal('43')
-    assert form.cleaned_data['french_grade'] == Decimal('43')
+    assert form.cleaned_data[selected] == Decimal('43')
+    assert form.cleaned_data[hidden] is None
     assert form.cleaned_data['arabic_grade'] == Decimal('68')
     assert form.cleaned_data['math_grade'] == Decimal('22')
 
 
-def test_wl_bln_post_form_computes_totals():
+@pytest.mark.parametrize('french, selected, hidden', [
+    ('No', 'english_grade', 'french_grade'),
+    ('Yes', 'french_grade', 'english_grade'),
+])
+def test_wl_bln_post_form_computes_totals(french, selected, hidden):
     form = WLBLNAssessmentForm(
         data={
             'programme_type': 'BLN Level 2',
@@ -68,11 +78,13 @@ def test_wl_bln_post_form_computes_totals():
         registry='1',
         programme_type='BLN Level 2',
         pre_post='post',
+        request=SimpleNamespace(user=SimpleNamespace(
+            center=SimpleNamespace(provide_french_language=french))),
     )
 
     assert form.is_valid(), form.errors
-    assert form.cleaned_data['english_grade'] == Decimal('65')
-    assert form.cleaned_data['french_grade'] == Decimal('65')
+    assert form.cleaned_data[selected] == Decimal('65')
+    assert form.cleaned_data[hidden] is None
     assert form.cleaned_data['arabic_grade'] == Decimal('70')
     assert form.cleaned_data['math_grade'] == Decimal('32')
 

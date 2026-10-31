@@ -13,6 +13,7 @@ from django import forms
 
 from student_registration.locations.models import Center, Location
 from student_registration.students.models import Nationality
+from student_registration.mscc.filters import current_round_choices
 from student_registration.mscc.models import (
     Registration,
     EducationService,
@@ -68,7 +69,7 @@ class MainFilter(PlaceholderFilterSet):
     child__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
                                 .order_by('name').distinct(), empty_label='Nationality')
     round = ChoiceFilter(
-        choices=[NO_ROUND_OPTION] + list(Round.objects.filter(current_year=True).values_list('id', 'name').order_by('name').distinct()),
+        choices=current_round_choices,
         empty_label='Cycle',
         method='filter_round'
     )
@@ -108,7 +109,7 @@ class FullFilter(PlaceholderFilterSet):
                           .order_by('name').distinct(), empty_label='Partner')
 
     round = ChoiceFilter(
-        choices=[NO_ROUND_OPTION] + list(Round.objects.filter(current_year=True).values_list('id', 'name').order_by('name').distinct()),
+        choices=current_round_choices,
         empty_label='Cycle',
         method='filter_round'
     )

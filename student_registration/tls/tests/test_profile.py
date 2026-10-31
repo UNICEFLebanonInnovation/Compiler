@@ -90,8 +90,8 @@ class TLSProfileTests(SimpleTestCase):
             for file in directory.rglob('*'):
                 if file.suffix in ('.py', '.html', '.js') and 'tests' not in file.parts:
                     with self.subTest(file=str(file)):
-                        self.assertNotIn('mscc:', file.read_text())
-                        self.assertNotIn('/mscc/', file.read_text())
+                        self.assertNotIn('mscc:', file.read_text(encoding='utf-8'))
+                        self.assertNotIn('/mscc/', file.read_text(encoding='utf-8'))
 
 
     def test_all_tls_templates_compile(self):

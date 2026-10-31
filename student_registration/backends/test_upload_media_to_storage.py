@@ -47,7 +47,8 @@ class UploadMediaToStorageTests(SimpleTestCase):
         names = []
         for directory, _, files in os.walk(self.target):
             names.extend(
-                os.path.relpath(os.path.join(directory, name), self.target) for name in files
+                os.path.relpath(os.path.join(directory, name), self.target).replace(os.sep, '/')
+                for name in files
             )
         return sorted(names)
 

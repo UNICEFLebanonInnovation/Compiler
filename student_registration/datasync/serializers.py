@@ -53,7 +53,7 @@ logger = logging.getLogger(__name__)
 #: Columns that are meaningless in the other database and are never sent.
 NEVER_SENT = frozenset({
     'id', 'created', 'modified',
-    'owner', 'modified_by', 'deleted_by',
+    'owner', 'modified_by', 'deleted_by', 'photo_sync_cleared',
 })
 
 #: Uploaded files are not replicated over this channel; only the description
@@ -172,7 +172,9 @@ def key_school(school):
         return None
     return {
         'source_id': school.pk,
-        'number': school.number,
+        # New PublicSchool references carry CERD in an integer column; NFE
+        # still resolves its existing School table using the number key.
+        'number': (str(school.cerd) if hasattr(school, 'cerd') else school.number),
         'name': school.name,
     }
 
@@ -317,7 +319,7 @@ def serialize_referral(instance):
     return {
         'fields': plain_fields(instance),
         'registration': key_registration(instance.registration),
-        'referred_school': key_school(instance.referred_school),
+        'referred_school': key_school(getattr(instance, 'public_school', None)),
     }
 
 
