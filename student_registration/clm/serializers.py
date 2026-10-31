@@ -2,6 +2,7 @@
 import json
 
 from rest_framework import serializers
+from student_registration.students.models import Student
 from .models import (
     CLM,
     BLN,
@@ -335,6 +336,14 @@ class BLNSerializer(CLMSerializer):
 
 
 class BridgingSerializer(CLMSerializer):
+    student_country_of_birth = serializers.ChoiceField(
+        source='student.country_of_birth',
+        choices=[choice for choice in Student.COUNTRY_OF_BIRTH if choice[0]],
+    )
+    student_place_of_birth = serializers.CharField(
+        source='student.place_of_birth', max_length=200,
+    )
+
 
     def create(self, validated_data):
         return create_instance(validated_data=validated_data, model=self.Meta.model)
@@ -350,6 +359,8 @@ class BridgingSerializer(CLMSerializer):
     class Meta:
         model = Bridging
         fields = CLMSerializer.Meta.fields + (
+            'student_country_of_birth',
+            'student_place_of_birth',
             # 'cycle',
             # 'referral',
             'child_outreach',

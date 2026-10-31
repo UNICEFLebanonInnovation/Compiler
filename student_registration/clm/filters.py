@@ -11,6 +11,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, ButtonHolder, Submit, HTML
 from django import forms
 from student_registration.locations.models import Location
+from student_registration.mscc.export_access import filter_by_photo
 from student_registration.schools.models import CLMRound, School, Section, ClassRoom, PartnerOrganization
 from student_registration.students.models import Nationality
 from .models import (
@@ -206,10 +207,20 @@ class PlaceholderFilterSet(FilterSet):
             if isinstance(field.widget, (forms.TextInput, forms.NumberInput)):
                 field.widget.attrs.setdefault('placeholder', label)
 
+    def filter_has_photo(self, queryset, name, value):
+        return filter_by_photo(queryset, value)
+
+
+PHOTO_CHOICES = (
+    ('yes', _('With photo')),
+    ('no', _('Without photo')),
+)
+
 
 class BridgingFullFilter(PlaceholderFilterSet):
 
     round = ModelChoiceFilter(queryset=CLMRound.objects.filter(current_year=True).all(), empty_label=_('Round'))
+    has_photo = ChoiceFilter(choices=PHOTO_CHOICES, empty_label=_('Photo'), method='filter_has_photo')
     governorate = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=True), empty_label=_('Governorate'))
     district = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=False), empty_label=_('District'))
     partner = ModelChoiceFilter(queryset=PartnerOrganization.objects.filter(is_dirasa=True).order_by('name'),
@@ -262,6 +273,7 @@ class BridgingFullFilter(PlaceholderFilterSet):
 class BridgingPartnerFilter(PlaceholderFilterSet):
 
     round = ModelChoiceFilter(queryset=CLMRound.objects.filter(current_year=True).all(), empty_label=_('Round'))
+    has_photo = ChoiceFilter(choices=PHOTO_CHOICES, empty_label=_('Photo'), method='filter_has_photo')
     governorate = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=True), empty_label=_('Governorate'))
     district = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=False), empty_label=_('District'))
     student__nationality = ModelChoiceFilter(queryset=Nationality.objects.exclude(id=9), empty_label=_('Nationality'))

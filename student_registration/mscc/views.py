@@ -79,7 +79,7 @@ from .utils import *
 
 from student_registration.mscc.templatetags.simple_tags import education_history_model, get_education_service_history
 from .tasks import queue_mscc_export, queue_filtered_mscc_export
-from .export_access import excel_export_registrations, user_can_export
+from .export_access import PHOTO_FILTER_VALUES, excel_export_registrations, user_can_export
 from student_registration.users.templatetags.custom_tags import has_group
 from student_registration.child.models import Child
 
@@ -1000,9 +1000,12 @@ def export_list_background(request):
     father_name = request.GET.get('father_name', '')
     mother_fullname = request.GET.get('mother_fullname', '')
     round = request.GET.get('round', '')
+    has_photo = request.GET.get('has_photo', '')
     if not round:
         return JsonResponse({'error': 'Round is not selected. Please select a round before exporting data.'},
                             status=400)
+    if has_photo not in PHOTO_FILTER_VALUES:
+        return HttpResponseBadRequest('Invalid photo filter.')
 
     if file_format == 'xlsx':
         if not user_can_export(user):
@@ -1011,7 +1014,7 @@ def export_list_background(request):
             excel_export_registrations(
                 user, nationality=nationality, first_name=first_name,
                 last_name=last_name, father_name=father_name,
-                mother_fullname=mother_fullname, round=round,
+                mother_fullname=mother_fullname, round=round, has_photo=has_photo,
             )
         except ValidationError as exc:
             return HttpResponseBadRequest('; '.join(exc.messages))
@@ -1031,6 +1034,7 @@ def export_list_background(request):
         mother_fullname,
         round,
         file_format=file_format,
+        has_photo=has_photo,
     )
     return JsonResponse({'status': 'started', 'export_id': export_record.id})
 
@@ -1123,9 +1127,18 @@ def get_file(request, file_name):
             file_url=reverse('mscc:export_download', args=[file_name]),
         ).exists():
             raise Http404('Export not found.')
+    elif file_name.startswith('bridging_photo_export_'):
+        from student_registration.clm.bridging_exports import user_can_export_bridging
+        if not user_can_export_bridging(request.user):
+            return HttpResponseForbidden('A Dirasa export role is required.')
+        if not ExportHistory.objects.filter(
+            created_by=request.user, status='done',
+            file_url=reverse('mscc:export_download', args=[file_name]),
+        ).exists():
+            raise Http404('Export not found.')
     if is_valid_filename(file_name, 'zip'):
         response = download_file(file_name, 'output_file.zip', request=request)
-        if file_name.startswith('mscc_photo_export_'):
+        if file_name.startswith(('mscc_photo_export_', 'bridging_photo_export_')):
             response['Cache-Control'] = 'private, no-store'
         return response
     return HttpResponse("Invalid file.")

@@ -64,6 +64,17 @@ class MainForm(forms.ModelForm):
         required=True,
         choices=YES_NO,
     )
+    child_country_of_birth = forms.ChoiceField(
+        label=_('Country of Birth'),
+        choices=Child.COUNTRY_OF_BIRTH,
+        required=True,
+    )
+    child_place_of_birth = forms.CharField(
+        label=_('Place of Birth'),
+        max_length=255,
+        required=True,
+        help_text=_('Place of birth similar in the Official ID'),
+    )
     child_first_name = forms.CharField(
         label=_("Child\'s First Name"),
         widget=forms.TextInput, required=True
@@ -848,6 +859,8 @@ class MainForm(forms.ModelForm):
             # 'center',
             'child_outreach',
             'student_old',
+            'child_country_of_birth',
+            'child_place_of_birth',
             'child_first_name',
             'child_father_name',
             'child_last_name',

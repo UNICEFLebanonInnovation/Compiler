@@ -10,6 +10,9 @@
 {% block project_title %}Registration | {% if form.instance.id %}Edit{% else %}New{% endif %} {% endblock %}
 
 {% block extra_head %}
+    <style>
+        #hint_id_student_place_of_birth { color: #000 !important; }
+    </style>
     <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
 {% endblock %}
 

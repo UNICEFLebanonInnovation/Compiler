@@ -766,7 +766,14 @@ class EducationServiceForm(forms.ModelForm):
 
             choices = []
             for option in service_programs:
-                if available_service_names and option.service_name not in available_service_names:
+                # CBECE levels remain available for TLS even when the child's
+                # generated package services only include RS.
+                is_cbece_level = option.program_code in (
+                    'CBECE Level 1', 'CBECE Level 2', 'CBECE Level 3'
+                )
+                if (available_service_names and
+                        option.service_name not in available_service_names and
+                        not is_cbece_level):
                     continue
 
                 label = programme_labels.get(option.program_code, _(option.program_code))
