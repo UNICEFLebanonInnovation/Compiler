@@ -169,8 +169,17 @@ def send_push_to_web(user, title, body, data=None):
         message="You are using a Python version.*google.api_core.*",
         category=FutureWarning,
     )
-    import firebase_admin
-    from firebase_admin import credentials, messaging
+    try:
+        import firebase_admin
+        from firebase_admin import credentials, messaging
+    except ModuleNotFoundError as exc:
+        if exc.name != "firebase_admin":
+            raise
+        logger.warning(
+            "Web push skipped: firebase-admin is not installed. "
+            "Install the project requirements to enable push notifications."
+        )
+        return False
 
     from student_registration.users.models import WebPushToken
 
