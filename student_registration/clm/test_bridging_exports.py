@@ -24,6 +24,7 @@ from student_registration.mscc.document_exports import (
     PHOTO_INCLUDED, PHOTO_MISSING, build_children_workbook, export_columns,
 )
 from student_registration.mscc.models import Round
+from student_registration.students.models import Student
 
 # The list filters read the current cycles from the database when the MSCC
 # views module is first imported. Stub that lookup so these tests need no database.
@@ -191,6 +192,22 @@ class BridgingWorkbookTests(SimpleTestCase):
         self.assertEqual(photo_colour(photos[second_number]), (0, 0, 255))
         self.assertEqual(len(photos), 2)
 
+    def test_outreach_link_exports_saved_id_without_loading_the_record(self):
+        # SimpleTestCase rejects any DB query, including a lazy FK lookup.
+        columns = {column.key: column.label for column in export_columns(profile=BRIDGING_PROFILE)}
+        for outreach_id in (812, None):
+            student = Student(pk=31, outreach_child_id=outreach_id, first_name='Layla')
+            registration = make_bridging(501, student)
+            for include_photos in (True, False):
+                with self.subTest(outreach_id=outreach_id, include_photos=include_photos):
+                    content = build_children_workbook(
+                        [registration], profile=BRIDGING_PROFILE, include_photos=include_photos,
+                    )
+                    row = workbook_rows(content)[0][1]
+                    expected = str(outreach_id) if outreach_id is not None else ''
+                    self.assertEqual(row[columns['student__outreach_child']], expected)
+                    self.assertEqual(row[columns['student__outreach_child_id']], expected)
+
     def test_bridging_headers_are_unambiguous_and_keep_identity_columns(self):
         labels = [column.label for column in export_columns(profile=BRIDGING_PROFILE)]
         self.assertEqual(labels[:4], ['Registration ID', 'Student ID', 'Photograph', 'Photograph status'])
@@ -243,6 +260,17 @@ class BridgingAccessTests(SimpleTestCase):
             qs, result = self.scoped(user)
             self.assertIs(result, qs)
             qs.filter.assert_not_called()
+
+    def test_export_query_does_not_join_the_legacy_outreach_table(self):
+        user = self.user({'CLM_BRIDGING_ALL'}, staff=True)
+        with self.has_group():
+            queryset = scoped_bridging_registrations(user)
+        sql, _ = queryset.query.sql_with_params()
+        self.assertNotIn('outreach_child', queryset.query.select_related['student'])
+        self.assertNotIn('"outreach_child"', sql)
+        self.assertIn('student__outreach_child_id', {
+            column.key for column in export_columns(profile=BRIDGING_PROFILE)
+        })
 
     def test_partner_users_are_limited_to_their_partner_and_school(self):
         qs, _ = self.scoped(self.user({'CLM_Bridging'}, partner_id=4))
