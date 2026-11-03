@@ -25,11 +25,32 @@ slicers at once (see ``engine.cube``), so NeuroDB can filter on any of them and 
   ``outreach`` counts the Kobo outreach children of every year (shared by all programmes) per
   answer of four questions.
 
-Which registrations count follows the partners' own lists: Makani, registrations not deleted in the
-rounds of the year (the current year also counts registrations without a round yet); Bridging,
-registrations not deleted in the round. A child who dropped out still counts as reached; the
-learning result shows the dropouts. A child is counted once per figure, however many services,
-records or partners.
+The period of both programmes is a year (format 4). Makani's: the rounds whose year is Y, a round without
+``year`` by its start date, else the first year in its name (``power_bi.makani_year``; or the rounds flagged
+current, setting ``period``). Bridging's: the CLM rounds whose Bridging start date is in Y, a round
+without one by the first year in its name (``power_bi.bridging_year``; or the Bridging rounds flagged
+current, setting ``period``). A child counts once per year however many rounds of the year; registrations
+add up over the rounds; the ``round`` dimension of Bridging's cubes and registrations block still shows one
+round of the year. The current year's payload names the rounds in no year and counts their registrations
+(``no_year``), so that such a round is never left out silently.
+
+Which registrations count (format 3) is what the Power BI dashboards read (power_bi.py):
+
+* view mode: exactly the registrations of the Power BI view (``vw_mscc_data``, ``vw_bridging_data``)
+  for the period (Makani: the rows whose round is a round of the year; Bridging: the rows whose round is a
+  round of the year, or of the year by the view's own year column), deleted ones left out (setting
+  ``FIGURES_POWER_BI[...]['deleted']``), with the partner and the centre or school the view gives each
+  registration. The view decides everything else (TLS, rounds...);
+* rule mode, when the view cannot be used (missing, not readable, its key is not the registration id,
+  empty for a period that has registrations, or the setting says so): Compiler's own rule. Makani,
+  registrations not deleted, with a child, in a round of the year, TLS left out (TLS has its own views)
+  and registrations without a round left out (they are in neither dashboard; ``pending_round`` counts
+  them in the current year); Bridging, registrations not deleted, in a round of the year, with a student.
+
+The payload's ``power_bi`` part says which mode counted and why, and reconciles the two in counts. A child
+who dropped out still counts as reached; the learning result shows the dropouts. A child is counted once
+per figure, however many services, records or partners. The staff, teachers and trainings counts and the
+attendance are not in the views and keep their own rules.
 """
 
 from __future__ import annotations
@@ -50,14 +71,15 @@ from django.db.models import (
     Value,
     When,
 )
+from django.db.models.expressions import RawSQL
 from django.db.models.functions import Cast, Coalesce, Left, Lower, NullIf, Trim
 from django.utils import timezone
 
-from . import engine
+from . import engine, power_bi
 
 logger = logging.getLogger(__name__)
 
-FORMAT_VERSION = 2
+FORMAT_VERSION = 4  # 4: Dirasa per year (the rounds of the year); Makani's payload unchanged
 NOT_SPECIFIED = 'Not specified'
 AGE_GROUPS = ('Under 6', '6-9', '10-14', '15-17', '18 and over', NOT_SPECIFIED)
 LEBANON = ((33.0, 34.8), (35.0, 36.7))  # rough box of the GPS points kept: latitude, longitude
@@ -138,38 +160,100 @@ def age_group(birthday_year_path, year):
     return born, Case(*whens, default=Value('18 and over'), output_field=CharField())
 
 
-def _annotate(queryset, fields):
+RID = 'x_pbi_rid'  # the registration id selected for the join with the view's population
+
+
+def _annotate(queryset, fields, rid=None):
     """Annotate ``fields`` (name -> expression) under prefixed names: an annotation may not share a
-    model field's name. Names starting with "_" are helpers (kept as they are, not selected)."""
+    model field's name. Names starting with "_" are helpers (kept as they are, not selected). ``rid``:
+    the path to the registration id, also selected (as RID) for the join with the view."""
     for name, expression in fields.items():
         queryset = queryset.annotate(**{(name if name.startswith('_') else 'x_' + name): expression})
-    return queryset.order_by().values(*['x_' + n for n in fields if not n.startswith('_')])
+    names = ['x_' + n for n in fields if not n.startswith('_')]
+    if rid is not None:
+        queryset = queryset.annotate(**{RID: F(rid)})
+        names.append(RID)
+    return queryset.order_by().values(*names)
 
 
-def _renamed(sql, fields):
+def _renamed(sql, params, fields, population=None, overrides=None):
+    """The renamed columns. With a view population: only the view's registrations of the period (a join
+    with its ids, held as arrays), each with its view rows (``view_rows``), and the dimensions the view
+    gives (partner, centre or school) taken from the view; ``overrides`` maps other column names to them
+    (e.g. ``{'person': 'center'}``)."""
     names = [n for n in fields if not n.startswith('_')]
-    return 'SELECT %s FROM (%s) AS r' % (', '.join('r.x_%s AS %s' % (n, n) for n in names), sql)
+    if population is None:
+        return 'SELECT %s FROM (%s) AS r' % (', '.join('r.x_%s AS %s' % (n, n) for n in names), sql), params
+    dims = list(population.overrides)
+    taken = {d: d for d in dims}
+    taken.update({n: d for n, d in (overrides or {}).items() if d in dims})
+    columns = ['pv.%s AS %s' % (taken[n], n) if n in taken else 'r.x_%s AS %s' % (n, n) for n in names]
+    columns.append('pv.n AS view_rows')
+    sql = 'SELECT %s FROM (%s) AS r JOIN unnest(%s) AS pv(%s) ON pv.id = r.%s' % (
+        ', '.join(columns), sql, ', '.join(['%s::int[]'] * (2 + len(dims))), ', '.join(['id', 'n'] + dims), RID)
+    return sql, list(params) + population.arrays()
 
 
-def select(queryset, fields):
-    """SQL and params returning one column per name in ``fields`` (the engine's base query)."""
-    sql, params = _annotate(queryset, fields).query.sql_with_params()
-    return _renamed(sql, fields), params
+def _joined(population):
+    return population if population is not None and population.joined else None
 
 
-def select_union(querysets, fields_list):
-    """The same columns from several querysets, one after the other (UNION ALL)."""
-    first, *rest = [_annotate(q, f) for q, f in zip(querysets, fields_list)]
+def select(queryset, fields, population=None, rid='id', overrides=None):
+    """SQL and params returning one column per name in ``fields`` (the engine's base query). In view
+    mode (``population``) restricted to the view's registrations; ``rid``: the path to the registration
+    id (``'registration_id'`` for a service record)."""
+    population = _joined(population)
+    sql, params = _annotate(queryset, fields, rid if population else None).query.sql_with_params()
+    return _renamed(sql, params, fields, population, overrides)
+
+
+def select_union(querysets, fields_list, population=None, rid='id', overrides=None):
+    """The same columns from several querysets, one after the other (UNION ALL). In view mode each queryset
+    is also restricted to the view's registrations by itself: PostgreSQL does not push the join with the
+    population (outside the UNION ALL) into its branches, so each branch would read its whole table, every
+    year's records, and the union of them all would be sorted before the join. The ids stay one bound
+    parameter (the population's array), never in the statement text."""
+    population = _joined(population)
+    if population is not None:
+        ids = RawSQL('SELECT unnest(%s::int[])', [population.arrays()[0]])
+        querysets = [q.filter(**{rid + '__in': ids}) for q in querysets]
+    first, *rest = [_annotate(q, f, rid if population else None) for q, f in zip(querysets, fields_list)]
     sql, params = first.union(*rest, all=True).query.sql_with_params()
-    return _renamed(sql, fields_list[0]), params
+    return _renamed(sql, params, fields_list[0], population, overrides)
+
+
+def view_population(programme, period, **kwargs):
+    """power_bi.population(), never failing the count: an unexpected error gives rule mode."""
+    try:
+        return power_bi.population(programme, period, **kwargs)
+    except engine.INTERRUPTS:  # the worker's time limit stops the whole count
+        raise
+    except Exception as exc:  # recorded in the payload; the count goes on with the rule
+        logger.error('figures %s %s: the view population failed: %s', programme, period, power_bi.error_line(exc))
+        chosen = power_bi.options(programme)
+        return power_bi.Population(view=power_bi.SOURCES[programme].view, deleted=chosen['deleted'],
+                                   setting=chosen['base'], reason=power_bi.error_text('population', exc),
+                                   errors=[power_bi.error_text('population', exc)])
+
+
+def power_bi_block(programme, period, population, before, counted, **kwargs):
+    try:
+        return power_bi.block(programme, period, population, before, counted, **kwargs)
+    except engine.INTERRUPTS:
+        raise
+    except Exception as exc:  # the counts are still sent
+        logger.error('figures %s %s: the power_bi block failed: %s', programme, period, power_bi.error_line(exc))
+        return power_bi.failed_block(programme, period, exc, kwargs.get('period_rule', ''))
 
 
 def block(name, sql_params, dimensions, grouping_list, measures=engine.PEOPLE):
     sql, params = sql_params
     try:
         return engine.figures_block(sql, params, dimensions, grouping_list, measures)
+    except engine.INTERRUPTS:  # the worker's time limit is not one block's failure: the count stops
+        raise
     except Exception as exc:  # one block's failure (e.g. a timeout) leaves the others
-        logger.exception('figures block %s failed', name)
+        logger.error('figures block %s failed: %s', name, power_bi.error_line(exc))  # never exc_info: SPEC §7
         return {'measures': [m for m, _sql in measures], 'figures': [], 'error': type(exc).__name__}
 
 
@@ -177,8 +261,10 @@ def cube(name, sql_params, dimensions, measures):
     sql, params = sql_params
     try:
         return engine.cube(sql, params, dimensions, measures)
+    except engine.INTERRUPTS:  # the worker's time limit is not one cube's failure: the count stops
+        raise
     except Exception as exc:  # one cube's failure (e.g. a timeout) leaves the others
-        logger.exception('figures cube %s failed', name)
+        logger.error('figures cube %s failed: %s', name, power_bi.error_line(exc))  # never exc_info: SPEC §7
         return {'dims': list(dimensions), 'measures': [m for m, _sql in measures], 'rows': [],
                 'error': type(exc).__name__}
 
@@ -241,6 +327,7 @@ def named(model, ids):
 class Makani:
     name = 'mscc'
     label = 'Makani (MSCC)'
+    format_version = FORMAT_VERSION
 
     MAIN = ('partner', 'governorate')
     DETAILS = ('district', 'cadaster', 'center', 'round', 'registration_type', 'sex', 'age_group',
@@ -259,32 +346,113 @@ class Makani:
         ('screened', 'COUNT(b.malnutrition)'),  # a malnutrition result recorded
         ('minimum_meals', 'SUM(b.minimum_meals)'),
         ('vaccinated', 'SUM(b.vaccinated)'),
+        # the variants of two cards whose Power BI measure is unknown (one field or the other)
+        ('immunized_record', 'SUM(COALESCE(b.health_bits, 0) & 1)'),
+        ('immunized_child', 'SUM((COALESCE(b.health_bits, 0) & 2) / 2)'),
+        ('screened_muac', 'SUM((COALESCE(b.health_bits, 0) & 4) / 4)'),
     )
+    VIEW_ROWS = (('view_rows', 'SUM(b.view_rows)'),)  # view mode only
     STAFF = ('center', 'partner', 'governorate', 'sex', 'active')
 
     @staticmethod
-    def _rounds():
+    def _all_rounds(alias=None):
+        """Every Makani round (tens of rows), by start date (nulls last), then name; a round's year is
+        ``power_bi.makani_year`` (its ``year``, else its start date's, else the first year in its name), read in
+        Python. ``alias``: the figures connection, when read in a count (under the counting limits)."""
         from student_registration.mscc.models import Round
 
-        return Round.objects.exclude(year=None)
+        rounds = Round.objects.using(alias) if alias else Round.objects.all()
+        return list(rounds.order_by('start_date', 'name'))
 
-    def years(self):
-        return [str(y) for y in sorted(set(self._rounds().values_list('year', flat=True)), reverse=True)]
+    def years(self, alias=None, rounds=None):
+        """The years of the rounds, as text, the newest first; a round in no year adds none. ``rounds``: every
+        round, when already read."""
+        rounds = self._all_rounds(alias) if rounds is None else rounds
+        found = {power_bi.makani_year(r)[0] for r in rounds} - {None}
+        return [str(y) for y in sorted(found, reverse=True)]
 
-    def current_year(self):
-        years = list(self._rounds().filter(current_year=True).values_list('year', flat=True))
-        years = years or [int(y) for y in self.years()]
+    def current_year(self, alias=None, rounds=None):
+        """The year of the rounds flagged current (the newest if they are of several), else the newest year."""
+        rounds = self._all_rounds(alias) if rounds is None else rounds
+        flagged = {power_bi.makani_year(r)[0] for r in rounds if r.current_year} - {None}
+        years = flagged or {int(y) for y in self.years(rounds=rounds)}
         return str(max(years)) if years else None
 
-    def has_year(self, year):
-        return str(year) in self.years()
+    def years_and_current(self, alias=None):
+        """(``years()``, ``current_year()``) from one read of the rounds."""
+        rounds = self._all_rounds(alias)
+        return self.years(rounds=rounds), self.current_year(rounds=rounds)
 
-    def _valid(self, year, prefix=''):
-        """Registrations counted in ``year`` (``prefix``: the path to Registration from another model)."""
-        condition = Q(**{prefix + 'round__year': int(year)})
-        if str(year) == self.current_year():  # not yet given a round: counted in the current year
-            condition |= Q(**{prefix + 'round__isnull': True})
-        return Q(**{prefix + 'deleted': False, prefix + 'child__isnull': False}) & condition
+    def has_year(self, year, years=None):
+        """Whether ``year`` is one of ``years()`` (``years``: when already read)."""
+        return str(year) in (self.years() if years is None else years)
+
+    @staticmethod
+    def _period_rounds(year, period_rule, rounds):
+        """The rounds of ``year`` among ``rounds`` (every round, as ``_all_rounds`` orders them): the rounds whose
+        year is Y ('round_year'), or the rounds flagged current ('current_rounds', the current year only)."""
+        if period_rule == 'current_rounds':
+            return [r for r in rounds if r.current_year]
+        return [r for r in rounds if power_bi.makani_year(r)[0] == int(year)]
+
+    @staticmethod
+    def _round_entry(the_round):
+        """A round in the payload, with the year the count gives it and where that year comes from."""
+        year, year_from = power_bi.makani_year(the_round)
+        return {'id': the_round.id, 'name': the_round.name, 'start_date': _iso(the_round.start_date),
+                'end_date': _iso(the_round.end_date), 'current': the_round.current_year, 'year': year,
+                'year_from': year_from}
+
+    def _no_year(self, rounds):
+        """The rounds in no year (no year, no start date, no year in the name) and their registrations that the
+        count's rule would take (not deleted, with a child, not TLS): in no year's figures. Read under the
+        counting limits."""
+        from student_registration.mscc.models import Registration
+
+        if not rounds:
+            return {'registrations': 0, 'rounds': []}
+        with engine.read_only_transaction() as alias:
+            count = Registration.objects.using(alias).filter(self._rule([r.id for r in rounds])).count()
+        return {'registrations': count, 'rounds': [self._round_entry(r) for r in rounds]}
+
+    @staticmethod
+    def _rule(round_ids, prefix=''):
+        """Compiler's own rule (rule mode), corrected to what Power BI's view holds: registrations not
+        deleted, with a child, in a round of the period, TLS left out (TLS has its own views); no
+        registration without a round (``prefix``: the path to Registration from another model)."""
+        return (Q(**{prefix + 'deleted': False, prefix + 'child__isnull': False, prefix + 'round__in': round_ids})
+                & (~Q(**{prefix + 'type': 'TLS'}) | Q(**{prefix + 'type__isnull': True})))
+
+    def _valid(self, population, round_ids, prefix=''):
+        """Registrations counted in the period. View mode: the view's (the population joins them in),
+        deleted ones left out unless the setting keeps them; rule mode: ``_rule``."""
+        if population.joined:
+            return Q(**{prefix + 'deleted': False}) if population.deleted == 'exclude' else Q()
+        return self._rule(round_ids, prefix)
+
+    @staticmethod
+    def _before(year, current):
+        """The rule used before the Power BI alignment (for the reconciliation only): TLS counted, and in
+        the current year (``current``) the registrations without a round too."""
+        condition = Q(round__year=int(year))
+        if current:
+            condition |= Q(round__isnull=True)
+        return Q(deleted=False, child__isnull=False) & condition
+
+    @staticmethod
+    def _pending_round(partner_ids):
+        """Registrations waiting for a round (in neither dashboard): not deleted, with a child, not TLS,
+        of the partners counted in the current year."""
+        from student_registration.mscc.models import Registration
+
+        if not partner_ids:
+            return 0
+        with engine.read_only_transaction() as alias:
+            return (Registration.objects.using(alias)
+                    .filter(deleted=False, round__isnull=True, child__isnull=False)
+                    .filter(~Q(type='TLS') | Q(type__isnull=True))
+                    .annotate(x_owner=Coalesce('partner_id', 'center__partner_id'))
+                    .filter(x_owner__in=list(partner_ids)).count())
 
     def _child(self, year, prefix=''):
         """The columns every child block shares: the child, partner, place, sex and age group."""
@@ -336,6 +504,11 @@ class Makani:
                                                        | yes('child_immunization_screened'))), Value(0)),
             'minimum_meals': Coalesce(latest(Health, _flag(yes('eating_minimum_meals'))), Value(0)),
             'vaccinated': Coalesce(latest(Health, _flag(yes('child_vaccinated'))), Value(0)),
+            # the latest record's immunization record (1), child immunization (2), MUAC result (4)
+            'health_bits': latest(Health, _flag(yes('immunization_record_screened'))
+                                  + _flag(yes('child_immunization_screened')) * Value(2)
+                                  + _flag(~Q(muac_malnutrition_screening='')
+                                          & Q(muac_malnutrition_screening__isnull=False)) * Value(4)),
         }
 
     @staticmethod
@@ -359,7 +532,16 @@ class Makani:
         from student_registration.students.models import IDType, Nationality
 
         year = str(year)
-        rounds = list(self._rounds().filter(year=int(year)).order_by('start_date', 'name'))
+        with engine.read_only_transaction() as alias:  # every read of a count under the limits
+            all_rounds = self._all_rounds(alias)
+        current = year == self.current_year(rounds=all_rounds)
+        chosen = power_bi.options(self.name)
+        period_rule = chosen['period'] if current else 'round_year'
+        rounds = self._period_rounds(year, period_rule, all_rounds)
+        round_ids = [r.id for r in rounds] or [0]
+        population = view_population(self.name, year, round_ids=round_ids,
+                                     rule=m.Registration.objects.filter(self._rule(round_ids)))
+        registrations = m.Registration.objects.filter(self._valid(population, round_ids))
         fields = dict(
             self._child(year),
             cadaster=F('center__cadaster_id'),
@@ -372,7 +554,7 @@ class Makani:
             center_type=F('center__type'),
         )
         blocks = {'registrations': block(
-            'registrations', select(m.Registration.objects.filter(self._valid(year)), fields),
+            'registrations', select(registrations, fields, population),
             self.MAIN + self.DETAILS, engine.groupings(self.MAIN, self.DETAILS, self.EXTRA))}
 
         # services: one row per service record (a child counts once per service)
@@ -385,18 +567,20 @@ class Makani:
         )
         querysets, fields_list = [], []
         for label, model in services:
-            querysets.append(model.objects.filter(self._valid(year, 'registration__')))
+            querysets.append(model.objects.filter(self._valid(population, round_ids, 'registration__')))
             fields_list.append(dict(self._child(year, 'registration__'),
                                     service=Value(label, output_field=CharField())))
         blocks['services'] = block(
-            'services', select_union(querysets, fields_list), ('service',) + self.SUBGROUPS,
+            'services', select_union(querysets, fields_list, population, rid='registration_id'),
+            ('service',) + self.SUBGROUPS,
             engine.groupings(('service', 'partner', 'governorate'), ('sex', 'age_group')))
 
         fields = dict(self._child(year, 'registration__'),
                       education_programme=Coalesce('education_program', Value(NOT_SPECIFIED)))
         blocks['education_programmes'] = block(
             'education_programmes',
-            select(m.EducationService.objects.filter(self._valid(year, 'registration__')), fields),
+            select(m.EducationService.objects.filter(self._valid(population, round_ids, 'registration__')), fields,
+                   population, rid='registration_id'),
             ('education_programme',) + self.SUBGROUPS,
             engine.groupings(('education_programme', 'partner', 'governorate'), ('sex', 'age_group')))
 
@@ -409,7 +593,8 @@ class Makani:
             'site_type': Coalesce('center__type', Value(NOT_SPECIFIED)),
         }
         blocks['sites'] = block(
-            'sites', select(m.Registration.objects.filter(self._valid(year), center__isnull=False), fields),
+            'sites', select(registrations.filter(center__isnull=False), fields, population,
+                            overrides={'person': 'center'}),
             ('partner', 'governorate', 'district', 'site_type'),
             engine.groupings(('partner', 'governorate'), ('district', 'site_type')))
 
@@ -419,7 +604,7 @@ class Makani:
             'partner': F('center__partner_id'),
             'governorate': F('center__governorate_id'),
             'sex': sex('gender'),
-            'active': Coalesce('is_active_current_round', Value(NOT_SPECIFIED)),
+            'active': yes_no('is_active_current_round'),  # a choice: free text never sent
         }
         blocks['staff'] = block(
             'staff', select(ProgramStaff.objects.filter(center__isnull=False), fields),
@@ -443,9 +628,10 @@ class Makani:
             engine.groupings(('partner', 'governorate'), ('month', 'education_programme')), ATTENDANCE)
 
         # cubes: registrations, and today's facilitators, per combination of the dashboard's slicers
+        measures = self.ENROLMENT_MEASURES + (self.VIEW_ROWS if population.joined else ())
         cubes = {
-            'enrolment': cube('enrolment', select(m.Registration.objects.filter(self._valid(year)), self._enrolment()),
-                              self.ENROLMENT, self.ENROLMENT_MEASURES),
+            'enrolment': cube('enrolment', select(registrations, self._enrolment(), population),
+                              self.ENROLMENT, measures),
             'staff': cube('staff', select(ProgramStaff.objects.filter(center__isnull=False), {
                 'center': F('center_id'),
                 'partner': F('center__partner_id'),
@@ -457,6 +643,31 @@ class Makani:
         centers_seen = self._centers(ids_in_cubes(cubes, 'center'))
         places = {c[k] for c in centers_seen for k in ('governorate', 'district', 'cadaster') if c[k]}
 
+        pending_round = 0
+        if current:
+            try:
+                pending_round = self._pending_round(
+                    ids_in_cubes({'enrolment': cubes['enrolment']}, 'partner')
+                    | ids_in({'registrations': blocks['registrations']}, 'partner'))
+            except engine.INTERRUPTS:
+                raise
+            except Exception as exc:  # recorded in power_bi.errors
+                logger.error('figures mscc %s: pending_round failed: %s', year, power_bi.error_line(exc))
+                population.errors.append(power_bi.error_text('pending_round', exc))
+        no_year = {'registrations': 0, 'rounds': []}
+        if current:  # the rounds in no year, said once: in the current year's payload
+            try:
+                no_year = self._no_year([r for r in all_rounds
+                                         if power_bi.makani_year(r)[0] is None and r.id not in round_ids])
+            except engine.INTERRUPTS:
+                raise
+            except Exception as exc:  # recorded in power_bi.errors
+                logger.error('figures mscc %s: no_year failed: %s', year, power_bi.error_line(exc))
+                population.errors.append(power_bi.error_text('no_year', exc))
+        power = power_bi_block(self.name, year, population,
+                               m.Registration.objects.filter(self._before(year, current)),
+                               registrations, current=current, period_rule=period_rule)
+
         centers = Center.objects.filter(id__in=ids_in(blocks, 'center'))
         return {
             'format': FORMAT_VERSION,
@@ -465,8 +676,7 @@ class Makani:
             'year': year,
             'generated_at': timezone.now().isoformat(),
             'counts': COUNTS,
-            'rounds': [{'id': r.id, 'name': r.name, 'start_date': _iso(r.start_date),
-                        'end_date': _iso(r.end_date), 'current': r.current_year} for r in rounds],
+            'rounds': [self._round_entry(r) for r in rounds],
             'partners': partners(ids_in(blocks, 'partner') | ids_in_cubes(cubes, 'partner')
                                  | {c['partner'] for c in centers_seen if c['partner']}),
             'locations': locations(ids_in(blocks, 'governorate') | ids_in(blocks, 'district')
@@ -479,6 +689,9 @@ class Makani:
             'id_types': named(IDType, ids_in_cubes(cubes, 'id_type')),
             'blocks': blocks,
             'cubes': cubes,
+            'pending_round': pending_round,
+            'no_year': no_year,
+            'power_bi': power,
         }
 
 
@@ -486,13 +699,14 @@ class Makani:
 class Bridging:
     name = 'bridging'
     label = 'Bridging (Dirasa)'
+    format_version = FORMAT_VERSION
 
     MAIN = ('partner', 'governorate')
     DETAILS = ('district', 'cadaster', 'school', 'registration_level', 'sex', 'age_group', 'nationality',
-               'disability', 'learning_result', 'education_status', 'source')
+               'disability', 'learning_result', 'education_status', 'source', 'round')
     EXTRA = (('sex', 'age_group'), ('partner', 'sex', 'age_group'), ('governorate', 'sex', 'age_group'),
              ('registration_level', 'sex'), ('disability', 'sex'), ('nationality', 'sex'),
-             ('learning_result', 'sex'), ('district', 'sex'))
+             ('learning_result', 'sex'), ('district', 'sex'), ('round', 'sex'))
     SUBGROUPS = ('partner', 'governorate', 'sex', 'age_group')
     SERVICES = (
         ('Social assistance', 'receiving_social_assistance'),
@@ -506,7 +720,7 @@ class Bridging:
         ('Other referral', 'referal_other'),
     )
     ENROLMENT = ('school', 'partner', 'governorate', 'sex', 'nationality', 'disability', 'level', 'learning_result',
-                 'barrier')
+                 'barrier', 'round')
     # the children numbers each school reports (one value per school, no round)
     SCHOOL_COUNTS = (
         ('children', 'number_children'),
@@ -519,22 +733,103 @@ class Bridging:
         ('dirasa_cwd', 'number_dirasa_children_disability'),
     )
 
-    @staticmethod
-    def _rounds():
+    # the first payload format counted per year: an older Bridging snapshot is a CLM round's (stored under the
+    # round's name), never listed, served nor pruned as a year's (snapshots.of_periods)
+    yearly_format = 4
+
+    @classmethod
+    def _bridging_rounds(cls, alias=None):
+        """The CLM rounds that are Bridging rounds: a Bridging start date, flagged current for Bridging, or
+        with a Bridging registration (deleted or not) or a teacher. ``CLMRound`` is shared by every CLM
+        programme: a round of another programme only (a BLN round) makes no Dirasa year. The rounds are read in
+        Python (tens of rows); only those with neither a Bridging start date nor the flag are looked for in the
+        registrations and teachers (``rounds_with_records``). Latest Bridging start first (nulls last).
+
+        Always read under the counting limits: ``alias``, the figures connection of a count; without it (the
+        API, a run's checks) in a read-only transaction of its own."""
         from student_registration.schools.models import CLMRound
 
-        return CLMRound.objects.order_by(F('start_date_bridging').desc(nulls_last=True), '-id')
+        if alias is None:
+            with engine.read_only_transaction() as alias:
+                return cls._bridging_rounds(alias)
+        rounds = list(CLMRound.objects.using(alias).order_by(F('start_date_bridging').desc(nulls_last=True), '-id'))
+        used = rounds_with_records([r.id for r in rounds if r.start_date_bridging is None
+                                    and not r.current_round_bridging], alias)
+        return [r for r in rounds if r.start_date_bridging is not None or r.current_round_bridging or r.id in used]
 
-    def years(self):
-        return list(self._rounds().values_list('name', flat=True))
+    def years(self, alias=None, rounds=None):
+        """The years of the Bridging rounds (power_bi.bridging_year), as text, the newest first; a round in
+        no year adds none. ``rounds``: the Bridging rounds, when already read (``_bridging_rounds``)."""
+        rounds = self._bridging_rounds(alias) if rounds is None else rounds
+        found = {power_bi.bridging_year(r)[0] for r in rounds}
+        return [str(y) for y in sorted(found - {None}, reverse=True)]
 
-    def current_year(self):
-        rounds = self._rounds()
-        current = rounds.filter(current_round_bridging=True).first() or rounds.filter(current_year=True).first()
-        return current.name if current else None
+    def current_year(self, alias=None, rounds=None):
+        """Among the Bridging rounds that have a year: the year of the round flagged current for Bridging
+        (the latest-starting one if several), else of the latest-starting round flagged current_year, else
+        the newest year; None when there is none. A flagged round in no year is passed over (the current
+        year's payload names it: ``no_year``)."""
+        rounds = self._bridging_rounds(alias) if rounds is None else rounds
+        rounds = [r for r in rounds if power_bi.bridging_year(r)[0] is not None]
+        flagged = ([r for r in rounds if r.current_round_bridging] or [r for r in rounds if r.current_year])
+        if flagged:  # latest Bridging start first (nulls last), as _bridging_rounds orders them
+            return str(power_bi.bridging_year(flagged[0])[0])
+        years = sorted({power_bi.bridging_year(r)[0] for r in rounds}, reverse=True)
+        return str(years[0]) if years else None
 
-    def has_year(self, year):
-        return self._rounds().filter(name=year).exists()
+    def years_and_current(self, alias=None):
+        """(``years()``, ``current_year()``) from one read of the Bridging rounds."""
+        rounds = self._bridging_rounds(alias)
+        return self.years(rounds=rounds), self.current_year(rounds=rounds)
+
+    def has_year(self, year, years=None):
+        """Whether ``year`` is one of ``years()`` (``years``: when already read)."""
+        return str(year).strip() in (self.years() if years is None else years)
+
+    @staticmethod
+    def _period_rounds(year, period_rule, rounds):
+        """(the rounds of ``year`` among the Bridging ``rounds``, the period rule used). 'start_year': the
+        Bridging rounds whose year (power_bi.bridging_year) is Y; 'current_rounds' (the current year only): the
+        Bridging rounds flagged current_year, as Compiler's own Bridging list, and when none is, the 'start_year'
+        rounds (reported as 'start_year'). Ordered by Bridging start (nulls last), then name."""
+        number = int(year) if str(year).strip().isdigit() else None
+        chosen = [r for r in rounds if r.current_year] if period_rule == 'current_rounds' else []
+        if not chosen:
+            period_rule = 'start_year'
+            chosen = [r for r in rounds if number is not None and power_bi.bridging_year(r)[0] == number]
+        return _by_start(chosen), period_rule
+
+    def _counted_rounds(self, rounds, bridging_rounds, blocks, cubes, population):
+        """The rounds of the counted registrations that ``rounds`` (the year's by the period rule) leave out: in
+        view mode the view decides which registrations are in the year (its year column, or its round_id where a
+        registration's own round may differ), so a registration of another year's round can be counted. Listed
+        with the year's rounds (``in_year`` false) so that the rounds listed add up to the year."""
+        from student_registration.schools.models import CLMRound
+
+        if not population.joined:
+            return []
+        found = (ids_in({'registrations': blocks['registrations']}, 'round')
+                 | ids_in_cubes({'enrolment': cubes['enrolment']}, 'round')) - {r.id for r in rounds}
+        known = {r.id: r for r in bridging_rounds if r.id in found}
+        if found - set(known):  # a round given a registration since the rounds were read
+            with engine.read_only_transaction() as alias:
+                known.update({r.id: r for r in CLMRound.objects.using(alias).filter(id__in=found - set(known))})
+        return list(known.values())
+
+    @staticmethod
+    def _no_year(rounds):
+        """The Bridging rounds in no year (no Bridging start date, no year in the name) and their registrations
+        that the count's rule would take (not deleted, with a student): in no year's figures. Read under the
+        counting limits."""
+        from student_registration.clm.models import Bridging as Registration
+
+        if not rounds:
+            return {'registrations': 0, 'rounds': []}
+        with engine.read_only_transaction() as alias:
+            count = Registration.objects.using(alias).filter(
+                deleted=False, student__isnull=False, round__in=[r.id for r in rounds]).count()
+        return {'registrations': count,
+                'rounds': [Bridging._round_entry(r, in_year=False) for r in sorted(rounds, key=lambda r: r.name)]}
 
     @staticmethod
     def _child(reference_year):
@@ -551,7 +846,7 @@ class Bridging:
 
     def _schools(self, cubes):
         """The schools of the cubes. A school's partners are those that registered children there in
-        the round, else the Dirasa partners that list it."""
+        the year, else the Dirasa partners that list it."""
         from student_registration.schools.models import PartnerOrganization, School
 
         ids = ids_in_cubes(cubes, 'school')
@@ -588,10 +883,24 @@ class Bridging:
         from student_registration.schools.models import School
         from student_registration.students.models import Nationality, Teacher, Training
 
-        the_round = self._rounds().get(name=year)
-        start = the_round.start_date_bridging
-        reference_year = start.year if start else timezone.localdate().year
-        valid = Registration.objects.filter(deleted=False, round=the_round, student__isnull=False)
+        year = str(year).strip()
+        with engine.read_only_transaction() as alias:  # every read of a count under the limits
+            bridging_rounds = self._bridging_rounds(alias)
+        current = year == self.current_year(rounds=bridging_rounds)
+        chosen = power_bi.options(self.name)
+        period_rule = chosen['period'] if current else 'start_year'  # a past year: always the rounds of its year
+        rounds, period_rule = self._period_rounds(year, period_rule, bridging_rounds)
+        round_ids = [r.id for r in rounds] or [0]
+        # ages in the year itself (a round without a year cannot be asked for: has_year)
+        reference_year = int(year) if year.isdigit() else timezone.localdate().year
+        rule = Registration.objects.filter(deleted=False, round__in=round_ids, student__isnull=False)
+        population = view_population(self.name, year, round_ids=round_ids, rule=rule)
+        if not population.joined:
+            valid = rule
+        elif population.deleted == 'exclude':  # the view's registrations (the population joins them in)
+            valid = Registration.objects.filter(deleted=False)
+        else:
+            valid = Registration.objects.all()
         fields = dict(
             self._child(reference_year),
             cadaster=F('cadaster_id'),
@@ -602,6 +911,7 @@ class Bridging:
             learning_result=Coalesce('learning_result', Value('in_progress')),
             education_status=Coalesce('education_status', Value(NOT_SPECIFIED)),
             source=Coalesce('source_of_identification', Value(NOT_SPECIFIED)),
+            round=F('round_id'),
             pre_tested=_flag(~Q(pre_test={}) & Q(pre_test__isnull=False)),
             post_tested=_flag(~Q(post_test={}) & Q(post_test__isnull=False)),
         )
@@ -615,6 +925,7 @@ class Bridging:
             'level': blank_to_null(F('registration_level')),
             'learning_result': Coalesce(blank_to_null(F('learning_result')), Value('in_progress')),
             'barrier': blank_to_null(F('barriers_single')),
+            'round': F('round_id'),  # the registration's round (in view mode too)
             'pre_tested': fields['pre_tested'],
             'post_tested': fields['post_tested'],
         }
@@ -623,7 +934,7 @@ class Bridging:
             ('post_tested', 'COUNT(DISTINCT b.person) FILTER (WHERE b.post_tested = 1)'),
         )
         blocks = {'registrations': block(
-            'registrations', select(valid, fields), self.MAIN + self.DETAILS,
+            'registrations', select(valid, fields, population), self.MAIN + self.DETAILS,
             engine.groupings(self.MAIN, self.DETAILS, self.EXTRA), measures)}
 
         querysets, fields_list = [], []
@@ -633,7 +944,7 @@ class Bridging:
             querysets.append(valid.filter(condition))
             fields_list.append(dict(self._child(reference_year), service=Value(label, output_field=CharField())))
         blocks['services'] = block(
-            'services', select_union(querysets, fields_list), ('service',) + self.SUBGROUPS,
+            'services', select_union(querysets, fields_list, population), ('service',) + self.SUBGROUPS,
             engine.groupings(('service', 'partner', 'governorate'), ('sex', 'age_group')))
 
         fields = {
@@ -644,26 +955,27 @@ class Bridging:
             'site_type': Coalesce('school__type', Value(NOT_SPECIFIED)),
         }
         blocks['sites'] = block(
-            'sites', select(valid.filter(school__isnull=False), fields),
+            'sites', select(valid.filter(school__isnull=False), fields, population, overrides={'person': 'school'}),
             ('partner', 'governorate', 'district', 'site_type'),
             engine.groupings(('partner', 'governorate'), ('district', 'site_type')))
 
-        # teachers of the round; a school's partners are the partners that list it
+        # teachers of the year's rounds (one record per teacher and round, as stored); a school's partners are
+        # the partners that list it
         fields = {
             'person': F('id'),
             'partner': F('school__partner_schools__id'),
             'governorate': F('school__governorate_id'),
             'sex': sex('sex'),
             'assignment': Coalesce('teacher_assignment', Value(NOT_SPECIFIED)),
-            'active': Coalesce('is_active_current_round', Value(NOT_SPECIFIED)),
+            'active': yes_no('is_active_current_round'),  # a choice: free text never sent
         }
         blocks['staff'] = block(
-            'staff', select(Teacher.objects.filter(round=the_round), fields),
+            'staff', select(Teacher.objects.filter(round__in=round_ids), fields),
             ('partner', 'governorate', 'sex', 'assignment', 'active'),
             engine.groupings(('partner', 'governorate'), ('sex', 'assignment', 'active')))
 
         attendance = CLMAttendanceStudent.objects.filter(
-            attendance_day__round_id=the_round.id,
+            attendance_day__round_id__in=round_ids,
         ).exclude(attendance_day__day_off__iexact='yes')
         fields = {
             'person': F('student_id'),
@@ -678,34 +990,58 @@ class Bridging:
             engine.groupings(('partner', 'governorate'), ('month', 'registration_level')), ATTENDANCE)
 
         # cubes: registrations, teachers, and teachers per training topic, per combination of slicers
-        teachers = Teacher.objects.filter(round=the_round)
-        trained = Teacher.trainings.through.objects.filter(teacher__round=the_round)
+        teachers = Teacher.objects.filter(round__in=round_ids)
+        trained = Teacher.trainings.through.objects.filter(teacher__round__in=round_ids)
         cubes = {
-            'enrolment': cube('enrolment', select(valid, enrolment), self.ENROLMENT, (
+            'enrolment': cube('enrolment', select(valid, enrolment, population), self.ENROLMENT, (
                 ('registrations', 'COUNT(*)'), ('pre_tested', 'SUM(b.pre_tested)'),
-                ('post_tested', 'SUM(b.post_tested)'))),
-            'teachers': cube('teachers', select(teachers, {'school': F('school_id'), 'sex': sex('sex')}),
-                             ('school', 'sex'), (('teachers', 'COUNT(*)'),)),
+                ('post_tested', 'SUM(b.post_tested)')) + (Makani.VIEW_ROWS if population.joined else ())),
+            'teachers': cube('teachers', select(teachers, {
+                'school': F('school_id'),
+                'sex': sex('sex'),
+                'round': F('round_id'),
+            }), ('school', 'sex', 'round'), (('teachers', 'COUNT(*)'),)),
             'trainings': cube('trainings', select(trained, {
                 'school': F('teacher__school_id'),
                 'sex': sex('teacher__sex'),
                 'training': F('training_id'),
-            }), ('school', 'sex', 'training'), (('teachers', 'COUNT(*)'),)),
+                'round': F('teacher__round_id'),
+            }), ('school', 'sex', 'training', 'round'), (('teachers', 'COUNT(*)'),)),
         }
         schools_seen = self._schools(cubes)
         places = {s[k] for s in schools_seen for k in ('governorate', 'district') if s[k]}
+        others, no_year = [], {'registrations': 0, 'rounds': []}
+        try:
+            others = self._counted_rounds(rounds, bridging_rounds, blocks, cubes, population)
+            if current:  # the rounds in no year, said once: in the current year's payload
+                shown = {r.id for r in rounds} | {r.id for r in others}
+                no_year = self._no_year([r for r in bridging_rounds
+                                         if power_bi.bridging_year(r)[0] is None and r.id not in shown])
+        except engine.INTERRUPTS:
+            raise
+        except Exception as exc:  # recorded in power_bi.errors
+            logger.error('figures bridging %s: the rounds counted failed: %s', year, power_bi.error_line(exc))
+            population.errors.append(power_bi.error_text('rounds', exc))
+        try:
+            school_totals = self._school_totals()
+        except engine.INTERRUPTS:
+            raise
+        except Exception as exc:  # recorded in power_bi.errors
+            logger.error('figures bridging %s: school_totals failed: %s', year, power_bi.error_line(exc))
+            population.errors.append(power_bi.error_text('school_totals', exc))
+            school_totals = {}
+        power = power_bi_block(self.name, year, population, rule, valid, current=current, period_rule=period_rule)
 
         schools = School.objects.filter(id__in=ids_in(blocks, 'school'))
         return {
             'format': FORMAT_VERSION,
             'programme': self.name,
             'label': self.label,
-            'year': the_round.name,
+            'year': year,
             'generated_at': timezone.now().isoformat(),
             'counts': COUNTS,
-            'rounds': [{'id': the_round.id, 'name': the_round.name, 'start_date': _iso(start),
-                        'end_date': _iso(the_round.end_date_bridging),
-                        'current': the_round.current_round_bridging}],
+            'rounds': [self._round_entry(r, in_year=r.id in round_ids) for r in _by_start(rounds + others)],
+            'no_year': no_year,
             'partners': partners(ids_in(blocks, 'partner') | ids_in_cubes(cubes, 'partner')
                                  | {p for s in schools_seen for p in s['partners']}),
             'locations': locations(ids_in(blocks, 'governorate') | ids_in(blocks, 'district')
@@ -719,7 +1055,34 @@ class Bridging:
             'blocks': blocks,
             'cubes': cubes,
             'outreach': outreach(),
+            'school_totals': school_totals,
+            'power_bi': power,
         }
+
+    @staticmethod
+    def _round_entry(the_round, in_year=True):
+        """A round in the payload: its own year and where it comes from (under ``current_rounds`` a round flagged
+        current may start in another year), and ``in_year``: whether it is a round of the year by the period rule
+        (false: a round only some of whose registrations the view puts in the year, or a round in no year)."""
+        year, year_from = power_bi.bridging_year(the_round)
+        return {'id': the_round.id, 'name': the_round.name, 'start_date': _iso(the_round.start_date_bridging),
+                'end_date': _iso(the_round.end_date_bridging), 'current': the_round.current_round_bridging,
+                'current_year': the_round.current_year, 'year': year, 'year_from': year_from, 'in_year': in_year}
+
+    def _school_totals(self):
+        """The school-reported numbers summed over every school a Dirasa partner lists (``listed``) and
+        over every school (``all``), a blank counting 0: candidates of the In-school and CWD cards."""
+        from django.db.models import Count, Sum
+
+        from student_registration.schools.models import PartnerOrganization, School
+
+        sums = {name: Coalesce(Sum(field), 0) for name, field in self.SCHOOL_COUNTS}
+        listed = PartnerOrganization.schools.through.objects.filter(
+            partnerorganization__is_dirasa=True).values('school_id')
+        with engine.read_only_transaction() as alias:
+            schools = School.objects.using(alias)
+            return {'listed': schools.filter(id__in=listed).aggregate(schools=Count('id'), **sums),
+                    'all': schools.aggregate(schools=Count('id'), **sums)}
 
 
 # ---------------------------------------------------------------------------------- outreach
@@ -762,6 +1125,42 @@ def _flag(condition):
 
 def _iso(value):
     return value.isoformat() if isinstance(value, (datetime.date, datetime.datetime)) else None
+
+
+def _by_start(rounds):
+    """CLM rounds by Bridging start (nulls last), then name."""
+    return sorted(rounds, key=lambda r: (r.start_date_bridging is None, r.start_date_bridging or datetime.date.min,
+                                         r.name))
+
+
+PROBES_PER_STATEMENT = 200
+
+
+def rounds_with_records(round_ids, alias):
+    """The ids among ``round_ids`` (CLM rounds) that have a Bridging registration (deleted or not) or a teacher.
+    One statement (per 200 rounds), one probe per round with the round's id written in it: PostgreSQL plans each
+    probe with that id's own statistics, an index lookup for a round with no Bridging row. A probe correlated with
+    a list of rounds (``EXISTS (... WHERE round_id = r.id)``) is planned once for every round, as a sequential scan
+    expected to stop at its first Bridging row; a round of another CLM programme (BLN, ABLN, CBECE...) has none, so
+    the whole table was read once per such round (4.5 seconds for 40 rounds and a million registrations, at
+    every index, run check, API read and count). Round ids only (no personal data)."""
+    from django.db import connections
+
+    from student_registration.clm.models import Bridging as Registration
+    from student_registration.students.models import Teacher
+
+    quote = connections[alias].ops.quote_name
+    tables = [(quote(model._meta.db_table), quote(model._meta.get_field('round').column))
+              for model in (Registration, Teacher)]
+    ids, found = sorted({int(i) for i in round_ids}), set()
+    for start in range(0, len(ids), PROBES_PER_STATEMENT):
+        probes = ['SELECT %d WHERE %s' % (i, ' OR '.join('EXISTS (SELECT 1 FROM %s WHERE %s = %d)' % (table, column, i)
+                                                          for table, column in tables))
+                  for i in ids[start:start + PROBES_PER_STATEMENT]]
+        with connections[alias].cursor() as cursor:
+            cursor.execute(' UNION ALL '.join(probes))
+            found.update(row[0] for row in cursor.fetchall())
+    return found
 
 
 PROGRAMMES = {p.name: p for p in (Makani(), Bridging())}
