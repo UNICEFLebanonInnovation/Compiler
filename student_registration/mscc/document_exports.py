@@ -61,6 +61,8 @@ class ExportProfile:
     person_label: str
     sheet_name: str
     picture_field: str = 'profile_picture'
+    # Export legacy links using the saved FK, without loading the related table.
+    person_id_only_relations: tuple = ()
 
     @property
     def person_excluded(self):
@@ -185,12 +187,17 @@ def _choice_label(field, value):
     return dict(field.flatchoices).get(value, value)
 
 
-def _field_values(instance, model, prefix, excluded):
+def _field_values(instance, model, prefix, excluded, id_only_relations=()):
     values = OrderedDict()
     for field in model._meta.concrete_fields:
         if field.name in excluded:
             continue
         key = '{}__{}'.format(prefix, field.name)
+        if isinstance(field, models.ForeignKey) and field.name in id_only_relations:
+            value = _text(getattr(instance, field.attname, None) if instance is not None else None)
+            values[key] = value
+            values['{}__{}_id'.format(prefix, field.name)] = value
+            continue
         value = getattr(instance, field.name, None) if instance is not None else None
         if isinstance(field, models.ForeignKey):
             values[key] = _text(value)
@@ -288,6 +295,7 @@ def registration_snapshot(registration, profile=MSCC_PROFILE, include_photos=Tru
     ))
     values.update(_field_values(
         person, profile.person_model, profile.person_field, profile.person_excluded,
+        id_only_relations=profile.person_id_only_relations,
     ))
     values.update(_field_values(
         registration, profile.registration_model, 'registration', profile.registration_excluded,

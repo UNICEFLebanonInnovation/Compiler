@@ -1845,6 +1845,7 @@ class Bridging(CLM):
         ('graduated_to_Bridging_next_round_same_level', _('Repeat the same Dirasa level')),
         ('dropout', _('Drop out')),
         ('referred_public_school', _('Referred to formal education')),
+        ('referred_to_tvet', _('Referred to TVET')),
         ('other', _('Referred to another pathway')),
     )
     SCHOOL_TYPE = Choices(

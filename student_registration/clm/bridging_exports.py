@@ -36,6 +36,7 @@ PHOTO_EXPORT_PREFIX = 'bridging_photo_export_'
 BRIDGING_PROFILE = ExportProfile(
     registration_model=Bridging, person_model=Student, person_field='student',
     person_label='Student', sheet_name='Dirasa students',
+    person_id_only_relations=('outreach_child',),
 )
 
 _INTEGER_FILTERS = (
@@ -65,7 +66,8 @@ def scoped_bridging_registrations(user):
     """Return nondeleted Bridging registrations within the user's scope."""
     related = [field.name for field in Bridging._meta.fields if field.many_to_one]
     related.extend(
-        'student__' + field.name for field in Student._meta.fields if field.many_to_one
+        'student__' + field.name for field in Student._meta.fields
+        if field.many_to_one and field.name not in BRIDGING_PROFILE.person_id_only_relations
     )
     queryset = Bridging.objects.filter(deleted=False, round__current_year=True).select_related(*related).order_by(
         'student__first_name', 'student__father_name', 'student__last_name', 'pk',
