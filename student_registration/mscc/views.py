@@ -16,7 +16,7 @@ from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden, Http404
 from django.core.exceptions import ValidationError
-from django.db.models import Count, F
+from django.db.models import Count, F, CharField, Value
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db import connection
 import csv
@@ -28,7 +28,7 @@ import traceback
 
 from rest_framework import status
 from django.db.models import F, Q, OuterRef, Exists, Subquery, IntegerField
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, NullIf, Trim
 from django.urls import reverse, reverse_lazy
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
@@ -603,7 +603,15 @@ class ChildPhotoExportView(ChildPhotoExportMixin, MainListView):
     programme = 'makani'
 
     def get_queryset(self):
-        return super().get_queryset().select_related('child__disability')
+        queryset = super().get_queryset().select_related('child__disability')
+        if self.all_ages:
+            # Match NULLIF(BTRIM(profile_picture), '') IS NOT NULL before batching.
+            queryset = queryset.annotate(
+                _export_photo_name=NullIf(
+                    Trim('profile_picture', output_field=CharField()), Value(''),
+                ),
+            ).filter(_export_photo_name__isnull=False)
+        return queryset
 
 
 class MainViewSet(mixins.RetrieveModelMixin,
