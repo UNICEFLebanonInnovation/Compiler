@@ -27,7 +27,8 @@ import datetime
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
-from django.db.models import Q, Sum, Avg, F, Func, When
+from django.db.models import Q, Sum, Avg, F, Func, When, CharField, Value
+from django.db.models.functions import NullIf, Trim
 from django.urls import reverse
 from django.shortcuts import render, get_object_or_404
 
@@ -197,7 +198,15 @@ class BridgingChildPhotoExportView(ChildPhotoExportMixin, BridgingListView):
     programme = 'dirasa'
 
     def get_queryset(self):
-        return super().get_queryset().select_related('cadaster', 'disability', 'partner')
+        queryset = super().get_queryset().select_related('cadaster', 'disability', 'partner')
+        if self.all_ages:
+            # Match NULLIF(BTRIM(profile_picture), '') IS NOT NULL before batching.
+            queryset = queryset.annotate(
+                _export_photo_name=NullIf(
+                    Trim('profile_picture', output_field=CharField()), Value(''),
+                ),
+            ).filter(_export_photo_name__isnull=False)
+        return queryset
 
 
 class BridgingAddView(LoginRequiredMixin,
