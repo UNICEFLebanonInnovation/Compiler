@@ -1,0 +1,32 @@
+{% extends module_base %}
+{% load i18n %}
+{% block content %}
+<div class="card"><div class="card-body">
+  <h1>{% if job.fields.unavailable_only %}{% trans "Unavailable photos — all ages" %}{% else %}{% trans "Photo export — all ages" %}{% endif %}</h1>
+  {% if job.fields.unavailable_only %}<p>{% trans "Each batch checks uploaded photos and lists only those that cannot be read. Blank fields and readable photos are excluded. A batch with no unavailable photos contains headers only." %}</p>{% endif %}
+  <p>{{ ready }} {% trans "of" %} {{ batches|length }} {% trans "batches ready" %} · {{ job.fields.total }} {% trans "registrations" %}</p>
+  <p>{% blocktrans with batch_size=job.fields.batch_size %}You can leave this page and return using this link or your export history. Each file contains up to {{ batch_size }} registrations with the same columns and photos.{% endblocktrans %}</p>
+  {% if waiting %}<p role="status">{% trans "Preparing photos. This page refreshes automatically." %}</p>{% endif %}
+  <table class="table">
+    <thead><tr><th>{% trans "Batch" %}</th><th>{% trans "Registrations" %}</th><th>{% trans "Status" %}</th><th>{% trans "Download / Retry" %}</th></tr></thead>
+    <tbody>
+    {% for batch in batches %}
+      <tr>
+        <td>{{ batch.fields.number }}</td><td>{{ batch.row_count }}</td>
+        <td>{% if batch.interrupted %}{% trans "Interrupted" %}{% elif batch.status == 'failed' %}{% trans "Failed" %}{% elif batch.status == 'done' %}{% trans "Ready" %}{% elif batch.fields.state == 'running' %}{% trans "Preparing photos" %}{% else %}{% trans "Queued" %}{% endif %}</td>
+        <td>
+          {% if batch.status == 'done' %}
+          <a class="btn btn-success" href="{% url 'backends:photo_batch_download' batch.pk %}">{% trans "Download batch" %} {{ batch.fields.number }}</a>
+          {% elif batch.can_retry %}
+          <form method="post" action="{% url 'backends:photo_batch_retry' batch.pk %}">{% csrf_token %}<button class="btn btn-warning" type="submit">{% trans "Retry batch" %} {{ batch.fields.number }}</button></form>
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="4">{% trans "No registrations match your filters." %}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div></div>
+{% if waiting %}<script>window.setTimeout(function () { window.location.reload(); }, 10000);</script>{% endif %}
+{% endblock %}
