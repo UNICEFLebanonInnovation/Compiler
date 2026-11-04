@@ -275,6 +275,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
         'district',
         'cadaster',
         'disability',
+        'education_status',
         'first_phone_number',
     ]
 
@@ -387,6 +388,8 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
 
             for name_field in ('first_name', 'father_name', 'last_name', 'mother_fullname'):
                 values[name_field] = str(values.get(name_field) or '').strip()
+
+            values['education_status'] = str(values.get('education_status') or '').strip()
 
             # ---- Missing mandatory fields
             missing = [f for f in self.mandatory_fields if not values.get(f)]
@@ -512,7 +515,8 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             except Exception:
                 invalid_fields.append("DOB (invalid date parts)")
 
-            # ---- Optional lookups: not mandatory, but if provided must exist
+            # ---- Education status is mandatory; validate against the form choices.
+            # Other lookups below remain optional, but must exist if provided.
 
             ed_status = None
             ed_status_val = (values.get('education_status') or '').strip()
@@ -544,7 +548,10 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                 ed_status == 'Currently registered in Formal Education school but not attending'
                 and not dropout_date
             ):
-                invalid_fields.append("dropout_date is required when education_status is ({0})".format(ed_status))
+                invalid_fields.append(
+                    "Dropout Date is mandatory when Youth Educational Level When Registering "
+                    "is '{0}'.".format(ed_status)
+                )
 
             father_ed = None
             father_ed_val = (values.get('father_educational_level') or '').strip()
