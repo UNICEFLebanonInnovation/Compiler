@@ -466,7 +466,7 @@ AZURE_URL_EXPIRATION_SECS = env.int('AZURE_URL_EXPIRATION_SECS', default=3600)
 # read by a local server connected to the shared database.
 STORAGES = {
     'default': {
-        'BACKEND': 'storages.backends.azure_storage.AzureStorage',
+        'BACKEND': 'student_registration.backends.azure_storage.ChunkedAzureStorage',
         'OPTIONS': {
             'azure_container': AZURE_MEDIA_CONTAINER,
             'expiration_secs': AZURE_URL_EXPIRATION_SECS,

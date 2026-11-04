@@ -16,7 +16,7 @@ import os
 import uuid
 import mimetypes
 from django.core.files.storage import default_storage
-from storages.backends.azure_storage import AzureStorage
+from student_registration.backends.azure_storage import ChunkedAzureStorage as AzureStorage
 from django.core.files.base import ContentFile
 from django.core.exceptions import ValidationError
 from django.db import connection
@@ -27,7 +27,8 @@ import datetime
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
-from django.db.models import Q, Sum, Avg, F, Func, When
+from django.db.models import Q, Sum, Avg, F, Func, When, CharField, Value
+from django.db.models.functions import NullIf, Trim
 from django.urls import reverse
 from django.shortcuts import render, get_object_or_404
 
@@ -64,6 +65,7 @@ from student_registration.schools.models import (
     CLMRound,
 )
 from student_registration.backends.models import ExportHistory
+from student_registration.backends.child_photo_export import ChildPhotoExportMixin
 from .bridging_forms import (
     BridgingPreAssessmentForm,
     BridgingMathAssessmentForm,
@@ -190,6 +192,21 @@ class BridgingListView(LoginRequiredMixin,
 
     def get_filterset_class(self):
         return bridging_filterset_class(self.request.user)
+
+
+class BridgingChildPhotoExportView(ChildPhotoExportMixin, BridgingListView):
+    programme = 'dirasa'
+
+    def get_queryset(self):
+        queryset = super().get_queryset().select_related('cadaster', 'disability', 'partner')
+        if self.all_ages:
+            # Match NULLIF(BTRIM(profile_picture), '') IS NOT NULL before batching.
+            queryset = queryset.annotate(
+                _export_photo_name=NullIf(
+                    Trim('profile_picture', output_field=CharField()), Value(''),
+                ),
+            ).filter(_export_photo_name__isnull=False)
+        return queryset
 
 
 class BridgingAddView(LoginRequiredMixin,

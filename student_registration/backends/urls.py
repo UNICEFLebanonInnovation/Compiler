@@ -3,10 +3,14 @@ from __future__ import absolute_import, unicode_literals
 from django.urls import re_path
 
 from . import views
+from . import photo_batches
 
 app_name = 'backends'
 
 urlpatterns = [
+    re_path(r'^photo-batches/(?P<job_id>\d+)/$', photo_batches.progress, name='photo_batch_progress'),
+    re_path(r'^photo-batch/(?P<batch_id>\d+)/download/$', photo_batches.download, name='photo_batch_download'),
+    re_path(r'^photo-batch/(?P<batch_id>\d+)/retry/$', photo_batches.retry, name='photo_batch_retry'),
 
     re_path(
         r'^files-list/$',
