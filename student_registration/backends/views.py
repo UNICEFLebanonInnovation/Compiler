@@ -581,20 +581,6 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                 if not id_type:
                     invalid_fields.append("id_type ({0})".format(id_type_val))
 
-            # Match the form's conditional "Other" requirements.
-            other_requirements = (
-                (nationality and nationality.pk == 6, 'nationality_other',
-                 'Adolescent Nationality Other is mandatory when Adolescent Nationality is Other.'),
-                (main_caregiver_norm == 'Other', 'main_caregiver_other',
-                 'Main Caregiver Other is mandatory when Main Caregiver is Other.'),
-                (caregiver_nat and caregiver_nat.pk == 6, 'main_caregiver_nationality_other',
-                 'Main Caregiver Nationality Other is mandatory when Main Caregiver Nationality is Other.'),
-            )
-            for required, field, message in other_requirements:
-                values[field] = str(values.get(field) or '').strip()
-                if required and not values[field]:
-                    invalid_fields.append(message)
-
             # ---- If any invalids, log and skip row
             if invalid_fields:
                 not_imported.append(
