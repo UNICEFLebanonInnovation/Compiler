@@ -574,6 +574,7 @@ function reorganizeForm()
 //    Child Nationality
     var child_nationality = $('select#id_adolescent_nationality').val();
     $('div#div_id_adolescent_nationality_other').addClass('d-none');
+    $('#id_adolescent_nationality_other').prop('required', child_nationality == 6);
 
     if(child_nationality == 6){
         $('#div_id_adolescent_nationality_other').removeClass('d-none');
@@ -596,6 +597,7 @@ function reorganizeForm()
 //    Main Caregiver
     var main_caregiver = $('select#id_main_caregiver').val();
     $('div#div_id_main_caregiver_other').addClass('d-none');
+    $('#id_main_caregiver_other').prop('required', main_caregiver == 'Other');
     if(main_caregiver == 'Other'){
         $('#div_id_main_caregiver_other').removeClass('d-none');
     }
@@ -607,6 +609,7 @@ function reorganizeForm()
 //    Main Caregiver Nationality
     var main_caregiver_nationality = $('select#id_main_caregiver_nationality').val();
     $('div#div_id_main_caregiver_nationality_other').addClass('d-none');
+    $('#id_main_caregiver_nationality_other').prop('required', main_caregiver_nationality == 6);
     if(main_caregiver_nationality == 6){
         $('#div_id_main_caregiver_nationality_other').removeClass('d-none');
     }
