@@ -533,6 +533,22 @@ class MainForm(forms.ModelForm):
         elif education_status != 'Currently registered in Formal Education school but not attending':
             cleaned_data['dropout_date'] = None
 
+        # Nationality ID 6 is the "Other" option used by the form UI.
+        nationality = cleaned_data.get('adolescent_nationality')
+        caregiver_nationality = cleaned_data.get('main_caregiver_nationality')
+        other_requirements = (
+            (nationality and nationality.pk == 6, 'adolescent_nationality_other',
+             _('Adolescent Nationality Other is mandatory when Adolescent Nationality is Other.')),
+            (cleaned_data.get('main_caregiver') == 'Other', 'main_caregiver_other',
+             _('Main Caregiver Other is mandatory when Main Caregiver is Other.')),
+            (caregiver_nationality and caregiver_nationality.pk == 6, 'main_caregiver_nationality_other',
+             _('Main Caregiver Nationality Other is mandatory when Main Caregiver Nationality is Other.')),
+        )
+        for required, field, message in other_requirements:
+            cleaned_data[field] = str(cleaned_data.get(field) or '').strip()
+            if required and not cleaned_data[field]:
+                self.add_error(field, message)
+
         return cleaned_data
 
     def save(self, request=None, instance=None):
