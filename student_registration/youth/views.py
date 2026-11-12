@@ -78,10 +78,16 @@ class ProfileView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         instance = Registration.objects.get(id=self.kwargs['pk'])
         current_tab = self.request.GET.get('current_tab', 'info')
+        enrolled_programs = instance.enrolled_programs.all()
+        if self.request.user.partner_id is not None:
+            enrolled_programs = enrolled_programs.filter(partner_id=self.request.user.partner_id)
+        elif not has_group(self.request.user, 'YOUTH_UNICEF'):
+            enrolled_programs = enrolled_programs.none()
 
         return {
             'instance': instance,
-            'current_tab': current_tab
+            'current_tab': current_tab,
+            'enrolled_programs': enrolled_programs
         }
 
 
@@ -212,7 +218,9 @@ class MainListView(LoginRequiredMixin,
         if has_group(user, 'YOUTH_UNICEF'):
             pass
         elif has_group(user, 'YOUTH_PARTNER') and partner_id is not None:
-            qs = qs.filter(partner_id=partner_id)
+            qs = qs.filter(
+                Q(partner_id=partner_id) | Q(enrolled_programs__partner_id=partner_id)
+            )
         else:
             return Registration.objects.none()
         return qs.distinct()

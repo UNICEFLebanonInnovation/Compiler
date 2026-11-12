@@ -308,7 +308,6 @@
 
   <!--Education history and current situation -->
 <div class="col-md-12 col-lg-6 col-xl-4">
-  {% program_data 'EnrolledPrograms' instance as result %}
                                 <div class="mb-3 card">
                                     <!--<div class="card-header-tab card-header">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
@@ -350,7 +349,7 @@
                                         <div class="tab-content">
                                          <ul class="list-group list-group-flush" style="height: 400px; overflow: scroll;">
 
-                                          {% for prog in result %}
+                                          {% for prog in enrolled_programs %}
 <li class="list-group-item" id="prog-item-{{ prog.id }}">
   <div class="d-flex justify-content-between align-items-start">
     <!-- Text content -->

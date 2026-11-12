@@ -40,6 +40,12 @@ def _name_en_label(obj):
 
 
 class EnrolledProgramsForm(forms.ModelForm):
+    partner = forms.ModelChoiceField(
+        queryset=PartnerOrganization.objects.all(),
+        widget=forms.HiddenInput,
+        required=False,
+        disabled=True,
+    )
     registration_date = forms.DateField(
         label=_("Date of registration"),
         required=True
@@ -137,6 +143,15 @@ class EnrolledProgramsForm(forms.ModelForm):
         registration_obj = None
         if registry:
             registration_obj = Registration.objects.filter(id=registry).select_related('adolescent').first()
+
+        if not registration_obj and instance:
+            registration_obj = EnrolledPrograms.objects.select_related('registration').get(
+                pk=instance
+            ).registration
+        self.initial['partner'] = (
+            getattr(getattr(self.request, 'user', None), 'partner_id', None)
+            or getattr(registration_obj, 'partner_id', None)
+        )
 
         if is_bulk_add:
             same_location = False
@@ -258,6 +273,7 @@ class EnrolledProgramsForm(forms.ModelForm):
         ])
 
         self.helper.layout = Layout(
+            Field('partner'),
             Field('registration_id'),
             Field('selected_registration_ids'),
             Div(
@@ -325,6 +341,11 @@ class EnrolledProgramsForm(forms.ModelForm):
         from datetime import datetime
         validated_data = request.POST
 
+        # Always derive ownership on the server, including for each bulk registration.
+        instance.partner_id = (
+            getattr(request.user, 'partner_id', None)
+            or instance.registration.partner_id
+        )
         instance.master_program_id = validated_data.get('master_program')
         instance.sub_program_id = validated_data.get('sub_program') or None
         instance.donor_id = validated_data.get('donor')
@@ -438,6 +459,7 @@ class EnrolledProgramsForm(forms.ModelForm):
     class Meta:
         model = EnrolledPrograms
         fields = (
+            'partner',
             'registration_id',
             'registration_date',
             'completion_date',

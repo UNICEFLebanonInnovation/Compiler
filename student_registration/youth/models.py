@@ -781,6 +781,13 @@ class EnrolledPrograms(TimeStampedModel):
         related_name='enrolled_programs',
     )
 
+    partner = models.ForeignKey(
+        PartnerOrganization,
+        blank=True, null=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+    )
+
     education_status = models.CharField(
         max_length=200,
         blank=True,
