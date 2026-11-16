@@ -252,26 +252,6 @@ WL_BLN_PROGRAMME_CONFIG = {
 }
 
 
-# RS assessments record one score per subject, using the grade-specific maxima.
-WL_RS_SUBJECT_TOTALS = {
-    'math': (34, 34, 34, 58, 58, 58, 40, 50, 60),
-    'arabic': (50, 50, 50, 34, 34, 34, 40, 40, 40),
-    'english': (40, 40, 40, 32, 32, 32, 42, 42, 42),
-    'french': (40, 40, 40, 32, 32, 32, 40, 40, 40),
-}
-for grade in range(1, 10):
-    WL_BLN_PROGRAMME_CONFIG['RS Grade {}'.format(grade)] = {
-        '{}_grade'.format(subject): {
-            'label': _(subject.title()),
-            'total': totals[grade - 1],
-            'components': (
-                ('{}_total_score'.format(subject), _('Total score'), totals[grade - 1]),
-            ),
-        }
-        for subject, totals in WL_RS_SUBJECT_TOTALS.items()
-    }
-
-
 def grading_numeric_field(label, readonly=False):
     attrs = {'step': '0.01', 'min': '0'}
     if readonly:
@@ -2340,11 +2320,6 @@ class SummerRSAssessmentForm(forms.ModelForm):
 
 
 class WLBLNAssessmentForm(forms.ModelForm):
-    english_total_score = grading_numeric_field(_('English - Total score'))
-    french_total_score = grading_numeric_field(_('French - Total score'))
-    arabic_total_score = grading_numeric_field(_('Arabic - Total score'))
-    math_total_score = grading_numeric_field(_('Math - Total score'))
-
     programme_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
     english_letter_sound = grading_numeric_field(_('English - Letter Sound'))

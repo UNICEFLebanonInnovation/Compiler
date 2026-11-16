@@ -1553,7 +1553,7 @@
     {% endif %}
 
     {% service_data 'EducationProgrammeWLAssessment' instance as wl_result %}
-    {% if result1.education_program == 'BLN Level 1' or result1.education_program == 'BLN Level 2' or result1.education_program == 'BLN Level 3' or result1.education_program == 'RS Grade 1' or result1.education_program == 'RS Grade 2' or result1.education_program == 'RS Grade 3' or result1.education_program == 'RS Grade 4' or result1.education_program == 'RS Grade 5' or result1.education_program == 'RS Grade 6' or result1.education_program == 'RS Grade 7' or result1.education_program == 'RS Grade 8' or result1.education_program == 'RS Grade 9' %}
+    {% if result1.education_program in 'BLN Level 1, BLN Level 2, BLN Level 3' %}
     <div class="col-md-12 col-lg-6 col-xl-4">
         <div class="mb-3 card">
             <div class="p-0 card-body">
@@ -1599,7 +1599,6 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">French Language Development</h4>
-                                                   {% if 'BLN Level' in result1.education_program %}
                                                    <p>French Letter Sound: {{ wl_result.pre_test.french_letter_sound|default:0 }}</p>
                                                    <p>French Familiar Words: {{ wl_result.pre_test.french_familiar_words|default:0 }}</p>
                                                    {% if result1.education_program == 'BLN Level 1' %}
@@ -1609,7 +1608,6 @@
                                                    <p>French Reading Comprehension: {{ wl_result.pre_test.french_reading_comprehension|default:0 }}</p>
                                                    {% endif %}
                                                    <p>French Dictation: {{ wl_result.pre_test.french_dictation|default:0 }}</p>
-                                                   {% endif %}
                                                    <p><strong>French Total: {{ wl_result.pre_test.french_grade|default:0 }}</strong></p>
                                                 </div>
                                             </div>
@@ -1618,7 +1616,6 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Language Development</h4>
-                                                   {% if 'BLN Level' in result1.education_program %}
                                                    <p>English Letter Sound: {{ wl_result.pre_test.english_letter_sound|default:0 }}</p>
                                                    <p>English Familiar Words: {{ wl_result.pre_test.english_familiar_words|default:0 }}</p>
                                                    {% if result1.education_program == 'BLN Level 1' %}
@@ -1628,7 +1625,6 @@
                                                    <p>English Reading Comprehension: {{ wl_result.pre_test.english_reading_comprehension|default:0 }}</p>
                                                    {% endif %}
                                                    <p>English Dictation: {{ wl_result.pre_test.english_dictation|default:0 }}</p>
-                                                   {% endif %}
                                                    <p><strong>English Total: {{ wl_result.pre_test.english_grade|default:0 }}</strong></p>
                                                 </div>
                                             </div>
@@ -1637,7 +1633,6 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Language Development</h4>
-                                                   {% if 'BLN Level' in result1.education_program %}
                                                    <p>Arabic Letter Sound: {{ wl_result.pre_test.arabic_letter_sound|default:0 }}</p>
                                                    <p>Arabic Alphabet Vowel: {{ wl_result.pre_test.arabic_alphabet_vowel|default:0 }}</p>
                                                    <p>Arabic Alphabet Long Vowel: {{ wl_result.pre_test.arabic_alphabet_long_vowel|default:0 }}</p>
@@ -1649,7 +1644,6 @@
                                                    <p>Arabic Reading Comprehension: {{ wl_result.pre_test.arabic_reading_comprehension|default:0 }}</p>
                                                    {% endif %}
                                                    <p>Arabic Dictation: {{ wl_result.pre_test.arabic_dictation|default:0 }}</p>
-                                                   {% endif %}
                                                    <p><strong>Arabic Total: {{ wl_result.pre_test.arabic_grade|default:0 }}</strong></p>
                                                 </div>
                                             </div>
@@ -1657,7 +1651,6 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mathematics</h4>
-                                                   {% if 'BLN Level' in result1.education_program %}
                                                    <p>Math Natural Numbers: {{ wl_result.pre_test.math_natural_numbers|default:0 }}</p>
                                                    <p>Math Addition: {{ wl_result.pre_test.math_addition_words|default:0 }}</p>
                                                    <p>Math Subtraction: {{ wl_result.pre_test.math_subtraction|default:0 }}</p>
@@ -1666,7 +1659,6 @@
                                                    {% endif %}
                                                    {% if result1.education_program == 'BLN Level 3' %}
                                                    <p>Math Division: {{ wl_result.pre_test.math_division|default:0 }}</p>
-                                                   {% endif %}
                                                    {% endif %}
                                                    <p><strong>Math Total: {{ wl_result.pre_test.math_grade|default:0 }}</strong></p>
                                                 </div>
@@ -1693,7 +1685,6 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">French Language Development</h4>
-                                                   {% if 'BLN Level' in result1.education_program %}
                                                    <p>French Letter Sound: {{ wl_result.post_test.french_letter_sound|default:0 }}</p>
                                                    <p>French Familiar Words: {{ wl_result.post_test.french_familiar_words|default:0 }}</p>
                                                    {% if result1.education_program == 'BLN Level 1' %}
@@ -1703,7 +1694,6 @@
                                                    <p>French Reading Comprehension: {{ wl_result.post_test.french_reading_comprehension|default:0 }}</p>
                                                    {% endif %}
                                                    <p>French Dictation: {{ wl_result.post_test.french_dictation|default:0 }}</p>
-                                                   {% endif %}
                                                    <p><strong>French Total: {{ wl_result.post_test.french_grade|default:0 }}</strong></p>
                                                 </div>
                                             </div>
@@ -1712,7 +1702,6 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Language Development</h4>
-                                                   {% if 'BLN Level' in result1.education_program %}
                                                    <p>English Letter Sound: {{ wl_result.post_test.english_letter_sound|default:0 }}</p>
                                                    <p>English Familiar Words: {{ wl_result.post_test.english_familiar_words|default:0 }}</p>
                                                    {% if result1.education_program == 'BLN Level 1' %}
@@ -1722,7 +1711,6 @@
                                                    <p>English Reading Comprehension: {{ wl_result.post_test.english_reading_comprehension|default:0 }}</p>
                                                    {% endif %}
                                                    <p>English Dictation: {{ wl_result.post_test.english_dictation|default:0 }}</p>
-                                                   {% endif %}
                                                    <p><strong>English Total: {{ wl_result.post_test.english_grade|default:0 }}</strong></p>
                                                 </div>
                                             </div>
@@ -1731,7 +1719,6 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Language Development</h4>
-                                                   {% if 'BLN Level' in result1.education_program %}
                                                    <p>Arabic Letter Sound: {{ wl_result.post_test.arabic_letter_sound|default:0 }}</p>
                                                    <p>Arabic Alphabet Vowel: {{ wl_result.post_test.arabic_alphabet_vowel|default:0 }}</p>
                                                    <p>Arabic Alphabet Long Vowel: {{ wl_result.post_test.arabic_alphabet_long_vowel|default:0 }}</p>
@@ -1743,7 +1730,6 @@
                                                    <p>Arabic Reading Comprehension: {{ wl_result.post_test.arabic_reading_comprehension|default:0 }}</p>
                                                    {% endif %}
                                                    <p>Arabic Dictation: {{ wl_result.post_test.arabic_dictation|default:0 }}</p>
-                                                   {% endif %}
                                                    <p><strong>Arabic Total: {{ wl_result.post_test.arabic_grade|default:0 }}</strong></p>
                                                 </div>
                                             </div>
@@ -1751,7 +1737,6 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mathematics</h4>
-                                                   {% if 'BLN Level' in result1.education_program %}
                                                    <p>Math Natural Numbers: {{ wl_result.post_test.math_natural_numbers|default:0 }}</p>
                                                    <p>Math Addition: {{ wl_result.post_test.math_addition_words|default:0 }}</p>
                                                    <p>Math Subtraction: {{ wl_result.post_test.math_subtraction|default:0 }}</p>
@@ -1760,7 +1745,6 @@
                                                    {% endif %}
                                                    {% if result1.education_program == 'BLN Level 3' %}
                                                    <p>Math Division: {{ wl_result.post_test.math_division|default:0 }}</p>
-                                                   {% endif %}
                                                    {% endif %}
                                                    <p><strong>Math Total: {{ wl_result.post_test.math_grade|default:0 }}</strong></p>
                                                 </div>
@@ -1780,7 +1764,6 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">French Language Development</h4>
-                                                   {% if 'BLN Level' in result1.education_program %}
                                                    <p>French Letter Sound: {% grading_improvement wl_result 'french_letter_sound' as grade %}{{ grade }}</p>
                                                    <p>French Familiar Words: {% grading_improvement wl_result 'french_familiar_words' as grade %}{{ grade }}</p>
                                                    {% if result1.education_program == 'BLN Level 1' %}
@@ -1790,7 +1773,6 @@
                                                    <p>French Reading Comprehension: {% grading_improvement wl_result 'french_reading_comprehension' as grade %}{{ grade }}</p>
                                                    {% endif %}
                                                    <p>French Dictation: {% grading_improvement wl_result 'french_dictation' as grade %}{{ grade }}</p>
-                                                   {% endif %}
                                                    <p><strong>French Total: {% grading_improvement wl_result 'french_grade' as grade %}{{ grade }}</strong></p>
                                                 </div>
                                             </div>
@@ -1799,7 +1781,6 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Language Development</h4>
-                                                   {% if 'BLN Level' in result1.education_program %}
                                                    <p>English Letter Sound: {% grading_improvement wl_result 'english_letter_sound' as grade %}{{ grade }}</p>
                                                    <p>English Familiar Words: {% grading_improvement wl_result 'english_familiar_words' as grade %}{{ grade }}</p>
                                                    {% if result1.education_program == 'BLN Level 1' %}
@@ -1809,7 +1790,6 @@
                                                    <p>English Reading Comprehension: {% grading_improvement wl_result 'english_reading_comprehension' as grade %}{{ grade }}</p>
                                                    {% endif %}
                                                    <p>English Dictation: {% grading_improvement wl_result 'english_dictation' as grade %}{{ grade }}</p>
-                                                   {% endif %}
                                                    <p><strong>English Total: {% grading_improvement wl_result 'english_grade' as grade %}{{ grade }}</strong></p>
                                                 </div>
                                             </div>
@@ -1818,7 +1798,6 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Language Development</h4>
-                                                   {% if 'BLN Level' in result1.education_program %}
                                                    <p>Arabic Letter Sound: {% grading_improvement wl_result 'arabic_letter_sound' as grade %}{{ grade }}</p>
                                                    <p>Arabic Alphabet Vowel: {% grading_improvement wl_result 'arabic_alphabet_vowel' as grade %}{{ grade }}</p>
                                                    <p>Arabic Alphabet Long Vowel: {% grading_improvement wl_result 'arabic_alphabet_long_vowel' as grade %}{{ grade }}</p>
@@ -1830,7 +1809,6 @@
                                                    <p>Arabic Reading Comprehension: {% grading_improvement wl_result 'arabic_reading_comprehension' as grade %}{{ grade }}</p>
                                                    {% endif %}
                                                    <p>Arabic Dictation: {% grading_improvement wl_result 'arabic_dictation' as grade %}{{ grade }}</p>
-                                                   {% endif %}
                                                    <p><strong>Arabic Total: {% grading_improvement wl_result 'arabic_grade' as grade %}{{ grade }}</strong></p>
                                                 </div>
                                             </div>
@@ -1838,7 +1816,6 @@
                                         <div class="vertical-timeline-item vertical-timeline-element">
                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mathematics</h4>
-                                                   {% if 'BLN Level' in result1.education_program %}
                                                    <p>Math Natural Numbers: {% grading_improvement wl_result 'math_natural_numbers' as grade %}{{ grade }}</p>
                                                    <p>Math Addition: {% grading_improvement wl_result 'math_addition_words' as grade %}{{ grade }}</p>
                                                    <p>Math Subtraction: {% grading_improvement wl_result 'math_subtraction' as grade %}{{ grade }}</p>
@@ -1847,7 +1824,6 @@
                                                    {% endif %}
                                                    {% if result1.education_program == 'BLN Level 3' %}
                                                    <p>Math Division: {% grading_improvement wl_result 'math_division' as grade %}{{ grade }}</p>
-                                                   {% endif %}
                                                    {% endif %}
                                                    <p><strong>Math Total: {% grading_improvement wl_result 'math_grade' as grade %}{{ grade }}</strong></p>
                                                 </div>
