@@ -200,3 +200,43 @@ def test_wl_bln_validates_only_visible_language_fields():
     )
 
     assert form.is_valid(), form.errors
+
+
+@pytest.mark.parametrize('grade,math,arabic,english,french', [
+    (1, 34, 50, 40, 40), (2, 34, 50, 40, 40), (3, 34, 50, 40, 40),
+    (4, 58, 34, 32, 32), (5, 58, 34, 32, 32), (6, 58, 34, 32, 32),
+    (7, 40, 40, 42, 40), (8, 50, 40, 42, 40), (9, 60, 40, 42, 40),
+])
+@pytest.mark.parametrize('language', ['english', 'french'])
+@pytest.mark.parametrize('period', ['pre', 'post'])
+def test_rs_subject_scores(grade, math, arabic, english, french, language, period):
+    request = SimpleNamespace(user=SimpleNamespace(center=SimpleNamespace(
+        provide_french_language='Yes' if language == 'french' else 'No')))
+    programme = 'RS Grade {}'.format(grade)
+    maxima = {'math': math, 'arabic': arabic, language: french if language == 'french' else english}
+    data = {'{}_total_score'.format(subject): maximum for subject, maximum in maxima.items()}
+    # Posted totals are recomputed from scores rather than trusted.
+    data['math_grade'] = 999
+    kwargs = dict(registry='1', programme_type=programme, pre_post=period, request=request)
+    if period == 'post':
+        kwargs['instance'] = '2'
+    form = WLBLNAssessmentForm(data=data, **kwargs)
+    assert form.is_valid(), form.errors
+    for subject, maximum in maxima.items():
+        assert form.cleaned_data[subject + '_grade'] == maximum
+        assert not form.fields[subject + '_total_score'].widget.is_hidden
+    assert form.fields['english_letter_sound'].widget.is_hidden
+    other_language = 'english' if language == 'french' else 'french'
+    assert form.fields[other_language + '_total_score'].widget.is_hidden
+
+    data['math_total_score'] = math + 1
+    form = WLBLNAssessmentForm(data=data, **kwargs)
+    assert not form.is_valid()
+    assert 'math_total_score' in form.errors
+
+    data['math_total_score'] = -1
+    assert not WLBLNAssessmentForm(data=data, **kwargs).is_valid()
+    data['math_total_score'] = 0
+    assert WLBLNAssessmentForm(data=data, **kwargs).is_valid()
+    del data['math_total_score']
+    assert not WLBLNAssessmentForm(data=data, **kwargs).is_valid()

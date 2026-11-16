@@ -329,8 +329,8 @@ class WLBLNAssessmentFormView(LoginRequiredMixin,
 
     def dispatch(self, request, *args, **kwargs):
         programme_type = self.kwargs.get('programme_type')
-        if programme_type not in ["BLN Level 1", "BLN Level 2", "BLN Level 3"]:
-            raise Http404("WL BLN assessment is only available for BLN levels.")
+        if programme_type not in WL_BLN_PROGRAMME_CONFIG:
+            raise Http404("WL BLN assessment is only available for BLN levels and RS Grades 1–9.")
         return super(WLBLNAssessmentFormView, self).dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
