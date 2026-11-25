@@ -22,12 +22,20 @@ The payload also holds ``cubes`` (format 2): records counted per combination of 
 slicers at once (see ``engine.cube``), so NeuroDB can filter on any of them and add the rows up.
 
 * Makani: ``enrolment`` (registrations, with the cards' flags: married, IDP, caregiver counselling,
-  and the answers of the latest health and nutrition record) and ``staff`` (today's facilitators);
-  ``centers`` lists their centers with type, emergency status and GPS point;
-* Bridging: ``enrolment`` (registrations), ``teachers`` and ``trainings`` (teachers per training
-  topic); ``schools`` lists their schools with the children numbers the schools report;
+  and the answers of the latest health and nutrition record), ``staff`` (today's facilitators) and
+  ``enrolment_age`` (registrations by partner, governorate, centre, sex, nationality, disability, age
+  group and round); ``centers`` lists their centers with type, emergency status and GPS point;
+* Bridging: ``enrolment`` (registrations; ``age_group`` is its last dimension), ``teachers`` and
+  ``trainings`` (teachers per training topic); ``schools`` lists their schools with the children numbers
+  the schools report;
   ``outreach`` counts the Kobo outreach children of every year (shared by all programmes) per
   answer of four questions.
+
+The age group and round of the cubes are those of the registrations block (same expressions), so the cubes
+and the block agree. Both came within format 4 and are additive, so FORMAT_VERSION did not change: Makani's
+``enrolment_age`` is a new cube (a reader that does not know it ignores it; ``enrolment`` is unchanged, since
+two more dimensions would multiply its rows), and Bridging's ``enrolment`` gains ``age_group`` as its last
+dimension (a reader that sums over the dimensions it does not filter gets the same totals).
 
 The period of both programmes is a year (format 4). Makani's: the rounds whose year is Y, a round without
 ``year`` by its start date, else the first year in its name (``power_bi.makani_year``; or the rounds flagged
@@ -344,6 +352,9 @@ class Makani:
     SUBGROUPS = ('partner', 'governorate', 'sex', 'age_group')
     ENROLMENT = ('center', 'partner', 'governorate', 'sex', 'nationality', 'disability', 'caregiver', 'working',
                  'programme', 'education_status', 'package', 'id_type', 'malnutrition', 'delay')
+    # registrations by age group and round, in a cube of their own (format 4, additive): appended to ENROLMENT
+    # they would multiply its rows (the payload grew by up to 61% on a synthetic year at production scale)
+    ENROLMENT_AGE = ('partner', 'governorate', 'center', 'sex', 'nationality', 'disability', 'age_group', 'round')
     ENROLMENT_MEASURES = (
         ('registrations', 'COUNT(*)'),
         ('married', 'SUM(b.married)'),
@@ -518,6 +529,24 @@ class Makani:
                                           & Q(muac_malnutrition_screening__isnull=False)) * Value(4)),
         }
 
+    def _enrolment_age(self, year):
+        """One row per registration for the ``enrolment_age`` cube: the slicers it shares with ``enrolment``,
+        defined as there, and the age group (in ``year``) and round of the registrations block (``_child``,
+        ``round``), so that the cubes and the block agree. In view mode partner and centre come from the view, as
+        in every count."""
+        child = self._child(year)
+        return {
+            'partner': child['partner'],
+            'governorate': F('center__governorate_id'),
+            'center': F('center_id'),
+            'sex': child['sex'],
+            'nationality': F('child__nationality_id'),
+            'disability': F('child__disability_id'),
+            '_born': child['_born'],  # a helper of age_group, not selected
+            'age_group': child['age_group'],
+            'round': F('round_id'),
+        }
+
     @staticmethod
     def _centers(ids):
         from student_registration.locations.models import Center
@@ -646,6 +675,8 @@ class Makani:
                 'sex': sex('gender'),
                 'active': yes_no('is_active_current_round'),
             }), self.STAFF, (('staff', 'COUNT(*)'),)),
+            'enrolment_age': cube('enrolment_age', select(registrations, self._enrolment_age(year), population),
+                                  self.ENROLMENT_AGE, (('registrations', 'COUNT(*)'),)),
         }
         centers_seen = self._centers(ids_in_cubes(cubes, 'center'))
         places = {c[k] for c in centers_seen for k in ('governorate', 'district', 'cadaster') if c[k]}
@@ -730,7 +761,8 @@ class Bridging:
         ('Other referral', 'referal_other'),
     )
     ENROLMENT = ('school', 'partner', 'governorate', 'sex', 'nationality', 'disability', 'level', 'learning_result',
-                 'barrier', 'round')
+                 'barrier', 'round',
+                 'age_group')  # appended: the registrations block's own age group (never reorder the dimensions above)
     # the children numbers each school reports (one value per school, no round)
     SCHOOL_COUNTS = (
         ('children', 'number_children'),
@@ -936,6 +968,8 @@ class Bridging:
             'learning_result': Coalesce(blank_to_null(F('learning_result')), Value('in_progress')),
             'barrier': blank_to_null(F('barriers_single')),
             'round': F('round_id'),  # the registration's round (in view mode too)
+            '_born': fields['_born'],  # a helper of age_group, not selected
+            'age_group': fields['age_group'],  # the registrations block's, in the same reference year
             'pre_tested': fields['pre_tested'],
             'post_tested': fields['post_tested'],
         }

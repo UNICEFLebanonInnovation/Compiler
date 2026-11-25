@@ -1,8 +1,9 @@
-"""Unique children for the common combinations.
+"""Unique children for the common combinations, and registrations by age group and Makani round.
 
 The ``registrations`` block answers a unique-children question only from the grouping that matches it exactly,
 so the combinations NeuroDB asks for (centre + sex, partner + sex + nationality...) are groupings of their own
-(``EXTRA``). Every check runs in view mode (a stand-in view under the real name, which leaves one
+(``EXTRA``). The registrations are counted by age group and round in a cube, defined as the same dimensions of
+the registrations block. Every check runs in view mode (a stand-in view under the real name, which leaves one
 counted registration out so that the view, not the rule, decides) and in rule mode (no view).
 
 The children are named "Secret", the partners "Example ...": no real name.
@@ -10,7 +11,7 @@ The children are named "Secret", the partners "Example ...": no real name.
 
 import datetime
 import json
-from collections import defaultdict
+from collections import Counter, defaultdict
 
 import pytest
 from django.db import connection
@@ -68,6 +69,22 @@ def grouping(block, *by):
     by = tuple(sorted(by))
     found = next(g for g in block['figures'] if tuple(g['by']) == by)
     return {tuple(row[:len(by)]): row[len(by):] for row in found['rows']}
+
+
+def cube_with(payload, dimension):
+    """The registrations cube that has ``dimension`` (``enrolment``, or ``enrolment_age`` when one is sent)."""
+    found = [c for c in payload['cubes'].values() if dimension in c['dims'] and 'registrations' in c['measures']]
+    assert len(found) == 1, sorted(payload['cubes'])
+    return found[0]
+
+
+def registrations_by(cube, dimension):
+    """Registrations per value of ``dimension``, summed over the cube's other dimensions."""
+    at, measure = cube['dims'].index(dimension), len(cube['dims']) + cube['measures'].index('registrations')
+    out = Counter()
+    for row in cube['rows']:
+        out[row[at]] += row[measure]
+    return dict(out)
 
 
 # ------------------------------------------------------------------------------------- data
@@ -312,7 +329,74 @@ def test_the_other_new_groupings_match_a_brute_force_count(case):
 
 
 @pytest.mark.parametrize('case', CASES, indirect=True, ids=['-'.join(c) for c in CASES])
+def test_registrations_by_age_group_add_up_to_the_total(case):
+    payload = case['payload']
+    cube = cube_with(payload, 'age_group')
+    total = sum(registrations_by(payload['cubes']['enrolment'], 'partner').values())
+    by_age = registrations_by(cube, 'age_group')
+    assert sum(by_age.values()) == total == len(case['rows'])
+    assert by_age == dict(Counter(row['age_group'] for row in case['rows']))
+    # every age group of the cube is one the registrations block gives, the same labels
+    block_groups = {key[0] for key in grouping(payload['blocks']['registrations'], 'age_group')}
+    assert set(by_age) == block_groups
+    assert set(by_age) <= set(education.AGE_GROUPS)
+    assert education.NOT_SPECIFIED in by_age  # the child with no usable birth year
+
+
+@pytest.mark.parametrize('case', CASES, indirect=True, ids=['-'.join(c) for c in CASES])
+def test_registrations_by_round_add_up_to_the_total(case):
+    payload = case['payload']
+    cube = cube_with(payload, 'round') if case['programme'] == 'mscc' else payload['cubes']['enrolment']
+    total = sum(registrations_by(payload['cubes']['enrolment'], 'partner').values())
+    by_round = registrations_by(cube, 'round')
+    assert sum(by_round.values()) == total == len(case['rows'])
+    assert by_round == dict(Counter(row['round'] for row in case['rows']))
+    assert set(by_round) == {case['data']['round_1'].id, case['data']['round_2'].id}
+    assert set(by_round) == {key[0] for key in grouping(payload['blocks']['registrations'], 'round')}
+
+
+@pytest.mark.parametrize('case', CASES, indirect=True, ids=['-'.join(c) for c in CASES])
+def test_age_group_and_round_together_add_up(case):
+    """A cube row holds age group and round at once, so a reader can filter on both: summed over the rest they
+    match the brute-force count of registrations per (age group, round)."""
+    payload = case['payload']
+    cube = cube_with(payload, 'age_group')
+    if 'round' not in cube['dims']:
+        pytest.fail('the age group cube has no round: %s' % cube['dims'])
+    age_at, round_at = cube['dims'].index('age_group'), cube['dims'].index('round')
+    measure = len(cube['dims']) + cube['measures'].index('registrations')
+    found = Counter()
+    for row in cube['rows']:
+        found[(row[age_at], row[round_at])] += row[measure]
+    assert dict(found) == dict(Counter((row['age_group'], row['round']) for row in case['rows']))
+
+
+@pytest.mark.parametrize('case', CASES, indirect=True, ids=['-'.join(c) for c in CASES])
 def test_the_payload_holds_counts_only(case):
     text = json.dumps(case['payload'])
     assert 'Secret' not in text and 'first_name' not in text and 'birthday' not in text
     assert case['payload']['format'] == 4
+
+
+@pytest.mark.parametrize('mode', ['view', 'rule'])
+def test_makanis_age_cube_agrees_with_the_enrolment_cube(makani, mode):
+    """``enrolment_age`` (registrations by age group and round, a cube of its own) and ``enrolment`` count the
+    same registrations: summed over the dimensions they share they give the same rows, partner and centre
+    from the view in view mode. ``enrolment`` keeps its dimensions."""
+    payload = build('mscc', makani, mode)
+    enrolment, age = payload['cubes']['enrolment'], payload['cubes']['enrolment_age']
+    assert enrolment['dims'] == list(MAKANI_ENROLMENT_BEFORE)
+    assert age['dims'] == list(education.Makani.ENROLMENT_AGE) and age['measures'] == ['registrations']
+    shared = [d for d in age['dims'] if d in enrolment['dims']]
+    assert shared == ['partner', 'governorate', 'center', 'sex', 'nationality', 'disability']
+
+    def summed(cube):
+        out = Counter()
+        measure = len(cube['dims']) + cube['measures'].index('registrations')
+        for row in cube['rows']:
+            out[tuple(row[cube['dims'].index(d)] for d in shared)] += row[measure]
+        return dict(out)
+
+    assert summed(age) == summed(enrolment)
+    assert sum(summed(age).values()) == len(counted_registrations(makani, mode))
+    assert list(payload['cubes']) == ['enrolment', 'staff', 'enrolment_age']  # appended

@@ -859,8 +859,9 @@ def test_bridging_counts_unique_children_once_per_year(places):
                                                     (r2.id, 'Female'): [1, 0, 0]}
     assert table(registrations, 'age_group') == {('10-14',): [2, 0, 0]}  # ages in 2026: 10 and 12
     enrolment = payload['cubes']['enrolment']
-    assert enrolment['dims'][-1] == 'round'
+    assert enrolment['dims'][-2:] == ['round', 'age_group']  # age_group appended after round
     assert total(enrolment, 'registrations') == 3
+    assert total(enrolment, 'registrations', age_group='10-14') == 3  # the block's age groups, per registration
     assert (total(enrolment, 'registrations', round=r1.id), total(enrolment, 'registrations', round=r2.id)) == (2, 1)
     assert payload['cubes']['teachers']['dims'] == ['school', 'sex', 'round']
     assert payload['cubes']['trainings']['dims'] == ['school', 'sex', 'training', 'round']
