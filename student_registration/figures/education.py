@@ -6,7 +6,11 @@ of groupings (see engine.py) with its measures:
 * ``registrations``: unique children registered (not deleted), by partner, governorate, district,
   cadaster, center or school, sex, age group, nationality, disability and the programme's own
   categories (registration type, level, education status, learning result, source of
-  identification...). Bridging also counts the children pre-tested and post-tested;
+  identification...). Bridging also counts the children pre-tested and post-tested. Unique children
+  answer only from the grouping that matches the question exactly, so the combinations NeuroDB asks for
+  are groupings of their own (``EXTRA``, appended at its end): centre (school) + sex, partner + centre
+  (school) + sex, partner + sex + nationality, partner + sex + disability, and Makani's governorate +
+  sex + nationality, Bridging's partner + sex + registration level;
 * ``services``: unique children per service received (Makani: one row per service record; Bridging:
   the "yes" answers of the services form);
 * ``education_programmes`` (Makani): unique children per education programme (BLN, ABLN, CBECE...);
@@ -333,7 +337,10 @@ class Makani:
     DETAILS = ('district', 'cadaster', 'center', 'round', 'registration_type', 'sex', 'age_group',
                'nationality', 'disability', 'source', 'center_type')
     EXTRA = (('sex', 'age_group'), ('partner', 'sex', 'age_group'), ('governorate', 'sex', 'age_group'),
-             ('disability', 'sex'), ('nationality', 'sex'), ('district', 'sex'))
+             ('disability', 'sex'), ('nationality', 'sex'), ('district', 'sex'),
+             # unique children for NeuroDB's common questions (appended: never reorder the groupings above)
+             ('center', 'sex'), ('partner', 'center', 'sex'), ('partner', 'sex', 'nationality'),
+             ('partner', 'sex', 'disability'), ('governorate', 'sex', 'nationality'))
     SUBGROUPS = ('partner', 'governorate', 'sex', 'age_group')
     ENROLMENT = ('center', 'partner', 'governorate', 'sex', 'nationality', 'disability', 'caregiver', 'working',
                  'programme', 'education_status', 'package', 'id_type', 'malnutrition', 'delay')
@@ -706,7 +713,10 @@ class Bridging:
                'disability', 'learning_result', 'education_status', 'source', 'round')
     EXTRA = (('sex', 'age_group'), ('partner', 'sex', 'age_group'), ('governorate', 'sex', 'age_group'),
              ('registration_level', 'sex'), ('disability', 'sex'), ('nationality', 'sex'),
-             ('learning_result', 'sex'), ('district', 'sex'), ('round', 'sex'))
+             ('learning_result', 'sex'), ('district', 'sex'), ('round', 'sex'),
+             # unique children for NeuroDB's common questions (appended: never reorder the groupings above)
+             ('school', 'sex'), ('partner', 'school', 'sex'), ('partner', 'sex', 'nationality'),
+             ('partner', 'sex', 'disability'), ('partner', 'sex', 'registration_level'))
     SUBGROUPS = ('partner', 'governorate', 'sex', 'age_group')
     SERVICES = (
         ('Social assistance', 'receiving_social_assistance'),
