@@ -35,7 +35,9 @@ The age group and round of the cubes are those of the registrations block (same 
 and the block agree. Both came within format 4 and are additive, so FORMAT_VERSION did not change: Makani's
 ``enrolment_age`` is a new cube (a reader that does not know it ignores it; ``enrolment`` is unchanged, since
 two more dimensions would multiply its rows), and Bridging's ``enrolment`` gains ``age_group`` as its last
-dimension (a reader that sums over the dimensions it does not filter gets the same totals).
+dimension (a reader that sums over the dimensions it does not filter gets the same totals). Payload growth on
+synthetic years: Makani, 18-23% for the separate cube and the groupings (59-63% had the two dimensions gone into
+``enrolment``); Bridging, +26.2% to +42.2% (gzip +23.5% to +32.9%), under the 50% limit (``Bridging.ENROLMENT``).
 
 The period of both programmes is a year (format 4). Makani's: the rounds whose year is Y, a round without
 ``year`` by its start date, else the first year in its name (``power_bi.makani_year``; or the rounds flagged
@@ -43,8 +45,10 @@ current, setting ``period``). Bridging's: the CLM rounds whose Bridging start da
 without one by the first year in its name (``power_bi.bridging_year``; or the Bridging rounds flagged
 current, setting ``period``). A child counts once per year however many rounds of the year; registrations
 add up over the rounds; the ``round`` dimension of Bridging's cubes and registrations block still shows one
-round of the year. The current year's payload names the rounds in no year and counts their registrations
-(``no_year``), so that such a round is never left out silently.
+round of the year. In view mode a counted registration keeps its own round, which may be of another year (the
+view's round_id chose it): ``rounds`` then lists that round too, with ``in_year`` false (both programmes), so that
+every round id of the counts has a name. The current year's payload names the rounds in no year and counts their
+registrations (``no_year``), so that such a round is never left out silently.
 
 Which registrations count (format 3) is what the Power BI dashboards read (power_bi.py):
 
@@ -353,7 +357,7 @@ class Makani:
     ENROLMENT = ('center', 'partner', 'governorate', 'sex', 'nationality', 'disability', 'caregiver', 'working',
                  'programme', 'education_status', 'package', 'id_type', 'malnutrition', 'delay')
     # registrations by age group and round, in a cube of their own (format 4, additive): appended to ENROLMENT
-    # they would multiply its rows (the payload grew by up to 61% on a synthetic year at production scale)
+    # they would multiply its rows (the payload grew by 59-63% on a synthetic year at production scale)
     ENROLMENT_AGE = ('partner', 'governorate', 'center', 'sex', 'nationality', 'disability', 'age_group', 'round')
     ENROLMENT_MEASURES = (
         ('registrations', 'COUNT(*)'),
@@ -414,12 +418,34 @@ class Makani:
         return [r for r in rounds if power_bi.makani_year(r)[0] == int(year)]
 
     @staticmethod
-    def _round_entry(the_round):
-        """A round in the payload, with the year the count gives it and where that year comes from."""
+    def _round_entry(the_round, in_year=True):
+        """A round in the payload, with the year the count gives it and where that year comes from, and
+        ``in_year``: whether it is a round of the year by the period rule (false: a round only some of whose
+        registrations the view puts in the year, or a round in no year), as Bridging's."""
         year, year_from = power_bi.makani_year(the_round)
         return {'id': the_round.id, 'name': the_round.name, 'start_date': _iso(the_round.start_date),
                 'end_date': _iso(the_round.end_date), 'current': the_round.current_year, 'year': year,
-                'year_from': year_from}
+                'year_from': year_from, 'in_year': in_year}
+
+    @staticmethod
+    def _counted_rounds(rounds, all_rounds, blocks, cubes, population):
+        """The rounds of the counted registrations that ``rounds`` (the year's by the period rule) leave out: in
+        view mode the view's round_id decides which registrations are in the year, and a registration keeps its
+        own round in the counts, so a view that gives a registration of another year a round of this year has it
+        counted with a round of another year. Listed with the year's rounds (``in_year`` false), as Bridging's
+        ``_counted_rounds``, so that every round id of the counts has its name."""
+        if not population.joined:
+            return []
+        found = (ids_in({'registrations': blocks['registrations']}, 'round')
+                 | ids_in_cubes({'enrolment_age': cubes['enrolment_age']}, 'round')) - {r.id for r in rounds}
+        known = {r.id: r for r in all_rounds if r.id in found}
+        if found - set(known):  # a round created since the rounds were read
+            from student_registration.mscc.models import Round
+
+            with engine.read_only_transaction() as alias:
+                known.update({r.id: r for r in Round.objects.using(alias).filter(id__in=found - set(known))})
+        return sorted(known.values(), key=lambda r: (r.start_date is None, r.start_date or datetime.date.min,
+                                                     r.name or '', r.id))
 
     def _no_year(self, rounds):
         """The rounds in no year (no year, no start date, no year in the name) and their registrations that the
@@ -431,7 +457,7 @@ class Makani:
             return {'registrations': 0, 'rounds': []}
         with engine.read_only_transaction() as alias:
             count = Registration.objects.using(alias).filter(self._rule([r.id for r in rounds])).count()
-        return {'registrations': count, 'rounds': [self._round_entry(r) for r in rounds]}
+        return {'registrations': count, 'rounds': [self._round_entry(r, in_year=False) for r in rounds]}
 
     @staticmethod
     def _rule(round_ids, prefix=''):
@@ -692,11 +718,19 @@ class Makani:
             except Exception as exc:  # recorded in power_bi.errors
                 logger.error('figures mscc %s: pending_round failed: %s', year, power_bi.error_line(exc))
                 population.errors.append(power_bi.error_text('pending_round', exc))
-        no_year = {'registrations': 0, 'rounds': []}
+        others, no_year = [], {'registrations': 0, 'rounds': []}
+        try:
+            others = self._counted_rounds(rounds, all_rounds, blocks, cubes, population)
+        except engine.INTERRUPTS:
+            raise
+        except Exception as exc:  # recorded in power_bi.errors
+            logger.error('figures mscc %s: the rounds counted failed: %s', year, power_bi.error_line(exc))
+            population.errors.append(power_bi.error_text('rounds', exc))
         if current:  # the rounds in no year, said once: in the current year's payload
+            shown = set(round_ids) | {r.id for r in others}
             try:
                 no_year = self._no_year([r for r in all_rounds
-                                         if power_bi.makani_year(r)[0] is None and r.id not in round_ids])
+                                         if power_bi.makani_year(r)[0] is None and r.id not in shown])
             except engine.INTERRUPTS:
                 raise
             except Exception as exc:  # recorded in power_bi.errors
@@ -714,7 +748,7 @@ class Makani:
             'year': year,
             'generated_at': timezone.now().isoformat(),
             'counts': COUNTS,
-            'rounds': [self._round_entry(r) for r in rounds],
+            'rounds': [self._round_entry(r) for r in rounds] + [self._round_entry(r, in_year=False) for r in others],
             'partners': partners(ids_in(blocks, 'partner') | ids_in_cubes(cubes, 'partner')
                                  | {c['partner'] for c in centers_seen if c['partner']}),
             'locations': locations(ids_in(blocks, 'governorate') | ids_in(blocks, 'district')
@@ -763,6 +797,10 @@ class Bridging:
     ENROLMENT = ('school', 'partner', 'governorate', 'sex', 'nationality', 'disability', 'level', 'learning_result',
                  'barrier', 'round',
                  'age_group')  # appended: the registrations block's own age group (never reorder the dimensions above)
+    # Payload growth of age_group and the EXTRA groupings, on synthetic years built with build(): 20,000
+    # registrations, 30 partners, 300 schools: +26.2% in all (groupings +6.5%, age_group +18.5%); 8 partners, 60
+    # schools (concentrated): +42.2% (age_group +37.4%); 45,000 registrations, 40 partners, 400 schools: +31.6%;
+    # gzip +23.5% to +32.9%. Under the 50% limit, so age_group stays here (Makani's needed a cube of its own).
     # the children numbers each school reports (one value per school, no round)
     SCHOOL_COUNTS = (
         ('children', 'number_children'),

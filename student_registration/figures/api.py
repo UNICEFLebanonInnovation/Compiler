@@ -19,6 +19,27 @@ programme of the index as education figures, keeps working; its snapshots are re
 
 Only the NeuroDB service account (the group named by YOUTH_FIGURES_API_GROUP, "NeuroDB API") or a
 superuser may call it, at most FIGURES_API_RATE times.
+
+Deploying
+---------
+
+* Settings (names only; every one is optional, with the default in the code): FIGURES_POWER_BI (per
+  programme: ``base`` auto/view/rule, ``deleted`` exclude/include, ``period``), FIGURES_POWER_BI_MIN_MATCH,
+  FIGURES_POWER_BI_RELATED, FIGURES_MAX_AGE_HOURS, FIGURES_PAST_MAX_AGE_HOURS, FIGURES_DATABASE,
+  FIGURES_STATEMENT_TIMEOUT_MS, FIGURES_WORK_MEM, FIGURES_PARALLEL_WORKERS, FIGURES_JIT, FIGURES_API_RATE,
+  YOUTH_FIGURES_API_GROUP.
+* Grants: the role behind FIGURES_DATABASE needs SELECT on ``vw_mscc_data``, ``vw_bridging_data`` and
+  ``vw_youth_data_all``, and, while FIGURES_POWER_BI_RELATED is true, on the related views of
+  ``power_bi.SOURCES`` (``related``). A view dropped and re-created by hand loses its grants (CREATE OR
+  REPLACE keeps them): grant again, or set default privileges for the views' creator. Without the grant the
+  count falls back to rule mode and says why (``power_bi.base.reason``: "no SELECT permission on ...").
+* Worker: a Celery worker must consume the queue of ``tasks.run_figures`` (the default queue: it has no route
+  of its own), or the runs stay queued.
+* Recount: a change that keeps FORMAT_VERSION (4) leaves the snapshots counted before it fresh, so they lack
+  what it adds (e.g. Makani's ``enrolment_age`` cube, Bridging's ``age_group`` dimension, the new ``EXTRA``
+  groupings, Makani's ``in_year`` rounds). After deploying, recount every stored year of ``mscc`` and
+  ``bridging`` off-peak, ``manage.py refresh_neurodb_figures --programme <p> --year <Y>``; otherwise a past
+  year waits up to FIGURES_PAST_MAX_AGE_HOURS (the current year, FIGURES_MAX_AGE_HOURS).
 """
 
 from __future__ import annotations

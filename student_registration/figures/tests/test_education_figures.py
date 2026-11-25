@@ -1064,7 +1064,7 @@ def test_a_makani_round_without_a_year_takes_its_start_or_its_name(places):
     assert total(payload['cubes']['enrolment'], 'registrations') == 2
     assert payload['no_year'] == {'registrations': 1, 'rounds': [
         {'id': r4.id, 'name': 'Catch-up', 'start_date': None, 'end_date': None, 'current': False, 'year': None,
-         'year_from': None}]}
+         'year_from': None, 'in_year': False}]}
     past = makani_.build('2025')
     assert [(r['name'], r['year_from']) for r in past['rounds']] == [('Summer 2025', 'name')]
     assert past['no_year'] == {'registrations': 0, 'rounds': []}
