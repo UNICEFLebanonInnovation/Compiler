@@ -21,6 +21,7 @@ from dal import autocomplete
 
 from student_registration.mscc.templatetags.simple_tags import get_service
 from student_registration.mscc.utils import DEFAULT_PACKAGE_TYPE, validate_date
+from .rs_assessment_config import RS_PROGRAMME_CONFIG
 from .models import (
     Registration,
     EducationAssessment,
@@ -251,6 +252,8 @@ WL_BLN_PROGRAMME_CONFIG = {
     },
 }
 
+
+WL_BLN_PROGRAMME_CONFIG.update(RS_PROGRAMME_CONFIG)
 
 def grading_numeric_field(label, readonly=False):
     attrs = {'step': '0.01', 'min': '0'}
@@ -2367,6 +2370,12 @@ class WLBLNAssessmentForm(forms.ModelForm):
         self.pre_post = pre_post
         self.programme_type = programme_type
         self.programme_config = WL_BLN_PROGRAMME_CONFIG.get(programme_type, {})
+
+        for subject in self.programme_config.values():
+            for field_name, label, _maximum in subject['components']:
+                if field_name not in self.fields:
+                    self.fields[field_name] = grading_numeric_field(
+                        '{} - {}'.format(subject['label'], label))
 
         center = getattr(getattr(self.request, 'user', None), 'center', None)
         provide_french_language = getattr(center, 'provide_french_language', None)

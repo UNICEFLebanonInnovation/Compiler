@@ -1,6 +1,6 @@
 {% load static i18n %}
 {% load util_tags %}
-{% load simple_tags %}
+{% load simple_tags mscc_assessment_tags %}
 
 <div class="row staff-profile">
 
@@ -1553,7 +1553,8 @@
     {% endif %}
 
     {% service_data 'EducationProgrammeWLAssessment' instance as wl_result %}
-    {% if result1.education_program in 'BLN Level 1, BLN Level 2, BLN Level 3' %}
+    {% wl_programme_sections result1.education_program request.user.center.provide_french_language as wl_sections %}
+    {% if wl_sections %}
     <div class="col-md-12 col-lg-6 col-xl-4">
         <div class="mb-3 card">
             <div class="p-0 card-body">
@@ -1591,83 +1592,7 @@
                                 <a href="{% url 'mscc:wl_bln_assessment_add' instance.id result1.education_program %}" data-toggle="tooltip" data-placement="top" data-original-title="Add WL BLN Pre Assessment">Add</a>
                             {% endif %}
                         </div>
-                        <div class="scroll-area-sm" style="height: 200px;">
-                            <div class="scrollbar-container ps ps--active-y">
-                                <div class="p-3">
-                                    <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
-                                        {% if request.user.center.provide_french_language == 'Yes' %}
-                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">French Language Development</h4>
-                                                   <p>French Letter Sound: {{ wl_result.pre_test.french_letter_sound|default:0 }}</p>
-                                                   <p>French Familiar Words: {{ wl_result.pre_test.french_familiar_words|default:0 }}</p>
-                                                   {% if result1.education_program == 'BLN Level 1' %}
-                                                   <p>French Sentence: {{ wl_result.pre_test.french_sentence|default:0 }}</p>
-                                                   {% else %}
-                                                   <p>French Paragraph: {{ wl_result.pre_test.french_paragraph|default:0 }}</p>
-                                                   <p>French Reading Comprehension: {{ wl_result.pre_test.french_reading_comprehension|default:0 }}</p>
-                                                   {% endif %}
-                                                   <p>French Dictation: {{ wl_result.pre_test.french_dictation|default:0 }}</p>
-                                                   <p><strong>French Total: {{ wl_result.pre_test.french_grade|default:0 }}</strong></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {% else %}
-                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Language Development</h4>
-                                                   <p>English Letter Sound: {{ wl_result.pre_test.english_letter_sound|default:0 }}</p>
-                                                   <p>English Familiar Words: {{ wl_result.pre_test.english_familiar_words|default:0 }}</p>
-                                                   {% if result1.education_program == 'BLN Level 1' %}
-                                                   <p>English Sentence: {{ wl_result.pre_test.english_sentence|default:0 }}</p>
-                                                   {% else %}
-                                                   <p>English Paragraph: {{ wl_result.pre_test.english_paragraph|default:0 }}</p>
-                                                   <p>English Reading Comprehension: {{ wl_result.pre_test.english_reading_comprehension|default:0 }}</p>
-                                                   {% endif %}
-                                                   <p>English Dictation: {{ wl_result.pre_test.english_dictation|default:0 }}</p>
-                                                   <p><strong>English Total: {{ wl_result.pre_test.english_grade|default:0 }}</strong></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {% endif %}
-                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Language Development</h4>
-                                                   <p>Arabic Letter Sound: {{ wl_result.pre_test.arabic_letter_sound|default:0 }}</p>
-                                                   <p>Arabic Alphabet Vowel: {{ wl_result.pre_test.arabic_alphabet_vowel|default:0 }}</p>
-                                                   <p>Arabic Alphabet Long Vowel: {{ wl_result.pre_test.arabic_alphabet_long_vowel|default:0 }}</p>
-                                                   <p>Arabic Familiar Words: {{ wl_result.pre_test.arabic_familiar_words|default:0 }}</p>
-                                                   {% if result1.education_program == 'BLN Level 1' %}
-                                                   <p>Arabic Sentence: {{ wl_result.pre_test.arabic_sentence|default:0 }}</p>
-                                                   {% else %}
-                                                   <p>Arabic Paragraph: {{ wl_result.pre_test.arabic_paragraph|default:0 }}</p>
-                                                   <p>Arabic Reading Comprehension: {{ wl_result.pre_test.arabic_reading_comprehension|default:0 }}</p>
-                                                   {% endif %}
-                                                   <p>Arabic Dictation: {{ wl_result.pre_test.arabic_dictation|default:0 }}</p>
-                                                   <p><strong>Arabic Total: {{ wl_result.pre_test.arabic_grade|default:0 }}</strong></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mathematics</h4>
-                                                   <p>Math Natural Numbers: {{ wl_result.pre_test.math_natural_numbers|default:0 }}</p>
-                                                   <p>Math Addition: {{ wl_result.pre_test.math_addition_words|default:0 }}</p>
-                                                   <p>Math Subtraction: {{ wl_result.pre_test.math_subtraction|default:0 }}</p>
-                                                   {% if result1.education_program != 'BLN Level 1' %}
-                                                   <p>Math Multiplication: {{ wl_result.pre_test.math_multiplication|default:0 }}</p>
-                                                   {% endif %}
-                                                   {% if result1.education_program == 'BLN Level 3' %}
-                                                   <p>Math Division: {{ wl_result.pre_test.math_division|default:0 }}</p>
-                                                   {% endif %}
-                                                   <p><strong>Math Total: {{ wl_result.pre_test.math_grade|default:0 }}</strong></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        {% include 'mscc/includes/summer_rs_assessment_scores.html' with assessment_period='pre' summer_sections=wl_sections summer_result=wl_result %}
                     </div>
                     <div class="tab-pane" id="tab-animated-wl-2" role="tabpanel">
                         <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
@@ -1677,162 +1602,10 @@
                                 <span style="font-size:14px;">Available after saving pre grading</span>
                             {% endif %}
                         </div>
-                        <div class="scroll-area-sm" style="height: 200px;">
-                            <div class="scrollbar-container ps ps--active-y">
-                                <div class="p-3">
-                                    <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
-                                        {% if request.user.center.provide_french_language == 'Yes' %}
-                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">French Language Development</h4>
-                                                   <p>French Letter Sound: {{ wl_result.post_test.french_letter_sound|default:0 }}</p>
-                                                   <p>French Familiar Words: {{ wl_result.post_test.french_familiar_words|default:0 }}</p>
-                                                   {% if result1.education_program == 'BLN Level 1' %}
-                                                   <p>French Sentence: {{ wl_result.post_test.french_sentence|default:0 }}</p>
-                                                   {% else %}
-                                                   <p>French Paragraph: {{ wl_result.post_test.french_paragraph|default:0 }}</p>
-                                                   <p>French Reading Comprehension: {{ wl_result.post_test.french_reading_comprehension|default:0 }}</p>
-                                                   {% endif %}
-                                                   <p>French Dictation: {{ wl_result.post_test.french_dictation|default:0 }}</p>
-                                                   <p><strong>French Total: {{ wl_result.post_test.french_grade|default:0 }}</strong></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {% else %}
-                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Language Development</h4>
-                                                   <p>English Letter Sound: {{ wl_result.post_test.english_letter_sound|default:0 }}</p>
-                                                   <p>English Familiar Words: {{ wl_result.post_test.english_familiar_words|default:0 }}</p>
-                                                   {% if result1.education_program == 'BLN Level 1' %}
-                                                   <p>English Sentence: {{ wl_result.post_test.english_sentence|default:0 }}</p>
-                                                   {% else %}
-                                                   <p>English Paragraph: {{ wl_result.post_test.english_paragraph|default:0 }}</p>
-                                                   <p>English Reading Comprehension: {{ wl_result.post_test.english_reading_comprehension|default:0 }}</p>
-                                                   {% endif %}
-                                                   <p>English Dictation: {{ wl_result.post_test.english_dictation|default:0 }}</p>
-                                                   <p><strong>English Total: {{ wl_result.post_test.english_grade|default:0 }}</strong></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {% endif %}
-                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Language Development</h4>
-                                                   <p>Arabic Letter Sound: {{ wl_result.post_test.arabic_letter_sound|default:0 }}</p>
-                                                   <p>Arabic Alphabet Vowel: {{ wl_result.post_test.arabic_alphabet_vowel|default:0 }}</p>
-                                                   <p>Arabic Alphabet Long Vowel: {{ wl_result.post_test.arabic_alphabet_long_vowel|default:0 }}</p>
-                                                   <p>Arabic Familiar Words: {{ wl_result.post_test.arabic_familiar_words|default:0 }}</p>
-                                                   {% if result1.education_program == 'BLN Level 1' %}
-                                                   <p>Arabic Sentence: {{ wl_result.post_test.arabic_sentence|default:0 }}</p>
-                                                   {% else %}
-                                                   <p>Arabic Paragraph: {{ wl_result.post_test.arabic_paragraph|default:0 }}</p>
-                                                   <p>Arabic Reading Comprehension: {{ wl_result.post_test.arabic_reading_comprehension|default:0 }}</p>
-                                                   {% endif %}
-                                                   <p>Arabic Dictation: {{ wl_result.post_test.arabic_dictation|default:0 }}</p>
-                                                   <p><strong>Arabic Total: {{ wl_result.post_test.arabic_grade|default:0 }}</strong></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mathematics</h4>
-                                                   <p>Math Natural Numbers: {{ wl_result.post_test.math_natural_numbers|default:0 }}</p>
-                                                   <p>Math Addition: {{ wl_result.post_test.math_addition_words|default:0 }}</p>
-                                                   <p>Math Subtraction: {{ wl_result.post_test.math_subtraction|default:0 }}</p>
-                                                   {% if result1.education_program != 'BLN Level 1' %}
-                                                   <p>Math Multiplication: {{ wl_result.post_test.math_multiplication|default:0 }}</p>
-                                                   {% endif %}
-                                                   {% if result1.education_program == 'BLN Level 3' %}
-                                                   <p>Math Division: {{ wl_result.post_test.math_division|default:0 }}</p>
-                                                   {% endif %}
-                                                   <p><strong>Math Total: {{ wl_result.post_test.math_grade|default:0 }}</strong></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        {% include 'mscc/includes/summer_rs_assessment_scores.html' with assessment_period='post' summer_sections=wl_sections summer_result=wl_result %}
                     </div>
                     <div class="tab-pane" id="tab-animated-wl-3" role="tabpanel">
-                        <div class="scroll-area-sm" style="height: 200px;">
-                            <div class="scrollbar-container ps ps--active-y">
-                                <div class="p-3">
-                                    <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
-                                        {% if request.user.center.provide_french_language == 'Yes' %}
-                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">French Language Development</h4>
-                                                   <p>French Letter Sound: {% grading_improvement wl_result 'french_letter_sound' as grade %}{{ grade }}</p>
-                                                   <p>French Familiar Words: {% grading_improvement wl_result 'french_familiar_words' as grade %}{{ grade }}</p>
-                                                   {% if result1.education_program == 'BLN Level 1' %}
-                                                   <p>French Sentence: {% grading_improvement wl_result 'french_sentence' as grade %}{{ grade }}</p>
-                                                   {% else %}
-                                                   <p>French Paragraph: {% grading_improvement wl_result 'french_paragraph' as grade %}{{ grade }}</p>
-                                                   <p>French Reading Comprehension: {% grading_improvement wl_result 'french_reading_comprehension' as grade %}{{ grade }}</p>
-                                                   {% endif %}
-                                                   <p>French Dictation: {% grading_improvement wl_result 'french_dictation' as grade %}{{ grade }}</p>
-                                                   <p><strong>French Total: {% grading_improvement wl_result 'french_grade' as grade %}{{ grade }}</strong></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {% else %}
-                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Language Development</h4>
-                                                   <p>English Letter Sound: {% grading_improvement wl_result 'english_letter_sound' as grade %}{{ grade }}</p>
-                                                   <p>English Familiar Words: {% grading_improvement wl_result 'english_familiar_words' as grade %}{{ grade }}</p>
-                                                   {% if result1.education_program == 'BLN Level 1' %}
-                                                   <p>English Sentence: {% grading_improvement wl_result 'english_sentence' as grade %}{{ grade }}</p>
-                                                   {% else %}
-                                                   <p>English Paragraph: {% grading_improvement wl_result 'english_paragraph' as grade %}{{ grade }}</p>
-                                                   <p>English Reading Comprehension: {% grading_improvement wl_result 'english_reading_comprehension' as grade %}{{ grade }}</p>
-                                                   {% endif %}
-                                                   <p>English Dictation: {% grading_improvement wl_result 'english_dictation' as grade %}{{ grade }}</p>
-                                                   <p><strong>English Total: {% grading_improvement wl_result 'english_grade' as grade %}{{ grade }}</strong></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {% endif %}
-                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Language Development</h4>
-                                                   <p>Arabic Letter Sound: {% grading_improvement wl_result 'arabic_letter_sound' as grade %}{{ grade }}</p>
-                                                   <p>Arabic Alphabet Vowel: {% grading_improvement wl_result 'arabic_alphabet_vowel' as grade %}{{ grade }}</p>
-                                                   <p>Arabic Alphabet Long Vowel: {% grading_improvement wl_result 'arabic_alphabet_long_vowel' as grade %}{{ grade }}</p>
-                                                   <p>Arabic Familiar Words: {% grading_improvement wl_result 'arabic_familiar_words' as grade %}{{ grade }}</p>
-                                                   {% if result1.education_program == 'BLN Level 1' %}
-                                                   <p>Arabic Sentence: {% grading_improvement wl_result 'arabic_sentence' as grade %}{{ grade }}</p>
-                                                   {% else %}
-                                                   <p>Arabic Paragraph: {% grading_improvement wl_result 'arabic_paragraph' as grade %}{{ grade }}</p>
-                                                   <p>Arabic Reading Comprehension: {% grading_improvement wl_result 'arabic_reading_comprehension' as grade %}{{ grade }}</p>
-                                                   {% endif %}
-                                                   <p>Arabic Dictation: {% grading_improvement wl_result 'arabic_dictation' as grade %}{{ grade }}</p>
-                                                   <p><strong>Arabic Total: {% grading_improvement wl_result 'arabic_grade' as grade %}{{ grade }}</strong></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mathematics</h4>
-                                                   <p>Math Natural Numbers: {% grading_improvement wl_result 'math_natural_numbers' as grade %}{{ grade }}</p>
-                                                   <p>Math Addition: {% grading_improvement wl_result 'math_addition_words' as grade %}{{ grade }}</p>
-                                                   <p>Math Subtraction: {% grading_improvement wl_result 'math_subtraction' as grade %}{{ grade }}</p>
-                                                   {% if result1.education_program != 'BLN Level 1' %}
-                                                   <p>Math Multiplication: {% grading_improvement wl_result 'math_multiplication' as grade %}{{ grade }}</p>
-                                                   {% endif %}
-                                                   {% if result1.education_program == 'BLN Level 3' %}
-                                                   <p>Math Division: {% grading_improvement wl_result 'math_division' as grade %}{{ grade }}</p>
-                                                   {% endif %}
-                                                   <p><strong>Math Total: {% grading_improvement wl_result 'math_grade' as grade %}{{ grade }}</strong></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        {% include 'mscc/includes/summer_rs_assessment_scores.html' with assessment_period='improvement' summer_sections=wl_sections summer_result=wl_result %}
                     </div>
                 </div>
                 <ul class="nav flex-column">
