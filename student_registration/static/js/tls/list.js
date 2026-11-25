@@ -1,3 +1,4 @@
+const listModuleRoot = document.currentScript.dataset.listUrl.replace(/list\/$/, '');
 
 
 $(document).ready(function() {
@@ -53,7 +54,7 @@ $(document).ready(function() {
         requestHeaders = getHeader();
         requestHeaders["content-type"] = 'application/json';
         $.ajax({
-            url: "/tls/child-mark-delete/" + registrationId + "/",
+            url: listModuleRoot + "child-mark-delete/" + registrationId + "/",
             type: "GET",
             headers: requestHeaders,
             success: function(data) {
@@ -174,7 +175,7 @@ $(document).ready(function() {
 
                $(".downloading-message").hide();
                $('.download-center-report').removeClass('disabled');
-               window.open("/tls/export-download/" + data,
+               window.open(listModuleRoot + "export-download/" + data,
                            "_blank");
 
             },
@@ -204,7 +205,7 @@ $(document).ready(function() {
         $('.download-report').addClass('disabled');
 
         $.ajax({
-            url: "/tls/export-list-background/?nationality=" + nationality
+            url: listModuleRoot + "export-list-background/?nationality=" + nationality
                                 + "&first_name=" + first_name
                                 + "&last_name=" + last_name
                                 + "&father_name=" + father_name
@@ -252,7 +253,7 @@ $(document).ready(function() {
         }
         requestHeaders = getHeader();
         $.ajax({
-            url: "/tls/export-list-background/?nationality=" + nationality
+            url: listModuleRoot + "export-list-background/?nationality=" + nationality
                                 + "&first_name=" + first_name
                                 + "&last_name=" + last_name
                                 + "&father_name=" + father_name

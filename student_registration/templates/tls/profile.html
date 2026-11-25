@@ -4,7 +4,7 @@
 {% load util_tags %}
 {% bootstrap_css %}
 
-{% block project_title %}TLS Child Profile{% endblock %}
+{% block project_title %}{% if request.resolver_match.namespace == 'sdc' %}SDC{% else %}TLS{% endif %} Child Profile{% endblock %}
 
 {% block content %}
 <div class="app-page-title">
@@ -13,13 +13,13 @@
       <div>
         <div class="page-title-head center-elem page-title-heading">
           <span class="d-inline-block pr-2"><i class="fa fa-child"></i></span>
-          <span class="d-inline-block">TLS Child Profile - {{ instance.child.full_name }}</span>
+          <span class="d-inline-block">{% if request.resolver_match.namespace == 'sdc' %}SDC{% else %}TLS{% endif %} Child Profile - {{ instance.child.full_name }}</span>
         </div>
         <div class="page-title-subheading opacity-10">
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a>Home</a></li>
-              <li class="breadcrumb-item"><a href="{% url 'tls:list' %}">TLS List</a></li>
+              <li class="breadcrumb-item"><a href="{% url 'tls:list' %}">{% if request.resolver_match.namespace == 'sdc' %}SDC{% else %}TLS{% endif %} List</a></li>
               <li class="active breadcrumb-item" aria-current="page">Child Info.</li>
             </ol>
           </nav>

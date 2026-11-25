@@ -5,7 +5,6 @@ from decimal import Decimal
 from django.utils.translation import gettext as _
 from django.utils.safestring import mark_safe
 from django import forms
-from django.urls import reverse
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db.models import Q
@@ -21,6 +20,7 @@ from dal import autocomplete
 
 from student_registration.tls.templatetags.simple_tags import get_service
 from student_registration.tls.utils import DEFAULT_PACKAGE_TYPE, validate_date
+from .routing import reverse_module
 from .models import EDUCATION_PROGRAM
 from student_registration.mscc.models import (
     Registration,
@@ -341,9 +341,9 @@ class DiagnosticAssessmentForm(forms.ModelForm):
 
         super(DiagnosticAssessmentForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('tls:service_diagnostic_assessment_add', kwargs={'registry': registry})
+        form_action = reverse_module(self.request, 'service_diagnostic_assessment_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('tls:service_diagnostic_assessment_edit',
+            form_action = reverse_module(self.request, 'service_diagnostic_assessment_edit',
                                   kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
@@ -539,9 +539,9 @@ class EducationAssessmentForm(forms.ModelForm):
 
         super(EducationAssessmentForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('tls:service_education_assessment_add', kwargs={'registry': registry})
+        form_action = reverse_module(self.request, 'service_education_assessment_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('tls:service_education_assessment_edit',
+            form_action = reverse_module(self.request, 'service_education_assessment_edit',
                                   kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
@@ -827,9 +827,9 @@ class EducationServiceForm(forms.ModelForm):
             self.fields['round'].queryset = available_rounds
 
 
-        form_action = reverse('tls:service_education_add', kwargs={'registry': registry})
+        form_action = reverse_module(self.request, 'service_education_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('tls:service_education_edit',
+            form_action = reverse_module(self.request, 'service_education_edit',
                                   kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
@@ -869,8 +869,8 @@ class EducationServiceForm(forms.ModelForm):
                 Submit('save', 'Save',
                        css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                 HTML(
-                    '<a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="/tls/child-registration-cancel/{}/">Cancel</a>'.format(
-                        registry)
+                    '<a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="{}">Cancel</a>'.format(
+                        reverse_module(self.request, 'child_registration_cancel', kwargs={'pk': registry}))
                 ),
 
             ),
@@ -1028,9 +1028,9 @@ class EducationRSServiceForm(forms.ModelForm):
 
         super(EducationRSServiceForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('tls:service_education_rs_add', kwargs={'registry': registry})
+        form_action = reverse_module(self.request, 'service_education_rs_add', kwargs={'registry': registry})
         if pk:
-            form_action = reverse('tls:service_education_rs_edit',
+            form_action = reverse_module(self.request, 'service_education_rs_edit',
                                   kwargs={'registry': registry, 'pk': pk})
 
         self.helper = FormHelper()
@@ -1205,10 +1205,10 @@ class EducationGradingForm(forms.ModelForm):
         provide_french_language = getattr(center, 'provide_french_language', None) == "Yes"
         self.provide_french_language = provide_french_language
 
-        form_action = reverse('tls:service_education_grading_add',
+        form_action = reverse_module(self.request, 'service_education_grading_add',
                               kwargs={'registry': registry, 'programme_type': programme_type})
         if instance:
-            form_action = reverse('tls:service_education_grading_edit',
+            form_action = reverse_module(self.request, 'service_education_grading_edit',
                                   kwargs={'registry': registry, 'programme_type': programme_type, 'pre_post': pre_post,
                                           'pk': instance})
 
@@ -2126,10 +2126,10 @@ class SummerRSAssessmentForm(forms.ModelForm):
                 if not field_name.startswith('french_')
             }
 
-        form_action = reverse('tls:summer_rs_assessment_add',
+        form_action = reverse_module(self.request, 'summer_rs_assessment_add',
                               kwargs={'registry': registry, 'programme_type': programme_type})
         if instance:
-            form_action = reverse('tls:summer_rs_assessment_edit',
+            form_action = reverse_module(self.request, 'summer_rs_assessment_edit',
                                   kwargs={'registry': registry, 'programme_type': programme_type,
                                           'pre_post': pre_post, 'pk': instance})
 
@@ -2371,10 +2371,10 @@ class WLBLNAssessmentForm(forms.ModelForm):
                 if not field_name.startswith('french_')
             }
 
-        form_action = reverse('tls:wl_bln_assessment_add',
+        form_action = reverse_module(self.request, 'wl_bln_assessment_add',
                               kwargs={'registry': registry, 'programme_type': programme_type})
         if instance:
-            form_action = reverse('tls:wl_bln_assessment_edit',
+            form_action = reverse_module(self.request, 'wl_bln_assessment_edit',
                                   kwargs={'registry': registry, 'programme_type': programme_type,
                                           'pre_post': pre_post, 'pk': instance})
 
@@ -2626,8 +2626,9 @@ class TarlGradingForm(forms.ModelForm):
         if not show_french_language:
             self.fields.pop('french_level_reached', None)
 
-        form_action = reverse(
-            'tls:service_tarl_grading_add',
+        form_action = reverse_module(
+            self.request,
+            'service_tarl_grading_add',
             kwargs={
                 'registry': registry,
                 'programme_type': programme_type,
@@ -2636,8 +2637,9 @@ class TarlGradingForm(forms.ModelForm):
         )
 
         if instance:
-            form_action = reverse(
-                'tls:service_tarl_grading_edit',
+            form_action = reverse_module(
+                self.request,
+                'service_tarl_grading_edit',
                 kwargs={
                     'registry': registry,
                     'programme_type': programme_type,
@@ -2851,10 +2853,10 @@ class YouthScoringForm(forms.ModelForm):
 
         super(YouthScoringForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('tls:service_youth_scoring_add',
+        form_action = reverse_module(self.request, 'service_youth_scoring_add',
                               kwargs={'registry': registry, 'programme_type': programme_type})
         if instance:
-            form_action = reverse('tls:service_youth_scoring_edit',
+            form_action = reverse_module(self.request, 'service_youth_scoring_edit',
                                   kwargs={'registry': registry, 'programme_type': programme_type, 'pre_post': pre_post,
                                           'pk': instance})
 
@@ -3124,7 +3126,7 @@ class EducationSchoolGradingForm(forms.ModelForm):
 
         super(EducationSchoolGradingForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('tls:service_school_grading',
+        form_action = reverse_module(self.request, 'service_school_grading',
                               kwargs={'registry': registry, 'programme_type': programme_type, 'pk': instance})
 
         if programme_type in ["RS Grade 7", "RS Grade 8", "RS Grade 9", "YFS Level 1 - RS Grade 9", "YFS Level 2 - RS Grade 9"]:

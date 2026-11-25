@@ -11,7 +11,7 @@ One TLS child profile ID card. Expects `card` (from registration_profile_id_card
   </div>
   <div class="details">
     <div class="title">{{ card.round }}</div>
-    <div class="subtitle">TLS</div>
+    <div class="subtitle">{% if request.resolver_match.namespace == 'sdc' %}SDC{% else %}TLS{% endif %}</div>
     <div>ID: {{ card.id }}</div>
     <div>NGO: {{ card.ngo }}</div>
     <div class="name">الاسم الثلاثي: {{ card.full_name }}</div>

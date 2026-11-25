@@ -1,10 +1,10 @@
 # coding: utf-8
 import django_tables2 as tables
 from django.utils.translation import gettext as _
-from django.urls import reverse
 from django.utils.html import format_html
 
 from student_registration.mscc.models import Registration
+from .routing import reverse_module
 
 
 class BootstrapTable(tables.Table):
@@ -63,7 +63,7 @@ class CommonTable(tables.Table):
         return record.has_previous_registration
 
     def render_child_unicef_id(self, record):
-        url = reverse('tls:child_profile', kwargs={'pk': record.id})
+        url = reverse_module(getattr(self, 'request', None), 'child_profile', kwargs={'pk': record.id})
         return format_html('<a href="{}" target="_blank">{}</a>', url, record.child.unicef_id)
 
 

@@ -4,12 +4,12 @@ from __future__ import absolute_import, unicode_literals
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
-from django.urls import reverse
 from django.http import Http404
 
 from dal import autocomplete
 from student_registration.schools.models import School
 
+from .routing import reverse_module
 from .education_form import *
 from student_registration.mscc.models import Registration, TarlAssessment
 from .utils import *
@@ -32,7 +32,7 @@ class EducationAssessmentFormView(LoginRequiredMixin,
     group_required = [u"TLS", u"TLS_CENTER"]
 
     def get_success_url(self):
-        return reverse('tls:child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
+        return reverse_module(self.request, 'child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
@@ -71,7 +71,7 @@ class DiagnosticAssessmentFormView(LoginRequiredMixin,
     group_required = [u"TLS", u"TLS_CENTER"]
 
     def get_success_url(self):
-        return reverse('tls:child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
+        return reverse_module(self.request, 'child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
@@ -125,7 +125,7 @@ class EducationServiceFormView(LoginRequiredMixin,
         return package_type or DEFAULT_PACKAGE_TYPE
 
     def get_success_url(self):
-        return reverse('tls:child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
+        return reverse_module(self.request, 'child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
@@ -166,7 +166,7 @@ class EducationRSServiceFormView(LoginRequiredMixin,
     group_required = [u"TLS", u"TLS_CENTER"]
 
     def get_success_url(self):
-        return reverse('tls:child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
+        return reverse_module(self.request, 'child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
@@ -203,7 +203,7 @@ class EducationGradingFormView(LoginRequiredMixin,
     group_required = [u"TLS", u"TLS_CENTER"]
 
     def get_success_url(self):
-        return reverse('tls:child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
+        return reverse_module(self.request, 'child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
@@ -260,7 +260,7 @@ class SummerRSAssessmentFormView(LoginRequiredMixin,
         return super(SummerRSAssessmentFormView, self).dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
-        return reverse('tls:child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
+        return reverse_module(self.request, 'child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
 
     def get_context_data(self, **kwargs):
         if 'form' not in kwargs:
@@ -334,7 +334,7 @@ class WLBLNAssessmentFormView(LoginRequiredMixin,
         return super(WLBLNAssessmentFormView, self).dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
-        return reverse('tls:child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
+        return reverse_module(self.request, 'child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
 
     def get_context_data(self, **kwargs):
         if 'form' not in kwargs:
@@ -439,7 +439,7 @@ class TarlGradingFormView(LoginRequiredMixin,
         )
 
     def get_success_url(self):
-        return reverse('tls:child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
+        return reverse_module(self.request, 'child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
 
     def get_context_data(self, **kwargs):
         if 'form' not in kwargs:
@@ -488,7 +488,7 @@ class YouthScoringFormView(LoginRequiredMixin,
     group_required = [u"TLS", u"TLS_CENTER"]
 
     def get_success_url(self):
-        return reverse('tls:child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
+        return reverse_module(self.request, 'child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
@@ -539,7 +539,7 @@ class EducationSchoolGradingFormView(LoginRequiredMixin,
     group_required = [u"TLS", u"TLS_CENTER"]
 
     def get_success_url(self):
-        return reverse('tls:child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
+        return reverse_module(self.request, 'child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""

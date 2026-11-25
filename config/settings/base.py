@@ -106,6 +106,7 @@ LOCAL_APPS = [
     'student_registration.child',
     'student_registration.mscc',
     'student_registration.tls',
+    'student_registration.sdc.apps.SDCConfig',
     'student_registration.youth',
     'student_registration.adolescent',
     'student_registration.wellbeing',

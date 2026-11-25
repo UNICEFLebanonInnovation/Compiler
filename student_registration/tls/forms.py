@@ -2,7 +2,6 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.utils.translation import gettext as _
 from django import forms
-from django.urls import reverse
 from django.contrib import messages
 
 from crispy_forms.helper import FormHelper
@@ -30,6 +29,7 @@ from student_registration.mscc.models import (
 from student_registration.schools.models import (
     School
 )
+from .routing import reverse_module
 from .utils import generate_services, generate_education_history, regenerate_services
 from .serializers import MainSerializer
 from student_registration.tls.templatetags.simple_tags import get_service, get_education_service
@@ -494,10 +494,10 @@ class MainForm(forms.ModelForm):
         for field_name in self.core_package_required_fields:
             self.fields[field_name].required = True
 
-        form_action = reverse('tls:child_add')
+        form_action = reverse_module(self.request, 'child_add')
         if instance:
             display_registry = ' d-none'
-            form_action = reverse('tls:child_edit', kwargs={'pk': instance.id})
+            form_action = reverse_module(self.request, 'child_edit', kwargs={'pk': instance.id})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -1006,9 +1006,9 @@ class ReferralForm(forms.ModelForm):
         pk = kwargs.pop('pk', None)
         super(ReferralForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('tls:referral_add', kwargs={'registry': registry})
+        form_action = reverse_module(self.request, 'referral_add', kwargs={'registry': registry})
         if pk:
-            form_action = reverse('tls:referral_edit',
+            form_action = reverse_module(self.request, 'referral_edit',
                                   kwargs={'registry': registry, 'pk': pk})
         education_program = get_education_service(registry)
         self.education_program = education_program

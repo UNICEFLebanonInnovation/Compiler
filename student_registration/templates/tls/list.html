@@ -6,7 +6,7 @@
 {% load django_bootstrap5 %}
 {% bootstrap_css %}
 
-{% block project_title %}TLS List{% endblock %}
+{% block project_title %}{% if request.resolver_match.namespace == 'sdc' %}SDC{% else %}TLS{% endif %} List{% endblock %}
 
 {% block content %}
 
@@ -103,7 +103,7 @@
                                                     <a href="">Home</a>
                                                 </li>
                                                 <li class="breadcrumb-item">
-                                                      TLS List
+                                                      {% if request.resolver_match.namespace == 'sdc' %}SDC{% else %}TLS{% endif %} List
                                                 </li>
                                               {% if request.user|has_group:"TLS_FULL" and request.user|has_group:"TLS_CENTER" and request.user.center.id %}
 
@@ -255,6 +255,6 @@
 {% block extra_js %}
 
     <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/tls/list.js' %}?v=1"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/tls/list.js' %}?v=2" data-list-url="{% url 'tls:list' %}"></script>
 
 {% endblock %}

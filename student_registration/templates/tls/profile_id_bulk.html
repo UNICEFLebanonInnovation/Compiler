@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>{% trans "TLS Profile IDs" %}</title>
+  <title>{% if request.resolver_match.namespace == 'sdc' %}{% trans "SDC Profile IDs" %}{% else %}{% trans "TLS Profile IDs" %}{% endif %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     * { box-sizing: border-box; }
@@ -33,7 +33,7 @@
     <button type="button" class="btn" id="print-profiles">{% trans "Print / Save as PDF" %}</button>
     <span class="hint">{% trans 'Choose "Save as PDF" in the print dialog to download this list.' %}</span>
   </div>
-  <h1 class="document-title">{% trans "TLS Profile IDs" %}</h1>
+  <h1 class="document-title">{% if request.resolver_match.namespace == 'sdc' %}{% trans "SDC Profile IDs" %}{% else %}{% trans "TLS Profile IDs" %}{% endif %}</h1>
   {% for item in cards %}
     <div class="sheet">
       <div class="profile-row" data-registration-id="{{ item.registration.pk }}">

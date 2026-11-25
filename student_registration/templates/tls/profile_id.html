@@ -10,7 +10,7 @@
   <div class="toolbar">
     <button type="button" class="btn" onclick="window.print()">{% trans "Print / Save as PDF" %}</button>
     <a class="btn secondary" href="{% url 'tls:profile_picture' object.pk %}">{% trans "Profile Picture" %}</a>
-    <a class="btn secondary" href="{% url 'tls:list' %}">{% trans "TLS List" %}</a>
+    <a class="btn secondary" href="{% url 'tls:list' %}">{% if request.resolver_match.namespace == 'sdc' %}{% trans "SDC List" %}{% else %}{% trans "TLS List" %}{% endif %}</a>
     <span class="spacer"></span>
     {% if not card.has_picture %}
       <span class="hint">{% trans "No profile picture has been uploaded for this child." %}</span>

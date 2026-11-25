@@ -1,3 +1,4 @@
+const registrationModuleRoot = document.currentScript.dataset.listUrl.replace(/list\/$/, '');
 
 var arabic_fields = "#id_child_first_name, #id_child_father_name, #id_child_last_name, #id_child_mother_fullname, " +
     " #id_caregiver_mother_name, #id_caregiver_last_name, #id_caregiver_middle_name, #id_caregiver_first_name";
@@ -286,7 +287,7 @@ function outreach_child_search() {
         };
 
         $.ajax({
-            url: '/tls/outreach-child-search/',
+            url: registrationModuleRoot + 'outreach-child-search/',
             dataType: "json",
             data: data,
             cache: false,
@@ -341,7 +342,7 @@ function get_child_data(outreach_id)
     $('#search_loader').removeClass('hidden');
 
     $.ajax({
-        url: '/tls/outreach-child/',
+        url: registrationModuleRoot + 'outreach-child/',
         data: { outreach_id: outreach_id},
         cache: false,
         async: true,
@@ -406,7 +407,7 @@ function old_child_search() {
         };
 
         $.ajax({
-            url: '/tls/old-child-search/',
+            url: registrationModuleRoot + 'old-child-search/',
             dataType: "json",
             data: data,
             cache: false,
@@ -462,7 +463,7 @@ function child_duplication_check() {
 
         $.ajax({
             type: "POST",
-            url: '/tls/child-duplication-check/',
+            url: registrationModuleRoot + 'child-duplication-check/',
             data: JSON.stringify(data),
             cache: false,
             async: true,
@@ -480,8 +481,8 @@ function child_duplication_check() {
                 if(duplicateResults.length > 0){
                     var text = ''
                     $(duplicateResults).each(function(i, item){
-                        text = 'This <a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="/tls/child-profile-preview/?registry_id='+item.id+'">Child</a> is already registered under the TLS programme in the Center:' + item.center__name+'</br>';
-                        text = text + 'Click <a href="/tls/new-round/'+item.id+'/">here</a> to register this child in a new Round.'
+                        text = 'This <a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="' + registrationModuleRoot + 'child-profile-preview/?registry_id='+item.id+'">Child</a> is already registered under the TLS programme in the Center:' + item.center__name+'</br>';
+                        text = text + 'Click <a href="' + registrationModuleRoot + 'new-round/'+item.id+'/">here</a> to register this child in a new Round.'
                     })
                     $('#child-duplication-error-text').html(text);
                     $('#child-duplication-error').show();
@@ -543,7 +544,7 @@ function append_old_result(data)
         var latestRegistrationId = item.latest_registration_id;
         var childLink = full_name;
         if (latestRegistrationId) {
-            childLink = '<a href="/tls/new-round/' + latestRegistrationId + '/">' + full_name + '</a>';
+            childLink = '<a href="' + registrationModuleRoot + 'new-round/' + latestRegistrationId + '/">' + full_name + '</a>';
         }
         var html_line2 = '<h4 class="timeline-title text-success">'+ childLink +'</h4>';
 
@@ -563,7 +564,7 @@ function get_old_child_data(student_id)
     $('#nfe_search_loader').removeClass('hidden');
 
     $.ajax({
-        url: '/tls/get-old-child-data/',
+        url: registrationModuleRoot + 'get-old-child-data/',
         data: { student_id: student_id},
         cache: false,
         async: true,

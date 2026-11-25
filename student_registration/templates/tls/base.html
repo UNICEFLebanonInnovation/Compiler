@@ -1,3 +1,3 @@
 {% extends "base.html" %}
 
-{% block module_name %}TLS{% endblock %}
+{% block module_name %}{% if request.resolver_match.namespace == 'sdc' %}SDC{% else %}TLS{% endif %}{% endblock %}

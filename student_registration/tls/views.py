@@ -26,6 +26,7 @@ from django_tables2.export.views import ExportMixin
 from student_registration.attendances.models import MSCCAttendanceChild
 from student_registration.backends.models import ExportHistory
 from student_registration.backends.utils import ExportStorage
+from .routing import module_namespace, reverse_module
 from .education_form import EducationServiceForm
 from .filters import FullFilter, MainFilter
 from .forms import MainForm
@@ -74,7 +75,7 @@ class TLSAddView(LoginRequiredMixin, GroupRequiredMixin, FormView):
     group_required = [u'TLS', u'TLS_CENTER', u'TLS_PARTNER', u'TLS_UNICEF']
 
     def get_success_url(self):
-        return reverse('tls:child_profile', kwargs={'pk': self.request.session.get('instance_id')})
+        return reverse_module(self.request, 'child_profile', kwargs={'pk': self.request.session.get('instance_id')})
 
     def get_context_data(self, **kwargs):
         if 'form' not in kwargs:
@@ -83,7 +84,9 @@ class TLSAddView(LoginRequiredMixin, GroupRequiredMixin, FormView):
 
     def get_initial(self):
         initial = super().get_initial()
-        initial['type'] = self.request.GET.get('type') or TLS_PACKAGE_TYPE
+        initial['type'] = TLS_PACKAGE_TYPE
+        if module_namespace(self.request) == 'tls':
+            initial['type'] = self.request.GET.get('type') or TLS_PACKAGE_TYPE
         return initial
 
     def form_valid(self, form):
@@ -103,7 +106,7 @@ class TLSEditView(LoginRequiredMixin, GroupRequiredMixin, FormView):
     group_required = [u'TLS', u'TLS_CENTER', u'TLS_PARTNER', u'TLS_UNICEF']
 
     def get_success_url(self):
-        return reverse('tls:child_profile', kwargs={'pk': self.request.session.get('instance_id')})
+        return reverse_module(self.request, 'child_profile', kwargs={'pk': self.request.session.get('instance_id')})
 
     def get_context_data(self, **kwargs):
         if 'form' not in kwargs:
@@ -203,7 +206,7 @@ class TLSEducationServiceFormView(LoginRequiredMixin, GroupRequiredMixin, FormVi
         return TLS_PACKAGE_TYPE or DEFAULT_PACKAGE_TYPE
 
     def get_success_url(self):
-        return reverse('tls:child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
+        return reverse_module(self.request, 'child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
 
     def get_context_data(self, **kwargs):
         if 'form' not in kwargs:
@@ -283,9 +286,9 @@ class TLSNewRoundRedirectView(LoginRequiredMixin, GroupRequiredMixin, RedirectVi
             new_registration.save()
 
             generate_services(new_registration.child.age, new_registration, self.request.user)
-            return reverse('tls:service_education_add', kwargs={'registry': new_registration.id})
+            return reverse_module(self.request, 'service_education_add', kwargs={'registry': new_registration.id})
 
-        return reverse('tls:new_round', kwargs={'pk': registry})
+        return reverse_module(self.request, 'new_round', kwargs={'pk': registry})
 
 
 def tls_registration_cancel_view(request, pk):
@@ -294,7 +297,7 @@ def tls_registration_cancel_view(request, pk):
             registration = Registration.objects.get(id=pk)
             registration.deleted = True
             registration.save()
-            return redirect('tls:list')
+            return redirect(reverse_module(request, 'list'))
         except Registration.DoesNotExist:
             result = {"isSuccessful": False}
     else:
@@ -302,7 +305,7 @@ def tls_registration_cancel_view(request, pk):
     return JsonResponse(result)
 
 
-def _generate_filtered_tls_export(export_id, round_id=''):
+def _generate_filtered_tls_export(export_id, round_id='', namespace='tls'):
     export = ExportHistory.objects.get(id=export_id)
     try:
         user = export.created_by
@@ -363,7 +366,7 @@ def _generate_filtered_tls_export(export_id, round_id=''):
         file_name = f'tls_out_file_{uuid.uuid4()}.zip'
         storage = ExportStorage()
         storage.save(file_name, ContentFile(zip_output.getvalue()))
-        export.file_url = reverse('tls:export_download', args=[file_name])
+        export.file_url = reverse(f'{namespace}:export_download', args=[file_name])
         export.status = 'done'
         export.save()
     except Exception:
@@ -371,8 +374,8 @@ def _generate_filtered_tls_export(export_id, round_id=''):
         export.save()
 
 
-def queue_filtered_tls_export(export_id, round_id=''):
-    thread = threading.Thread(target=_generate_filtered_tls_export, args=(export_id, round_id), daemon=True)
+def queue_filtered_tls_export(export_id, round_id='', namespace='tls'):
+    thread = threading.Thread(target=_generate_filtered_tls_export, args=(export_id, round_id, namespace), daemon=True)
     thread.start()
     return thread
 
@@ -389,5 +392,5 @@ def export_list_background(request):
         created_by=user,
         partner_name=user.partner.name if user.partner else '',
     )
-    queue_filtered_tls_export(export_record.id, round_id)
+    queue_filtered_tls_export(export_record.id, round_id, module_namespace(request))
     return JsonResponse({'status': 'started', 'export_id': export_record.id})

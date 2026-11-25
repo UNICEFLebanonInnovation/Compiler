@@ -4,13 +4,13 @@ import mimetypes
 from braces.views import GroupRequiredMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import FileResponse, Http404, HttpResponseForbidden, HttpResponseBadRequest
-from django.urls import reverse_lazy
 from django.views.generic import DetailView, UpdateView, View
 from django.shortcuts import render, get_object_or_404
 
 from student_registration.users.templatetags.custom_tags import has_group
 from student_registration.mscc.models import Registration, Round
 from .profile_forms import ProfilePictureForm
+from .routing import reverse_module
 
 
 class ProfileRegistrationMixin(LoginRequiredMixin, GroupRequiredMixin):
@@ -36,7 +36,13 @@ class ProfileRegistrationMixin(LoginRequiredMixin, GroupRequiredMixin):
 class ProfilePictureView(ProfileRegistrationMixin, UpdateView):
     form_class = ProfilePictureForm
     template_name = 'tls/profile_picture.html'
-    success_url = reverse_lazy('tls:list')
+    def get_success_url(self):
+        return reverse_module(self.request, 'list')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
 
     def dispatch(self, request, *args, **kwargs):
         if (request.method == 'POST' and request.user.is_authenticated

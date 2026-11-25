@@ -2,7 +2,6 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.utils.translation import gettext as _
 from django import forms
-from django.urls import reverse
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.conf import settings
@@ -15,6 +14,7 @@ from crispy_forms.bootstrap import (
 )
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, Reset
 
+from .routing import reverse_module
 from .utils import update_service, validate_date, TrimmedDateField
 from student_registration.mscc.models import (
     PSSService,
@@ -102,9 +102,9 @@ class PSSServiceForm(forms.ModelForm):
 
         super(PSSServiceForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('tls:service_pss_add', kwargs={'registry': registry})
+        form_action = reverse_module(self.request, 'service_pss_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('tls:service_pss_edit', kwargs={'registry': registry, 'pk': instance})
+            form_action = reverse_module(self.request, 'service_pss_edit', kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -232,9 +232,9 @@ class InclusionServiceForm(forms.ModelForm):
 
         super(InclusionServiceForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('tls:service_inclusion_add', kwargs={'registry': registry})
+        form_action = reverse_module(self.request, 'service_inclusion_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('tls:service_inclusion_edit', kwargs={'registry': registry, 'pk': instance})
+            form_action = reverse_module(self.request, 'service_inclusion_edit', kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -397,9 +397,9 @@ class DigitalServiceForm(forms.ModelForm):
             education_program__in=self.RS_GRADES
         ).exists()
 
-        form_action = reverse('tls:service_digital_add', kwargs={'registry': registry})
+        form_action = reverse_module(self.request, 'service_digital_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('tls:service_digital_edit', kwargs={'registry': registry, 'pk': instance})
+            form_action = reverse_module(self.request, 'service_digital_edit', kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -797,9 +797,9 @@ class HealthNutritionServiceForm(forms.ModelForm):
             self.fields['accessing_reproductive_health'].required = True
             self.fields['attended_health_nutrition_session'].required = True
 
-        form_action = reverse('tls:service_health_nutrition_add', kwargs={'registry': registry, 'age': age})
+        form_action = reverse_module(self.request, 'service_health_nutrition_add', kwargs={'registry': registry, 'age': age})
         if instance:
-            form_action = reverse('tls:service_health_nutrition_edit', kwargs={'registry': registry, 'age': age, 'pk': instance})
+            form_action = reverse_module(self.request, 'service_health_nutrition_edit', kwargs={'registry': registry, 'age': age, 'pk': instance})
 
         self.fields['child_age'].initial = age
         self.helper = FormHelper()
@@ -1289,9 +1289,9 @@ class HealthNutritionReferralForm(forms.ModelForm):
 
         super(HealthNutritionReferralForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('tls:service_health_nutrition_referral_add', kwargs={'registry': registry})
+        form_action = reverse_module(self.request, 'service_health_nutrition_referral_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('tls:service_health_nutrition_referral_edit', kwargs={'registry': registry, 'pk': instance})
+            form_action = reverse_module(self.request, 'service_health_nutrition_referral_edit', kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -1554,9 +1554,9 @@ class YouthKitServiceForm(forms.ModelForm):
 
         super(YouthKitServiceForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('tls:service_youth_kit_add', kwargs={'registry': registry})
+        form_action = reverse_module(self.request, 'service_youth_kit_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('tls:service_youth_kit_edit', kwargs={'registry': registry, 'pk': instance})
+            form_action = reverse_module(self.request, 'service_youth_kit_edit', kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -1787,10 +1787,10 @@ class YouthServiceMaharatiForm(forms.ModelForm):
 
         super(YouthServiceMaharatiForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('tls:service_youth_maharati_add',
+        form_action = reverse_module(self.request, 'service_youth_maharati_add',
                                   kwargs={'registry': registry })
         if instance:
-            form_action = reverse('tls:service_youth_maharati_edit',
+            form_action = reverse_module(self.request, 'service_youth_maharati_edit',
                                   kwargs={'registry': registry, 'pk': instance})
 
 
@@ -1921,10 +1921,10 @@ class YouthServiceGilForm(forms.ModelForm):
 
         super(YouthServiceGilForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('tls:service_youth_gil_add',
+        form_action = reverse_module(self.request, 'service_youth_gil_add',
                                   kwargs={'registry': registry })
         if instance:
-            form_action = reverse('tls:service_youth_gil_edit',
+            form_action = reverse_module(self.request, 'service_youth_gil_edit',
                                   kwargs={'registry': registry, 'pk': instance})
 
 
@@ -2089,9 +2089,9 @@ class FollowUpServiceForm(forms.ModelForm):
 
         super(FollowUpServiceForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('tls:service_follow_up_add', kwargs={'registry': registry})
+        form_action = reverse_module(self.request, 'service_follow_up_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('tls:service_follow_up_edit', kwargs={'registry': registry, 'pk': instance})
+            form_action = reverse_module(self.request, 'service_follow_up_edit', kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -2322,9 +2322,9 @@ class YouthAssessmentForm(forms.ModelForm):
 
         super(YouthAssessmentForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('tls:service_youth_assessment_add', kwargs={'registry': registry})
+        form_action = reverse_module(self.request, 'service_youth_assessment_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('tls:service_youth_assessment_edit', kwargs={'registry': registry, 'pk': instance})
+            form_action = reverse_module(self.request, 'service_youth_assessment_edit', kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -2468,9 +2468,9 @@ class YouthReferralForm(forms.ModelForm):
 
         super(YouthReferralForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('tls:service_youth_referral_add', kwargs={'registry': registry})
+        form_action = reverse_module(self.request, 'service_youth_referral_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('tls:service_youth_referral_edit', kwargs={'registry': registry, 'pk': instance})
+            form_action = reverse_module(self.request, 'service_youth_referral_edit', kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -2572,9 +2572,9 @@ class RecreationalForm(forms.ModelForm):
 
         super(RecreationalForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('tls:service_recreational_add', kwargs={'registry': registry})
+        form_action = reverse_module(self.request, 'service_recreational_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('tls:service_recreational_edit', kwargs={'registry': registry, 'pk': instance})
+            form_action = reverse_module(self.request, 'service_recreational_edit', kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -2675,9 +2675,9 @@ class LegoServiceForm(forms.ModelForm):
             self.fields['participating_education_sessions'].required = True
             self.fields['participating_lego_play_sessions'].required = True
 
-        form_action = reverse('tls:service_lego_add', kwargs={'registry': registry, 'age': age})
+        form_action = reverse_module(self.request, 'service_lego_add', kwargs={'registry': registry, 'age': age})
         if instance:
-            form_action = reverse('tls:service_lego_edit', kwargs={'registry': registry, 'age': age, 'pk': instance})
+            form_action = reverse_module(self.request, 'service_lego_edit', kwargs={'registry': registry, 'age': age, 'pk': instance})
 
         self.fields['child_age'].initial = age
         self.helper = FormHelper()

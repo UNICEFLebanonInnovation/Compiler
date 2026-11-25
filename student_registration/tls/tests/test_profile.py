@@ -5,9 +5,9 @@ from types import SimpleNamespace
 from unittest.mock import patch
 from urllib.parse import unquote
 
-from django.template import Context, Engine
+from django.template import Context, Engine, RequestContext
 from django.template.loader import get_template
-from django.test import SimpleTestCase
+from django.test import RequestFactory, SimpleTestCase
 from django.urls import resolve, reverse
 
 from student_registration.mscc.models import Registration
@@ -72,6 +72,11 @@ class TLSProfileTests(SimpleTestCase):
                 match = resolve(unquote(url))
                 callback = getattr(match.func, 'view_class', match.func)
                 self.assertTrue(callback.__module__.startswith('student_registration.tls'), callback)
+                sdc_url = reverse('sdc:' + route.name, kwargs=kwargs)
+                self.assertEqual(sdc_url, '/sdc/' + url.removeprefix('/tls/'))
+                sdc_match = resolve(unquote(sdc_url))
+                self.assertEqual(sdc_match.namespace, 'sdc')
+                self.assertIs(sdc_match.func, match.func)
 
     def test_service_saves_return_to_tls_services_tab(self):
         classes = [views.TLSEducationServiceFormView]
@@ -82,7 +87,22 @@ class TLSProfileTests(SimpleTestCase):
             with self.subTest(view=cls.__name__):
                 view = cls()
                 view.kwargs = {'registry': 216007}
+                view.request = RequestFactory().get('/tls/list/')
+                view.request.resolver_match = resolve(view.request.path)
                 self.assertEqual(view.get_success_url(), '/tls/child-profile/216007/?current_tab=services')
+                view.request = RequestFactory().get('/sdc/list/')
+                view.request.resolver_match = resolve(view.request.path)
+                self.assertEqual(view.get_success_url(), '/sdc/child-profile/216007/?current_tab=services')
+
+    def test_sdc_add_form_uses_tls_package_and_sdc_routes(self):
+        view = views.TLSAddView()
+        view.request = RequestFactory().get('/sdc/child-add/?type=SDC')
+        view.request.resolver_match = resolve(view.request.path)
+        self.assertEqual(view.get_initial()['type'], 'TLS')
+        self.assertEqual(view.get_form().helper.form_action, '/sdc/child-add/')
+
+        template = Engine().from_string("{% url 'tls:child_add' %}")
+        self.assertEqual(template.render(RequestContext(view.request)), '/sdc/child-add/')
 
     def test_tls_links_do_not_reference_mscc_routes(self):
         app = Path(views.__file__).parents[1]

@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.views.generic import FormView, TemplateView
 from fuzzywuzzy import fuzz
 
@@ -16,6 +16,7 @@ from student_registration.students.utils import generate_one_unique_id
 from student_registration.mscc.models import Registration, Referral
 from student_registration.tls.templatetags.simple_tags import education_history_model, get_education_service_history
 from student_registration.users.templatetags.custom_tags import has_group
+from .routing import reverse_module
 from .forms import ReferralForm
 from student_registration.outreach.models import OutreachChild
 from .utils import get_outreach_child, get_old_child
@@ -100,7 +101,7 @@ class ReferralFormView(LoginRequiredMixin,
     group_required = [u"TLS", u"TLS_CENTER"]
 
     def get_success_url(self):
-        return reverse('tls:child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
+        return reverse_module(self.request, 'child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
