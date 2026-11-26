@@ -1,0 +1,28 @@
+{% extends "admin/base_site.html" %}
+{% block content_title %}Remove pending bulk syncs{% endblock %}
+{% block content %}
+<section class="card">
+  <div class="card-body">
+    <h2 class="h4">Pending bulk syncs for {{ partner }}</h2>
+    {% if pending_runs %}
+    <p>Remove the {{ pending_runs|length }} waiting request{{ pending_runs|length|pluralize }} listed below? This permanently removes these requests from the bulk history. Source records and data in BMA-NFE are preserved.</p>
+    <p>Any request that starts processing before confirmation will be kept.</p>
+    <div class="table-responsive">
+      <table class="table" aria-label="Pending bulk syncs to remove">
+        <thead><tr><th>Requested</th><th>Round / scope</th><th>Categories</th><th>Requested by</th><th>Request ID</th></tr></thead>
+        <tbody>{% for item in pending_runs %}<tr><td>{{ item.created }}</td><td>{{ item.scope_label }}</td><td>{{ item.get_category_display }}</td><td>{{ item.requested_by|default:"—" }}</td><td>{{ item.pk }}</td></tr>{% endfor %}</tbody>
+      </table>
+    </div>
+    <form method="post" class="d-flex flex-wrap align-items-center" style="gap: 12px;">
+      {% csrf_token %}
+      <input type="hidden" name="confirmation" value="{{ confirmation }}">
+      <button type="submit" class="btn btn-danger">Remove {{ pending_runs|length }} pending request{{ pending_runs|length|pluralize }}</button>
+      <a href="{{ back_url }}" class="btn btn-secondary">Keep requests</a>
+    </form>
+    {% else %}
+    <p>No unstarted bulk sync requests are available to remove for this partner.</p>
+    <a href="{{ back_url }}" class="btn btn-secondary">Back to bulk sync</a>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

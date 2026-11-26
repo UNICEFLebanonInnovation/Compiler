@@ -108,6 +108,7 @@ LOCAL_APPS = [
     'student_registration.tls',
     'student_registration.youth',
     'student_registration.adolescent',
+    'student_registration.datasync',  # replication of MSCC data to BMA-NFE
     'student_registration.wellbeing',
     'student_registration.figures',
 ]
@@ -377,14 +378,74 @@ CELERY_TASK_DEFAULT_QUEUE = 'default'
 CELERY_TASK_QUEUES = (
     Queue('default', routing_key='default'),
     Queue('mscc_export', routing_key='mscc_export'),
+    Queue('datasync', routing_key='datasync'),
 )
 CELERY_TASK_ROUTES = {
     'student_registration.mscc.tasks.generate_mscc_export': {
         'queue': 'mscc_export',
         'routing_key': 'mscc_export',
     },
+    'datasync.deliver_sync_event': {
+        'queue': 'datasync',
+        'routing_key': 'datasync',
+    },
+    'datasync.flush_sync_outbox': {
+        'queue': 'datasync',
+        'routing_key': 'datasync',
+    },
+}
+
+# Sweep the replication outbox regularly. This is the safety net behind the
+# push that happens on save: it re-sends whatever failed, whatever was queued
+# while BMA-NFE was unreachable, and whatever a dead worker dropped.
+CELERY_BEAT_SCHEDULE = {
+    'datasync-flush-outbox': {
+        'task': 'datasync.flush_sync_outbox',
+        'schedule': env.int('DATASYNC_SWEEP_SECONDS', default=300),
+        'options': {'queue': 'datasync', 'expires': 240},
+    },
 }
 ########## END CELERY
+
+########## DATA REPLICATION (Compiler -> BMA-NFE, outbound)
+# The Compiler is the system of record for MSCC. Every change to a replicated
+# model is captured on save and pushed to BMA-NFE, which holds a read replica
+# so partners do not have to enter the same data twice. Nothing is ever read
+# back: this is a one-way channel.
+
+# Master switch. Off by default so a deployment that has not been configured
+# yet does not start queueing events it cannot deliver.
+DATASYNC_ENABLED = env.bool('DATASYNC_ENABLED', default=True)
+DATASYNC_PHOTO_SYNC_ENABLED = DATASYNC_ENABLED  # Compatibility alias; one sync switch
+DATASYNC_PHOTO_MAX_BYTES = env.int('DATASYNC_PHOTO_MAX_BYTES', default=5 * 1024 * 1024)
+DATASYNC_PHOTO_TIMEOUT = env.int('DATASYNC_PHOTO_TIMEOUT', default=60)
+DATASYNC_PHOTO_REUSE_ENABLED = env.bool('DATASYNC_PHOTO_REUSE_ENABLED', default=True)
+# Shared PostgreSQL slots cap in-flight deliveries across all Compiler workers.
+DATASYNC_PARALLEL_UPLOADS = env.int('DATASYNC_PARALLEL_UPLOADS', default=4)
+
+# BMA-NFE SIT connection shared by web and sync worker processes.
+# Update both values together when switching the receiver environment.
+DATASYNC_TARGET_URL = 'https://leb-container-test-sector-api.azurewebsites.net/api/sync/events/'
+DATASYNC_TARGET_TOKEN = '18f2184a63a5485617114eefcdae0bb04bd269fb'
+
+# Transport tuning.
+DATASYNC_TIMEOUT = env.int('DATASYNC_TIMEOUT', default=30)
+DATASYNC_VERIFY_TLS = env.bool('DATASYNC_VERIFY_TLS', default=True)
+DATASYNC_BATCH_SIZE = env.int('DATASYNC_BATCH_SIZE', default=100)
+# Attendance days embed many child rows; keep their HTTP batches smaller.
+DATASYNC_ATTENDANCE_BATCH_SIZE = env.int('DATASYNC_ATTENDANCE_BATCH_SIZE', default=10)
+
+# Retry policy: the wait doubles after each failure, from DATASYNC_RETRY_DELAY
+# up to DATASYNC_MAX_RETRY_DELAY, and an event is parked for an operator after
+# DATASYNC_MAX_ATTEMPTS tries.
+DATASYNC_RETRY_DELAY = env.int('DATASYNC_RETRY_DELAY', default=60)
+DATASYNC_MAX_RETRY_DELAY = env.int('DATASYNC_MAX_RETRY_DELAY', default=3600)
+DATASYNC_MAX_ATTEMPTS = env.int('DATASYNC_MAX_ATTEMPTS', default=12)
+
+# When the Celery broker cannot be reached, send the event in the web process
+# instead so the record still reaches BMA-NFE as the partner presses save.
+DATASYNC_INLINE_FALLBACK = env.bool('DATASYNC_INLINE_FALLBACK', default=True)
+########## END DATA REPLICATION
 
 # Location of root django.contrib.admin URL, use {% url 'admin:index' %}
 ADMIN_URL = r'^admin/'
@@ -420,7 +481,12 @@ SPECTACULAR_SETTINGS = {
     # OTHER SETTINGS AS NEEDED
 }
 
+JAZZMIN_UI_TWEAKS = {
+    "sidebar_fixed": True,
+}
+
 JAZZMIN_SETTINGS = {
+    "custom_css": "css/admin-layout.css",
     "site_title": "BMA",
     "site_header": "BMA-2",
     "welcome_sign": "Welcome, Admin",
